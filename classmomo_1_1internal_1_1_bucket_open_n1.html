@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -134,9 +134,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afeb96704e1e4ce54addc78402697681d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3edbf9196790b6b7023dc6bbb5ef257a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a40d19799ccf75e12ce5bc93f66f842cc">Bounds</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a3edbf9196790b6b7023dc6bbb5ef257a">GetBounds</a> (<a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a8fef4506e5b3d0733f450597e0af745f">Params</a> &amp;) noexcept</td></tr>
 <tr class="separator:a3edbf9196790b6b7023dc6bbb5ef257a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99cc86ca22eafb8a584052e12c7868ab"><td class="memTemplParams" colspan="2">template&lt;bool first, typename Predicate &gt; </td></tr>
-<tr class="memitem:a99cc86ca22eafb8a584052e12c7868ab"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a086fa17772b708b77aea056e3623f467">Iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a99cc86ca22eafb8a584052e12c7868ab">Find</a> (<a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a8fef4506e5b3d0733f450597e0af745f">Params</a> &amp;, const Predicate &amp;pred, size_t hashCode)</td></tr>
-<tr class="separator:a99cc86ca22eafb8a584052e12c7868ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbfb826c66ada6629bf42fc8da8fad64"><td class="memTemplParams" colspan="2">template&lt;bool first, typename ItemPredicate &gt; </td></tr>
+<tr class="memitem:adbfb826c66ada6629bf42fc8da8fad64"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> <a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a086fa17772b708b77aea056e3623f467">Iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#adbfb826c66ada6629bf42fc8da8fad64">Find</a> (<a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a8fef4506e5b3d0733f450597e0af745f">Params</a> &amp;, const ItemPredicate &amp;itemPred, size_t hashCode)</td></tr>
+<tr class="separator:adbfb826c66ada6629bf42fc8da8fad64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e33182ba095114e2e2db29de92d6f82"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a1e33182ba095114e2e2db29de92d6f82">IsFull</a> () const noexcept</td></tr>
 <tr class="separator:a1e33182ba095114e2e2db29de92d6f82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e4f81541d2280af01a39235c600354c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_bucket_open_n1.html#a2e4f81541d2280af01a39235c600354c">WasFull</a> () const noexcept</td></tr>
@@ -474,15 +474,15 @@ template&lt;typename TItemTraits , size_t tMaxCount, bool tReverse&gt; </div>
 
 </div>
 </div>
-<a id="a99cc86ca22eafb8a584052e12c7868ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a99cc86ca22eafb8a584052e12c7868ab">&#9670;&nbsp;</a></span>Find()</h2>
+<a id="adbfb826c66ada6629bf42fc8da8fad64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbfb826c66ada6629bf42fc8da8fad64">&#9670;&nbsp;</a></span>Find()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItemTraits , size_t tMaxCount, bool tReverse&gt; </div>
 <div class="memtemplate">
-template&lt;bool first, typename Predicate &gt; </div>
+template&lt;bool first, typename ItemPredicate &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -496,8 +496,8 @@ template&lt;bool first, typename Predicate &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Predicate &amp;&#160;</td>
-          <td class="paramname"><em>pred</em>, </td>
+          <td class="paramtype">const ItemPredicate &amp;&#160;</td>
+          <td class="paramname"><em>itemPred</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

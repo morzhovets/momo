@@ -16,6 +16,6 @@ var classmomo_1_1internal_1_1_hash_set_buckets =
     [ "operator=", "classmomo_1_1internal_1_1_hash_set_buckets.html#a363050e200ea161cff079aee15a545e9", null ],
     [ "operator[]", "classmomo_1_1internal_1_1_hash_set_buckets.html#a6577383b91bc3e3741b147db1726840b", null ],
     [ "SetNextBuckets", "classmomo_1_1internal_1_1_hash_set_buckets.html#a22a2424da6fa10553160d98b8195c0a8", null ],
-    [ "mAlignedBuffer", "classmomo_1_1internal_1_1_hash_set_buckets.html#aa9468cb2962b7532a15ecb9b3d01d7c1", null ],
+    [ "mAlignedBuffer", "classmomo_1_1internal_1_1_hash_set_buckets.html#a18054cfc6f6f5029776049a817d72529", null ],
     [ "mBucketParams", "classmomo_1_1internal_1_1_hash_set_buckets.html#ae6155680073bdae8be08f045646d87a1", null ]
 ];

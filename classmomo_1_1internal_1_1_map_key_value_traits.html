@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -132,9 +132,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a47eeb7ed3dcd81ccf1aa79931e981b08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5e1f18711a93790dcc750853d0e70fa"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#aa5e1f18711a93790dcc750853d0e70fa">ReplaceRelocate</a> (<a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a4fa44ccda6bc080481c0d3e685bb0749">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ab8011d130a0f5dc9e24043e18c92b090">Key</a> &amp;srcKey, <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a600f867676696d2b2405d5e0885a01b7">Value</a> &amp;srcValue, <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ab8011d130a0f5dc9e24043e18c92b090">Key</a> &amp;midKey, <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a600f867676696d2b2405d5e0885a01b7">Value</a> &amp;midValue, <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ab8011d130a0f5dc9e24043e18c92b090">Key</a> *dstKey, <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a600f867676696d2b2405d5e0885a01b7">Value</a> *dstValue)</td></tr>
 <tr class="separator:aa5e1f18711a93790dcc750853d0e70fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b4d4d330aaf55212514a939cc74e529"><td class="memTemplParams" colspan="2">template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; </td></tr>
-<tr class="memitem:a3b4d4d330aaf55212514a939cc74e529"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a3b4d4d330aaf55212514a939cc74e529">RelocateExec</a> (<a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a4fa44ccda6bc080481c0d3e685bb0749">MemManager</a> &amp;memManager, KeyIterator srcKeyBegin, ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, Func &amp;&amp;func)</td></tr>
-<tr class="separator:a3b4d4d330aaf55212514a939cc74e529"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b024c6ee4f7fa5d82171dc6efdd9e61"><td class="memTemplParams" colspan="2">template&lt;typename KeyIterator , typename ValueIterator , typename Executor &gt; </td></tr>
+<tr class="memitem:a6b024c6ee4f7fa5d82171dc6efdd9e61"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a6b024c6ee4f7fa5d82171dc6efdd9e61">RelocateExec</a> (<a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a4fa44ccda6bc080481c0d3e685bb0749">MemManager</a> &amp;memManager, KeyIterator srcKeyBegin, ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, Executor &amp;&amp;exec)</td></tr>
+<tr class="separator:a6b024c6ee4f7fa5d82171dc6efdd9e61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d846fed9076c7695d3b2fef4eb4f0ec"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
 <tr class="memitem:a4d846fed9076c7695d3b2fef4eb4f0ec"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a4d846fed9076c7695d3b2fef4eb4f0ec">AssignKey</a> (<a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a4fa44ccda6bc080481c0d3e685bb0749">MemManager</a> &amp;, KeyArg &amp;&amp;keyArg, <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ab8011d130a0f5dc9e24043e18c92b090">Key</a> &amp;key)</td></tr>
 <tr class="separator:a4d846fed9076c7695d3b2fef4eb4f0ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -480,15 +480,15 @@ template&lt;typename TKey , typename TValue , typename TMemManager &gt; </div>
 
 </div>
 </div>
-<a id="a3b4d4d330aaf55212514a939cc74e529"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b4d4d330aaf55212514a939cc74e529">&#9670;&nbsp;</a></span>RelocateExec()</h2>
+<a id="a6b024c6ee4f7fa5d82171dc6efdd9e61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b024c6ee4f7fa5d82171dc6efdd9e61">&#9670;&nbsp;</a></span>RelocateExec()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TKey , typename TValue , typename TMemManager &gt; </div>
 <div class="memtemplate">
-template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; </div>
+template&lt;typename KeyIterator , typename ValueIterator , typename Executor &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -532,8 +532,8 @@ template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; <
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Func &amp;&amp;&#160;</td>
-          <td class="paramname"><em>func</em>&#160;</td>
+          <td class="paramtype">Executor &amp;&amp;&#160;</td>
+          <td class="paramname"><em>exec</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

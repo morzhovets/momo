@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -111,6 +111,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aa8732c0284b9f5eb4c8914611fdf209e"><td class="memTemplParams" colspan="2">template&lt;typename ResObject  = void&gt; </td></tr>
 <tr class="memitem:aa8732c0284b9f5eb4c8914611fdf209e"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#aa8732c0284b9f5eb4c8914611fdf209e">Allocate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, size_t size)</td></tr>
 <tr class="separator:aa8732c0284b9f5eb4c8914611fdf209e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacbd74e64633db8d726870bf6b2f999f"><td class="memTemplParams" colspan="2">template&lt;typename ResObject , typename... ResObjectArgs&gt; </td></tr>
+<tr class="memitem:aacbd74e64633db8d726870bf6b2f999f"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#aacbd74e64633db8d726870bf6b2f999f">AllocateCreate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, ResObjectArgs &amp;&amp;... resObjectArgs)</td></tr>
+<tr class="separator:aacbd74e64633db8d726870bf6b2f999f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab897511927185dc52af650b4bcf259ed"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#ab897511927185dc52af650b4bcf259ed">Deallocate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, void *ptr, size_t size) noexcept</td></tr>
 <tr class="separator:ab897511927185dc52af650b4bcf259ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a520be3792b1e8ce3ea323126d97aeb73"><td class="memTemplParams" colspan="2">template&lt;typename ResObject  = void&gt; </td></tr>
@@ -120,9 +123,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:ae98b8ca32a867f2296a45be153692445"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaf7518c8df0dedd89b22ffcd06a30da"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#aeaf7518c8df0dedd89b22ffcd06a30da">IsEqual</a> (const <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager1, const <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager2) noexcept</td></tr>
 <tr class="separator:aeaf7518c8df0dedd89b22ffcd06a30da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aacbd74e64633db8d726870bf6b2f999f"><td class="memTemplParams" colspan="2">template&lt;typename ResObject , typename... ResObjectArgs&gt; </td></tr>
-<tr class="memitem:aacbd74e64633db8d726870bf6b2f999f"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#aacbd74e64633db8d726870bf6b2f999f">AllocateCreate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, ResObjectArgs &amp;&amp;... resObjectArgs)</td></tr>
-<tr class="separator:aacbd74e64633db8d726870bf6b2f999f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b48122d680b348c0f6040a93ef68edf"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a4b48122d680b348c0f6040a93ef68edf">Assign</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&amp;srcMemManager, <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;dstMemManager) noexcept</td></tr>
+<tr class="separator:a4b48122d680b348c0f6040a93ef68edf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -225,6 +227,44 @@ template&lt;typename ResObject , typename... ResObjectArgs&gt; </div>
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4b48122d680b348c0f6040a93ef68edf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b48122d680b348c0f6040a93ef68edf">&#9670;&nbsp;</a></span>Assign()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TMemManager &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html">momo::internal::MemManagerProxy</a>&lt; TMemManager &gt;::Assign </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&amp;&#160;</td>
+          <td class="paramname"><em>srcMemManager</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>dstMemManager</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

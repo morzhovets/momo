@@ -21,6 +21,6 @@ var classmomo_1_1stdish_1_1multimap =
     [ "insert", "classmomo_1_1stdish_1_1multimap.html#a148c59e7a93adbd1222c335ff0bf878a", null ],
     [ "insert", "classmomo_1_1stdish_1_1multimap.html#ad51aeadda3fe0ef161c6193567a76b4e", null ],
     [ "operator=", "classmomo_1_1stdish_1_1multimap.html#a38cc6a728af26e00424fed51f610b6b0", null ],
-    [ "erase_if", "classmomo_1_1stdish_1_1multimap.html#a0ae7d3466369d8fef8db8750a20f8922", null ],
+    [ "erase_if", "classmomo_1_1stdish_1_1multimap.html#a15fdf92d3ebf71593a90465466da0609", null ],
     [ "swap", "classmomo_1_1stdish_1_1multimap.html#a70af449e9626e700b4ce0cc0bcab0b54", null ]
 ];

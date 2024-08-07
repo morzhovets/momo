@@ -18,6 +18,6 @@ var classmomo_1_1stdish_1_1multiset =
     [ "insert", "classmomo_1_1stdish_1_1multiset.html#a65cd466a7e310438fd4fa1db5539575d", null ],
     [ "insert", "classmomo_1_1stdish_1_1multiset.html#adc76760fa72a4a05015dc047e74b0c58", null ],
     [ "operator=", "classmomo_1_1stdish_1_1multiset.html#ab70449311671818f72d876af7d79fba7", null ],
-    [ "erase_if", "classmomo_1_1stdish_1_1multiset.html#ac586566b2665bd101aa9b89905b35222", null ],
+    [ "erase_if", "classmomo_1_1stdish_1_1multiset.html#ab25579ccf202c6cdbcaf9895f5e0d75f", null ],
     [ "swap", "classmomo_1_1stdish_1_1multiset.html#a48babcf13ee3254da306efef4f666de9", null ]
 ];

@@ -1,4 +1,0 @@
-var structmomo_1_1internal_1_1_data_visitable_items_getter_3_01_struct_00_01_void_3_01typename_01_st2bdf45cd6c2075d73c69a5550b463c4d =
-[
-    [ "VisitableItems", "structmomo_1_1internal_1_1_data_visitable_items_getter_3_01_struct_00_01_void_3_01typename_01_st2bdf45cd6c2075d73c69a5550b463c4d.html#ad5e07db4a05dd2315eba51920c8a8cd0", null ]
-];

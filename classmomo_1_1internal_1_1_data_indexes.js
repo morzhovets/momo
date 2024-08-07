@@ -1,7 +1,6 @@
 var classmomo_1_1internal_1_1_data_indexes =
 [
     [ "Result", "structmomo_1_1internal_1_1_data_indexes_1_1_result.html", "structmomo_1_1internal_1_1_data_indexes_1_1_result" ],
-    [ "Column", "classmomo_1_1internal_1_1_data_indexes.html#a31a50ba96482c8cee701b8508fba0ec0", null ],
     [ "ColumnList", "classmomo_1_1internal_1_1_data_indexes.html#a323a81ee8f4458187080defdd74c9b32", null ],
     [ "DataTraits", "classmomo_1_1internal_1_1_data_indexes.html#abe1919fdb9e17dfc6bd618691049a983", null ],
     [ "MemManager", "classmomo_1_1internal_1_1_data_indexes.html#a52b8bef2c7b9460b7671d1a0eeb1021f", null ],
@@ -40,5 +39,5 @@ var classmomo_1_1internal_1_1_data_indexes =
     [ "Reserve", "classmomo_1_1internal_1_1_data_indexes.html#a9cbf81f8c600f3617d4287cf5f9acb4b", null ],
     [ "Swap", "classmomo_1_1internal_1_1_data_indexes.html#a7e25963e6a4ee6825c9c312e856d993e", null ],
     [ "UpdateRaw", "classmomo_1_1internal_1_1_data_indexes.html#a3585ceb7edcc3a5c851a144b7e6cace9", null ],
-    [ "UpdateRaw", "classmomo_1_1internal_1_1_data_indexes.html#a6641ccf4fc2b9279814631e9cc54a659", null ]
+    [ "UpdateRaw", "classmomo_1_1internal_1_1_data_indexes.html#af2b6f11997d49a5795a1210ca80f52c7", null ]
 ];

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -91,13 +91,13 @@ $(document).ready(function(){initNavTree('functions_v.html',''); initResizable()
 , <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#ad6b4812d5e553a57b923cdb84a38f4a9">momo::HashMultiMapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_hash_map_nested_set_item_traits.html#a64cc9362ec630c32850cdfb863bd1292">momo::internal::HashMapNestedSetItemTraits&lt; TKeyValueTraits &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_reference.html#a1721585212ef71b612f7c1b0ed60805d">momo::internal::HashMultiMapReference&lt; TKey, TValue &gt;</a>
 </li>
 <li>value
 : <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_reference.html#aa13cd0da3936bb8ccaf3def23cbe8c85">momo::internal::HashMultiMapReference&lt; TKey, TValue &gt;</a>
 </li>
 <li>Value
-: <a class="el" href="classmomo_1_1internal_1_1_map_extracted_pair.html#a5c08d3efb8570fb00bc35526e137d78d">momo::internal::MapExtractedPair&lt; TSetExtractedItem &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_reference.html#a1721585212ef71b612f7c1b0ed60805d">momo::internal::HashMultiMapReference&lt; TKey, TValue &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_map_extracted_pair.html#a5c08d3efb8570fb00bc35526e137d78d">momo::internal::MapExtractedPair&lt; TSetExtractedItem &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_map_key_value_pair.html#a647aee57a577bc282084baa9062aab2e">momo::internal::MapKeyValuePair&lt; TKey, TValue, tKeyAlignment, tValueAlignment &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a600f867676696d2b2405d5e0885a01b7">momo::internal::MapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_map_nested_set_item_traits.html#a64cc9362ec630c32850cdfb863bd1292">momo::internal::MapNestedSetItemTraits&lt; TKeyValueTraits &gt;</a>
@@ -111,7 +111,7 @@ $(document).ready(function(){initNavTree('functions_v.html',''); initResizable()
 , <a class="el" href="classmomo_1_1internal_1_1_tree_map_nested_set_item_traits.html#a64cc9362ec630c32850cdfb863bd1292">momo::internal::TreeMapNestedSetItemTraits&lt; TKeyValueTraits &gt;</a>
 </li>
 <li>value()
-: <a class="el" href="classmomo_1_1stdish_1_1internal_1_1set__node__handle.html#ab1b86c48012f48bb2509adf990b7dbfa">momo::stdish::internal::set_node_handle&lt; TSetExtractedItem &gt;</a>
+: <a class="el" href="classmomo_1_1stdish_1_1internal_1_1set__node__handle.html#a4a49a4f9f4c4d243bb524a91b4bb559d">momo::stdish::internal::set_node_handle&lt; TSetExtractedItem &gt;</a>
 </li>
 <li>Value
 : <a class="el" href="classmomo_1_1_tree_map.html#a2df6db3f8142349923dbc03d5d3a9b9d">momo::TreeMap&lt; TKey, TValue, TTreeTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>
@@ -179,7 +179,7 @@ $(document).ready(function(){initNavTree('functions_v.html',''); initResizable()
 : <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#af966f450931aced0225475bf3f932f17">momo::internal::HashMultiMapKeyReference&lt; THashMapReference &gt;</a>
 </li>
 <li>vector()
-: <a class="el" href="classmomo_1_1stdish_1_1vector.html#a6c2da25348562a13043440589b8ea751">momo::stdish::vector&lt; TValue, TAllocator, TArray &gt;</a>
+: <a class="el" href="classmomo_1_1stdish_1_1vector.html#a177cdfc38b9342664e1b85d7458ff088">momo::stdish::vector&lt; TValue, TAllocator, TArray &gt;</a>
 </li>
 <li>VersionKeeper
 : <a class="el" href="classmomo_1_1internal_1_1_data_const_row_reference.html#a0760f612bee75e20616af9d9103145e0">momo::internal::DataConstRowReference&lt; TColumnList &gt;</a>
@@ -193,27 +193,26 @@ $(document).ready(function(){initNavTree('functions_v.html',''); initResizable()
 , <a class="el" href="classmomo_1_1internal_1_1_version_keeper_3_01_t_settings_00_01true_01_4.html#aff31073bbc7cca0e818a743a960709bc">momo::internal::VersionKeeper&lt; TSettings, true &gt;</a>
 </li>
 <li>Visit()
-: <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html#ac1a023ff61c737a83d2f2a0cd02171ed">momo::internal::DataColumnInfo&lt; TStruct, TCode &gt;</a>
+: <a class="el" href="classmomo_1_1_data_column_info.html#ae33062fd66b6d21028e07367adc13e20">momo::DataColumnInfo&lt; TStruct, TCode &gt;</a>
+, <a class="el" href="classmomo_1_1_data_column_info_native.html#a6d12cfe1c44aa4cd2dab93501db0a92e">momo::DataColumnInfoNative&lt; TStruct &gt;</a>
 </li>
 <li>VisitableItems
 : <a class="el" href="structmomo_1_1_data_struct_default.html#aa186cc2da518138653a87dfa2d46da10">momo::DataStructDefault&lt; TVisitableItems &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html#a60dc0838725df2791df319fa207c7526">momo::internal::DataColumnInfo&lt; TStruct, TCode &gt;</a>
-, <a class="el" href="structmomo_1_1internal_1_1_data_visitable_items_getter.html#a78dd12791220845193e4b30e4b0228e5">momo::internal::DataVisitableItemsGetter&lt; Struct, typename &gt;</a>
-, <a class="el" href="structmomo_1_1internal_1_1_data_visitable_items_getter_3_01_struct_00_01_void_3_01typename_01_st2bdf45cd6c2075d73c69a5550b463c4d.html#ad5e07db4a05dd2315eba51920c8a8cd0">momo::internal::DataVisitableItemsGetter&lt; Struct, Void&lt; typename Struct::VisitableItems &gt; &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_data_column_info_base.html#a1eefa831730ee3d91238af86684ea45c">momo::internal::DataColumnInfoBase&lt; TStruct, TCode &gt;</a>
 </li>
 <li>VisitPointers()
-: <a class="el" href="classmomo_1_1_data_column_list.html#ae1eeab6c960341f9c3718e8cbc26566a">momo::DataColumnList&lt; TColumnTraits, TMemManager, TItemTraits, TSettings &gt;</a>
-, <a class="el" href="classmomo_1_1_data_column_list_static.html#a8de74612836f3d3a165dde84cd4ff33c">momo::DataColumnListStatic&lt; TStruct, TMemManager, TSettings &gt;</a>
+: <a class="el" href="classmomo_1_1_data_column_list.html#a9070648e98942ea710481063b70a9d7c">momo::DataColumnList&lt; TColumnTraits, TMemManager, TItemTraits, TSettings &gt;</a>
+, <a class="el" href="classmomo_1_1_data_column_list_static.html#a7f1cdee793275a8e25217b4bc2db4ae9">momo::DataColumnListStatic&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_data_const_row_reference.html#a2b6f21610a0307e0d1e8e05db9bd03d1">momo::internal::DataConstRowReference&lt; TColumnList &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_data_row.html#a33dc23f9400bf9f131c91d3d5b667f62">momo::internal::DataRow&lt; TColumnList &gt;</a>
 </li>
 <li>VisitReferences()
 : <a class="el" href="classmomo_1_1internal_1_1_data_const_row_reference.html#a39d7cf9063689d72e3053cfab06507cb">momo::internal::DataConstRowReference&lt; TColumnList &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_data_row.html#a29989bf5c78a10c99ad4cde3d669a9b1">momo::internal::DataRow&lt; TColumnList &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_data_row.html#a0670452aec73da8b3188b2ad7063035f">momo::internal::DataRow&lt; TColumnList &gt;</a>
 </li>
 <li>Void
 : <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a800dc3e2335d7c39a1c6f9343bc2b17a">momo::internal::DataPtrVisitor&lt; TRefVisitor, TVoid &gt;</a>
-, <a class="el" href="structmomo_1_1internal_1_1_void_maker.html#a8377ca4d0341e5324afffe95a6bcfece">momo::internal::VoidMaker&lt; Types &gt;</a>
+, <a class="el" href="structmomo_1_1internal_1_1_void_maker.html#aaffb72b0d45cf73c47c7cf4e3104da57">momo::internal::VoidMaker&lt;... &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->

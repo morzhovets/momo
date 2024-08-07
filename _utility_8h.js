@@ -24,7 +24,9 @@ var _utility_8h =
     [ "MOMO_FRIENDS_SIZE_BEGIN_END_CONST", "_utility_8h.html#a3f7b972f009703f55f5c266ec9f14f74", null ],
     [ "MOMO_STATIC_ASSERT", "_utility_8h.html#a04478e8c251bfd597e779369ff8fd295", null ],
     [ "BoolConstant", "_utility_8h.html#a12df18edcafda2c66c5af5276c2661af", null ],
+    [ "Byte", "_utility_8h.html#a832a663a2782dd0674c143d654bd39bf", null ],
     [ "EnableIf", "_utility_8h.html#a3240c94f5aacdf8b48d58980f85348f0", null ],
+    [ "Identity", "_utility_8h.html#a6457202229264fdd3fba4be31ccb4079", null ],
     [ "IsForwardIterator", "_utility_8h.html#a3af1c05e0a098d112e970dadb0a13a79", null ],
     [ "Void", "_utility_8h.html#a7d76c09010f189220f878e088275214c", null ],
     [ "CheckMode", "_utility_8h.html#a24e32b81078826b60e080dc5f8b77c46", [

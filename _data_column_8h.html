@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -85,7 +85,9 @@ $(document).ready(function(){initNavTree('_data_column_8h.html',''); initResizab
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#define-members">Macros</a>  </div>
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
 <div class="title">DataColumn.h File Reference</div>  </div>
 </div><!--header-->
@@ -98,31 +100,39 @@ $(document).ready(function(){initNavTree('_data_column_8h.html',''); initResizab
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1_hash_coder_3_01_data_column_code_offset_00_01size__t_01_4.html">momo::HashCoder&lt; DataColumnCodeOffset, size_t &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_str_hasher.html">momo::internal::StrHasher</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_operator.html">momo::internal::DataOperator&lt; TColumn, TItemArg &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_equaler.html">momo::internal::DataEqualer&lt; TColumn, TItemArg &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_assigner.html">momo::internal::DataAssigner&lt; TColumn, TItemArg &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_data_mutable.html">momo::internal::DataMutable&lt; Item &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_column.html">momo::internal::DataColumn&lt; TItem, TStruct, TCode &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_data_column_code_selector.html">momo::internal::DataColumnCodeSelector&lt; Struct, isStructWithMembers &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_column_3_01_data_mutable_3_01_t_item_01_4_00_01_t_struct_00_01_t_code_01_4.html">momo::internal::DataColumn&lt; DataMutable&lt; TItem &gt;, TStruct, TCode &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_data_column_code_selector_3_01_struct_00_01true_01_4.html">momo::internal::DataColumnCodeSelector&lt; Struct, true &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_data_column_item_selector.html">momo::internal::DataColumnItemSelector&lt; TColumn &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_data_column_item_selector_3_01_t_item_01_t_struct_1_1_5_01_4.html">momo::internal::DataColumnItemSelector&lt; TItem TStruct::* &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_column_info_base.html">momo::internal::DataColumnInfoBase&lt; TStruct, TCode &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_data_visitable_items_getter.html">momo::internal::DataVisitableItemsGetter&lt; Struct, typename &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_equality.html">momo::DataEquality&lt; Columns &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_data_visitable_items_getter_3_01_struct_00_01_void_3_01typename_01_st2bdf45cd6c2075d73c69a5550b463c4d.html">momo::internal::DataVisitableItemsGetter&lt; Struct, Void&lt; typename Struct::VisitableItems &gt; &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_equality_3_01_column_01_4.html">momo::DataEquality&lt; Column &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_column_info.html">momo::internal::DataColumnInfo&lt; TStruct, TCode &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_settings.html">momo::DataSettings&lt; tKeepRowNumber &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_assignment.html">momo::DataAssignment&lt; TColumn, TItemArg &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1_data_struct_default.html">momo::DataStructDefault&lt; TVisitableItems &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column.html">momo::DataColumn&lt; TItem, TStruct, TCode &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_3_01internal_1_1_data_mutable_3_01_t_item_01_4_00_01_t_struct_00_01_t_code_01_4.html">momo::DataColumn&lt; internal::DataMutable&lt; TItem &gt;, TStruct, TCode &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_info.html">momo::DataColumnInfo&lt; TStruct, TCode &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_info_native.html">momo::DataColumnInfoNative&lt; TStruct &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_settings.html">momo::DataSettings&lt; tKeepRowNumber &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_traits.html">momo::DataColumnTraits&lt; TStruct, tLogVertexCount &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,7 +142,7 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_1_1_column_record.html">momo::DataColumnList&lt; TColumnTraits, TMemManager, TItemTraits, TSettings &gt;::ColumnRecord</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic&lt; TStruct, TMemManager, TSettings &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
@@ -146,10 +156,21 @@ Namespaces</h2></td></tr>
 Macros</h2></td></tr>
 <tr class="memitem:a082adae182ff720cef53af7d77f001fa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_data_column_8h.html#a082adae182ff720cef53af7d77f001fa">MOMO_DATA_COLUMN_STRUCT</a>(Struct,  name)</td></tr>
 <tr class="separator:a082adae182ff720cef53af7d77f001fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fd27e4b7d4d20af526af89f10319ac2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_data_column_8h.html#a9fd27e4b7d4d20af526af89f10319ac2">MOMO_DATA_COLUMN_STRING_TAG</a>(Tag,  Type,  name)</td></tr>
+<tr class="memitem:a9fd27e4b7d4d20af526af89f10319ac2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_data_column_8h.html#a9fd27e4b7d4d20af526af89f10319ac2">MOMO_DATA_COLUMN_STRING_TAG</a>(Tag,  Type,  name)&#160;&#160;&#160;	constexpr <a class="el" href="classmomo_1_1_data_column.html">momo::DataColumn</a>&lt;Type, Tag, uint64_t&gt; name{#name}</td></tr>
 <tr class="separator:a9fd27e4b7d4d20af526af89f10319ac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2752b9809f94e59a18a5a35bc75568b5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_data_column_8h.html#a2752b9809f94e59a18a5a35bc75568b5">MOMO_DATA_COLUMN_STRING</a>(Type,  name)&#160;&#160;&#160;	<a class="el" href="_data_column_8h.html#a9fd27e4b7d4d20af526af89f10319ac2">MOMO_DATA_COLUMN_STRING_TAG</a>(<a class="el" href="structmomo_1_1_data_struct_default.html">momo::DataStructDefault</a>&lt;&gt;, Type, name)</td></tr>
 <tr class="separator:a2752b9809f94e59a18a5a35bc75568b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:aeeba7ee3985c45788be272e20de4f7b3"><td class="memTemplParams" colspan="2">template&lt;typename TStruct &gt; </td></tr>
+<tr class="memitem:aeeba7ee3985c45788be272e20de4f7b3"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#aeeba7ee3985c45788be272e20de4f7b3">momo::DataColumnListNative</a> = DataColumnListStatic&lt; TStruct, DataColumnInfoNative&lt; TStruct &gt; &gt;</td></tr>
+<tr class="separator:aeeba7ee3985c45788be272e20de4f7b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a5f687a5e146deea34fb9a124b4c1c453"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a5f687a5e146deea34fb9a124b4c1c453">momo::DataColumnCodeOffset</a> : size_t </td></tr>
+<tr class="separator:a5f687a5e146deea34fb9a124b4c1c453"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a2752b9809f94e59a18a5a35bc75568b5"></a>
@@ -207,14 +228,11 @@ Macros</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td>
+          <td></td><td>&#160;&#160;&#160;	constexpr <a class="el" href="classmomo_1_1_data_column.html">momo::DataColumn</a>&lt;Type, Tag, uint64_t&gt; name{#name}</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    <a class="code" href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">MOMO_STATIC_ASSERT</a>(!std::is_class&lt;Tag&gt;::value || std::is_empty&lt;Tag&gt;::value); \</div>
-<div class="line">    constexpr <a class="code" href="classmomo_1_1internal_1_1_data_column.html">momo::internal::DataColumn&lt;Type, Tag&gt; \</a></div>
-<div class="line"><a class="code" href="classmomo_1_1internal_1_1_data_column.html">	name</a>(<a class="code" href="classmomo_1_1internal_1_1_str_hasher.html#a132e7d33c9946d702c4b3e3846ab5d9a">momo::internal::StrHasher::GetHashCode64</a>(#name), #name)</div>
-</div><!-- fragment -->
+
 </div>
 </div>
 <a id="a082adae182ff720cef53af7d77f001fa"></a>
@@ -242,16 +260,15 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    constexpr <a class="code" href="classmomo_1_1internal_1_1_data_column.html">momo::internal::DataColumn&lt;decltype(std::declval&lt;Struct&amp;&gt;</a>().name), Struct&gt; \</div>
-<div class="line">    name(uint64_t{offsetof(Struct, name)}, #name)</div>
+<b>Value:</b><div class="fragment"><div class="line">    constexpr <a class="code" href="classmomo_1_1_data_column.html">momo::DataColumn&lt;decltype(std::declval&lt;Struct&gt;</a>().name), Struct, <a class="code" href="namespacemomo.html#a5f687a5e146deea34fb9a124b4c1c453">momo::DataColumnCodeOffset</a>&gt; \</div>
+<div class="line">        name{<a class="code" href="namespacemomo.html#a5f687a5e146deea34fb9a124b4c1c453">momo::DataColumnCodeOffset</a>(offsetof(Struct, name)), #Struct <span class="stringliteral">&quot;.&quot;</span> #name}</div>
 </div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassmomo_1_1internal_1_1_data_column_html"><div class="ttname"><a href="classmomo_1_1internal_1_1_data_column.html">momo::internal::DataColumn</a></div><div class="ttdef"><b>Definition:</b> DataColumn.h:140</div></div>
-<div class="ttc" id="a_utility_8h_html_a04478e8c251bfd597e779369ff8fd295"><div class="ttname"><a href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">MOMO_STATIC_ASSERT</a></div><div class="ttdeci">#define MOMO_STATIC_ASSERT(expr)</div><div class="ttdef"><b>Definition:</b> Utility.h:70</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_str_hasher_html_a132e7d33c9946d702c4b3e3846ab5d9a"><div class="ttname"><a href="classmomo_1_1internal_1_1_str_hasher.html#a132e7d33c9946d702c4b3e3846ab5d9a">momo::internal::StrHasher::GetHashCode64</a></div><div class="ttdeci">static constexpr uint64_t GetHashCode64(const char *str) noexcept</div><div class="ttdef"><b>Definition:</b> DataColumn.h:61</div></div>
+<div class="ttc" id="anamespacemomo_html_a5f687a5e146deea34fb9a124b4c1c453"><div class="ttname"><a href="namespacemomo.html#a5f687a5e146deea34fb9a124b4c1c453">momo::DataColumnCodeOffset</a></div><div class="ttdeci">DataColumnCodeOffset</div><div class="ttdef"><b>Definition:</b> DataColumn.h:57</div></div>
+<div class="ttc" id="aclassmomo_1_1_data_column_html"><div class="ttname"><a href="classmomo_1_1_data_column.html">momo::DataColumn</a></div><div class="ttdef"><b>Definition:</b> DataColumn.h:403</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

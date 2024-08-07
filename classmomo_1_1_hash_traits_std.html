@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -104,6 +104,9 @@ Public Types</h2></td></tr>
 <tr class="separator:aabb0dafcf20db439a1a069ea16ec2643"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dc90ff36d549fe806e18b7e551d2927"><td class="memItemLeft" align="right" valign="top">typedef THashBucket&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a5dc90ff36d549fe806e18b7e551d2927">HashBucket</a></td></tr>
 <tr class="separator:a5dc90ff36d549fe806e18b7e551d2927"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a424931f5f234038da59f284f8dc13c71"><td class="memTemplParams" colspan="2">template&lt;typename ItemTraits &gt; </td></tr>
+<tr class="memitem:a424931f5f234038da59f284f8dc13c71"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a424931f5f234038da59f284f8dc13c71">Bucket</a> = typename HashBucket::template <a class="el" href="classmomo_1_1_hash_traits_std.html#a424931f5f234038da59f284f8dc13c71">Bucket</a>&lt; ItemTraits, !<a class="el" href="classmomo_1_1_hash_traits_std.html#acb2f8601d26925ba18d955f517f7bbf9">isFastNothrowHashable</a> &gt;</td></tr>
+<tr class="separator:a424931f5f234038da59f284f8dc13c71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dbc0ef5a6d59b87c98bced63bb919c8"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
 <tr class="memitem:a0dbc0ef5a6d59b87c98bced63bb919c8"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a0dbc0ef5a6d59b87c98bced63bb919c8">IsValidKeyArg</a> = <a class="el" href="structmomo_1_1internal_1_1_hash_traits_std_is_valid_key_arg.html">internal::HashTraitsStdIsValidKeyArg</a>&lt; <a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a>, <a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a> &gt;</td></tr>
 <tr class="separator:a0dbc0ef5a6d59b87c98bced63bb919c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,6 +142,24 @@ Static Public Attributes</h2></td></tr>
 <tr class="separator:acb2f8601d26925ba18d955f517f7bbf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a424931f5f234038da59f284f8dc13c71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a424931f5f234038da59f284f8dc13c71">&#9670;&nbsp;</a></span>Bucket</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+<div class="memtemplate">
+template&lt;typename ItemTraits &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#a424931f5f234038da59f284f8dc13c71">Bucket</a> =  typename HashBucket::template <a class="el" href="classmomo_1_1_hash_traits_std.html#a424931f5f234038da59f284f8dc13c71">Bucket</a>&lt;ItemTraits, !<a class="el" href="classmomo_1_1_hash_traits_std.html#acb2f8601d26925ba18d955f517f7bbf9">isFastNothrowHashable</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aabb0dafcf20db439a1a069ea16ec2643"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aabb0dafcf20db439a1a069ea16ec2643">&#9670;&nbsp;</a></span>EqualFunc</h2>
 

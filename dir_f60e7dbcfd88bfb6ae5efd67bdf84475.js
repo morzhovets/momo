@@ -31,12 +31,7 @@ var dir_f60e7dbcfd88bfb6ae5efd67bdf84475 =
       [ "iterator_traits< momo::internal::DataRowIterator< RI, RR > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_row_iterator_3_01_r_i_00_01_r_r_01_4_01_4.html", null ],
       [ "iterator_traits< momo::internal::DataConstItemIterator< RI, I > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_const_item_iterator_3_01_r_i_00_01_i_01_4_01_4.html", null ]
     ] ],
-    [ "DataTable.h", "_data_table_8h.html", [
-      [ "DataTraits", "classmomo_1_1_data_traits.html", "classmomo_1_1_data_traits" ],
-      [ "DataTable", "classmomo_1_1_data_table.html", "classmomo_1_1_data_table" ],
-      [ "TryResult", "structmomo_1_1_data_table_1_1_try_result.html", "structmomo_1_1_data_table_1_1_try_result" ],
-      [ "UniqueIndexViolation", "classmomo_1_1_data_table_1_1_unique_index_violation.html", "classmomo_1_1_data_table_1_1_unique_index_violation" ]
-    ] ],
+    [ "DataTable.h", "_data_table_8h.html", "_data_table_8h" ],
     [ "HashMap.h", "_hash_map_8h.html", "_hash_map_8h" ],
     [ "HashMultiMap.h", "_hash_multi_map_8h.html", "_hash_multi_map_8h" ],
     [ "HashSet.h", "_hash_set_8h.html", "_hash_set_8h" ],
@@ -80,7 +75,8 @@ var dir_f60e7dbcfd88bfb6ae5efd67bdf84475 =
     ] ],
     [ "ObjectManager.h", "_object_manager_8h.html", [
       [ "HasCustomMoveConstructor", "structmomo_1_1internal_1_1_has_custom_move_constructor.html", null ],
-      [ "HasCustomMoveConstructor< MemManagerStd< Allocator >, Object, Void< decltype(std::declval< typename MemManagerStd< Allocator >::ByteAllocator & >().construct(std::declval< Object * >(), std::declval< Object && >())), EnableIf<!std::is_same< std::allocator< char >, typename MemManagerStd< Allocator >::ByteAllocator >::value > > >", "structmomo_1_1internal_1_1_has_custom_move_constructor_3_01_mem_manager_std_3_01_allocator_01_4_dd4ae2f20186f6c9186549863e3be8b8.html", null ],
+      [ "HasCustomMoveConstructor< MemManagerStd< Allocator >, Object, Void< decltype(std::declval< typename MemManagerStd< Allocator >::ByteAllocator & >().construct(std::declval< Object * >(), std::declval< Object && >())), EnableIf<!std::is_same< std::allocator< Byte >, typename MemManagerStd< Allocator >::ByteAllocator >::value > > >", "structmomo_1_1internal_1_1_has_custom_move_constructor_3_01_mem_manager_std_3_01_allocator_01_4_65957608f34f960487d95ff71a0cf874.html", null ],
+      [ "ConvertibleToReferences", "structmomo_1_1internal_1_1_convertible_to_references.html", "structmomo_1_1internal_1_1_convertible_to_references" ],
       [ "IsTriviallyRelocatable", "structmomo_1_1_is_trivially_relocatable.html", null ],
       [ "IsNothrowMoveConstructible", "structmomo_1_1_is_nothrow_move_constructible.html", null ],
       [ "ObjectDestroyer", "classmomo_1_1_object_destroyer.html", "classmomo_1_1_object_destroyer" ],

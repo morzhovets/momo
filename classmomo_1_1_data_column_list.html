@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -167,9 +167,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2a2db66850fd493ad07cb4826241a60f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2b87b6d0a7beabb553e1848f95efdc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list.html#ae2b87b6d0a7beabb553e1848f95efdc2">ImportRaw</a> (<a class="el" href="classmomo_1_1_data_column_list.html#accc7cfc73ae2b5dfbd97a34c50ec15d7">MemManager</a> &amp;memManager, const <a class="el" href="classmomo_1_1_data_column_list.html">DataColumnList</a> &amp;srcColumnList, const <a class="el" href="classmomo_1_1_data_column_list.html#a2325d9314150973f6ac4106220d03a8a">Raw</a> *srcRaw, <a class="el" href="classmomo_1_1_data_column_list.html#a2325d9314150973f6ac4106220d03a8a">Raw</a> *raw) const</td></tr>
 <tr class="separator:ae2b87b6d0a7beabb553e1848f95efdc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abaa1ba70b822b9a5f61cc3c7e631f22f"><td class="memTemplParams" colspan="2">template&lt;bool extraCheck = true&gt; </td></tr>
-<tr class="memitem:abaa1ba70b822b9a5f61cc3c7e631f22f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list.html#abaa1ba70b822b9a5f61cc3c7e631f22f">GetOffset</a> (<a class="el" href="classmomo_1_1_data_column_list.html#aca00f8d1e8d4b25e042414ce8ed45a3c">ColumnInfo</a> columnInfo) const</td></tr>
-<tr class="separator:abaa1ba70b822b9a5f61cc3c7e631f22f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af40fba4aa6fdd4611d13bac86deb6fdc"><td class="memTemplParams" colspan="2">template&lt;bool extraCheck = true, typename Item &gt; </td></tr>
+<tr class="memitem:af40fba4aa6fdd4611d13bac86deb6fdc"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list.html#af40fba4aa6fdd4611d13bac86deb6fdc">GetOffset</a> (const <a class="el" href="classmomo_1_1_data_column_list.html#a86bf26b2ae96944df71645915f470940">Column</a>&lt; Item &gt; &amp;column) const</td></tr>
+<tr class="separator:af40fba4aa6fdd4611d13bac86deb6fdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04948d08c7173009b14999012c960595"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename ItemArg &gt; </td></tr>
 <tr class="memitem:a04948d08c7173009b14999012c960595"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list.html#a04948d08c7173009b14999012c960595">Assign</a> (<a class="el" href="classmomo_1_1_data_column_list.html#a2325d9314150973f6ac4106220d03a8a">Raw</a> *raw, size_t offset, ItemArg &amp;&amp;itemArg) const</td></tr>
 <tr class="separator:a04948d08c7173009b14999012c960595"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -177,8 +177,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa2470986b7f0b6d420a982dd94af1a36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abff674598d520414a8634d624e441510"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list.html#abff674598d520414a8634d624e441510">SetNumber</a> (<a class="el" href="classmomo_1_1_data_column_list.html#a2325d9314150973f6ac4106220d03a8a">Raw</a> *raw, size_t number) const noexcept</td></tr>
 <tr class="separator:abff674598d520414a8634d624e441510"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9286e56ccb809e7b1aa0a34278710515"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list.html#a9286e56ccb809e7b1aa0a34278710515">Contains</a> (<a class="el" href="classmomo_1_1_data_column_list.html#aca00f8d1e8d4b25e042414ce8ed45a3c">ColumnInfo</a> columnInfo, size_t *resOffset=nullptr) const noexcept</td></tr>
-<tr class="separator:a9286e56ccb809e7b1aa0a34278710515"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c63f1094f02d68c9cb03d4e05e0d773"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list.html#a6c63f1094f02d68c9cb03d4e05e0d773">Contains</a> (const <a class="el" href="classmomo_1_1_data_column_list.html#aca00f8d1e8d4b25e042414ce8ed45a3c">ColumnInfo</a> &amp;columnInfo, size_t *resOffset=nullptr) const noexcept</td></tr>
+<tr class="separator:a6c63f1094f02d68c9cb03d4e05e0d773"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1eeab6c960341f9c3718e8cbc26566a"><td class="memTemplParams" colspan="2">template&lt;typename PtrVisitor &gt; </td></tr>
 <tr class="memitem:ae1eeab6c960341f9c3718e8cbc26566a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list.html#ae1eeab6c960341f9c3718e8cbc26566a">VisitPointers</a> (const <a class="el" href="classmomo_1_1_data_column_list.html#a2325d9314150973f6ac4106220d03a8a">Raw</a> *raw, const PtrVisitor &amp;ptrVisitor) const</td></tr>
 <tr class="separator:ae1eeab6c960341f9c3718e8cbc26566a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -626,8 +626,8 @@ template&lt;typename Item , typename ItemArg &gt; </div>
 
 </div>
 </div>
-<a id="a9286e56ccb809e7b1aa0a34278710515"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9286e56ccb809e7b1aa0a34278710515">&#9670;&nbsp;</a></span>Contains()</h2>
+<a id="a6c63f1094f02d68c9cb03d4e05e0d773"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c63f1094f02d68c9cb03d4e05e0d773">&#9670;&nbsp;</a></span>Contains()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -640,7 +640,7 @@ template&lt;typename TColumnTraits  = DataColumnTraits&lt;&gt;, typename TMemMan
         <tr>
           <td class="memname">bool <a class="el" href="classmomo_1_1_data_column_list.html">momo::DataColumnList</a>&lt; TColumnTraits, TMemManager, TItemTraits, TSettings &gt;::Contains </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list.html#aca00f8d1e8d4b25e042414ce8ed45a3c">ColumnInfo</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list.html#aca00f8d1e8d4b25e042414ce8ed45a3c">ColumnInfo</a> &amp;&#160;</td>
           <td class="paramname"><em>columnInfo</em>, </td>
         </tr>
         <tr>
@@ -1001,15 +1001,15 @@ template&lt;typename TColumnTraits  = DataColumnTraits&lt;&gt;, typename TMemMan
 
 </div>
 </div>
-<a id="abaa1ba70b822b9a5f61cc3c7e631f22f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abaa1ba70b822b9a5f61cc3c7e631f22f">&#9670;&nbsp;</a></span>GetOffset()</h2>
+<a id="af40fba4aa6fdd4611d13bac86deb6fdc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af40fba4aa6fdd4611d13bac86deb6fdc">&#9670;&nbsp;</a></span>GetOffset()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TColumnTraits  = DataColumnTraits&lt;&gt;, typename TMemManager  = MemManagerDefault, typename TItemTraits  = DataItemTraits&lt;TMemManager&gt;, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;bool extraCheck = true&gt; </div>
+template&lt;bool extraCheck = true, typename Item &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1017,8 +1017,8 @@ template&lt;bool extraCheck = true&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> size_t <a class="el" href="classmomo_1_1_data_column_list.html">momo::DataColumnList</a>&lt; TColumnTraits, TMemManager, TItemTraits, TSettings &gt;::GetOffset </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list.html#aca00f8d1e8d4b25e042414ce8ed45a3c">ColumnInfo</a>&#160;</td>
-          <td class="paramname"><em>columnInfo</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list.html#a86bf26b2ae96944df71645915f470940">Column</a>&lt; Item &gt; &amp;&#160;</td>
+          <td class="paramname"><em>column</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>

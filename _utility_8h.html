@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -120,7 +120,7 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html">momo::internal::SequenceMaker&lt; 0, sequence... &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_void_maker.html">momo::internal::VoidMaker&lt; Types &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_void_maker.html">momo::internal::VoidMaker&lt;... &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">momo::internal::IsInvocable&lt; Func, Result, Args &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,6 +173,8 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:a832a663a2782dd0674c143d654bd39bf"><td class="memItemLeft" align="right" valign="top">typedef unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a832a663a2782dd0674c143d654bd39bf">momo::internal::Byte</a></td></tr>
+<tr class="separator:a832a663a2782dd0674c143d654bd39bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3af1c05e0a098d112e970dadb0a13a79"><td class="memTemplParams" colspan="2">template&lt;typename Iterator &gt; </td></tr>
 <tr class="memitem:a3af1c05e0a098d112e970dadb0a13a79"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a3af1c05e0a098d112e970dadb0a13a79">momo::internal::IsForwardIterator</a> = std::is_base_of&lt; std::forward_iterator_tag, typename std::iterator_traits&lt; Iterator &gt;::iterator_category &gt;</td></tr>
 <tr class="separator:a3af1c05e0a098d112e970dadb0a13a79"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,6 +187,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a3240c94f5aacdf8b48d58980f85348f0"><td class="memTemplParams" colspan="2">template&lt;bool value, typename Type  = void&gt; </td></tr>
 <tr class="memitem:a3240c94f5aacdf8b48d58980f85348f0"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a> = typename std::enable_if&lt; value, Type &gt;::type</td></tr>
 <tr class="separator:a3240c94f5aacdf8b48d58980f85348f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6457202229264fdd3fba4be31ccb4079"><td class="memTemplParams" colspan="2">template&lt;typename Type &gt; </td></tr>
+<tr class="memitem:a6457202229264fdd3fba4be31ccb4079"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">momo::internal::Identity</a> = EnableIf&lt; true, Type &gt;</td></tr>
+<tr class="separator:a6457202229264fdd3fba4be31ccb4079"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -426,7 +431,7 @@ Enumerations</h2></td></tr>
 </div>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="a_user_settings_8h_html_af8bcba5a2dae5b1ce92b79f769aad846"><div class="ttname"><a href="_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846">MOMO_CHECK_EXCEPTION</a></div><div class="ttdeci">#define MOMO_CHECK_EXCEPTION(expr)</div><div class="ttdef"><b>Definition:</b> UserSettings.h:155</div></div>
+<div class="ttc" id="a_user_settings_8h_html_af8bcba5a2dae5b1ce92b79f769aad846"><div class="ttname"><a href="_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846">MOMO_CHECK_EXCEPTION</a></div><div class="ttdeci">#define MOMO_CHECK_EXCEPTION(expr)</div><div class="ttdef"><b>Definition:</b> UserSettings.h:164</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

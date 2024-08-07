@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -124,9 +124,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a19292786b680dd45795bd38cf945291a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf18662e25aad1f7164a2e04fc2ad7ce"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#abf18662e25aad1f7164a2e04fc2ad7ce">Replace</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;srcKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;srcValue, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;dstKey, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a8c688210408e081d72e53ade288a3eab">Value</a> &amp;dstValue)</td></tr>
 <tr class="separator:abf18662e25aad1f7164a2e04fc2ad7ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6bf01ff56a05e914e736e76c52065b1"><td class="memTemplParams" colspan="2">template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; </td></tr>
-<tr class="memitem:ab6bf01ff56a05e914e736e76c52065b1"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ab6bf01ff56a05e914e736e76c52065b1">RelocateExec</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;memManager, KeyIterator srcKeyBegin, ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, Func &amp;&amp;func)</td></tr>
-<tr class="separator:ab6bf01ff56a05e914e736e76c52065b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a138c32c0ebca6ce5fc8d39715060b2ff"><td class="memTemplParams" colspan="2">template&lt;typename KeyIterator , typename ValueIterator , typename Executor &gt; </td></tr>
+<tr class="memitem:a138c32c0ebca6ce5fc8d39715060b2ff"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a138c32c0ebca6ce5fc8d39715060b2ff">RelocateExec</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;memManager, KeyIterator srcKeyBegin, ValueIterator srcValueBegin, KeyIterator dstKeyBegin, ValueIterator dstValueBegin, size_t count, Executor &amp;&amp;exec)</td></tr>
+<tr class="separator:a138c32c0ebca6ce5fc8d39715060b2ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae084fc674ef838152e16cda09e907e2c"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
 <tr class="memitem:ae084fc674ef838152e16cda09e907e2c"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#ae084fc674ef838152e16cda09e907e2c">AssignKey</a> (<a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#aa69143fbcf599ee0a6c3ca5881434bf4">MemManager</a> &amp;memManager, KeyArg &amp;&amp;keyArg, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">Key</a> &amp;key)</td></tr>
 <tr class="separator:ae084fc674ef838152e16cda09e907e2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -509,15 +509,15 @@ template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSetting
 
 </div>
 </div>
-<a id="ab6bf01ff56a05e914e736e76c52065b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6bf01ff56a05e914e736e76c52065b1">&#9670;&nbsp;</a></span>RelocateExec()</h2>
+<a id="a138c32c0ebca6ce5fc8d39715060b2ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a138c32c0ebca6ce5fc8d39715060b2ff">&#9670;&nbsp;</a></span>RelocateExec()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename THashMultiMapKeyValueTraits , typename THashMultiMapSettings &gt; </div>
 <div class="memtemplate">
-template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; </div>
+template&lt;typename KeyIterator , typename ValueIterator , typename Executor &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -561,8 +561,8 @@ template&lt;typename KeyIterator , typename ValueIterator , typename Func &gt; <
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Func &amp;&amp;&#160;</td>
-          <td class="paramname"><em>func</em>&#160;</td>
+          <td class="paramtype">Executor &amp;&amp;&#160;</td>
+          <td class="paramname"><em>exec</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

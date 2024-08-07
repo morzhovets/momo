@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -90,13 +90,13 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <h4><a class="anchor" id="autotoc_md0"></a>
 momo (Memory Optimization is the Main Objective)</h4>
 <p>This project contains an implementation of the C++ containers, similar to the <a href="https://en.cppreference.com/w/cpp/container">standard</a> <code>set/map</code> and <code>unordered_set/map</code>, but much more efficient in memory usage. As for the operation speed, these containers are also better than the standard ones in most cases (<a href="https://morzhovets.github.io/hash_gcc_ubuntu16">benchmark of unordered containers</a>, <a href="https://morzhovets.github.io/tree_gcc_ubuntu16">benchmark of ordered containers</a>, <a href="https://github.com/morzhovets/hash-table-shootout">benchmark sources</a>).</p>
-<p>Classes are designed in close conformity with the standard C++20 <b>including exception safety guarantees</b>. Compiler must support C++11.</p>
+<p>Classes are designed in close conformity with the standard C++20 including exception safety guarantees. <b>The compiler only needs to support C++11</b>.</p>
 <h4><a class="anchor" id="autotoc_md1"></a>
 Deviations from the standard</h4>
 <ul>
 <li>Container items must be movable (preferably without exceptions) or copyable, similar to items of <code>std::vector</code>.</li>
 <li>All iterators and references to items will become invalid after each addition or removal of the item and should not be used.</li>
-<li>In <code>map</code> and <code>unordered_map</code> type <code>reference</code> is not the same as <code>value_type&amp;</code>, so <code>for (auto&amp; p : map)</code> is illegal, but <code>for (auto p : map)</code> or <code>for (const auto&amp; p : map)</code> or <code>for (auto&amp;&amp; p : map)</code> is allowed.</li>
+<li>In <code>map</code> and <code>unordered_map</code> type <code>reference</code> is a pair of references (same as in <a href="https://en.cppreference.com/w/cpp/container/flat_map">std::flat_map</a>), so <code>for (auto&amp; p : map)</code> is illegal, but <code>for (auto p : map)</code> or <code>for (const auto&amp; p : map)</code> or <code>for (auto&amp;&amp; p : map)</code> is allowed.</li>
 </ul>
 <h4><a class="anchor" id="autotoc_md2"></a>
 The main ideas</h4>
@@ -107,7 +107,7 @@ The main ideas</h4>
 </ul>
 <h4><a class="anchor" id="autotoc_md3"></a>
 Usage</h4>
-<p>Just copy the folder <a href="https://github.com/morzhovets/momo/tree/branch_cpp11/include/momo">include/momo</a> in your source code. This folder contains <b>only header files</b>.</p>
+<p>This library is <b>header-only</b> and has zero dependencies. So you can just copy the folder <a href="https://github.com/morzhovets/momo/tree/branch_cpp11/include/momo">include/momo</a> into your source code.</p>
 <p>Classes <code>set/map</code> and <code>unordered_set/map</code> are located in subfolder <a href="https://github.com/morzhovets/momo/tree/branch_cpp11/include/momo/stdish">stdish</a>, namespace <code><a class="el" href="namespacemomo_1_1stdish.html">momo::stdish</a></code>.</p>
 <p>Some documentation is <a href="https://morzhovets.github.io/momo">here</a>.</p>
 <h4><a class="anchor" id="autotoc_md4"></a>
@@ -122,15 +122,15 @@ Other classes</h4>
 </ul>
 <h4><a class="anchor" id="autotoc_md5"></a>
 DataTable</h4>
-<p><code><a class="el" href="classmomo_1_1_data_table.html" title="momo::DataTable is similar to Boost.MultiIndex, but its API looks like ADO.NET DataTable.">momo::DataTable</a></code> is similar to <a href="https://www.boost.org/doc/libs/1_74_0/libs/multi_index/doc/index.html"><code>Boost.MultiIndex</code></a>, but its API looks like <a href="https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable"><code>ADO.NET DataTable</code></a>. Some examples are <a href="https://github.com/morzhovets/momo/blob/branch_cpp11/test/sources/SimpleDataSampler.cpp">here</a>.</p>
+<p><code><a class="el" href="classmomo_1_1_data_table.html" title="momo::DataTable is similar to Boost.MultiIndex, but its API looks like ADO.NET DataTable.">momo::DataTable</a></code> is similar to <a href="https://www.boost.org/doc/libs/1_74_0/libs/multi_index/doc/index.html"><code>Boost.MultiIndex</code></a>, but its API looks like <a href="https://docs.microsoft.com/en-us/dotnet/api/system.data.datatable"><code>ADO.NET DataTable</code></a>. Some examples are <a href="https://github.com/morzhovets/momo/blob/branch_cpp11/test/sources/DataSamples.cpp">here</a>.</p>
 <h4><a class="anchor" id="autotoc_md6"></a>
 Supported compilers</h4>
 <ul>
 <li>MS Visual C++ (19.0+, Visual Studio 2015+)</li>
-<li>GCC (4.9+) with -std=c++11</li>
-<li>Clang (3.6+) with -std=c++11</li>
-<li>Apple Clang (8.1+, Xcode 8.3+) with -std=c++11</li>
-<li>Intel C++ with -std=c++11 </li>
+<li>GCC (4.9+)</li>
+<li>Clang (3.6+)</li>
+<li>Apple Clang (8.1+, Xcode 8.3+)</li>
+<li>Intel C++ </li>
 </ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->

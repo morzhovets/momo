@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::DataColumnListStatic&lt; TStruct, TMemManager, TSettings &gt; Class Template Reference</title>
+<title>momo: momo::DataColumnListStatic&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1_data_column_list_static.
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classmomo_1_1_data_column_list_static-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::DataColumnListStatic&lt; TStruct, TMemManager, TSettings &gt; Class Template Reference</div>  </div>
+<div class="title">momo::DataColumnListStatic&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -96,176 +96,178 @@ $(document).ready(function(){initNavTree('classmomo_1_1_data_column_list_static.
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ae78504d4e3600b641bceb38c2de7b552"><td class="memItemLeft" align="right" valign="top">typedef TStruct&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae78504d4e3600b641bceb38c2de7b552">Struct</a></td></tr>
-<tr class="separator:ae78504d4e3600b641bceb38c2de7b552"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f3c2e3974b8fa386e037512fa58e7c3"><td class="memItemLeft" align="right" valign="top">typedef TMemManager&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a></td></tr>
-<tr class="separator:a8f3c2e3974b8fa386e037512fa58e7c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a159f189ab7fd17aa70996f121a3ca8b3"><td class="memItemLeft" align="right" valign="top">typedef TSettings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a159f189ab7fd17aa70996f121a3ca8b3">Settings</a></td></tr>
-<tr class="separator:a159f189ab7fd17aa70996f121a3ca8b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d8ac9cd1d9d65dc4017e523b8b3eae7"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html">internal::DataColumnInfo</a>&lt; <a class="el" href="classmomo_1_1_data_column_list_static.html#ae78504d4e3600b641bceb38c2de7b552">Struct</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a6d8ac9cd1d9d65dc4017e523b8b3eae7">ColumnInfo</a></td></tr>
-<tr class="separator:a6d8ac9cd1d9d65dc4017e523b8b3eae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ba7f598c0469f01e7373517f6a21265"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:a6ba7f598c0469f01e7373517f6a21265"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a> = typename ColumnInfo::template <a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a>&lt; Item &gt;</td></tr>
-<tr class="separator:a6ba7f598c0469f01e7373517f6a21265"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9ce99556fed45ae33dbe6456660a5d7"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_data_column_list_static.html#ae78504d4e3600b641bceb38c2de7b552">Struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a></td></tr>
-<tr class="separator:ae9ce99556fed45ae33dbe6456660a5d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3295c2142aab63fb575a23d5cd71964"><td class="memItemLeft" align="right" valign="top">typedef TStruct&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae3295c2142aab63fb575a23d5cd71964">Struct</a></td></tr>
+<tr class="separator:ae3295c2142aab63fb575a23d5cd71964"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41d817ace9be3e68c96430c030f04c86"><td class="memItemLeft" align="right" valign="top">typedef TColumnInfo&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a41d817ace9be3e68c96430c030f04c86">ColumnInfo</a></td></tr>
+<tr class="separator:a41d817ace9be3e68c96430c030f04c86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1ec41b09ee9831bb210dd8451465c06"><td class="memItemLeft" align="right" valign="top">typedef TMemManager&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a></td></tr>
+<tr class="separator:ae1ec41b09ee9831bb210dd8451465c06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad519a7a6efc99550cadea232fcbb310a"><td class="memItemLeft" align="right" valign="top">typedef TSettings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad519a7a6efc99550cadea232fcbb310a">Settings</a></td></tr>
+<tr class="separator:ad519a7a6efc99550cadea232fcbb310a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac62a6c2ebd7f53983690d18788513365"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
+<tr class="memitem:ac62a6c2ebd7f53983690d18788513365"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a> = typename ColumnInfo::template <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt; Item &gt;</td></tr>
+<tr class="separator:ac62a6c2ebd7f53983690d18788513365"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad09ec1ab65257de528cb01913d480d06"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_data_column_list_static.html#ae3295c2142aab63fb575a23d5cd71964">Struct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a></td></tr>
+<tr class="separator:ad09ec1ab65257de528cb01913d480d06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ada4e495442c0c93a40015253b8a76332"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ada4e495442c0c93a40015253b8a76332">MOMO_STATIC_ASSERT</a> (std::is_class&lt; <a class="el" href="classmomo_1_1_data_column_list_static.html#ae78504d4e3600b641bceb38c2de7b552">Struct</a> &gt;::value)</td></tr>
-<tr class="separator:ada4e495442c0c93a40015253b8a76332"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea95eb7451b93161dbfb2ab528df13c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#aea95eb7451b93161dbfb2ab528df13c3">DataColumnListStatic</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a> memManager=<a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a>())</td></tr>
-<tr class="separator:aea95eb7451b93161dbfb2ab528df13c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b6eb32fced626559a12f8fb4dc24d48"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a7b6eb32fced626559a12f8fb4dc24d48">DataColumnListStatic</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;&amp;columnList) noexcept</td></tr>
-<tr class="separator:a7b6eb32fced626559a12f8fb4dc24d48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ff84913e6c65863cfe141d59f2e8ec7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a1ff84913e6c65863cfe141d59f2e8ec7">DataColumnListStatic</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;columnList)</td></tr>
-<tr class="separator:a1ff84913e6c65863cfe141d59f2e8ec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11c080069b898dbd5e190014ef5b1d4e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a11c080069b898dbd5e190014ef5b1d4e">~DataColumnListStatic</a> ()=default</td></tr>
-<tr class="separator:a11c080069b898dbd5e190014ef5b1d4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5d283ebaa60979b44a8a434a0d5f9cf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad5d283ebaa60979b44a8a434a0d5f9cf">operator=</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;)=delete</td></tr>
-<tr class="separator:ad5d283ebaa60979b44a8a434a0d5f9cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0983bfd72344061725cbed8f9b9e3f7"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad0983bfd72344061725cbed8f9b9e3f7">GetMemManager</a> () const noexcept</td></tr>
-<tr class="separator:ad0983bfd72344061725cbed8f9b9e3f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaab5e4507e7627f2fda9c3188679670a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#aaab5e4507e7627f2fda9c3188679670a">GetMemManager</a> () noexcept</td></tr>
-<tr class="separator:aaab5e4507e7627f2fda9c3188679670a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af436f0dc21f43b5b196651a15efda268"><td class="memTemplParams" colspan="2">template&lt;typename... Items&gt; </td></tr>
-<tr class="memitem:af436f0dc21f43b5b196651a15efda268"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#af436f0dc21f43b5b196651a15efda268">SetMutable</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a>&lt; Items &gt; &amp;... columns)</td></tr>
-<tr class="separator:af436f0dc21f43b5b196651a15efda268"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae468447c5e33f39c863e6909600ad429"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae468447c5e33f39c863e6909600ad429">ResetMutable</a> () noexcept</td></tr>
-<tr class="separator:ae468447c5e33f39c863e6909600ad429"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a268280f9d988cfdf8b871452b9bb8603"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a268280f9d988cfdf8b871452b9bb8603">IsMutable</a> (size_t offset) const noexcept</td></tr>
-<tr class="separator:a268280f9d988cfdf8b871452b9bb8603"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a962e642bc4103a34a5e58a5dace23a41"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a962e642bc4103a34a5e58a5dace23a41">GetTotalSize</a> () const noexcept</td></tr>
-<tr class="separator:a962e642bc4103a34a5e58a5dace23a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac21ae09f1c0852ee38061af6185887c4"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ac21ae09f1c0852ee38061af6185887c4">GetAlignment</a> () const noexcept</td></tr>
-<tr class="separator:ac21ae09f1c0852ee38061af6185887c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae86a0aad3bbe3a65f787806bd4f7531c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae86a0aad3bbe3a65f787806bd4f7531c">CreateRaw</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *raw) const</td></tr>
-<tr class="separator:ae86a0aad3bbe3a65f787806bd4f7531c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9298942db9e37ee693e1e788b9270e9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a9298942db9e37ee693e1e788b9270e9f">DestroyRaw</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a> *memManager, <a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *raw) const noexcept</td></tr>
-<tr class="separator:a9298942db9e37ee693e1e788b9270e9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acaafb818e16b315435ce19470281eefd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#acaafb818e16b315435ce19470281eefd">ImportRaw</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a> &amp;memManager, const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;, const <a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *srcRaw, <a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *raw) const</td></tr>
-<tr class="separator:acaafb818e16b315435ce19470281eefd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53b5939db3bbcaa2fe766dbcbdf71876"><td class="memTemplParams" colspan="2">template&lt;bool extraCheck = true&gt; </td></tr>
-<tr class="memitem:a53b5939db3bbcaa2fe766dbcbdf71876"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a53b5939db3bbcaa2fe766dbcbdf71876">GetOffset</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#a6d8ac9cd1d9d65dc4017e523b8b3eae7">ColumnInfo</a> columnInfo) const noexcept</td></tr>
-<tr class="separator:a53b5939db3bbcaa2fe766dbcbdf71876"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b00fe193cf721fbe1d2e8f2b197bfb1"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename ItemArg &gt; </td></tr>
-<tr class="memitem:a7b00fe193cf721fbe1d2e8f2b197bfb1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a7b00fe193cf721fbe1d2e8f2b197bfb1">Assign</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *raw, size_t offset, ItemArg &amp;&amp;itemArg) const</td></tr>
-<tr class="separator:a7b00fe193cf721fbe1d2e8f2b197bfb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d65f52493d21e408320ef08748b5c90"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a3d65f52493d21e408320ef08748b5c90">GetNumber</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *raw) const noexcept</td></tr>
-<tr class="separator:a3d65f52493d21e408320ef08748b5c90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1f2c322fb198ebcf94fe8c5abbc8b28"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ac1f2c322fb198ebcf94fe8c5abbc8b28">SetNumber</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *raw, size_t number) const noexcept</td></tr>
-<tr class="separator:ac1f2c322fb198ebcf94fe8c5abbc8b28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a729966c0e07a1576c337a860432ae4c8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a729966c0e07a1576c337a860432ae4c8">Contains</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#a6d8ac9cd1d9d65dc4017e523b8b3eae7">ColumnInfo</a> columnInfo, size_t *resOffset=nullptr) const noexcept</td></tr>
-<tr class="separator:a729966c0e07a1576c337a860432ae4c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aceb09c9cb436ce9000fb9824954ae9d3"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename... Items&gt; </td></tr>
-<tr class="memitem:aceb09c9cb436ce9000fb9824954ae9d3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#aceb09c9cb436ce9000fb9824954ae9d3">PrepareForVisitors</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a>&lt; Item &gt; &amp;column, const <a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a>&lt; Items &gt; &amp;... columns)</td></tr>
-<tr class="separator:aceb09c9cb436ce9000fb9824954ae9d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8de74612836f3d3a165dde84cd4ff33c"><td class="memTemplParams" colspan="2">template&lt;typename PtrVisitor &gt; </td></tr>
-<tr class="memitem:a8de74612836f3d3a165dde84cd4ff33c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8de74612836f3d3a165dde84cd4ff33c">VisitPointers</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *raw, const PtrVisitor &amp;ptrVisitor) const</td></tr>
-<tr class="separator:a8de74612836f3d3a165dde84cd4ff33c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8df4ada9bc96f579e68f15963028edaa"><td class="memTemplParams" colspan="2">template&lt;typename PtrVisitor &gt; </td></tr>
-<tr class="memitem:a8df4ada9bc96f579e68f15963028edaa"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8df4ada9bc96f579e68f15963028edaa">VisitPointers</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *raw, const PtrVisitor &amp;ptrVisitor) const</td></tr>
-<tr class="separator:a8df4ada9bc96f579e68f15963028edaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa982bd8fac234214fedb8214bb806f15"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#aa982bd8fac234214fedb8214bb806f15">MOMO_STATIC_ASSERT</a> (std::is_class&lt; <a class="el" href="classmomo_1_1_data_column_list_static.html#ae3295c2142aab63fb575a23d5cd71964">Struct</a> &gt;::value &amp;&amp;!std::is_empty&lt; <a class="el" href="classmomo_1_1_data_column_list_static.html#ae3295c2142aab63fb575a23d5cd71964">Struct</a> &gt;::value)</td></tr>
+<tr class="separator:aa982bd8fac234214fedb8214bb806f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21c26babec5df76fdbadd7470391459a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a21c26babec5df76fdbadd7470391459a">DataColumnListStatic</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> memManager=<a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a>())</td></tr>
+<tr class="separator:a21c26babec5df76fdbadd7470391459a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14bc00d5e78f8abece620cfa3af4ae22"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a14bc00d5e78f8abece620cfa3af4ae22">DataColumnListStatic</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;&amp;columnList) noexcept</td></tr>
+<tr class="separator:a14bc00d5e78f8abece620cfa3af4ae22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2265ba67abdd30539e9120e0d0feb24e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a2265ba67abdd30539e9120e0d0feb24e">DataColumnListStatic</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;columnList)</td></tr>
+<tr class="separator:a2265ba67abdd30539e9120e0d0feb24e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89476d8df679dcdfc01a29ae041669ff"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a89476d8df679dcdfc01a29ae041669ff">~DataColumnListStatic</a> ()=default</td></tr>
+<tr class="separator:a89476d8df679dcdfc01a29ae041669ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e78e4743fa7cad7c0b9be8b4bc4260c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a9e78e4743fa7cad7c0b9be8b4bc4260c">operator=</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;)=delete</td></tr>
+<tr class="separator:a9e78e4743fa7cad7c0b9be8b4bc4260c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcddc95584a7ee4148a4f78f4c15d571"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#adcddc95584a7ee4148a4f78f4c15d571">GetMemManager</a> () const noexcept</td></tr>
+<tr class="separator:adcddc95584a7ee4148a4f78f4c15d571"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08f0df571470dc845322abafee65b40e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a08f0df571470dc845322abafee65b40e">GetMemManager</a> () noexcept</td></tr>
+<tr class="separator:a08f0df571470dc845322abafee65b40e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a189d5a848dff0cb18c2e4558a8c86d0e"><td class="memTemplParams" colspan="2">template&lt;typename... Items&gt; </td></tr>
+<tr class="memitem:a189d5a848dff0cb18c2e4558a8c86d0e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a189d5a848dff0cb18c2e4558a8c86d0e">SetMutable</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt; Items &gt; &amp;... columns)</td></tr>
+<tr class="separator:a189d5a848dff0cb18c2e4558a8c86d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34551759f885944228d9353748c63573"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a34551759f885944228d9353748c63573">ResetMutable</a> () noexcept</td></tr>
+<tr class="separator:a34551759f885944228d9353748c63573"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7ee947bc8f36fa26c87e7a865c8bc25"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad7ee947bc8f36fa26c87e7a865c8bc25">IsMutable</a> (size_t offset) const noexcept</td></tr>
+<tr class="separator:ad7ee947bc8f36fa26c87e7a865c8bc25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36e7e9e055226369aab90ab3626e58a9"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a36e7e9e055226369aab90ab3626e58a9">GetTotalSize</a> () const noexcept</td></tr>
+<tr class="separator:a36e7e9e055226369aab90ab3626e58a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7d48555f14e9dffe3129e6de03c2fb5"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#aa7d48555f14e9dffe3129e6de03c2fb5">GetAlignment</a> () const noexcept</td></tr>
+<tr class="separator:aa7d48555f14e9dffe3129e6de03c2fb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa88e6892fddf3051f99d6c23347562da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#aa88e6892fddf3051f99d6c23347562da">CreateRaw</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw) const</td></tr>
+<tr class="separator:aa88e6892fddf3051f99d6c23347562da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8768e04d959fe1b2c8baaa3625d4becf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8768e04d959fe1b2c8baaa3625d4becf">CreateRaw</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> &amp;&amp;srcRaw, <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw) const</td></tr>
+<tr class="separator:a8768e04d959fe1b2c8baaa3625d4becf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9364de36a59778625cfaef2739793c0a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a9364de36a59778625cfaef2739793c0a">DestroyRaw</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> *memManager, <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw) const noexcept</td></tr>
+<tr class="separator:a9364de36a59778625cfaef2739793c0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45ea63ad3fcf829a180f7ac5a24291f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a45ea63ad3fcf829a180f7ac5a24291f2">ImportRaw</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> &amp;memManager, const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> &amp;, const <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *srcRaw, <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw) const</td></tr>
+<tr class="separator:a45ea63ad3fcf829a180f7ac5a24291f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acceee35d6d5b7b484d413c9b8eae0516"><td class="memTemplParams" colspan="2">template&lt;bool extraCheck = true, typename Item &gt; </td></tr>
+<tr class="memitem:acceee35d6d5b7b484d413c9b8eae0516"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#acceee35d6d5b7b484d413c9b8eae0516">GetOffset</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt; Item &gt; &amp;column) const noexcept</td></tr>
+<tr class="separator:acceee35d6d5b7b484d413c9b8eae0516"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad02230f864d8d35181a0a373b8850cbe"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename ItemArg &gt; </td></tr>
+<tr class="memitem:ad02230f864d8d35181a0a373b8850cbe"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad02230f864d8d35181a0a373b8850cbe">Assign</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw, size_t offset, ItemArg &amp;&amp;itemArg) const</td></tr>
+<tr class="separator:ad02230f864d8d35181a0a373b8850cbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62ca8bb7bc33c028092d11b5b2fde3c4"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a62ca8bb7bc33c028092d11b5b2fde3c4">GetNumber</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw) const noexcept</td></tr>
+<tr class="separator:a62ca8bb7bc33c028092d11b5b2fde3c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0b9888352458be19b951d26b0cddaaf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#aa0b9888352458be19b951d26b0cddaaf">SetNumber</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw, size_t number) const noexcept</td></tr>
+<tr class="separator:aa0b9888352458be19b951d26b0cddaaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3096a477881d1520877161cfadaa938"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad3096a477881d1520877161cfadaa938">Contains</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#a41d817ace9be3e68c96430c030f04c86">ColumnInfo</a> &amp;columnInfo, size_t *resOffset=nullptr) const noexcept</td></tr>
+<tr class="separator:ad3096a477881d1520877161cfadaa938"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76b9152d4909a0c1ac3a0da9a408fdd0"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename... Items&gt; </td></tr>
+<tr class="memitem:a76b9152d4909a0c1ac3a0da9a408fdd0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a76b9152d4909a0c1ac3a0da9a408fdd0">PrepareForVisitors</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt; Item &gt; &amp;column, const <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt; Items &gt; &amp;... columns)</td></tr>
+<tr class="separator:a76b9152d4909a0c1ac3a0da9a408fdd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f1cdee793275a8e25217b4bc2db4ae9"><td class="memTemplParams" colspan="2">template&lt;typename PtrVisitor &gt; </td></tr>
+<tr class="memitem:a7f1cdee793275a8e25217b4bc2db4ae9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a7f1cdee793275a8e25217b4bc2db4ae9">VisitPointers</a> (const <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw, const PtrVisitor &amp;ptrVisitor) const</td></tr>
+<tr class="separator:a7f1cdee793275a8e25217b4bc2db4ae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2ca172bf196738bdb07a1d32080d868"><td class="memTemplParams" colspan="2">template&lt;typename PtrVisitor &gt; </td></tr>
+<tr class="memitem:aa2ca172bf196738bdb07a1d32080d868"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#aa2ca172bf196738bdb07a1d32080d868">VisitPointers</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw, const PtrVisitor &amp;ptrVisitor) const</td></tr>
+<tr class="separator:aa2ca172bf196738bdb07a1d32080d868"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a9e1f43d2c7cc978d6b7098866b4df88c"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:a9e1f43d2c7cc978d6b7098866b4df88c"><td class="memTemplItemLeft" align="right" valign="top">static Item &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a9e1f43d2c7cc978d6b7098866b4df88c">GetByOffset</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *raw, size_t offset) noexcept</td></tr>
-<tr class="separator:a9e1f43d2c7cc978d6b7098866b4df88c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a0d3d53e87f59363940017229619604"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
+<tr class="memitem:a4a0d3d53e87f59363940017229619604"><td class="memTemplItemLeft" align="right" valign="top">static Item &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_column_list_static.html#a4a0d3d53e87f59363940017229619604">GetByOffset</a> (<a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *raw, size_t offset) noexcept</td></tr>
+<tr class="separator:a4a0d3d53e87f59363940017229619604"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a6ba7f598c0469f01e7373517f6a21265"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ba7f598c0469f01e7373517f6a21265">&#9670;&nbsp;</a></span>Column</h2>
+<a id="ac62a6c2ebd7f53983690d18788513365"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac62a6c2ebd7f53983690d18788513365">&#9670;&nbsp;</a></span>Column</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename Item &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a> =  typename ColumnInfo::template <a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a>&lt;Item&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a> =  typename ColumnInfo::template <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt;Item&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a6d8ac9cd1d9d65dc4017e523b8b3eae7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d8ac9cd1d9d65dc4017e523b8b3eae7">&#9670;&nbsp;</a></span>ColumnInfo</h2>
+<a id="a41d817ace9be3e68c96430c030f04c86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41d817ace9be3e68c96430c030f04c86">&#9670;&nbsp;</a></span>ColumnInfo</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_data_column_info.html">internal::DataColumnInfo</a>&lt;<a class="el" href="classmomo_1_1_data_column_list_static.html#ae78504d4e3600b641bceb38c2de7b552">Struct</a>&gt; <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#a6d8ac9cd1d9d65dc4017e523b8b3eae7">ColumnInfo</a></td>
+          <td class="memname">typedef TColumnInfo <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#a41d817ace9be3e68c96430c030f04c86">ColumnInfo</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a8f3c2e3974b8fa386e037512fa58e7c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f3c2e3974b8fa386e037512fa58e7c3">&#9670;&nbsp;</a></span>MemManager</h2>
+<a id="ae1ec41b09ee9831bb210dd8451465c06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1ec41b09ee9831bb210dd8451465c06">&#9670;&nbsp;</a></span>MemManager</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TMemManager <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a></td>
+          <td class="memname">typedef TMemManager <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ae9ce99556fed45ae33dbe6456660a5d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9ce99556fed45ae33dbe6456660a5d7">&#9670;&nbsp;</a></span>Raw</h2>
+<a id="ad09ec1ab65257de528cb01913d480d06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad09ec1ab65257de528cb01913d480d06">&#9670;&nbsp;</a></span>Raw</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1_data_column_list_static.html#ae78504d4e3600b641bceb38c2de7b552">Struct</a> <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1_data_column_list_static.html#ae3295c2142aab63fb575a23d5cd71964">Struct</a> <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a159f189ab7fd17aa70996f121a3ca8b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a159f189ab7fd17aa70996f121a3ca8b3">&#9670;&nbsp;</a></span>Settings</h2>
+<a id="ad519a7a6efc99550cadea232fcbb310a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad519a7a6efc99550cadea232fcbb310a">&#9670;&nbsp;</a></span>Settings</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TSettings <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#a159f189ab7fd17aa70996f121a3ca8b3">Settings</a></td>
+          <td class="memname">typedef TSettings <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#ad519a7a6efc99550cadea232fcbb310a">Settings</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ae78504d4e3600b641bceb38c2de7b552"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae78504d4e3600b641bceb38c2de7b552">&#9670;&nbsp;</a></span>Struct</h2>
+<a id="ae3295c2142aab63fb575a23d5cd71964"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3295c2142aab63fb575a23d5cd71964">&#9670;&nbsp;</a></span>Struct</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TStruct <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#ae78504d4e3600b641bceb38c2de7b552">Struct</a></td>
+          <td class="memname">typedef TStruct <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html#ae3295c2142aab63fb575a23d5cd71964">Struct</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -273,22 +275,22 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aea95eb7451b93161dbfb2ab528df13c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea95eb7451b93161dbfb2ab528df13c3">&#9670;&nbsp;</a></span>DataColumnListStatic() <span class="overload">[1/3]</span></h2>
+<a id="a21c26babec5df76fdbadd7470391459a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21c26babec5df76fdbadd7470391459a">&#9670;&nbsp;</a></span>DataColumnListStatic() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a>&#160;</td>
-          <td class="paramname"><em>memManager</em> = <code><a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a>()</code></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a>&#160;</td>
+          <td class="paramname"><em>memManager</em> = <code><a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a>()</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -301,21 +303,21 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="a7b6eb32fced626559a12f8fb4dc24d48"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b6eb32fced626559a12f8fb4dc24d48">&#9670;&nbsp;</a></span>DataColumnListStatic() <span class="overload">[2/3]</span></h2>
+<a id="a14bc00d5e78f8abece620cfa3af4ae22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14bc00d5e78f8abece620cfa3af4ae22">&#9670;&nbsp;</a></span>DataColumnListStatic() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt; &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt; &amp;&amp;&#160;</td>
           <td class="paramname"><em>columnList</em></td><td>)</td>
           <td></td>
         </tr>
@@ -329,21 +331,21 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="a1ff84913e6c65863cfe141d59f2e8ec7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ff84913e6c65863cfe141d59f2e8ec7">&#9670;&nbsp;</a></span>DataColumnListStatic() <span class="overload">[3/3]</span></h2>
+<a id="a2265ba67abdd30539e9120e0d0feb24e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2265ba67abdd30539e9120e0d0feb24e">&#9670;&nbsp;</a></span>DataColumnListStatic() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt; &amp;&#160;</td>
           <td class="paramname"><em>columnList</em></td><td>)</td>
           <td></td>
         </tr>
@@ -357,19 +359,19 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="a11c080069b898dbd5e190014ef5b1d4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11c080069b898dbd5e190014ef5b1d4e">&#9670;&nbsp;</a></span>~DataColumnListStatic()</h2>
+<a id="a89476d8df679dcdfc01a29ae041669ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89476d8df679dcdfc01a29ae041669ff">&#9670;&nbsp;</a></span>~DataColumnListStatic()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::~<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::~<a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -385,13 +387,13 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7b00fe193cf721fbe1d2e8f2b197bfb1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b00fe193cf721fbe1d2e8f2b197bfb1">&#9670;&nbsp;</a></span>Assign()</h2>
+<a id="ad02230f864d8d35181a0a373b8850cbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad02230f864d8d35181a0a373b8850cbe">&#9670;&nbsp;</a></span>Assign()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename Item , typename ItemArg &gt; </div>
 <table class="mlabels">
@@ -399,9 +401,9 @@ template&lt;typename Item , typename ItemArg &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::Assign </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::Assign </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em>, </td>
         </tr>
         <tr>
@@ -431,21 +433,21 @@ template&lt;typename Item , typename ItemArg &gt; </div>
 
 </div>
 </div>
-<a id="a729966c0e07a1576c337a860432ae4c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a729966c0e07a1576c337a860432ae4c8">&#9670;&nbsp;</a></span>Contains()</h2>
+<a id="ad3096a477881d1520877161cfadaa938"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3096a477881d1520877161cfadaa938">&#9670;&nbsp;</a></span>Contains()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::Contains </td>
+          <td class="memname">bool <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::Contains </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#a6d8ac9cd1d9d65dc4017e523b8b3eae7">ColumnInfo</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#a41d817ace9be3e68c96430c030f04c86">ColumnInfo</a> &amp;&#160;</td>
           <td class="paramname"><em>columnInfo</em>, </td>
         </tr>
         <tr>
@@ -469,27 +471,33 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="ae86a0aad3bbe3a65f787806bd4f7531c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae86a0aad3bbe3a65f787806bd4f7531c">&#9670;&nbsp;</a></span>CreateRaw()</h2>
+<a id="a8768e04d959fe1b2c8baaa3625d4becf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8768e04d959fe1b2c8baaa3625d4becf">&#9670;&nbsp;</a></span>CreateRaw() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::CreateRaw </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::CreateRaw </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> &amp;&amp;&#160;</td>
+          <td class="paramname"><em>srcRaw</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em>&#160;</td>
         </tr>
         <tr>
@@ -507,27 +515,65 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="a9298942db9e37ee693e1e788b9270e9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9298942db9e37ee693e1e788b9270e9f">&#9670;&nbsp;</a></span>DestroyRaw()</h2>
+<a id="aa88e6892fddf3051f99d6c23347562da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa88e6892fddf3051f99d6c23347562da">&#9670;&nbsp;</a></span>CreateRaw() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::DestroyRaw </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::CreateRaw </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
+          <td class="paramname"><em>raw</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9364de36a59778625cfaef2739793c0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9364de36a59778625cfaef2739793c0a">&#9670;&nbsp;</a></span>DestroyRaw()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::DestroyRaw </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> *&#160;</td>
+          <td class="paramname"><em>memManager</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em>&#160;</td>
         </tr>
         <tr>
@@ -545,19 +591,19 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="ac21ae09f1c0852ee38061af6185887c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac21ae09f1c0852ee38061af6185887c4">&#9670;&nbsp;</a></span>GetAlignment()</h2>
+<a id="aa7d48555f14e9dffe3129e6de03c2fb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7d48555f14e9dffe3129e6de03c2fb5">&#9670;&nbsp;</a></span>GetAlignment()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::GetAlignment </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::GetAlignment </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -572,13 +618,13 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="a9e1f43d2c7cc978d6b7098866b4df88c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e1f43d2c7cc978d6b7098866b4df88c">&#9670;&nbsp;</a></span>GetByOffset()</h2>
+<a id="a4a0d3d53e87f59363940017229619604"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a0d3d53e87f59363940017229619604">&#9670;&nbsp;</a></span>GetByOffset()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename Item &gt; </div>
 <table class="mlabels">
@@ -586,9 +632,9 @@ template&lt;typename Item &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static Item&amp; <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::GetByOffset </td>
+          <td class="memname">static Item&amp; <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::GetByOffset </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em>, </td>
         </tr>
         <tr>
@@ -612,19 +658,19 @@ template&lt;typename Item &gt; </div>
 
 </div>
 </div>
-<a id="ad0983bfd72344061725cbed8f9b9e3f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad0983bfd72344061725cbed8f9b9e3f7">&#9670;&nbsp;</a></span>GetMemManager() <span class="overload">[1/2]</span></h2>
+<a id="adcddc95584a7ee4148a4f78f4c15d571"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcddc95584a7ee4148a4f78f4c15d571">&#9670;&nbsp;</a></span>GetMemManager() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a>&amp; <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::GetMemManager </td>
+          <td class="memname">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a>&amp; <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::GetMemManager </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -639,19 +685,19 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="aaab5e4507e7627f2fda9c3188679670a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaab5e4507e7627f2fda9c3188679670a">&#9670;&nbsp;</a></span>GetMemManager() <span class="overload">[2/2]</span></h2>
+<a id="a08f0df571470dc845322abafee65b40e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08f0df571470dc845322abafee65b40e">&#9670;&nbsp;</a></span>GetMemManager() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a>&amp; <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::GetMemManager </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a>&amp; <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::GetMemManager </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -666,21 +712,21 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="a3d65f52493d21e408320ef08748b5c90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d65f52493d21e408320ef08748b5c90">&#9670;&nbsp;</a></span>GetNumber()</h2>
+<a id="a62ca8bb7bc33c028092d11b5b2fde3c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62ca8bb7bc33c028092d11b5b2fde3c4">&#9670;&nbsp;</a></span>GetNumber()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::GetNumber </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::GetNumber </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -694,24 +740,24 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="a53b5939db3bbcaa2fe766dbcbdf71876"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53b5939db3bbcaa2fe766dbcbdf71876">&#9670;&nbsp;</a></span>GetOffset()</h2>
+<a id="acceee35d6d5b7b484d413c9b8eae0516"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acceee35d6d5b7b484d413c9b8eae0516">&#9670;&nbsp;</a></span>GetOffset()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;bool extraCheck = true&gt; </div>
+template&lt;bool extraCheck = true, typename Item &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> size_t <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::GetOffset </td>
+          <td class="memname"><a class="el" href="_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559">MOMO_FORCEINLINE</a> size_t <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::GetOffset </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#a6d8ac9cd1d9d65dc4017e523b8b3eae7">ColumnInfo</a>&#160;</td>
-          <td class="paramname"><em>columnInfo</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt; Item &gt; &amp;&#160;</td>
+          <td class="paramname"><em>column</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -724,19 +770,19 @@ template&lt;bool extraCheck = true&gt; </div>
 
 </div>
 </div>
-<a id="a962e642bc4103a34a5e58a5dace23a41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a962e642bc4103a34a5e58a5dace23a41">&#9670;&nbsp;</a></span>GetTotalSize()</h2>
+<a id="a36e7e9e055226369aab90ab3626e58a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36e7e9e055226369aab90ab3626e58a9">&#9670;&nbsp;</a></span>GetTotalSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::GetTotalSize </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::GetTotalSize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -751,39 +797,39 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="acaafb818e16b315435ce19470281eefd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acaafb818e16b315435ce19470281eefd">&#9670;&nbsp;</a></span>ImportRaw()</h2>
+<a id="a45ea63ad3fcf829a180f7ac5a24291f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45ea63ad3fcf829a180f7ac5a24291f2">&#9670;&nbsp;</a></span>ImportRaw()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::ImportRaw </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::ImportRaw </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#a8f3c2e3974b8fa386e037512fa58e7c3">MemManager</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae1ec41b09ee9831bb210dd8451465c06">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt; &amp;&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>srcRaw</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em>&#160;</td>
         </tr>
         <tr>
@@ -801,19 +847,19 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="a268280f9d988cfdf8b871452b9bb8603"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a268280f9d988cfdf8b871452b9bb8603">&#9670;&nbsp;</a></span>IsMutable()</h2>
+<a id="ad7ee947bc8f36fa26c87e7a865c8bc25"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7ee947bc8f36fa26c87e7a865c8bc25">&#9670;&nbsp;</a></span>IsMutable()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::IsMutable </td>
+          <td class="memname">bool <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::IsMutable </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>offset</em></td><td>)</td>
@@ -829,18 +875,18 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="ada4e495442c0c93a40015253b8a76332"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ada4e495442c0c93a40015253b8a76332">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT()</h2>
+<a id="aa982bd8fac234214fedb8214bb806f15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa982bd8fac234214fedb8214bb806f15">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::MOMO_STATIC_ASSERT </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::MOMO_STATIC_ASSERT </td>
           <td>(</td>
-          <td class="paramtype">std::is_class&lt; <a class="el" href="classmomo_1_1_data_column_list_static.html#ae78504d4e3600b641bceb38c2de7b552">Struct</a> &gt;::value&#160;</td>
+          <td class="paramtype">std::is_class&lt; <a class="el" href="classmomo_1_1_data_column_list_static.html#ae3295c2142aab63fb575a23d5cd71964">Struct</a> &gt;::value &amp;&amp;!std::is_empty&lt; <a class="el" href="classmomo_1_1_data_column_list_static.html#ae3295c2142aab63fb575a23d5cd71964">Struct</a> &gt;::value&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -849,21 +895,21 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="ad5d283ebaa60979b44a8a434a0d5f9cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5d283ebaa60979b44a8a434a0d5f9cf">&#9670;&nbsp;</a></span>operator=()</h2>
+<a id="a9e78e4743fa7cad7c0b9be8b4bc4260c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e78e4743fa7cad7c0b9be8b4bc4260c">&#9670;&nbsp;</a></span>operator=()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&amp; <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::operator= </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&amp; <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::operator= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html">DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt; &amp;&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -877,13 +923,13 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="aceb09c9cb436ce9000fb9824954ae9d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aceb09c9cb436ce9000fb9824954ae9d3">&#9670;&nbsp;</a></span>PrepareForVisitors()</h2>
+<a id="a76b9152d4909a0c1ac3a0da9a408fdd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76b9152d4909a0c1ac3a0da9a408fdd0">&#9670;&nbsp;</a></span>PrepareForVisitors()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename Item , typename... Items&gt; </div>
 <table class="mlabels">
@@ -891,15 +937,15 @@ template&lt;typename Item , typename... Items&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::PrepareForVisitors </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::PrepareForVisitors </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a>&lt; Item &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt; Item &gt; &amp;&#160;</td>
           <td class="paramname"><em>column</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a>&lt; Items &gt; &amp;...&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt; Items &gt; &amp;...&#160;</td>
           <td class="paramname"><em>columns</em>&#160;</td>
         </tr>
         <tr>
@@ -917,19 +963,19 @@ template&lt;typename Item , typename... Items&gt; </div>
 
 </div>
 </div>
-<a id="ae468447c5e33f39c863e6909600ad429"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae468447c5e33f39c863e6909600ad429">&#9670;&nbsp;</a></span>ResetMutable()</h2>
+<a id="a34551759f885944228d9353748c63573"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34551759f885944228d9353748c63573">&#9670;&nbsp;</a></span>ResetMutable()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::ResetMutable </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::ResetMutable </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -944,13 +990,13 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="af436f0dc21f43b5b196651a15efda268"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af436f0dc21f43b5b196651a15efda268">&#9670;&nbsp;</a></span>SetMutable()</h2>
+<a id="a189d5a848dff0cb18c2e4558a8c86d0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a189d5a848dff0cb18c2e4558a8c86d0e">&#9670;&nbsp;</a></span>SetMutable()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename... Items&gt; </div>
 <table class="mlabels">
@@ -958,9 +1004,9 @@ template&lt;typename... Items&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::SetMutable </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::SetMutable </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#a6ba7f598c0469f01e7373517f6a21265">Column</a>&lt; Items &gt; &amp;...&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ac62a6c2ebd7f53983690d18788513365">Column</a>&lt; Items &gt; &amp;...&#160;</td>
           <td class="paramname"><em>columns</em></td><td>)</td>
           <td></td>
         </tr>
@@ -974,21 +1020,21 @@ template&lt;typename... Items&gt; </div>
 
 </div>
 </div>
-<a id="ac1f2c322fb198ebcf94fe8c5abbc8b28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac1f2c322fb198ebcf94fe8c5abbc8b28">&#9670;&nbsp;</a></span>SetNumber()</h2>
+<a id="aa0b9888352458be19b951d26b0cddaaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0b9888352458be19b951d26b0cddaaf">&#9670;&nbsp;</a></span>SetNumber()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::SetNumber </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::SetNumber </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em>, </td>
         </tr>
         <tr>
@@ -1012,13 +1058,13 @@ template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typena
 
 </div>
 </div>
-<a id="a8de74612836f3d3a165dde84cd4ff33c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8de74612836f3d3a165dde84cd4ff33c">&#9670;&nbsp;</a></span>VisitPointers() <span class="overload">[1/2]</span></h2>
+<a id="a7f1cdee793275a8e25217b4bc2db4ae9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f1cdee793275a8e25217b4bc2db4ae9">&#9670;&nbsp;</a></span>VisitPointers() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename PtrVisitor &gt; </div>
 <table class="mlabels">
@@ -1026,9 +1072,9 @@ template&lt;typename PtrVisitor &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::VisitPointers </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::VisitPointers </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em>, </td>
         </tr>
         <tr>
@@ -1052,13 +1098,13 @@ template&lt;typename PtrVisitor &gt; </div>
 
 </div>
 </div>
-<a id="a8df4ada9bc96f579e68f15963028edaa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8df4ada9bc96f579e68f15963028edaa">&#9670;&nbsp;</a></span>VisitPointers() <span class="overload">[2/2]</span></h2>
+<a id="aa2ca172bf196738bdb07a1d32080d868"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2ca172bf196738bdb07a1d32080d868">&#9670;&nbsp;</a></span>VisitPointers() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TStruct , typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
+template&lt;typename TStruct , typename TColumnInfo  = DataColumnInfo&lt;TStruct&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = DataSettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename PtrVisitor &gt; </div>
 <table class="mlabels">
@@ -1066,9 +1112,9 @@ template&lt;typename PtrVisitor &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TMemManager, TSettings &gt;::VisitPointers </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1_data_column_list_static.html">momo::DataColumnListStatic</a>&lt; TStruct, TColumnInfo, TMemManager, TSettings &gt;::VisitPointers </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ae9ce99556fed45ae33dbe6456660a5d7">Raw</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_data_column_list_static.html#ad09ec1ab65257de528cb01913d480d06">Raw</a> *&#160;</td>
           <td class="paramname"><em>raw</em>, </td>
         </tr>
         <tr>

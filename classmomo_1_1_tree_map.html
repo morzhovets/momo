@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -274,9 +274,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4b2bef1a0ece9769347abbb2ad796b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a634f02952fe179d91d4c2d60d6ce0957"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#a634f02952fe179d91d4c2d60d6ce0957">Remove</a> (const <a class="el" href="classmomo_1_1_tree_map.html#ab11956cbd467d9446419c14094c8236a">Key</a> &amp;key)</td></tr>
 <tr class="separator:a634f02952fe179d91d4c2d60d6ce0957"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94faa1c39093df2f19a3622d85192988"><td class="memTemplParams" colspan="2">template&lt;typename PairPredicate &gt; </td></tr>
-<tr class="memitem:a94faa1c39093df2f19a3622d85192988"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const PairPredicate &amp;, bool, const <a class="el" href="classmomo_1_1_tree_map.html#ab11956cbd467d9446419c14094c8236a">Key</a> &amp;, const <a class="el" href="classmomo_1_1_tree_map.html#a2df6db3f8142349923dbc03d5d3a9b9d">Value</a> &amp; &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#a94faa1c39093df2f19a3622d85192988">Remove</a> (const PairPredicate &amp;pairPred)</td></tr>
-<tr class="separator:a94faa1c39093df2f19a3622d85192988"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2a1c0139f85aa168bca2e8b687747d7"><td class="memTemplParams" colspan="2">template&lt;typename PairFilter &gt; </td></tr>
+<tr class="memitem:ad2a1c0139f85aa168bca2e8b687747d7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const PairFilter &amp;, bool, const <a class="el" href="classmomo_1_1_tree_map.html#ab11956cbd467d9446419c14094c8236a">Key</a> &amp;, const <a class="el" href="classmomo_1_1_tree_map.html#a2df6db3f8142349923dbc03d5d3a9b9d">Value</a> &amp; &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#ad2a1c0139f85aa168bca2e8b687747d7">Remove</a> (const PairFilter &amp;pairFilter)</td></tr>
+<tr class="separator:ad2a1c0139f85aa168bca2e8b687747d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a851a32c93c74977eac4174c312ce5612"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_tree_map.html#a715e57b8261da574300dd995093962e7">ExtractedPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#a851a32c93c74977eac4174c312ce5612">Extract</a> (<a class="el" href="classmomo_1_1_tree_map.html#a6cfc30fd36bbe906be00793d70ee9661">ConstIterator</a> iter)</td></tr>
 <tr class="separator:a851a32c93c74977eac4174c312ce5612"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa11addaeec6eadc08a4c67987a226b89"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg , bool extraCheck = true&gt; </td></tr>
@@ -299,7 +299,7 @@ class momo::TreeMap&lt; TKey, TValue, TTreeTraits, TMemManager, TKeyValueTraits,
 
 <p>All <code><a class="el" href="classmomo_1_1_tree_map.html">TreeMap</a></code> functions and constructors have strong exception safety, but not the following cases:</p><ol type="1">
 <li>Functions <code>Insert</code> receiving many items have basic exception safety.</li>
-<li>Function <code>Remove</code> receiving predicate have basic exception safety.</li>
+<li>Function <code>Remove</code> receiving predicate has basic exception safety.</li>
 <li>Functions <code>MergeFrom</code> and <code>MergeTo</code> have basic exception safety.</li>
 <li>In case default <code>KeyValueTraits</code>: if insert/add function receiving argument <code>Key&amp;&amp; key</code> throws exception, this argument may be changed.</li>
 <li>In case default <code>KeyValueTraits</code>: if function <code>Remove</code> throws exception and <code>ObjectManager&lt;Key, MemManager&gt;::isNothrowAnywayAssignable</code> is false and <code>ObjectManager&lt;Value, MemManager&gt;::isNothrowAnywayAssignable</code> is false, removing value may be changed. </li>
@@ -2637,24 +2637,24 @@ template&lt;typename TKey , typename TValue , typename TTreeTraits  = TreeTraits
 
 </div>
 </div>
-<a id="a94faa1c39093df2f19a3622d85192988"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a94faa1c39093df2f19a3622d85192988">&#9670;&nbsp;</a></span>Remove() <span class="overload">[2/6]</span></h2>
+<a id="ad2a1c0139f85aa168bca2e8b687747d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2a1c0139f85aa168bca2e8b687747d7">&#9670;&nbsp;</a></span>Remove() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TKey , typename TValue , typename TTreeTraits  = TreeTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TKeyValueTraits  = TreeMapKeyValueTraits&lt;TKey, TValue, TMemManager&gt;, typename TSettings  = TreeMapSettings&gt; </div>
 <div class="memtemplate">
-template&lt;typename PairPredicate &gt; </div>
+template&lt;typename PairFilter &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt;const PairPredicate&amp;, bool, const <a class="el" href="classmomo_1_1_tree_map.html#ab11956cbd467d9446419c14094c8236a">Key</a>&amp;, const <a class="el" href="classmomo_1_1_tree_map.html#a2df6db3f8142349923dbc03d5d3a9b9d">Value</a>&amp;&gt;::value, size_t&gt; <a class="el" href="classmomo_1_1_tree_map.html">momo::TreeMap</a>&lt; TKey, TValue, TTreeTraits, TMemManager, TKeyValueTraits, TSettings &gt;::Remove </td>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt;const PairFilter&amp;, bool, const <a class="el" href="classmomo_1_1_tree_map.html#ab11956cbd467d9446419c14094c8236a">Key</a>&amp;, const <a class="el" href="classmomo_1_1_tree_map.html#a2df6db3f8142349923dbc03d5d3a9b9d">Value</a>&amp;&gt;::value, size_t&gt; <a class="el" href="classmomo_1_1_tree_map.html">momo::TreeMap</a>&lt; TKey, TValue, TTreeTraits, TMemManager, TKeyValueTraits, TSettings &gt;::Remove </td>
           <td>(</td>
-          <td class="paramtype">const PairPredicate &amp;&#160;</td>
-          <td class="paramname"><em>pairPred</em></td><td>)</td>
+          <td class="paramtype">const PairFilter &amp;&#160;</td>
+          <td class="paramname"><em>pairFilter</em></td><td>)</td>
           <td></td>
         </tr>
       </table>

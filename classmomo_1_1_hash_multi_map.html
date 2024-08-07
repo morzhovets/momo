@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -237,9 +237,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8a67ccee82de84f9f24805e59a44a82a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9382fff2e41cc508c7f0f825f478783"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_hash_multi_map.html#a5fb88241da75e7d8f32773b7610bda19">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#ae9382fff2e41cc508c7f0f825f478783">Remove</a> (<a class="el" href="classmomo_1_1_hash_multi_map.html#a30f43e060cd8ed9530a10ee8053c0a32">ConstIterator</a> iter)</td></tr>
 <tr class="separator:ae9382fff2e41cc508c7f0f825f478783"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a947f3c25e7e9f7e6c15b9bea7a0f4876"><td class="memTemplParams" colspan="2">template&lt;typename PairPredicate &gt; </td></tr>
-<tr class="memitem:a947f3c25e7e9f7e6c15b9bea7a0f4876"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const PairPredicate &amp;, bool, const <a class="el" href="classmomo_1_1_hash_multi_map.html#a763061aa86c98c665a7aeb18704da443">Key</a> &amp;, const <a class="el" href="classmomo_1_1_hash_multi_map.html#afc55ee93add3d62a6fcc9f9a18fbcf09">Value</a> &amp; &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a947f3c25e7e9f7e6c15b9bea7a0f4876">Remove</a> (const PairPredicate &amp;pairPred)</td></tr>
-<tr class="separator:a947f3c25e7e9f7e6c15b9bea7a0f4876"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea02205d7f7e8790c2c100046d327807"><td class="memTemplParams" colspan="2">template&lt;typename PairFilter &gt; </td></tr>
+<tr class="memitem:aea02205d7f7e8790c2c100046d327807"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const PairFilter &amp;, bool, const <a class="el" href="classmomo_1_1_hash_multi_map.html#a763061aa86c98c665a7aeb18704da443">Key</a> &amp;, const <a class="el" href="classmomo_1_1_hash_multi_map.html#afc55ee93add3d62a6fcc9f9a18fbcf09">Value</a> &amp; &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#aea02205d7f7e8790c2c100046d327807">Remove</a> (const PairFilter &amp;pairFilter)</td></tr>
+<tr class="separator:aea02205d7f7e8790c2c100046d327807"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1df14902e7055b542ec44cf62abf8364"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_hash_multi_map.html#a5fb88241da75e7d8f32773b7610bda19">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a1df14902e7055b542ec44cf62abf8364">RemoveValues</a> (<a class="el" href="classmomo_1_1_hash_multi_map.html#a111ff6d8fb884c8ec53f0276deaee627">ConstKeyIterator</a> keyIter)</td></tr>
 <tr class="separator:a1df14902e7055b542ec44cf62abf8364"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e3e63ae60235579e1b2590b5acd6206"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_hash_multi_map.html#af721d8bea4602b58044a2b2e5a6c1a11">KeyIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a4e3e63ae60235579e1b2590b5acd6206">RemoveKey</a> (<a class="el" href="classmomo_1_1_hash_multi_map.html#a111ff6d8fb884c8ec53f0276deaee627">ConstKeyIterator</a> keyIter)</td></tr>
@@ -268,7 +268,7 @@ class momo::HashMultiMap&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTr
 
 <p>All <code><a class="el" href="classmomo_1_1_hash_multi_map.html">HashMultiMap</a></code> functions and constructors have strong exception safety, but not the following cases:</p><ol type="1">
 <li>Functions <code>Add</code> receiving many items have basic exception safety.</li>
-<li>Function <code>Remove</code> receiving predicate have basic exception safety.</li>
+<li>Function <code>Remove</code> receiving predicate has basic exception safety.</li>
 <li>In case default <code>KeyValueTraits</code>: If function <code>Add</code>, <code>AddVar</code> or <code>AddCrt</code> receiving argument <code>Key&amp;&amp; key</code> throws exception, this argument may be changed. </li>
 </ol>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
@@ -2164,24 +2164,24 @@ template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits
 
 </div>
 </div>
-<a id="a947f3c25e7e9f7e6c15b9bea7a0f4876"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a947f3c25e7e9f7e6c15b9bea7a0f4876">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/3]</span></h2>
+<a id="aea02205d7f7e8790c2c100046d327807"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea02205d7f7e8790c2c100046d327807">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TKeyValueTraits  = HashMultiMapKeyValueTraits&lt;TKey, TValue, TMemManager&gt;, typename TSettings  = HashMultiMapSettings&gt; </div>
 <div class="memtemplate">
-template&lt;typename PairPredicate &gt; </div>
+template&lt;typename PairFilter &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt;const PairPredicate&amp;, bool, const <a class="el" href="classmomo_1_1_hash_multi_map.html#a763061aa86c98c665a7aeb18704da443">Key</a>&amp;, const <a class="el" href="classmomo_1_1_hash_multi_map.html#afc55ee93add3d62a6fcc9f9a18fbcf09">Value</a>&amp;&gt;::value, size_t&gt; <a class="el" href="classmomo_1_1_hash_multi_map.html">momo::HashMultiMap</a>&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;::Remove </td>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt;const PairFilter&amp;, bool, const <a class="el" href="classmomo_1_1_hash_multi_map.html#a763061aa86c98c665a7aeb18704da443">Key</a>&amp;, const <a class="el" href="classmomo_1_1_hash_multi_map.html#afc55ee93add3d62a6fcc9f9a18fbcf09">Value</a>&amp;&gt;::value, size_t&gt; <a class="el" href="classmomo_1_1_hash_multi_map.html">momo::HashMultiMap</a>&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;::Remove </td>
           <td>(</td>
-          <td class="paramtype">const PairPredicate &amp;&#160;</td>
-          <td class="paramname"><em>pairPred</em></td><td>)</td>
+          <td class="paramtype">const PairFilter &amp;&#160;</td>
+          <td class="paramname"><em>pairFilter</em></td><td>)</td>
           <td></td>
         </tr>
       </table>

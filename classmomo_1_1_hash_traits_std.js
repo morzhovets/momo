@@ -1,5 +1,6 @@
 var classmomo_1_1_hash_traits_std =
 [
+    [ "Bucket", "classmomo_1_1_hash_traits_std.html#a424931f5f234038da59f284f8dc13c71", null ],
     [ "EqualFunc", "classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643", null ],
     [ "HashBucket", "classmomo_1_1_hash_traits_std.html#a5dc90ff36d549fe806e18b7e551d2927", null ],
     [ "HashFunc", "classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929", null ],

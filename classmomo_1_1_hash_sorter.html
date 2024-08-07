@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -105,17 +105,17 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a826c9c20be685ad75f500631387430ef"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#a826c9c20be685ad75f500631387430ef">HashFuncResult</a></td></tr>
-<tr class="separator:a826c9c20be685ad75f500631387430ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae97488bf0471ab347e1b746f8756b61c"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#ae97488bf0471ab347e1b746f8756b61c">HashCode</a></td></tr>
+<tr class="separator:ae97488bf0471ab347e1b746f8756b61c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a00dcfa5b51cf696a175e980420e51f19"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename SwapFunc  = Swapper&lt;Iterator&gt;&gt; </td></tr>
-<tr class="memitem:a00dcfa5b51cf696a175e980420e51f19"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#a00dcfa5b51cf696a175e980420e51f19">Sort</a> (Iterator begin, size_t count, const HashFunc &amp;hashFunc=HashFunc(), const EqualFunc &amp;equalFunc=EqualFunc(), const SwapFunc &amp;swapFunc=SwapFunc())</td></tr>
-<tr class="separator:a00dcfa5b51cf696a175e980420e51f19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f7f1667ac544890f03ec4f089d60578"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename SwapFunc  = Swapper&lt;Iterator&gt;&gt; </td></tr>
-<tr class="memitem:a3f7f1667ac544890f03ec4f089d60578"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#a3f7f1667ac544890f03ec4f089d60578">SortPrehashed</a> (Iterator begin, size_t count, HashIterator hashBegin, const EqualFunc &amp;equalFunc=EqualFunc(), const SwapFunc &amp;swapFunc=SwapFunc())</td></tr>
-<tr class="separator:a3f7f1667ac544890f03ec4f089d60578"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fe225f90492961eae001c3f94637f00"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename IterSwapper  = Swapper&lt;Iterator&gt;&gt; </td></tr>
+<tr class="memitem:a6fe225f90492961eae001c3f94637f00"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#a6fe225f90492961eae001c3f94637f00">Sort</a> (Iterator begin, size_t count, const HashFunc &amp;hashFunc=HashFunc(), const EqualFunc &amp;equalFunc=EqualFunc(), const IterSwapper &amp;iterSwapper=IterSwapper())</td></tr>
+<tr class="separator:a6fe225f90492961eae001c3f94637f00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6700018bdd9a00948d05282fe893a4e"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename IterSwapper  = Swapper&lt;Iterator&gt;&gt; </td></tr>
+<tr class="memitem:aa6700018bdd9a00948d05282fe893a4e"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#aa6700018bdd9a00948d05282fe893a4e">SortPrehashed</a> (Iterator begin, size_t count, HashIterator hashBegin, const EqualFunc &amp;equalFunc=EqualFunc(), const IterSwapper &amp;iterSwapper=IterSwapper())</td></tr>
+<tr class="separator:aa6700018bdd9a00948d05282fe893a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ca03250271d480a15f9bffdb7dc9a2d"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;&gt; </td></tr>
 <tr class="memitem:a5ca03250271d480a15f9bffdb7dc9a2d"><td class="memTemplItemLeft" align="right" valign="top">static bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#a5ca03250271d480a15f9bffdb7dc9a2d">IsSorted</a> (Iterator begin, size_t count, const HashFunc &amp;hashFunc=HashFunc(), const EqualFunc &amp;equalFunc=EqualFunc())</td></tr>
 <tr class="separator:a5ca03250271d480a15f9bffdb7dc9a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -125,25 +125,25 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a39afba60e1ac707b018f41a7a284170b"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;&gt; </td></tr>
 <tr class="memitem:a39afba60e1ac707b018f41a7a284170b"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="structmomo_1_1_hash_sorter_1_1_find_result.html">FindResult</a>&lt; Iterator &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#a39afba60e1ac707b018f41a7a284170b">Find</a> (Iterator begin, size_t count, const typename std::iterator_traits&lt; Iterator &gt;::value_type &amp;item, const HashFunc &amp;hashFunc=HashFunc(), const EqualFunc &amp;equalFunc=EqualFunc())</td></tr>
 <tr class="separator:a39afba60e1ac707b018f41a7a284170b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a064d2cd998f29514ae32dbcc07d92fe2"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;&gt; </td></tr>
-<tr class="memitem:a064d2cd998f29514ae32dbcc07d92fe2"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="structmomo_1_1_hash_sorter_1_1_find_result.html">FindResult</a>&lt; Iterator &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#a064d2cd998f29514ae32dbcc07d92fe2">FindPrehashed</a> (Iterator begin, size_t count, HashIterator hashBegin, const typename std::iterator_traits&lt; Iterator &gt;::value_type &amp;item, <a class="el" href="classmomo_1_1_hash_sorter.html#a826c9c20be685ad75f500631387430ef">HashFuncResult</a> itemHash, const EqualFunc &amp;equalFunc=EqualFunc())</td></tr>
-<tr class="separator:a064d2cd998f29514ae32dbcc07d92fe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade70f0c4de2f47ab05d28c248ecef95f"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;&gt; </td></tr>
+<tr class="memitem:ade70f0c4de2f47ab05d28c248ecef95f"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="structmomo_1_1_hash_sorter_1_1_find_result.html">FindResult</a>&lt; Iterator &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#ade70f0c4de2f47ab05d28c248ecef95f">FindPrehashed</a> (Iterator begin, size_t count, HashIterator hashBegin, const typename std::iterator_traits&lt; Iterator &gt;::value_type &amp;item, <a class="el" href="classmomo_1_1_hash_sorter.html#ae97488bf0471ab347e1b746f8756b61c">HashCode</a> itemHash, const EqualFunc &amp;equalFunc=EqualFunc())</td></tr>
+<tr class="separator:ade70f0c4de2f47ab05d28c248ecef95f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab26158b475604b7cef2b7387d7685231"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;&gt; </td></tr>
 <tr class="memitem:ab26158b475604b7cef2b7387d7685231"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1_hash_sorter_1_1_bounds.html">Bounds</a>&lt; Iterator &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#ab26158b475604b7cef2b7387d7685231">GetBounds</a> (Iterator begin, size_t count, const typename std::iterator_traits&lt; Iterator &gt;::value_type &amp;item, const HashFunc &amp;hashFunc=HashFunc(), const EqualFunc &amp;equalFunc=EqualFunc())</td></tr>
 <tr class="separator:ab26158b475604b7cef2b7387d7685231"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1686a3d0645a0f7180e6c6794a4bd1ea"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;&gt; </td></tr>
-<tr class="memitem:a1686a3d0645a0f7180e6c6794a4bd1ea"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1_hash_sorter_1_1_bounds.html">Bounds</a>&lt; Iterator &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#a1686a3d0645a0f7180e6c6794a4bd1ea">GetBoundsPrehashed</a> (Iterator begin, size_t count, HashIterator hashBegin, const typename std::iterator_traits&lt; Iterator &gt;::value_type &amp;item, <a class="el" href="classmomo_1_1_hash_sorter.html#a826c9c20be685ad75f500631387430ef">HashFuncResult</a> itemHash, const EqualFunc &amp;equalFunc=EqualFunc())</td></tr>
-<tr class="separator:a1686a3d0645a0f7180e6c6794a4bd1ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e05b47ef7ad13f3ee5337bd9500695a"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;&gt; </td></tr>
+<tr class="memitem:a0e05b47ef7ad13f3ee5337bd9500695a"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1_hash_sorter_1_1_bounds.html">Bounds</a>&lt; Iterator &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_sorter.html#a0e05b47ef7ad13f3ee5337bd9500695a">GetBoundsPrehashed</a> (Iterator begin, size_t count, HashIterator hashBegin, const typename std::iterator_traits&lt; Iterator &gt;::value_type &amp;item, <a class="el" href="classmomo_1_1_hash_sorter.html#ae97488bf0471ab347e1b746f8756b61c">HashCode</a> itemHash, const EqualFunc &amp;equalFunc=EqualFunc())</td></tr>
+<tr class="separator:a0e05b47ef7ad13f3ee5337bd9500695a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a826c9c20be685ad75f500631387430ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a826c9c20be685ad75f500631387430ef">&#9670;&nbsp;</a></span>HashFuncResult</h2>
+<a id="ae97488bf0471ab347e1b746f8756b61c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae97488bf0471ab347e1b746f8756b61c">&#9670;&nbsp;</a></span>HashCode</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef size_t <a class="el" href="classmomo_1_1_hash_sorter.html#a826c9c20be685ad75f500631387430ef">momo::HashSorter::HashFuncResult</a></td>
+          <td class="memname">typedef size_t <a class="el" href="classmomo_1_1_hash_sorter.html#ae97488bf0471ab347e1b746f8756b61c">momo::HashSorter::HashCode</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -207,8 +207,8 @@ template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::
 
 </div>
 </div>
-<a id="a064d2cd998f29514ae32dbcc07d92fe2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a064d2cd998f29514ae32dbcc07d92fe2">&#9670;&nbsp;</a></span>FindPrehashed()</h2>
+<a id="ade70f0c4de2f47ab05d28c248ecef95f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade70f0c4de2f47ab05d28c248ecef95f">&#9670;&nbsp;</a></span>FindPrehashed()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -245,7 +245,7 @@ template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = st
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_hash_sorter.html#a826c9c20be685ad75f500631387430ef">HashFuncResult</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_hash_sorter.html#ae97488bf0471ab347e1b746f8756b61c">HashCode</a>&#160;</td>
           <td class="paramname"><em>itemHash</em>, </td>
         </tr>
         <tr>
@@ -325,8 +325,8 @@ template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::
 
 </div>
 </div>
-<a id="a1686a3d0645a0f7180e6c6794a4bd1ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1686a3d0645a0f7180e6c6794a4bd1ea">&#9670;&nbsp;</a></span>GetBoundsPrehashed()</h2>
+<a id="a0e05b47ef7ad13f3ee5337bd9500695a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e05b47ef7ad13f3ee5337bd9500695a">&#9670;&nbsp;</a></span>GetBoundsPrehashed()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -363,7 +363,7 @@ template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = st
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_hash_sorter.html#a826c9c20be685ad75f500631387430ef">HashFuncResult</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_hash_sorter.html#ae97488bf0471ab347e1b746f8756b61c">HashCode</a>&#160;</td>
           <td class="paramname"><em>itemHash</em>, </td>
         </tr>
         <tr>
@@ -487,13 +487,13 @@ template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = st
 
 </div>
 </div>
-<a id="a00dcfa5b51cf696a175e980420e51f19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00dcfa5b51cf696a175e980420e51f19">&#9670;&nbsp;</a></span>Sort()</h2>
+<a id="a6fe225f90492961eae001c3f94637f00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fe225f90492961eae001c3f94637f00">&#9670;&nbsp;</a></span>Sort()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename SwapFunc  = Swapper&lt;Iterator&gt;&gt; </div>
+template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename IterSwapper  = Swapper&lt;Iterator&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -525,8 +525,8 @@ template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const SwapFunc &amp;&#160;</td>
-          <td class="paramname"><em>swapFunc</em> = <code>SwapFunc()</code>&#160;</td>
+          <td class="paramtype">const IterSwapper &amp;&#160;</td>
+          <td class="paramname"><em>iterSwapper</em> = <code>IterSwapper()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -543,13 +543,13 @@ template&lt;typename Iterator , typename HashFunc  = HashCoder&lt;typename std::
 
 </div>
 </div>
-<a id="a3f7f1667ac544890f03ec4f089d60578"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f7f1667ac544890f03ec4f089d60578">&#9670;&nbsp;</a></span>SortPrehashed()</h2>
+<a id="aa6700018bdd9a00948d05282fe893a4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6700018bdd9a00948d05282fe893a4e">&#9670;&nbsp;</a></span>SortPrehashed()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename SwapFunc  = Swapper&lt;Iterator&gt;&gt; </div>
+template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = std::equal_to&lt;typename std::iterator_traits&lt;Iterator&gt;::value_type&gt;, typename IterSwapper  = Swapper&lt;Iterator&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -581,8 +581,8 @@ template&lt;typename Iterator , typename HashIterator , typename EqualFunc  = st
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const SwapFunc &amp;&#160;</td>
-          <td class="paramname"><em>swapFunc</em> = <code>SwapFunc()</code>&#160;</td>
+          <td class="paramtype">const IterSwapper &amp;&#160;</td>
+          <td class="paramname"><em>iterSwapper</em> = <code>IterSwapper()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>

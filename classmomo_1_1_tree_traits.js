@@ -2,6 +2,7 @@ var classmomo_1_1_tree_traits =
 [
     [ "IsValidKeyArg", "classmomo_1_1_tree_traits.html#aade8887f2e2d2d148b366f69b201ff88", null ],
     [ "Key", "classmomo_1_1_tree_traits.html#ad7433e5c0134ebf89efd6a0c820b8fb4", null ],
+    [ "Node", "classmomo_1_1_tree_traits.html#afd36b27e89271d41d21c28383670afdb", null ],
     [ "TreeNode", "classmomo_1_1_tree_traits.html#a083144e77c46595490bd9681b76785fd", null ],
     [ "TreeTraits", "classmomo_1_1_tree_traits.html#aad2285c585c3028201775991dd7dc59f", null ],
     [ "GetSplitItemIndex", "classmomo_1_1_tree_traits.html#a0ea18e6e41d7fbd2b81a6067c84695ba", null ],

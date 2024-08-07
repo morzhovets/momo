@@ -32,9 +32,9 @@ var classmomo_1_1stdish_1_1unordered__set =
     [ "unordered_set", "classmomo_1_1stdish_1_1unordered__set.html#a8113f93f5386ee601dc3b00e2ec59212", null ],
     [ "unordered_set", "classmomo_1_1stdish_1_1unordered__set.html#a45fe16ee00c756e53d8e8400b7d4e3bc", null ],
     [ "unordered_set", "classmomo_1_1stdish_1_1unordered__set.html#a545d345166d1c61fd470f23c35ba1af7", null ],
-    [ "unordered_set", "classmomo_1_1stdish_1_1unordered__set.html#a0e36bec507a9f3e780ac451a634a31ff", null ],
+    [ "unordered_set", "classmomo_1_1stdish_1_1unordered__set.html#ac3b73fd2028818d9fef2c630406b173f", null ],
     [ "unordered_set", "classmomo_1_1stdish_1_1unordered__set.html#ae9eef0e488b5618789e7455997d78088", null ],
-    [ "unordered_set", "classmomo_1_1stdish_1_1unordered__set.html#a56b62d8835e9b9247cc095ebd9dff330", null ],
+    [ "unordered_set", "classmomo_1_1stdish_1_1unordered__set.html#aa294e80a57c6b34dfabe3b4b0e104133", null ],
     [ "~unordered_set", "classmomo_1_1stdish_1_1unordered__set.html#aa20cae271dd694d122b70d02c3431420", null ],
     [ "begin", "classmomo_1_1stdish_1_1unordered__set.html#a89627e0a15ff094942d1dcb3f60778d7", null ],
     [ "begin", "classmomo_1_1stdish_1_1unordered__set.html#aaa11a04f82760926b678e02fc39137d8", null ],
@@ -51,6 +51,7 @@ var classmomo_1_1stdish_1_1unordered__set =
     [ "contains", "classmomo_1_1stdish_1_1unordered__set.html#a76c0b7952396ca4df46e9208accbb012", null ],
     [ "count", "classmomo_1_1stdish_1_1unordered__set.html#addef956d1d62d2fb3e8702c6808123c1", null ],
     [ "count", "classmomo_1_1stdish_1_1unordered__set.html#a8397f0d3ac4f6c59b941b488cab7d7e7", null ],
+    [ "emplace", "classmomo_1_1stdish_1_1unordered__set.html#af7fccfcda89e5f7e317e66a8ecf23ff8", null ],
     [ "emplace", "classmomo_1_1stdish_1_1unordered__set.html#a16c1ba1a857de8a28c7871d0fcaa7068", null ],
     [ "emplace_hint", "classmomo_1_1stdish_1_1unordered__set.html#a4a82235df2e42b43ea098b9917b175cc", null ],
     [ "empty", "classmomo_1_1stdish_1_1unordered__set.html#aea52fafcebb1241bd02a6b1fc41ccd3d", null ],
@@ -94,6 +95,6 @@ var classmomo_1_1stdish_1_1unordered__set =
     [ "reserve", "classmomo_1_1stdish_1_1unordered__set.html#adaed126de573503bf37e4ab84ed9507f", null ],
     [ "size", "classmomo_1_1stdish_1_1unordered__set.html#a0163aced13e1a8447de067f51f913e8d", null ],
     [ "swap", "classmomo_1_1stdish_1_1unordered__set.html#a26bf7b51cfa3960eb35a49165fdad92e", null ],
-    [ "erase_if", "classmomo_1_1stdish_1_1unordered__set.html#a278dcf1f552f58f0b0a06cacf5e1a08a", null ],
+    [ "erase_if", "classmomo_1_1stdish_1_1unordered__set.html#a147484afde9c44f4445541643e01fded", null ],
     [ "swap", "classmomo_1_1stdish_1_1unordered__set.html#a48a358f1da9e4df79fb37692560629ea", null ]
 ];

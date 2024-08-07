@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -225,9 +225,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad8b0f087105f653219014e4e11b8e9cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfbca4858e07d623c7937faf1e5ecc59"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#acfbca4858e07d623c7937faf1e5ecc59">Remove</a> (size_t index, size_t count=1)</td></tr>
 <tr class="separator:acfbca4858e07d623c7937faf1e5ecc59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabe9bf3b05ef4018508a7dcc8d04faf1"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
-<tr class="memitem:aabe9bf3b05ef4018508a7dcc8d04faf1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const Predicate &amp;, bool, const <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a> &amp; &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#aabe9bf3b05ef4018508a7dcc8d04faf1">Remove</a> (const Predicate &amp;pred)</td></tr>
-<tr class="separator:aabe9bf3b05ef4018508a7dcc8d04faf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a15ae308a4767fbc05bc826b45cbaae"><td class="memTemplParams" colspan="2">template&lt;typename ItemFilter &gt; </td></tr>
+<tr class="memitem:a9a15ae308a4767fbc05bc826b45cbaae"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const ItemFilter &amp;, bool, const <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a> &amp; &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a9a15ae308a4767fbc05bc826b45cbaae">Remove</a> (const ItemFilter &amp;itemFilter)</td></tr>
+<tr class="separator:a9a15ae308a4767fbc05bc826b45cbaae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87d9782334f26ada7899cccdf382fe8e"><td class="memTemplParams" colspan="2">template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </td></tr>
 <tr class="memitem:a87d9782334f26ada7899cccdf382fe8e"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a87d9782334f26ada7899cccdf382fe8e">Contains</a> (const <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a> &amp;item, const EqualFunc &amp;equalFunc=EqualFunc()) const</td></tr>
 <tr class="separator:a87d9782334f26ada7899cccdf382fe8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1875,24 +1875,24 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="aabe9bf3b05ef4018508a7dcc8d04faf1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aabe9bf3b05ef4018508a7dcc8d04faf1">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/2]</span></h2>
+<a id="a9a15ae308a4767fbc05bc826b45cbaae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a15ae308a4767fbc05bc826b45cbaae">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = SegmentedArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = SegmentedArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename Predicate &gt; </div>
+template&lt;typename ItemFilter &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt;const Predicate&amp;, bool, const <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a>&amp;&gt;::value, size_t&gt; <a class="el" href="classmomo_1_1_segmented_array.html">momo::SegmentedArray</a>&lt; TItem, TMemManager, TItemTraits, TSettings &gt;::Remove </td>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt;const ItemFilter&amp;, bool, const <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a>&amp;&gt;::value, size_t&gt; <a class="el" href="classmomo_1_1_segmented_array.html">momo::SegmentedArray</a>&lt; TItem, TMemManager, TItemTraits, TSettings &gt;::Remove </td>
           <td>(</td>
-          <td class="paramtype">const Predicate &amp;&#160;</td>
-          <td class="paramname"><em>pred</em></td><td>)</td>
+          <td class="paramtype">const ItemFilter &amp;&#160;</td>
+          <td class="paramname"><em>itemFilter</em></td><td>)</td>
           <td></td>
         </tr>
       </table>

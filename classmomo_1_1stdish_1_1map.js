@@ -20,6 +20,6 @@ var classmomo_1_1stdish_1_1map =
     [ "try_emplace", "classmomo_1_1stdish_1_1map.html#ac7b71a60d372ad287987aad5b6b3f068", null ],
     [ "try_emplace", "classmomo_1_1stdish_1_1map.html#aed76514a50b6a9677158b0dbf9b045c7", null ],
     [ "try_emplace", "classmomo_1_1stdish_1_1map.html#a2f43966d4e5d8f37fe363a8f4a9e7132", null ],
-    [ "erase_if", "classmomo_1_1stdish_1_1map.html#ad568c35d925d3dc272c20c0df1bbbaff", null ],
+    [ "erase_if", "classmomo_1_1stdish_1_1map.html#aefc301c31734871a29902413efc59d58", null ],
     [ "swap", "classmomo_1_1stdish_1_1map.html#aa2cb4dd6fcaf25d79fa60aacac862eb3", null ]
 ];

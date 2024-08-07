@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -118,9 +118,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a7b379a6e9752c441e1cf3b1a646da5b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2916647364bee3652d8efd08fc3ec127"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a2916647364bee3652d8efd08fc3ec127">Remove</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, size_t index, size_t count)</td></tr>
 <tr class="separator:a2916647364bee3652d8efd08fc3ec127"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2da24edd8fd1906005747f2f574f300"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
-<tr class="memitem:ad2da24edd8fd1906005747f2f574f300"><td class="memTemplItemLeft" align="right" valign="top">static size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#ad2da24edd8fd1906005747f2f574f300">Remove</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, const Predicate &amp;pred)</td></tr>
-<tr class="separator:ad2da24edd8fd1906005747f2f574f300"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb21d63c07d8a2e1c287a8162a21fef9"><td class="memTemplParams" colspan="2">template&lt;typename ItemFilter &gt; </td></tr>
+<tr class="memitem:abb21d63c07d8a2e1c287a8162a21fef9"><td class="memTemplItemLeft" align="right" valign="top">static size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#abb21d63c07d8a2e1c287a8162a21fef9">Remove</a> (<a class="el" href="classmomo_1_1internal_1_1_array_shifter.html#a1d2a79b2c5210b0453f163883be24011">Array</a> &amp;array, const ItemFilter &amp;itemFilter)</td></tr>
+<tr class="separator:abb21d63c07d8a2e1c287a8162a21fef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a1d2a79b2c5210b0453f163883be24011"></a>
@@ -358,15 +358,15 @@ template&lt;typename TArray &gt; </div>
 
 </div>
 </div>
-<a id="ad2da24edd8fd1906005747f2f574f300"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad2da24edd8fd1906005747f2f574f300">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/2]</span></h2>
+<a id="abb21d63c07d8a2e1c287a8162a21fef9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb21d63c07d8a2e1c287a8162a21fef9">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TArray &gt; </div>
 <div class="memtemplate">
-template&lt;typename Predicate &gt; </div>
+template&lt;typename ItemFilter &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -380,8 +380,8 @@ template&lt;typename Predicate &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Predicate &amp;&#160;</td>
-          <td class="paramname"><em>pred</em>&#160;</td>
+          <td class="paramtype">const ItemFilter &amp;&#160;</td>
+          <td class="paramname"><em>itemFilter</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

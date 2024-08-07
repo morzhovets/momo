@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -104,9 +104,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a8f20a759bb19c5e124992c87a8496a4d"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename CodeGetter  = RadixSorterCodeGetter&lt;Iterator&gt;&gt; </td></tr>
 <tr class="memitem:a8f20a759bb19c5e124992c87a8496a4d"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_radix_sorter.html#a8f20a759bb19c5e124992c87a8496a4d">Sort</a> (Iterator begin, size_t count, const CodeGetter &amp;codeGetter=CodeGetter())</td></tr>
 <tr class="separator:a8f20a759bb19c5e124992c87a8496a4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a713a6e1281a6bb5c6e628c6d1c8859c4"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename CodeGetter , typename SwapFunc , typename GroupFunc &gt; </td></tr>
-<tr class="memitem:a713a6e1281a6bb5c6e628c6d1c8859c4"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_radix_sorter.html#a713a6e1281a6bb5c6e628c6d1c8859c4">Sort</a> (Iterator begin, size_t count, const CodeGetter &amp;codeGetter, const SwapFunc &amp;swapFunc, const GroupFunc &amp;groupFunc)</td></tr>
-<tr class="separator:a713a6e1281a6bb5c6e628c6d1c8859c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8c4406c8b3875ec916cb9347159f4e6"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename CodeGetter , typename IterSwapper , typename GroupFunc &gt; </td></tr>
+<tr class="memitem:aa8c4406c8b3875ec916cb9347159f4e6"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_radix_sorter.html#aa8c4406c8b3875ec916cb9347159f4e6">Sort</a> (Iterator begin, size_t count, const CodeGetter &amp;codeGetter, const IterSwapper &amp;iterSwapper, const GroupFunc &amp;groupFunc)</td></tr>
+<tr class="separator:aa8c4406c8b3875ec916cb9347159f4e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -133,15 +133,15 @@ template&lt;size_t tRadixSize = 8&gt; </div>
 
 </div>
 </div>
-<a id="a713a6e1281a6bb5c6e628c6d1c8859c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a713a6e1281a6bb5c6e628c6d1c8859c4">&#9670;&nbsp;</a></span>Sort() <span class="overload">[1/2]</span></h2>
+<a id="aa8c4406c8b3875ec916cb9347159f4e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8c4406c8b3875ec916cb9347159f4e6">&#9670;&nbsp;</a></span>Sort() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t tRadixSize = 8&gt; </div>
 <div class="memtemplate">
-template&lt;typename Iterator , typename CodeGetter , typename SwapFunc , typename GroupFunc &gt; </div>
+template&lt;typename Iterator , typename CodeGetter , typename IterSwapper , typename GroupFunc &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -167,8 +167,8 @@ template&lt;typename Iterator , typename CodeGetter , typename SwapFunc , typena
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const SwapFunc &amp;&#160;</td>
-          <td class="paramname"><em>swapFunc</em>, </td>
+          <td class="paramtype">const IterSwapper &amp;&#160;</td>
+          <td class="paramname"><em>iterSwapper</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

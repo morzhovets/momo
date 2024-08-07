@@ -1,5 +1,6 @@
 var classmomo_1_1_hash_traits =
 [
+    [ "Bucket", "classmomo_1_1_hash_traits.html#a093ce3d368b2f53360a2e3e5225d3fbb", null ],
     [ "HashBucket", "classmomo_1_1_hash_traits.html#a93bb9a2392ec5c3fe6fda1a58262bc9d", null ],
     [ "IsValidKeyArg", "classmomo_1_1_hash_traits.html#a21673c1fcb3dd114edb8619a79475d70", null ],
     [ "Key", "classmomo_1_1_hash_traits.html#aea92460a3b4751dcb81df78161f89a8f", null ],

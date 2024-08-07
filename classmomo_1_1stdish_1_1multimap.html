@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -161,9 +161,9 @@ Public Member Functions</h2></td></tr>
 Friends</h2></td></tr>
 <tr class="memitem:a70af449e9626e700b4ce0cc0bcab0b54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a70af449e9626e700b4ce0cc0bcab0b54">swap</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;left, <a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;right) noexcept</td></tr>
 <tr class="separator:a70af449e9626e700b4ce0cc0bcab0b54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ae7d3466369d8fef8db8750a20f8922"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
-<tr class="memitem:a0ae7d3466369d8fef8db8750a20f8922"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#af14762948a531a94dc09ac9c63277c8d">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a0ae7d3466369d8fef8db8750a20f8922">erase_if</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;cont, const Predicate &amp;pred)</td></tr>
-<tr class="separator:a0ae7d3466369d8fef8db8750a20f8922"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15fdf92d3ebf71593a90465466da0609"><td class="memTemplParams" colspan="2">template&lt;typename ValueFilter &gt; </td></tr>
+<tr class="memitem:a15fdf92d3ebf71593a90465466da0609"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#af14762948a531a94dc09ac9c63277c8d">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a15fdf92d3ebf71593a90465466da0609">erase_if</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;cont, const ValueFilter &amp;valueFilter)</td></tr>
+<tr class="separator:a15fdf92d3ebf71593a90465466da0609"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename TKey, typename TMapped, typename TLessFunc = std::less&lt;TKey&gt;, typename TAllocator = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt;<br />
@@ -725,15 +725,15 @@ template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&l
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Function Documentation</h2>
-<a id="a0ae7d3466369d8fef8db8750a20f8922"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ae7d3466369d8fef8db8750a20f8922">&#9670;&nbsp;</a></span>erase_if</h2>
+<a id="a15fdf92d3ebf71593a90465466da0609"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15fdf92d3ebf71593a90465466da0609">&#9670;&nbsp;</a></span>erase_if</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename Predicate &gt; </div>
+template&lt;typename ValueFilter &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -747,8 +747,8 @@ template&lt;typename Predicate &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Predicate &amp;&#160;</td>
-          <td class="paramname"><em>pred</em>&#160;</td>
+          <td class="paramtype">const ValueFilter &amp;&#160;</td>
+          <td class="paramname"><em>valueFilter</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

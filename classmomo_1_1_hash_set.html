@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -217,9 +217,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7f03cecbbe64a77a612df2affaddb19a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f56d6974f0946de9590f9468be3e118"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set.html#a0f56d6974f0946de9590f9468be3e118">Remove</a> (const <a class="el" href="classmomo_1_1_hash_set.html#a27a669969c554786a8482a26cc3a2a9f">Key</a> &amp;key)</td></tr>
 <tr class="separator:a0f56d6974f0946de9590f9468be3e118"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb6eac200cf913bfd9414d148acb4006"><td class="memTemplParams" colspan="2">template&lt;typename Predicate &gt; </td></tr>
-<tr class="memitem:acb6eac200cf913bfd9414d148acb4006"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const Predicate &amp;, bool, const <a class="el" href="classmomo_1_1_hash_set.html#a134f438ae8184c10f31a036dc9de60a7">Item</a> &amp; &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set.html#acb6eac200cf913bfd9414d148acb4006">Remove</a> (const Predicate &amp;pred)</td></tr>
-<tr class="separator:acb6eac200cf913bfd9414d148acb4006"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a953988d2910922f712e90032e74c0c87"><td class="memTemplParams" colspan="2">template&lt;typename ItemFilter &gt; </td></tr>
+<tr class="memitem:a953988d2910922f712e90032e74c0c87"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const ItemFilter &amp;, bool, const <a class="el" href="classmomo_1_1_hash_set.html#a134f438ae8184c10f31a036dc9de60a7">Item</a> &amp; &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set.html#a953988d2910922f712e90032e74c0c87">Remove</a> (const ItemFilter &amp;itemFilter)</td></tr>
+<tr class="separator:a953988d2910922f712e90032e74c0c87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42b3acb3f86e7d933c586d92ea7fb9d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_hash_set.html#a83cd6ea7a404b102d0f968e9029eeae6">ExtractedItem</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set.html#a42b3acb3f86e7d933c586d92ea7fb9d8">Extract</a> (<a class="el" href="classmomo_1_1_hash_set.html#a1d2b987149182592e7f7291c0959f31b">ConstPosition</a> pos)</td></tr>
 <tr class="separator:a42b3acb3f86e7d933c586d92ea7fb9d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77f15a6ddfdaa32c9689a3e99f42cec4"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg , bool extraCheck = true&gt; </td></tr>
@@ -255,7 +255,7 @@ class momo::HashSet&lt; TKey, THashTraits, TMemManager, TItemTraits, TSettings &
 
 <p>All <code><a class="el" href="classmomo_1_1_hash_set.html">HashSet</a></code> functions and constructors have strong exception safety, but not the following cases:</p><ol type="1">
 <li>Functions <code>Insert</code> receiving many items have basic exception safety.</li>
-<li>Function <code>Remove</code> receiving predicate have basic exception safety.</li>
+<li>Function <code>Remove</code> receiving predicate has basic exception safety.</li>
 <li>Functions <code>MergeFrom</code> and <code>MergeTo</code> have basic exception safety. </li>
 </ol>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
@@ -1854,8 +1854,38 @@ template&lt;typename TKey , typename THashTraits  = HashTraits&lt;TKey&gt;, type
 
 </div>
 </div>
+<a id="a953988d2910922f712e90032e74c0c87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a953988d2910922f712e90032e74c0c87">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TItemTraits  = HashSetItemTraits&lt;TKey, TMemManager&gt;, typename TSettings  = HashSetSettings&gt; </div>
+<div class="memtemplate">
+template&lt;typename ItemFilter &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt;const ItemFilter&amp;, bool, const <a class="el" href="classmomo_1_1_hash_set.html#a134f438ae8184c10f31a036dc9de60a7">Item</a>&amp;&gt;::value, size_t&gt; <a class="el" href="classmomo_1_1_hash_set.html">momo::HashSet</a>&lt; TKey, THashTraits, TMemManager, TItemTraits, TSettings &gt;::Remove </td>
+          <td>(</td>
+          <td class="paramtype">const ItemFilter &amp;&#160;</td>
+          <td class="paramname"><em>itemFilter</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a0f56d6974f0946de9590f9468be3e118"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f56d6974f0946de9590f9468be3e118">&#9670;&nbsp;</a></span>Remove() <span class="overload">[1/5]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f56d6974f0946de9590f9468be3e118">&#9670;&nbsp;</a></span>Remove() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1870,36 +1900,6 @@ template&lt;typename TKey , typename THashTraits  = HashTraits&lt;TKey&gt;, type
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classmomo_1_1_hash_set.html#a27a669969c554786a8482a26cc3a2a9f">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acb6eac200cf913bfd9414d148acb4006"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb6eac200cf913bfd9414d148acb4006">&#9670;&nbsp;</a></span>Remove() <span class="overload">[2/5]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TKey , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TItemTraits  = HashSetItemTraits&lt;TKey, TMemManager&gt;, typename TSettings  = HashSetSettings&gt; </div>
-<div class="memtemplate">
-template&lt;typename Predicate &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt;const Predicate&amp;, bool, const <a class="el" href="classmomo_1_1_hash_set.html#a134f438ae8184c10f31a036dc9de60a7">Item</a>&amp;&gt;::value, size_t&gt; <a class="el" href="classmomo_1_1_hash_set.html">momo::HashSet</a>&lt; TKey, THashTraits, TMemManager, TItemTraits, TSettings &gt;::Remove </td>
-          <td>(</td>
-          <td class="paramtype">const Predicate &amp;&#160;</td>
-          <td class="paramname"><em>pred</em></td><td>)</td>
           <td></td>
         </tr>
       </table>

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -112,14 +112,14 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a51ec21acf49454e7393a7bdd030ef40e"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
 <tr class="memitem:a51ec21acf49454e7393a7bdd030ef40e"><td class="memTemplItemLeft" align="right" valign="top">static int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_traits.html#a51ec21acf49454e7393a7bdd030ef40e">Compare</a> (const Item &amp;item1, const Item &amp;item2)</td></tr>
 <tr class="separator:a51ec21acf49454e7393a7bdd030ef40e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84f2b6df2c8325ac90873d7e3ee39e65"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename Comparer , typename MemManager &gt; </td></tr>
-<tr class="memitem:a84f2b6df2c8325ac90873d7e3ee39e65"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_traits.html#a84f2b6df2c8325ac90873d7e3ee39e65">Sort</a> (Iterator begin, size_t count, const Comparer &amp;comparer, MemManager &amp;)</td></tr>
-<tr class="separator:a84f2b6df2c8325ac90873d7e3ee39e65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18c65ea4e637852c3f13072ca424d4a9"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename LessFunc , typename MemManager &gt; </td></tr>
+<tr class="memitem:a18c65ea4e637852c3f13072ca424d4a9"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_traits.html#a18c65ea4e637852c3f13072ca424d4a9">Sort</a> (Iterator begin, size_t count, const LessFunc &amp;lessFunc, MemManager &amp;)</td></tr>
+<tr class="separator:a18c65ea4e637852c3f13072ca424d4a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a0857f49779bc9d9279607347c5d609df"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_traits.html#a0857f49779bc9d9279607347c5d609df">selectEqualerMaxCount</a> = 6</td></tr>
-<tr class="separator:a0857f49779bc9d9279607347c5d609df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8409bdd1e2278bb5d363a794efbbb011"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_traits.html#a8409bdd1e2278bb5d363a794efbbb011">selectEqualityMaxCount</a> = 6</td></tr>
+<tr class="separator:a8409bdd1e2278bb5d363a794efbbb011"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a314bf784725cd74ba282389faa17c46e"></a>
@@ -271,13 +271,13 @@ template&lt;typename Item &gt; </div>
 
 </div>
 </div>
-<a id="a84f2b6df2c8325ac90873d7e3ee39e65"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a84f2b6df2c8325ac90873d7e3ee39e65">&#9670;&nbsp;</a></span>Sort()</h2>
+<a id="a18c65ea4e637852c3f13072ca424d4a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18c65ea4e637852c3f13072ca424d4a9">&#9670;&nbsp;</a></span>Sort()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Iterator , typename Comparer , typename MemManager &gt; </div>
+template&lt;typename Iterator , typename LessFunc , typename MemManager &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -297,8 +297,8 @@ template&lt;typename Iterator , typename Comparer , typename MemManager &gt; </d
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Comparer &amp;&#160;</td>
-          <td class="paramname"><em>comparer</em>, </td>
+          <td class="paramtype">const LessFunc &amp;&#160;</td>
+          <td class="paramname"><em>lessFunc</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -322,8 +322,8 @@ template&lt;typename Iterator , typename Comparer , typename MemManager &gt; </d
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a0857f49779bc9d9279607347c5d609df"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0857f49779bc9d9279607347c5d609df">&#9670;&nbsp;</a></span>selectEqualerMaxCount</h2>
+<a id="a8409bdd1e2278bb5d363a794efbbb011"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8409bdd1e2278bb5d363a794efbbb011">&#9670;&nbsp;</a></span>selectEqualityMaxCount</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -332,7 +332,7 @@ template&lt;typename Iterator , typename Comparer , typename MemManager &gt; </d
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const size_t momo::DataTraits::selectEqualerMaxCount = 6</td>
+          <td class="memname">const size_t momo::DataTraits::selectEqualityMaxCount = 6</td>
         </tr>
       </table>
   </td>

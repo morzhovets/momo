@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.8</span>
+   &#160;<span id="projectnumber">3.9</span>
    </div>
   </td>
  </tr>
@@ -122,9 +122,9 @@ Public Types</h2></td></tr>
 <tr class="memitem:a4717c654e700b88b31656af61974b79c"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
 <tr class="memitem:a4717c654e700b88b31656af61974b79c"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a> = typename ColumnList::template <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt; Item &gt;</td></tr>
 <tr class="separator:a4717c654e700b88b31656af61974b79c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a16472e3216ae4922cf592c0150ab95"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:a2a16472e3216ae4922cf592c0150ab95"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a> = <a class="el" href="classmomo_1_1internal_1_1_data_equaler.html">internal::DataEqualer</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt; Item &gt;, const Item &amp; &gt;</td></tr>
-<tr class="separator:a2a16472e3216ae4922cf592c0150ab95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d0c1bfade85281097c1d2462e7f6baa"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
+<tr class="memitem:a8d0c1bfade85281097c1d2462e7f6baa"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a> = <a class="el" href="classmomo_1_1_data_equality.html">DataEquality</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt; Item &gt; &gt;</td></tr>
+<tr class="separator:a8d0c1bfade85281097c1d2462e7f6baa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb912cf7c44da539bf120a89cd302e2e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a>&lt; ConstRowReference, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a019a9f25be39f2c11f068aed6c90c90c">DataTraits</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#acb912cf7c44da539bf120a89cd302e2e">ConstSelection</a></td></tr>
 <tr class="separator:acb912cf7c44da539bf120a89cd302e2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd09d00d41107785c4b4a3ebc2ba95d9"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_data_row_iterator.html">DataRowIterator</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_data_raw_iterator.html">RawIterator</a>, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#ad504ac01d1d3db4383a0ac72456b5853">RowReference</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#acd09d00d41107785c4b4a3ebc2ba95d9">ConstIterator</a></td></tr>
@@ -211,24 +211,24 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5ace9d5cbec470c47a4f090a7e010771"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename... Items&gt; </td></tr>
 <tr class="memitem:a5ace9d5cbec470c47a4f090a7e010771"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a5ace9d5cbec470c47a4f090a7e010771">Sort</a> (const <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt; Item &gt; &amp;column, const <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt; Items &gt; &amp;... columns) &amp;</td></tr>
 <tr class="separator:a5ace9d5cbec470c47a4f090a7e010771"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdc3e4d539ae25e228c1e6bd9f47ef9f"><td class="memTemplParams" colspan="2">template&lt;typename RowComparer &gt; </td></tr>
-<tr class="memitem:afdc3e4d539ae25e228c1e6bd9f47ef9f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const RowComparer &amp;, bool, ConstRowReference, ConstRowReference &gt;::value, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a> &amp;&amp; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#afdc3e4d539ae25e228c1e6bd9f47ef9f">Sort</a> (const RowComparer &amp;rowComp) &amp;&amp;</td></tr>
-<tr class="separator:afdc3e4d539ae25e228c1e6bd9f47ef9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9425928ff6bb303877130465cf3745a2"><td class="memTemplParams" colspan="2">template&lt;typename RowComparer &gt; </td></tr>
-<tr class="memitem:a9425928ff6bb303877130465cf3745a2"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const RowComparer &amp;, bool, ConstRowReference, ConstRowReference &gt;::value, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a> &amp; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a9425928ff6bb303877130465cf3745a2">Sort</a> (const RowComparer &amp;rowComp) &amp;</td></tr>
-<tr class="separator:a9425928ff6bb303877130465cf3745a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a375600679b1bbab7858e25f6339318b3"><td class="memTemplParams" colspan="2">template&lt;typename RowLessFunc &gt; </td></tr>
+<tr class="memitem:a375600679b1bbab7858e25f6339318b3"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const RowLessFunc &amp;, bool, ConstRowReference, ConstRowReference &gt;::value, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a> &amp;&amp; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a375600679b1bbab7858e25f6339318b3">Sort</a> (const RowLessFunc &amp;rowLessFunc) &amp;&amp;</td></tr>
+<tr class="separator:a375600679b1bbab7858e25f6339318b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95ce376ccbde8c8b963795668715c974"><td class="memTemplParams" colspan="2">template&lt;typename RowLessFunc &gt; </td></tr>
+<tr class="memitem:a95ce376ccbde8c8b963795668715c974"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const RowLessFunc &amp;, bool, ConstRowReference, ConstRowReference &gt;::value, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a> &amp; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a95ce376ccbde8c8b963795668715c974">Sort</a> (const RowLessFunc &amp;rowLessFunc) &amp;</td></tr>
+<tr class="separator:a95ce376ccbde8c8b963795668715c974"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0c9424314955291932271640060ce96"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename... Items&gt; </td></tr>
 <tr class="memitem:ab0c9424314955291932271640060ce96"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a> &amp;&amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#ab0c9424314955291932271640060ce96">Group</a> (const <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt; Item &gt; &amp;column, const <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt; Items &gt; &amp;... columns) &amp;&amp;</td></tr>
 <tr class="separator:ab0c9424314955291932271640060ce96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a910d1cef5052c239a7740738ffdcdb82"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename... Items&gt; </td></tr>
 <tr class="memitem:a910d1cef5052c239a7740738ffdcdb82"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a910d1cef5052c239a7740738ffdcdb82">Group</a> (const <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt; Item &gt; &amp;column, const <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt; Items &gt; &amp;... columns) &amp;</td></tr>
 <tr class="separator:a910d1cef5052c239a7740738ffdcdb82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bc78c375355c3465d2cce08637ad2e0"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename... Items&gt; </td></tr>
-<tr class="memitem:a9bc78c375355c3465d2cce08637ad2e0"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a9bc78c375355c3465d2cce08637ad2e0">GetLowerBound</a> (<a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a>&lt; Item &gt; equaler, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a>&lt; Items &gt;... equalers) const</td></tr>
-<tr class="separator:a9bc78c375355c3465d2cce08637ad2e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c889292770134cd2212ce6f620faa94"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename... Items&gt; </td></tr>
-<tr class="memitem:a0c889292770134cd2212ce6f620faa94"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a0c889292770134cd2212ce6f620faa94">GetUpperBound</a> (<a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a>&lt; Item &gt; equaler, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a>&lt; Items &gt;... equalers) const</td></tr>
-<tr class="separator:a0c889292770134cd2212ce6f620faa94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28d4ca52bd1f6afbfc41ee9cdd2fa8b5"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename... Items&gt; </td></tr>
+<tr class="memitem:a28d4ca52bd1f6afbfc41ee9cdd2fa8b5"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a28d4ca52bd1f6afbfc41ee9cdd2fa8b5">GetLowerBound</a> (<a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a>&lt; Item &gt; equal, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a>&lt; Items &gt;... equals) const</td></tr>
+<tr class="separator:a28d4ca52bd1f6afbfc41ee9cdd2fa8b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed7d22026290b5d395c4d8a93cf0b5ef"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename... Items&gt; </td></tr>
+<tr class="memitem:aed7d22026290b5d395c4d8a93cf0b5ef"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#aed7d22026290b5d395c4d8a93cf0b5ef">GetUpperBound</a> (<a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a>&lt; Item &gt; equal, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a>&lt; Items &gt;... equals) const</td></tr>
+<tr class="separator:aed7d22026290b5d395c4d8a93cf0b5ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77a70c6009a98b8c31729370ef9770bf"><td class="memTemplParams" colspan="2">template&lt;typename RowPredicate &gt; </td></tr>
 <tr class="memitem:a77a70c6009a98b8c31729370ef9770bf"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a77a70c6009a98b8c31729370ef9770bf">BinarySearch</a> (const RowPredicate &amp;rowPred) const</td></tr>
 <tr class="separator:a77a70c6009a98b8c31729370ef9770bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -346,8 +346,8 @@ template&lt;typename TRowReference , typename TDataTraits &gt; </div>
 
 </div>
 </div>
-<a id="a2a16472e3216ae4922cf592c0150ab95"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a16472e3216ae4922cf592c0150ab95">&#9670;&nbsp;</a></span>Equaler</h2>
+<a id="a8d0c1bfade85281097c1d2462e7f6baa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d0c1bfade85281097c1d2462e7f6baa">&#9670;&nbsp;</a></span>Equality</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -357,7 +357,7 @@ template&lt;typename TRowReference , typename TDataTraits &gt; </div>
 template&lt;typename Item &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">momo::internal::DataSelection</a>&lt; TRowReference, TDataTraits &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a> =  <a class="el" href="classmomo_1_1internal_1_1_data_equaler.html">internal::DataEqualer</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt;Item&gt;, const Item&amp;&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">momo::internal::DataSelection</a>&lt; TRowReference, TDataTraits &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a> =  <a class="el" href="classmomo_1_1_data_equality.html">DataEquality</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a4717c654e700b88b31656af61974b79c">Column</a>&lt;Item&gt; &gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -991,8 +991,8 @@ template&lt;typename TRowReference , typename TDataTraits &gt; </div>
 
 </div>
 </div>
-<a id="a9bc78c375355c3465d2cce08637ad2e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9bc78c375355c3465d2cce08637ad2e0">&#9670;&nbsp;</a></span>GetLowerBound()</h2>
+<a id="a28d4ca52bd1f6afbfc41ee9cdd2fa8b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28d4ca52bd1f6afbfc41ee9cdd2fa8b5">&#9670;&nbsp;</a></span>GetLowerBound()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1007,14 +1007,14 @@ template&lt;typename Item , typename... Items&gt; </div>
         <tr>
           <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">momo::internal::DataSelection</a>&lt; TRowReference, TDataTraits &gt;::GetLowerBound </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a>&lt; Item &gt;&#160;</td>
-          <td class="paramname"><em>equaler</em>, </td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a>&lt; Item &gt;&#160;</td>
+          <td class="paramname"><em>equal</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a>&lt; Items &gt;...&#160;</td>
-          <td class="paramname"><em>equalers</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a>&lt; Items &gt;...&#160;</td>
+          <td class="paramname"><em>equals</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1085,8 +1085,8 @@ template&lt;typename TRowReference , typename TDataTraits &gt; </div>
 
 </div>
 </div>
-<a id="a0c889292770134cd2212ce6f620faa94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c889292770134cd2212ce6f620faa94">&#9670;&nbsp;</a></span>GetUpperBound()</h2>
+<a id="aed7d22026290b5d395c4d8a93cf0b5ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed7d22026290b5d395c4d8a93cf0b5ef">&#9670;&nbsp;</a></span>GetUpperBound()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1101,14 +1101,14 @@ template&lt;typename Item , typename... Items&gt; </div>
         <tr>
           <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">momo::internal::DataSelection</a>&lt; TRowReference, TDataTraits &gt;::GetUpperBound </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a>&lt; Item &gt;&#160;</td>
-          <td class="paramname"><em>equaler</em>, </td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a>&lt; Item &gt;&#160;</td>
+          <td class="paramname"><em>equal</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a2a16472e3216ae4922cf592c0150ab95">Equaler</a>&lt; Items &gt;...&#160;</td>
-          <td class="paramname"><em>equalers</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_selection.html#a8d0c1bfade85281097c1d2462e7f6baa">Equality</a>&lt; Items &gt;...&#160;</td>
+          <td class="paramname"><em>equals</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1722,24 +1722,24 @@ template&lt;typename Item , typename... Items&gt; </div>
 
 </div>
 </div>
-<a id="a9425928ff6bb303877130465cf3745a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9425928ff6bb303877130465cf3745a2">&#9670;&nbsp;</a></span>Sort() <span class="overload">[3/4]</span></h2>
+<a id="a95ce376ccbde8c8b963795668715c974"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95ce376ccbde8c8b963795668715c974">&#9670;&nbsp;</a></span>Sort() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TRowReference , typename TDataTraits &gt; </div>
 <div class="memtemplate">
-template&lt;typename RowComparer &gt; </div>
+template&lt;typename RowLessFunc &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const RowComparer&amp;, bool, ConstRowReference, ConstRowReference&gt;::value, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a>&amp;&gt; <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">momo::internal::DataSelection</a>&lt; TRowReference, TDataTraits &gt;::Sort </td>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const RowLessFunc&amp;, bool, ConstRowReference, ConstRowReference&gt;::value, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a>&amp;&gt; <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">momo::internal::DataSelection</a>&lt; TRowReference, TDataTraits &gt;::Sort </td>
           <td>(</td>
-          <td class="paramtype">const RowComparer &amp;&#160;</td>
-          <td class="paramname"><em>rowComp</em></td><td>)</td>
+          <td class="paramtype">const RowLessFunc &amp;&#160;</td>
+          <td class="paramname"><em>rowLessFunc</em></td><td>)</td>
           <td> &amp;</td>
         </tr>
       </table>
@@ -1752,24 +1752,24 @@ template&lt;typename RowComparer &gt; </div>
 
 </div>
 </div>
-<a id="afdc3e4d539ae25e228c1e6bd9f47ef9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afdc3e4d539ae25e228c1e6bd9f47ef9f">&#9670;&nbsp;</a></span>Sort() <span class="overload">[4/4]</span></h2>
+<a id="a375600679b1bbab7858e25f6339318b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a375600679b1bbab7858e25f6339318b3">&#9670;&nbsp;</a></span>Sort() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TRowReference , typename TDataTraits &gt; </div>
 <div class="memtemplate">
-template&lt;typename RowComparer &gt; </div>
+template&lt;typename RowLessFunc &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const RowComparer&amp;, bool, ConstRowReference, ConstRowReference&gt;::value, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a>&amp;&amp;&gt; <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">momo::internal::DataSelection</a>&lt; TRowReference, TDataTraits &gt;::Sort </td>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const RowLessFunc&amp;, bool, ConstRowReference, ConstRowReference&gt;::value, <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">DataSelection</a>&amp;&amp;&gt; <a class="el" href="classmomo_1_1internal_1_1_data_selection.html">momo::internal::DataSelection</a>&lt; TRowReference, TDataTraits &gt;::Sort </td>
           <td>(</td>
-          <td class="paramtype">const RowComparer &amp;&#160;</td>
-          <td class="paramname"><em>rowComp</em></td><td>)</td>
+          <td class="paramtype">const RowLessFunc &amp;&#160;</td>
+          <td class="paramname"><em>rowLessFunc</em></td><td>)</td>
           <td> &amp;&amp;</td>
         </tr>
       </table>
