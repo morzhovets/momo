@@ -40,12 +40,18 @@ jobs:
         repository: 'morzhovets/momo'
         ref: 'v3.5'
         path: 'momo_v35'
-    - name: Checkout momo_v38
+    - name: Checkout momo_v37
       uses: actions/checkout@v4
       with:
         repository: 'morzhovets/momo'
-        ref: 'v3.8'
-        path: 'momo_v38'
+        ref: 'v3.7'
+        path: 'momo_v37'
+    - name: Checkout momo_v39
+      uses: actions/checkout@v4
+      with:
+        repository: 'morzhovets/momo'
+        ref: 'v3.9'
+        path: 'momo_v39'
     - name: Checkout momo_cur
       uses: actions/checkout@v4
       with:
@@ -59,7 +65,8 @@ jobs:
         mkdir build
         clang++-${{ matrix.clang_ver }} -Imomo_v32 -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_1 src/momo_${{ matrix.type }}.cc
         clang++-${{ matrix.clang_ver }} -Imomo_v35 -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_2 src/momo_${{ matrix.type }}.cc
-        clang++-${{ matrix.clang_ver }} -Imomo_v38/include -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_3 src/momo_${{ matrix.type }}.cc
+        clang++-${{ matrix.clang_ver }} -Imomo_v37 -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_3 src/momo_${{ matrix.type }}.cc
+        clang++-${{ matrix.clang_ver }} -Imomo_v39/include -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_4 src/momo_${{ matrix.type }}.cc
         clang++-${{ matrix.clang_ver }} -Imomo_cur/include -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_0 src/momo_${{ matrix.type }}.cc
     - name: Test
       run: |
