@@ -33,10 +33,10 @@ jobs:
           flags: '-std=c++20 -msse2'
           ubuntu_ver: '24.04'
 
-#        - clang_ver: '17'
-#          build_type: 'Release'
-#          flags: '-std=c++23 -msse2'
-#          ubuntu_ver: '24.04'
+        - clang_ver: '17'
+          build_type: 'Release'
+          flags: '-std=c++23 -msse2'
+          ubuntu_ver: '24.04'
 
         - clang_ver: '18'
           build_type: 'Release'
