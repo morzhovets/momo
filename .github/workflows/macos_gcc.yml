@@ -68,7 +68,7 @@ jobs:
       run: brew install gcc@${{ matrix.gcc_ver }}
     - name: Build
       env:
-        CXX: /usr/local/opt/gcc@${{ matrix.gcc_ver }}/bin/g++-${{ matrix.gcc_ver }}
+        CXX: ${{ matrix.path_prefix }}/opt/gcc@${{ matrix.gcc_ver }}/bin/g++-${{ matrix.gcc_ver }}
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
