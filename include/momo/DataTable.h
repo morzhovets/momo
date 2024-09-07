@@ -1156,7 +1156,8 @@ private:
 			if (rawMap.Insert(raw, count).inserted)
 				++count;
 		}
-		auto rawFilter = [&rawMap] (Raw* raw) { return rawMap.ContainsKey(raw); };
+		auto rawFilter = [&rawMap] (Raw* raw) noexcept
+			{ return rawMap.ContainsKey(raw); };
 		pvFilterRaws(FastCopyableFunctor(rawFilter));
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -1207,7 +1208,8 @@ private:
 			MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
 			rawSet.Insert(ConstRowReferenceProxy::GetRaw(rowRef));
 		}
-		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };
+		auto rawFilter = [&rawSet] (Raw* raw) noexcept
+			{ return !rawSet.ContainsKey(raw); };
 		pvFilterRaws(FastCopyableFunctor(rawFilter));
 	}
 
@@ -1245,14 +1247,15 @@ private:
 			if (rowFilter(pvMakeConstRowReference(raw)))
 				rawSet.Insert(raw);
 		}
-		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };
+		auto rawFilter = [&rawSet] (Raw* raw) noexcept
+			{ return !rawSet.ContainsKey(raw); };
 		pvFilterRaws(FastCopyableFunctor(rawFilter));
 	}
 
 	void pvRemoveInvalidRaws() noexcept
 	{
 		const ColumnList& columnList = GetColumnList();
-		auto rawFilter = [&columnList] (Raw* raw)
+		auto rawFilter = [&columnList] (Raw* raw) noexcept
 			{ return columnList.GetNumber(raw) != invalidNumber; };
 		pvFilterRaws(FastCopyableFunctor(rawFilter));
 	}
@@ -1487,7 +1490,9 @@ private:
 		Index trueIndex = mIndexes.GetTrueIndex(index, offsets);
 		OffsetItemTuple<Items...> tuple = { { 0, equals.GetItem() }... };
 		const size_t* offsetPtr = offsets.data();
-		std::apply([&offsetPtr] (auto&... pairs) { ((pairs.first = *offsetPtr++), ...); }, tuple);
+		std::apply(
+			[&offsetPtr] (auto&... pairs) noexcept { ((pairs.first = *offsetPtr++), ...); },
+			tuple);
 		auto raws = mIndexes.FindRaws(trueIndex, tuple, VersionKeeper(&mCrew.GetChangeVersion()));
 		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}

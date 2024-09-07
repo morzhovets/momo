@@ -61,7 +61,7 @@ namespace internal
 		{
 			auto iterSwapper = [] (Iterator iter1, Iterator iter2)
 				{ std::iter_swap(iter1, iter2); };
-			auto itemsGrouper = [] (Iterator, size_t) {};
+			auto itemsGrouper = [] (Iterator, size_t) noexcept {};
 			Sort(begin, count, FastCopyableFunctor(RadixSorterCodeGetter<Iterator>()),	//?
 				FastCopyableFunctor(iterSwapper), FastCopyableFunctor(itemsGrouper));
 		}

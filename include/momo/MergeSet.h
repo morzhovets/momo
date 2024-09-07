@@ -232,7 +232,7 @@ namespace internal
 					itemPtrHashes[count - 2 * initialItemCount + i] = { srcItems2 + i,
 						mergeTraits.GetHashCode(MergeSetItemTraits::GetKey(srcItems2[i])) };
 				}
-				auto lessFunc = [] (ItemPtrHash itemPtrHash1, ItemPtrHash itemPtrHash2)
+				auto lessFunc = [] (ItemPtrHash itemPtrHash1, ItemPtrHash itemPtrHash2) noexcept
 					{ return itemPtrHash1.hash < itemPtrHash2.hash; };
 				pvSortPtrs(&itemPtrHashes[count - 2 * initialItemCount], lessFunc);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)

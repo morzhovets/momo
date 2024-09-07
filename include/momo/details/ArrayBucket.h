@@ -66,7 +66,7 @@ namespace internal
 		static void Relocate(MemManager& memManager, Item* srcItems, Item* dstItems, size_t count)
 		{
 			ArrayBucketItemTraits::RelocateCreate(memManager.GetBaseMemManager(), srcItems,
-				dstItems, count, FastMovableFunctor([] (Item*) {}), nullptr);
+				dstItems, count, FastMovableFunctor([] (Item*) noexcept {}), nullptr);
 		}
 
 		template<conceptObjectCreator<Item> ItemCreator>
@@ -297,7 +297,7 @@ namespace internal
 							Item* newItems = array.GetItems();
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, std::move(itemCreator), newItems + count);
-							array.SetCountCrt(newCount, [] (Item* /*newItem*/) {});
+							array.SetCountCrt(newCount, [] (Item* /*newItem*/) noexcept {});
 							std::construct_at(pvGetArrayPtr(memory.GetPointer()), std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							pvSet(memory.Extract(), uint8_t{0});
