@@ -355,6 +355,7 @@ public:
 
 	template<typename... Args>
 	decltype(auto) operator()(Args&&... args) &&
+		noexcept(noexcept(std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...)))
 	{
 		return std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...);
 	}
@@ -390,6 +391,7 @@ public:
 
 	template<typename... Args>
 	decltype(auto) operator()(Args&&... args) const
+		noexcept(noexcept(mBaseFunctor(std::forward<Args>(args)...)))
 	{
 		return mBaseFunctor(std::forward<Args>(args)...);
 	}
