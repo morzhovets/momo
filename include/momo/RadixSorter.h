@@ -64,7 +64,7 @@ namespace internal
 		{
 			auto iterSwapper = [] (Iterator iter1, Iterator iter2)
 				{ std::iter_swap(iter1, iter2); };
-			auto groupFunc = [] (Iterator, size_t) {};
+			auto groupFunc = [] (Iterator, size_t) noexcept {};
 			Sort(begin, count, codeGetter, iterSwapper, groupFunc);
 		}
 

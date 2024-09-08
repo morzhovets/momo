@@ -813,7 +813,7 @@ public:
 
 	ConstIterator Remove(ConstIterator iter)
 	{
-		auto itemRemover = [this] (Item& item)
+		auto itemRemover = [this] (Item& item) noexcept
 			{ ItemTraits::Destroy(&GetMemManager(), item); };
 		auto itemReplacer = [this] (Item& srcItem, Item& dstItem)
 			{ ItemTraits::Replace(GetMemManager(), srcItem, dstItem); };
@@ -861,7 +861,7 @@ public:
 		size_t resItemIndex;
 		if (node1 == node2 && node1->IsLeaf())
 		{
-			auto itemRemover = [this] (Item& item)
+			auto itemRemover = [this] (Item& item) noexcept
 				{ ItemTraits::Destroy(&GetMemManager(), item); };
 			for (size_t i = itemIndex2 + 1; i > itemIndex1; --i)
 				node1->Remove(*mNodeParams, i - 1, itemRemover);
@@ -1398,7 +1398,7 @@ private:
 
 	Node* pvRemoveRange(Node* node1, size_t itemIndex1, Node* node2, size_t itemIndex2)
 	{
-		auto itemRemover = [this] (Item& item)
+		auto itemRemover = [this] (Item& item) noexcept
 			{ ItemTraits::Destroy(&GetMemManager(), item); };
 		size_t comIndex1 = itemIndex1;
 		size_t comIndex2 = itemIndex2;

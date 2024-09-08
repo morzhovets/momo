@@ -886,7 +886,7 @@ private:
 
 	typedef void (*CreateFunc)(MemManager&, const ColumnRecord*, const DataColumnList*,
 		const Raw*, Raw*);
-	typedef void (*DestroyFunc)(MemManager*, const ColumnRecord*, Raw*);
+	typedef void (*DestroyFunc)(MemManager*, const ColumnRecord*, Raw*) /*noexcept*/;
 
 	struct FuncRecord
 	{
@@ -1132,7 +1132,7 @@ private:
 			else
 				pvCreate<Items...>(memManager, columns, srcColumnList, srcRaw, raw);
 		};
-		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw)
+		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw) noexcept
 			{ pvDestroy<void, Items...>(memManager, columns, raw); };
 		mColumns.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);

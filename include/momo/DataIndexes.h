@@ -570,7 +570,7 @@ namespace internal
 			template<typename RawFilter>
 			void FilterRaws(RawFilter rawFilter) noexcept
 			{
-				mHashSet.Remove([rawFilter] (Raw* raw) { return !rawFilter(raw); });
+				mHashSet.Remove([rawFilter] (Raw* raw) noexcept { return !rawFilter(raw); });
 			}
 
 		private:
@@ -678,7 +678,7 @@ namespace internal
 				}
 				else
 				{
-					auto keyCreator = [&hashMixedKey] (Raw** newRaw)
+					auto keyCreator = [&hashMixedKey] (Raw** newRaw) noexcept
 						{ *newRaw = hashMixedKey.raw; };
 					mKeyIteratorAdd = mHashMultiMap.AddKeyCrt(keyIter, keyCreator);
 				}
@@ -1001,7 +1001,7 @@ namespace internal
 
 		Result AddRaw(Raw* raw)
 		{
-			auto rejector = [this] ()
+			auto rejector = [this] () noexcept
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 					uniqueHash.RejectAdd();
@@ -1059,7 +1059,7 @@ namespace internal
 
 		Result UpdateRaw(Raw* oldRaw, Raw* newRaw)
 		{
-			auto rejector = [this, newRaw] ()
+			auto rejector = [this, newRaw] () noexcept
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
@@ -1117,7 +1117,7 @@ namespace internal
 				std::forward<ItemAssigner>(itemAssigner)(raw, offset);
 				return { nullptr, UniqueHashIndex::empty };
 			}
-			auto rejector = [this] ()
+			auto rejector = [this] () noexcept
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{

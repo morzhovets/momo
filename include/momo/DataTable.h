@@ -1342,7 +1342,8 @@ private:
 			if (rawMap.Insert(raw, count).inserted)
 				++count;
 		}
-		auto rawFilter = [&rawMap] (Raw* raw) { return rawMap.ContainsKey(raw); };
+		auto rawFilter = [&rawMap] (Raw* raw) noexcept
+			{ return rawMap.ContainsKey(raw); };
 		pvFilterRaws(rawFilter);
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -1395,7 +1396,8 @@ private:
 			MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
 			rawSet.Insert(ConstRowReferenceProxy::GetRaw(rowRef));
 		}
-		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };
+		auto rawFilter = [&rawSet] (Raw* raw) noexcept
+			{ return !rawSet.ContainsKey(raw); };
 		pvFilterRaws(rawFilter);
 	}
 
@@ -1435,14 +1437,15 @@ private:
 			if (rowFilter(pvMakeConstRowReference(raw)))
 				rawSet.Insert(raw);
 		}
-		auto rawFilter = [&rawSet] (Raw* raw) { return !rawSet.ContainsKey(raw); };
+		auto rawFilter = [&rawSet] (Raw* raw) noexcept
+			{ return !rawSet.ContainsKey(raw); };
 		pvFilterRaws(rawFilter);
 	}
 
 	void pvRemoveInvalidRaws() noexcept
 	{
 		const ColumnList& columnList = GetColumnList();
-		auto rawFilter = [&columnList] (Raw* raw)
+		auto rawFilter = [&columnList] (Raw* raw) noexcept
 			{ return columnList.GetNumber(raw) != invalidNumber; };
 		pvFilterRaws(rawFilter);
 	}
