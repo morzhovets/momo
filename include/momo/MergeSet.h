@@ -214,14 +214,16 @@ namespace internal
 				MergeSetItemTraits::Destroy(setMemManager, *iter++);
 		}
 
-		template<conceptIncIterator<Item> SrcIterator, conceptObjectCreator<Item> ItemCreator>
-		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, Item* dstBegin,
+		template<conceptIncIterator<Item> SrcIterator, conceptIncIterator<Item> DstIterator,
+			conceptObjectCreator<Item> ItemCreator>
+		requires conceptRandomIterator<SrcIterator> && std::is_same_v<DstIterator, Item*>
+		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 		{
 			MOMO_ASSERT(std::has_single_bit(count) && count > initialItemCount);
 			const MergeTraits& mergeTraits = memManager.GetMergeSetCrew().GetContainerTraits();
-			Item* srcItems1 = std::to_address(UIntMath<>::Next(srcBegin, count - initialItemCount));
-			Item* srcItems2 = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * initialItemCount));
+			Item* srcItems1 = pvNextAddr(srcBegin, count - initialItemCount);
+			Item* srcItems2 = pvNextAddr(srcBegin, count - 2 * initialItemCount);
 			if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
 			{
 				ItemPtrHashes itemPtrHashes(count, memManager);
@@ -237,7 +239,7 @@ namespace internal
 				pvSortPtrs(&itemPtrHashes[count - 2 * initialItemCount], lessFunc);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
-					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
+					Item* srcItems = pvNextAddr(srcBegin, count - 2 * index);
 					pvMergePtrHashes(mergeTraits, srcItems, &itemPtrHashes[count - 2 * index], index);
 				}
 				IncIterator srcIter = [iter = itemPtrHashes.GetItems()] () mutable noexcept
@@ -257,7 +259,7 @@ namespace internal
 				pvSortRelocate(memManager, mergeTraits, dstBegin + count - 2 * initialItemCount);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
-					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
+					Item* srcItems = pvNextAddr(srcBegin, count - 2 * index);
 					pvMergeRelocate(memManager, mergeTraits, srcItems,
 						dstBegin + count - 2 * index, index);
 				}
@@ -278,7 +280,7 @@ namespace internal
 				pvSortPtrs(&itemPtrs[count - 2 * initialItemCount], lessFunc);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
-					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
+					Item* srcItems = pvNextAddr(srcBegin, count - 2 * index);
 					pvMergePtrs(mergeTraits, srcItems, &itemPtrs[count - 2 * index], index);
 				}
 				IncIterator srcIter = [iter = itemPtrs.GetItems()] () mutable noexcept
@@ -289,6 +291,13 @@ namespace internal
 		}
 
 	private:
+		template<conceptIncIterator<Item> Iterator>
+		requires conceptRandomIterator<Iterator>
+		static Item* pvNextAddr(Iterator iter, size_t dist)
+		{
+			return std::to_address(UIntMath<>::Next(iter, dist));
+		}
+
 		static void pvRelocate(MemManager& memManager, Item& srcItem, Item* dstItem)
 			noexcept(MergeSetItemTraits::isNothrowRelocatable)
 		{
