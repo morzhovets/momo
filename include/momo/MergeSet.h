@@ -240,7 +240,7 @@ namespace internal
 					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
 					pvMergePtrHashes(mergeTraits, srcItems, &itemPtrHashes[count - 2 * index], index);
 				}
-				IncIterator srcIter = [iter = itemPtrHashes.GetItems()] () mutable
+				IncIterator srcIter = [iter = itemPtrHashes.GetItems()] () mutable noexcept
 					{ return (iter++)->ptr; };
 				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
 					srcIter, dstBegin, count, std::move(itemCreator), newItem);
@@ -281,7 +281,8 @@ namespace internal
 					Item* srcItems = std::to_address(UIntMath<>::Next(srcBegin, count - 2 * index));
 					pvMergePtrs(mergeTraits, srcItems, &itemPtrs[count - 2 * index], index);
 				}
-				IncIterator srcIter = [iter = itemPtrs.GetItems()] () mutable { return *iter++; };
+				IncIterator srcIter = [iter = itemPtrs.GetItems()] () mutable noexcept
+					{ return *iter++; };
 				MergeSetItemTraits::RelocateCreate(memManager.GetBaseMemManager(),
 					srcIter, dstBegin, count, std::move(itemCreator), newItem);
 			}

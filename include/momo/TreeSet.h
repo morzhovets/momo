@@ -409,10 +409,10 @@ private:
 			mSrcSegments.AddBack({ nullptr, 0, 0 });
 			mDstSegments.AddBack({ nullptr, 0, 0 });
 			internal::IncIterator srcIter =
-				[segPtr = mSrcSegments.GetItems(), index = mSrcSegments[0].beginIndex] () mutable
+				[segPtr = mSrcSegments.GetItems(), index = mSrcSegments[0].beginIndex] () mutable noexcept
 				{ return pvGenerate(segPtr, index); };
 			internal::IncIterator dstIter =
-				[segPtr = mDstSegments.GetItems(), index = mDstSegments[0].beginIndex] () mutable
+				[segPtr = mDstSegments.GetItems(), index = mDstSegments[0].beginIndex] () mutable noexcept
 				{ return pvGenerate(segPtr, index); };
 			ItemTraits::RelocateCreate(mNodeParams.GetMemManager(), srcIter, dstIter,
 				mItemCount, std::move(itemCreator), newItem);

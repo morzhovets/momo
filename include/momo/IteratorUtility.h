@@ -469,8 +469,9 @@ namespace internal
 	};
 
 	template<typename TPointerGenerator>
-	requires std::copy_constructible<TPointerGenerator> &&
-		std::is_pointer_v<decltype(std::declval<TPointerGenerator>()())>
+	requires (std::is_trivially_copyable_v<TPointerGenerator> &&
+		noexcept(std::declval<TPointerGenerator>()()) &&
+		std::is_pointer_v<decltype(std::declval<TPointerGenerator>()())>)
 	class IncIterator
 	{
 	public:
@@ -479,12 +480,12 @@ namespace internal
 		typedef decltype(std::declval<PointerGenerator>()()) Pointer;
 
 	public:
-		IncIterator(PointerGenerator gen)
+		IncIterator(PointerGenerator gen) noexcept
 			: mPointerGenerator(gen)
 		{
 		}
 
-		[[nodiscard]] Pointer operator++(int)
+		[[nodiscard]] Pointer operator++(int) noexcept
 		{
 			return mPointerGenerator();
 		}

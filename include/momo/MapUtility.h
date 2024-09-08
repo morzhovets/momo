@@ -865,13 +865,13 @@ namespace internal
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i)
 				Item::Create(std::to_address(dstIter++));
-			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable
+			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable noexcept
 				{ return (srcIter++)->GetKeyPtr(); };
-			IncIterator srcValueIter = [srcIter = srcBegin] () mutable
+			IncIterator srcValueIter = [srcIter = srcBegin] () mutable noexcept
 				{ return (srcIter++)->GetValuePtr(); };
-			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable
+			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable noexcept
 				{ return (dstIter++)->GetKeyPtr(); };
-			IncIterator dstValueIter = [dstIter = dstBegin] () mutable
+			IncIterator dstValueIter = [dstIter = dstBegin] () mutable noexcept
 				{ return (dstIter++)->GetValuePtr(); };
 			auto exec = [itemCreator = std::move(itemCreator), newItem] () mutable
 				{ std::move(itemCreator)(newItem); };
@@ -999,17 +999,17 @@ namespace internal
 			DstIterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i)
 				Item::Create(std::to_address(dstIter++));
-			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable
+			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable noexcept
 				{ return (srcIter++)->GetKeyPtr(); };
-			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable
+			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable noexcept
 				{ return (dstIter++)->GetKeyPtr(); };
 			auto exec = [itemCreator = std::move(itemCreator), newItem] () mutable
 				{ std::move(itemCreator)(newItem); };
 			KeyValueTraits::RelocateExecKeys(memManager, srcKeyIter, dstKeyIter,
 				count, FastMovableFunctor(std::move(exec)));
-			IncIterator srcValueIter = [srcIter = srcBegin] () mutable
+			IncIterator srcValueIter = [srcIter = srcBegin] () mutable noexcept
 				{ return &(srcIter++)->GetValuePtr(); };
-			IncIterator dstValueIter = [dstIter = dstBegin] () mutable
+			IncIterator dstValueIter = [dstIter = dstBegin] () mutable noexcept
 				{ return &(dstIter++)->GetValuePtr(); };
 			ObjectManager<Value*, MemManager>::Relocate(memManager, srcValueIter, dstValueIter, count);
 		}

@@ -51,9 +51,11 @@ namespace internal
 		template<conceptIncIterator<Item> Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
-			IncIterator keyIter = [iter = begin] () mutable { return (iter++)->GetKeyPtr(); };
+			IncIterator keyIter = [iter = begin] () mutable noexcept
+				{ return (iter++)->GetKeyPtr(); };
 			KeyValueTraits::ShiftKeyNothrow(memManager, keyIter, shift);
-			IncIterator valueIter = [iter = begin] () mutable { return (iter++)->GetValuePtr(); };
+			IncIterator valueIter = [iter = begin] () mutable noexcept
+				{ return (iter++)->GetValuePtr(); };
 			KeyValueTraits::ShiftValueNothrow(memManager, valueIter, shift);
 		}
 	};
@@ -79,9 +81,11 @@ namespace internal
 		template<conceptIncIterator<Item> Iterator>
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
-			IncIterator keyIter = [iter = begin] () mutable { return (iter++)->GetKeyPtr(); };
+			IncIterator keyIter = [iter = begin] () mutable noexcept
+				{ return (iter++)->GetKeyPtr(); };
 			KeyValueTraits::ShiftKeyNothrow(memManager, keyIter, shift);
-			IncIterator valueIter = [iter = begin] () mutable { return &(iter++)->GetValuePtr(); };
+			IncIterator valueIter = [iter = begin] () mutable noexcept
+				{ return &(iter++)->GetValuePtr(); };
 			ObjectManager<Value*, MemManager>::ShiftNothrow(memManager, valueIter, shift);
 		}
 	};
