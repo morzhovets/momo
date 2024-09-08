@@ -933,27 +933,6 @@ public:
 		return pvMakeRowReference(raw);
 	}
 
-	template<typename... Items>
-	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
-	ConstSelection> Select(Equality<Items>... equals) const
-	{
-		return pvSelect<Selection>(EmptyRowFilter(), equals...);
-	}
-
-	template<typename... Items>
-	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
-	Selection> Select(Equality<Items>... equals)
-	{
-		return pvSelect<Selection>(EmptyRowFilter(), equals...);
-	}
-
-	template<typename... Items>
-	MOMO_DEPRECATED internal::EnableIf<(sizeof...(Items) > 1),
-	size_t> SelectCount(Equality<Items>... equals) const
-	{
-		return pvSelect<size_t>(EmptyRowFilter(), equals...);
-	}
-
 private:
 	RawMemPool pvCreateRawMemPool()
 	{

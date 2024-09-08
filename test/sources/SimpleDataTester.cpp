@@ -21,12 +21,6 @@
 #include <iostream>
 #include <sstream>
 
-#ifdef __has_cpp_attribute
-# if __has_cpp_attribute(deprecated)
-#  define TEST_HAS_DEPRECATED
-# endif
-#endif
-
 namespace
 {
 	typedef momo::DataStructDefault<int, double, std::string> BaseStruct;
@@ -318,15 +312,6 @@ public:
 		assert(table.SelectCount(momo::DataEquality<>().And(dblCol, 0.0)) == 1);
 		assert(table.Select(momo::DataEquality<>().And(dblCol, 1.0)).GetCount() == 1);
 		assert(ctable.Select(momo::DataEquality<>().And(dblCol, 1.0)).GetCount() == 1);
-
-#if !defined(TEST_HAS_DEPRECATED)
-		assert(table.SelectCount(
-			ColumnInfo::MakeEquality(strCol, "0"), ColumnInfo::MakeEquality(intCol, 1)) == 1);
-		assert(table.Select(
-			ColumnInfo::MakeEquality(intCol, 0), ColumnInfo::MakeEquality(strCol, "1")).GetCount() == 1);
-		assert(ctable.Select(
-			ColumnInfo::MakeEquality(strCol, "1"), ColumnInfo::MakeEquality(intCol, 0)).GetCount() == 1);
-#endif
 
 		assert(table.SelectCount(
 			momo::DataEquality<>().And(strCol, "0").And(intCol, 1).And(dblCol, 1.0)) == 1);
