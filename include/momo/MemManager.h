@@ -78,8 +78,12 @@ public:
 
 	void Deallocate(void* ptr, size_t size) noexcept
 	{
-		(void)size;	// c++11
+#ifdef __cpp_sized_deallocation	//?
+		operator delete(ptr, size);
+#else
+		(void)size;
 		operator delete(ptr);
+#endif
 	}
 };
 
