@@ -8,7 +8,7 @@ jobs:
       matrix:
         include:
 
-        - clang_ver: '18'
+        - clang_ver: '19'
           build_type: 'Release'
           flags: '-std=c++23 -msse2'
           path_prefix: '/usr/local'
@@ -27,19 +27,25 @@ jobs:
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-        - clang_ver: '18'
+        - clang_ver: '19'
+          build_type: 'Release'
+          flags: '-std=c++23'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - clang_ver: '19'
           build_type: 'Release'
           flags: '-std=c++23 -fsized-deallocation -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-        - clang_ver: '18'
+        - clang_ver: '19'
           build_type: 'Debug'
           flags: '-std=c++23 -fsanitize=address,undefined'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-        - clang_ver: '18'
+        - clang_ver: '19'
           build_type: 'Debug'
           flags: '-std=c++23 -fsanitize=address,undefined -fsized-deallocation -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           path_prefix: '/opt/homebrew'
