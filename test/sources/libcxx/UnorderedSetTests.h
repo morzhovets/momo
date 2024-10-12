@@ -54,6 +54,10 @@ LIBCXX_TEST_BEGIN(empty)
 #include "unord.set/empty.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(eq_different_hash)
+#include "unord.set/eq.different_hash.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(eq)
 #include "unord.set/eq.pass.cpp"
 LIBCXX_TEST_END
@@ -110,6 +114,10 @@ LIBCXX_TEST_BEGIN(get_allocator)
 #include "unord.set/get_allocator.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(hash_function)
+#include "unord.set/hash_function.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(incomplete)
 #include "unord.set/incomplete.pass.cpp"
@@ -136,16 +144,16 @@ LIBCXX_TEST_BEGIN(insert_init)
 #include "unord.set/insert_init.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(insert_iter_iter)
+#include "unord.set/insert_iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(insert_node_type)
 #include "unord.set/insert_node_type.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_node_type_hint)
 #include "unord.set/insert_node_type_hint.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(insert_range)
-#include "unord.set/insert_range.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(insert_rvalue)
@@ -158,6 +166,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "unord.set/iterators.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(key_eq)
+#include "unord.set/key_eq.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(load_factor)
