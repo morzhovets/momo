@@ -44,16 +44,12 @@ private:
 
 inline int Counter_base::gConstructed = 0;
 
-namespace std {
-
 template <class T>
-struct hash<Counter<T> >
-{
-    typedef Counter<T> argument_type;
-    typedef std::size_t result_type;
+struct std::hash<Counter<T> > {
+  typedef Counter<T> argument_type;
+  typedef std::size_t result_type;
 
-    std::size_t operator()(const Counter<T>& x) const {return std::hash<T>()(x.get());}
+  std::size_t operator()(const Counter<T>& x) const { return std::hash<T>()(x.get()); }
 };
-}
 
 #endif
