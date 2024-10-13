@@ -42,7 +42,7 @@
       "inheritEnvironments": [ "clang_cl_x64" ],
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\build\\${name}",
-      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
       "buildCommandArgs": "-v"
     },
     {
@@ -51,7 +51,7 @@
       "inheritEnvironments": [ "clang_cl_x64" ],
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\build\\${name}",
-      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
       "buildCommandArgs": "-v"
     },
     {
@@ -60,13 +60,31 @@
       "inheritEnvironments": [ "clang_cl_x86" ],
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\build\\${name}",
-      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
       "buildCommandArgs": "-v"
     },
     {
       "name": "x86-Clang-Release",
       "generator": "Ninja",
       "inheritEnvironments": [ "clang_cl_x86" ],
+      "configurationType": "RelWithDebInfo",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=23",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x64-cpp20-Debug",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "msvc_x64" ],
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
+      "buildCommandArgs": "-v"
+    },
+    {
+      "name": "x64-cpp20-Release",
+      "generator": "Ninja",
+      "inheritEnvironments": [ "msvc_x64" ],
       "configurationType": "RelWithDebInfo",
       "buildRoot": "${projectDir}\\build\\${name}",
       "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
