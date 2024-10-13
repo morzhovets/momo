@@ -89,6 +89,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 
 #if TEST_STD_VER >= 23
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
       {
         momo::stdish::vector c(std::from_range, std::array<int, 0>());
@@ -101,6 +102,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         static_assert(std::is_same_v<decltype(c), momo::stdish::vector<int, Alloc>>);
       }
     }
+#endif
 #endif
 
 //  A couple of vector<bool> tests, too!
