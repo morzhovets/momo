@@ -47,11 +47,11 @@ std::size_t hash_same(T /*val*/) {
 
 template <class T>
 std::size_t hash_identity(T* val) {
-  return *val;
+  return static_cast<std::size_t>(*val);
 }
 template <class T>
 std::size_t hash_neg(T* val) {
-  return std::numeric_limits<T>::max() - *val;
+  return static_cast<std::size_t>(std::numeric_limits<T>::max() - *val);
 }
 template <class T>
 std::size_t hash_scale(T* val) {
