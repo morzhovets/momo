@@ -49,6 +49,7 @@
 #include "support/check_consecutive.h"
 #include "support/set_allocator_requirement_test_templates.h"
 #include "support/map_allocator_requirement_test_templates.h"
+#include "support/insert_range_maps_sets.h"
 #include "support/asan_testing.h"
 #include "support/min_allocator.h"
 
