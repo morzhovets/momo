@@ -156,6 +156,12 @@ LIBCXX_TEST_BEGIN(insert_node_type_hint)
 #include "unord.set/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(insert_range)
+#include "unord.set/insert_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(insert_rvalue)
 #include "unord.set/insert_rvalue.pass.cpp"
 LIBCXX_TEST_END
@@ -315,6 +321,12 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(cnstr_dtor_noexcept)
 #include "unord.set/unord.set.cnstr/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(cnstr_from_range)
+#include "unord.set/unord.set.cnstr/from_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(cnstr_init)
 #include "unord.set/unord.set.cnstr/init.pass.cpp"
