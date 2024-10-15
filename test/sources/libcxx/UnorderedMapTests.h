@@ -46,6 +46,10 @@ LIBCXX_TEST_BEGIN(empty)
 #include "unord.map/empty.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(eq_different_hash)
+#include "unord.map/eq.different_hash.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(eq)
 #include "unord.map/eq.pass.cpp"
 LIBCXX_TEST_END
@@ -82,6 +86,10 @@ LIBCXX_TEST_BEGIN(get_allocator)
 #include "unord.map/get_allocator.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(hash_function)
+#include "unord.map/hash_function.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(incomplete_type)
 #include "unord.map/incomplete_type.pass.cpp"
@@ -94,6 +102,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "unord.map/iterators.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(key_eq)
+#include "unord.map/key_eq.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(load_factor)
