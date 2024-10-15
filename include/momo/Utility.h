@@ -40,6 +40,7 @@
 #include <concepts>
 #include <compare>
 #include <bit>
+#include <ranges>	//?
 
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) \

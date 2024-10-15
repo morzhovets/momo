@@ -182,6 +182,42 @@ public:
 	{
 	}
 
+#if defined(__cpp_lib_containers_ranges)
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	unordered_set(std::from_range_t, Range&& values)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	unordered_set(std::from_range_t, Range&& values, size_type bucketCount,
+		const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	unordered_set(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
+		const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, hashFunc, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	unordered_set(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
+		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, hashFunc, equalFunc, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+#endif // __cpp_lib_containers_ranges
+
 	unordered_set(unordered_set&& right) noexcept
 		: mHashSet(std::move(right.mHashSet))
 	{
@@ -476,6 +512,14 @@ public:
 	void insert(std::initializer_list<value_type> values)
 	{
 		mHashSet.Insert(values);
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	void insert_range(Range&& values)
+	{
+		for (auto&& ref : values)
+			emplace(std::forward<decltype(ref)>(ref));
 	}
 
 	template<typename... ValueArgs>
