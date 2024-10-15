@@ -54,6 +54,7 @@
 
 #if TEST_STD_VER >= 23
 # include "support/insert_range_maps_sets.h"
+# include "support/from_range_unordered_containers.h"
 #endif
 
 #define TEST_LIBCPP_ASSERT_FAILURE(expr, mess) try { (void)(expr); assert(false); } catch (...) {}
