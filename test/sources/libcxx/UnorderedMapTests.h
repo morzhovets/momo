@@ -426,6 +426,10 @@ LIBCXX_TEST_BEGIN(modifiers_insert_init)
 #include "unord.map/unord.map.modifiers/insert_init.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_insert_iter_iter)
+#include "unord.map/unord.map.modifiers/insert_iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_insert_node_type)
 #include "unord.map/unord.map.modifiers/insert_node_type.pass.cpp"
 LIBCXX_TEST_END
@@ -436,10 +440,6 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
 #include "unord.map/unord.map.modifiers/insert_or_assign.pass.cpp"
-LIBCXX_TEST_END
-
-LIBCXX_TEST_BEGIN(modifiers_insert_range)
-#include "unord.map/unord.map.modifiers/insert_range.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
