@@ -274,6 +274,10 @@ LIBCXX_TEST_BEGIN(cnstr_init)
 #include "unord.map/unord.map.cnstr/init.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(cnstr_from_range)
+#include "unord.map/unord.map.cnstr/from_range.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(cnstr_init_size)
 #include "unord.map/unord.map.cnstr/init_size.pass.cpp"
 LIBCXX_TEST_END
@@ -440,6 +444,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
 #include "unord.map/unord.map.modifiers/insert_or_assign.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(modifiers_insert_range)
+#include "unord.map/unord.map.modifiers/insert_range.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
