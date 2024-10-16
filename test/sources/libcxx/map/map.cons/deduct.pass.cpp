@@ -159,7 +159,7 @@ int main(int, char**)
     }
 
 #if MOMO_VERSION_MAJOR > 3
-    AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::map, momo::stdish::map<int, long>>();
+    AssociativeContainerDeductionGuidesSfinaeAway<std::map, std::map<int, long>>();
 #endif
 
     return 0;

@@ -293,7 +293,7 @@ int main(int, char**)
 #endif
 
 #if MOMO_VERSION_MAJOR > 3
-    UnorderedContainerDeductionGuidesSfinaeAway<momo::stdish::unordered_map, momo::stdish::unordered_map<int, long>>();
+    UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_map, std::unordered_map<int, long>>();
 #endif
 
     return 0;
