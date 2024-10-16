@@ -100,7 +100,9 @@ void test_unordered_map_with_input(std::vector<ValueType>&& input) {
       auto diff = c.load_factor() - (static_cast<float>(c.size()) / c.bucket_count());
       assert(std::fabs(diff) < std::numeric_limits<float>::epsilon());
     }
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(c.max_load_factor() == 1);
+#endif
   };
 
   { // (range)
