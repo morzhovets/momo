@@ -189,9 +189,12 @@ int main(int, char **) {
   }
 #endif
 
-#if !(defined(TEST_MSVC) && _MSC_VER < 1930)
+//#if MOMO_VERSION_MAJOR > 3
+#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11)
   AssociativeContainerDeductionGuidesSfinaeAway<std::multiset, std::multiset<int>>();
 #endif
+  AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::multiset, momo::stdish::multiset<int>>();
+//#endif
 
   return 0;
 }

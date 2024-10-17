@@ -158,10 +158,11 @@ int main(int, char**)
 #endif
     }
 
-#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11)
 #if MOMO_VERSION_MAJOR > 3
+#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11)
     AssociativeContainerDeductionGuidesSfinaeAway<std::map, std::map<int, long>>();
 #endif
+    AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::map, momo::stdish::map<int, long>>();
 #endif
 
     return 0;

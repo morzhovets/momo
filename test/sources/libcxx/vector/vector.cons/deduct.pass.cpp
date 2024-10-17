@@ -151,10 +151,11 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         }
     }
 
-#if !(defined(TEST_GCC) && __GNUC__ < 11)
 #if MOMO_VERSION_MAJOR > 3
+#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11)
     SequenceContainerDeductionGuidesSfinaeAway<std::vector, std::vector<int>>();
 #endif
+    SequenceContainerDeductionGuidesSfinaeAway<momo::stdish::vector, momo::stdish::vector<int>>();
 #endif
 
     return true;
