@@ -218,8 +218,10 @@ int main(int, char**)
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::unordered_multimap<int, int>);
     }
 
+#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11)
 #if MOMO_VERSION_MAJOR > 3
     UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_multimap, std::unordered_multimap<int, long>>();
+#endif
 #endif
 
     return 0;
