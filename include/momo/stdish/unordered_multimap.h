@@ -196,6 +196,39 @@ public:
 	{
 	}
 
+#if defined(__cpp_lib_containers_ranges)
+	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	unordered_multimap(std::from_range_t, Range&& values)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	unordered_multimap(std::from_range_t, Range&& values, size_type bucketCount,
+		const allocator_type& alloc = allocator_type())
+		: unordered_multimap(bucketCount, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	unordered_multimap(std::from_range_t, Range&& values, size_type bucketCount,
+		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+		: unordered_multimap(bucketCount, hashFunc, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	unordered_multimap(std::from_range_t, Range&& values, size_type bucketCount,
+		const hasher& hashFunc, const key_equal& equalFunc,
+		const allocator_type& alloc = allocator_type())
+		: unordered_multimap(bucketCount, hashFunc, equalFunc, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+#endif // __cpp_lib_containers_ranges
+
 	unordered_multimap(unordered_multimap&& right) noexcept
 		: mHashMultiMap(std::move(right.mHashMultiMap))
 	{
@@ -501,6 +534,13 @@ public:
 	void insert(std::initializer_list<value_type> values)
 	{
 		mHashMultiMap.Add(values.begin(), values.end());
+	}
+
+	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	void insert_range(Range&& values)
+	{
+		for (auto&& ref : values)
+			insert(std::forward<decltype(ref)>(ref));
 	}
 
 	iterator emplace()
@@ -834,9 +874,46 @@ requires momo::internal::conceptHashFunc<HashFunc, Key> && \
 unordered_multimap(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashFunc, EqualFunc, Allocator>;
 
+#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_multimap) \
+template<std::ranges::input_range Range, \
+	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
+	typename Mapped = typename std::ranges::range_value_t<Range>::second_type> \
+unordered_multimap(std::from_range_t, Range&&) \
+	-> unordered_multimap<Key, Mapped>; \
+template<std::ranges::input_range Range, \
+	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
+	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
+requires momo::internal::conceptAllocator<Allocator> \
+unordered_multimap(std::from_range_t, Range&&, size_t, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename HashFunc, \
+	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
+	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
+unordered_multimap(std::from_range_t, Range&&, size_t, HashFunc, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename HashFunc, typename EqualFunc, \
+	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
+	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
+requires momo::internal::conceptHashFunc<HashFunc, Key> && \
+	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
+unordered_multimap(std::from_range_t, Range&&, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, HashFunc, EqualFunc, Allocator>;
+
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap_open)
 
+#if defined(__cpp_lib_containers_ranges)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_multimap)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_multimap_open)
+#endif
+
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
+#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace momo::stdish
