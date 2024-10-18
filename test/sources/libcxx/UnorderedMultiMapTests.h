@@ -205,6 +205,10 @@ LIBCXX_TEST_BEGIN(cnstr_dtor_noexcept)
 #include "unord.multimap/unord.multimap.cnstr/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(cnstr_from_range)
+#include "unord.multimap/unord.multimap.cnstr/from_range.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(cnstr_init)
 #include "unord.multimap/unord.multimap.cnstr/init.pass.cpp"
 LIBCXX_TEST_END
@@ -343,6 +347,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_init)
 #include "unord.multimap/unord.multimap.modifiers/insert_init.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(modifiers_insert_iter_iter)
+#include "unord.multimap/unord.multimap.modifiers/insert_iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_insert_range)
