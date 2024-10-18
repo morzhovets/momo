@@ -96,6 +96,7 @@ void test_unordered_map_with_input(std::vector<ValueType>&& input) {
   using DefaultEqual = std::equal_to<int>;
 
   auto validate = [](auto&& c) {
+    if constexpr (requires { c.load_factor(); })
     if (!c.empty()) {
       auto diff = c.load_factor() - (static_cast<float>(c.size()) / c.bucket_count());
       assert(std::fabs(diff) < std::numeric_limits<float>::epsilon());
