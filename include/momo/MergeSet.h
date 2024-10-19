@@ -216,7 +216,7 @@ namespace internal
 
 		template<conceptIncIterator<Item> SrcIterator, conceptIncIterator<Item> DstIterator,
 			conceptObjectCreator<Item> ItemCreator>
-		requires conceptRandomIterator<SrcIterator> && std::is_same_v<DstIterator, Item*>
+		requires conceptRandomIterator17<SrcIterator> && std::is_same_v<DstIterator, Item*>
 		static void RelocateCreate(MemManager& memManager, SrcIterator srcBegin, DstIterator dstBegin,
 			size_t count, FastMovableFunctor<ItemCreator> itemCreator, Item* newItem)
 		{
@@ -292,7 +292,7 @@ namespace internal
 
 	private:
 		template<conceptIncIterator<Item> Iterator>
-		requires conceptRandomIterator<Iterator>
+		requires conceptRandomIterator17<Iterator>
 		static Item* pvNextAddr(Iterator iter, size_t dist)
 		{
 			return std::to_address(UIntMath<>::Next(iter, dist));

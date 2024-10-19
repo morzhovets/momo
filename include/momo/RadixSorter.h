@@ -56,7 +56,7 @@ namespace internal
 		static const size_t selectionSortMaxCount = size_t{1} << (radixSize / 2 + 1);
 
 	public:
-		template<conceptRandomIterator Iterator>
+		template<conceptRandomIterator17 Iterator>
 		static void Sort(Iterator begin, size_t count)
 		{
 			auto iterSwapper = [] (Iterator iter1, Iterator iter2)
@@ -66,7 +66,7 @@ namespace internal
 				FastCopyableFunctor(iterSwapper), FastCopyableFunctor(itemsGrouper));
 		}
 
-		template<conceptRandomIterator Iterator,
+		template<conceptRandomIterator17 Iterator,
 			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
 			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper,
 			internal::conceptConstFunctor<void, Iterator, size_t> ItemsGrouper>
@@ -80,7 +80,7 @@ namespace internal
 		}
 
 	private:
-		template<std::unsigned_integral Code, conceptRandomIterator Iterator,
+		template<std::unsigned_integral Code, conceptRandomIterator17 Iterator,
 			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
 			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper,
 			internal::conceptConstFunctor<void, Iterator, size_t> ItemsGrouper>
@@ -103,7 +103,7 @@ namespace internal
 				pvRadixSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper, shift);
 		}
 
-		template<std::unsigned_integral Code, conceptRandomIterator Iterator,
+		template<std::unsigned_integral Code, conceptRandomIterator17 Iterator,
 			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
 			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper,
 			internal::conceptConstFunctor<void, Iterator, size_t> ItemsGrouper>
@@ -138,7 +138,7 @@ namespace internal
 			itemsGrouper(UIntMath<>::Next(begin, prevIndex), count - prevIndex);
 		}
 
-		template<std::unsigned_integral Code, conceptRandomIterator Iterator,
+		template<std::unsigned_integral Code, conceptRandomIterator17 Iterator,
 			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
 			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper,
 			internal::conceptConstFunctor<void, Iterator, size_t> ItemsGrouper>
@@ -195,7 +195,7 @@ namespace internal
 			}
 		}
 
-		template<std::unsigned_integral Code, conceptRandomIterator Iterator,
+		template<std::unsigned_integral Code, conceptRandomIterator17 Iterator,
 			internal::conceptConstFunctor<size_t, Iterator> CodeGetter,
 			internal::conceptConstFunctor<void, Iterator, Iterator> IterSwapper>
 		static void pvRadixSort(Iterator begin, FastCopyableFunctor<CodeGetter> codeGetter,

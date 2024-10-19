@@ -254,7 +254,7 @@ namespace internal
 		Reference mReference;
 	};
 
-	template<conceptRandomIterator TIterator>
+	template<conceptRandomIterator17 TIterator>
 	class ArrayBoundsBase
 	{
 	public:
@@ -301,7 +301,7 @@ namespace internal
 		size_t mCount;
 	};
 
-	template<conceptRandomIterator TIterator>
+	template<conceptRandomIterator17 TIterator>
 	class ArrayBounds : public ArrayBoundsBase<TIterator>
 	{
 	private:
@@ -321,7 +321,7 @@ namespace internal
 		}
 	};
 
-	template<conceptIterator<std::bidirectional_iterator_tag> TBaseIterator,
+	template<conceptIterator17<std::bidirectional_iterator_tag> TBaseIterator,
 		template<typename BaseReference> class TReference>
 	class DerivedBidirectionalIterator
 	{
@@ -398,7 +398,7 @@ namespace internal
 		BaseIterator mBaseIterator;
 	};
 
-	template<conceptIterator<std::forward_iterator_tag> TBaseIterator,
+	template<conceptIterator17<std::forward_iterator_tag> TBaseIterator,
 		template<typename BaseReference> class TReference>
 	class DerivedForwardIterator
 	{

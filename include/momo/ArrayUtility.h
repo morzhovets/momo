@@ -196,7 +196,7 @@ namespace internal
 		}
 
 		template<conceptInputIterator ArgIterator>
-		requires (!conceptIterator<ArgIterator, std::forward_iterator_tag>)
+		requires (!conceptIterator17<ArgIterator, std::forward_iterator_tag>)
 		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
 		{
 			typedef typename ItemTraits::template Creator<
@@ -207,7 +207,7 @@ namespace internal
 				array.InsertCrt(index + count, IterCreator(memManager, *iter));
 		}
 
-		template<conceptIterator<std::forward_iterator_tag> ArgIterator>
+		template<conceptIterator17<std::forward_iterator_tag> ArgIterator>
 		static void Insert(Array& array, size_t index, ArgIterator begin, size_t count)
 		{
 			size_t initCount = array.GetCount();
