@@ -230,6 +230,12 @@ LIBCXX_TEST_BEGIN(common_iterator_difference_type)
 #include "unord.set/common/iterator_difference_type.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(extra_insert_range_ext)
+#include "unord.set/extra/insert_range_ext.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 #ifdef LIBCXX_TEST_FAILURE
 
 LIBCXX_TEST_BEGIN(spec_assert_bucket)
