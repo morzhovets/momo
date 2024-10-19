@@ -152,10 +152,6 @@ namespace internal
 	template<typename Predicate, typename... Args>
 	concept conceptPredicate = conceptConstFunctor<Predicate, bool, Args...>;
 
-	template<typename Range, typename Object>
-	concept conceptCompatibleRange = std::ranges::input_range<Range> &&
-		std::convertible_to<std::ranges::range_reference_t<Range>, Object>;
-
 	template<size_t size>
 	struct UIntSelector;
 

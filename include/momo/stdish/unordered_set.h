@@ -183,13 +183,15 @@ public:
 	}
 
 #if defined(__cpp_lib_containers_ranges)
-	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	unordered_set(std::from_range_t, Range&& values)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 
-	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	unordered_set(std::from_range_t, Range&& values, size_type bucketCount,
 		const allocator_type& alloc = allocator_type())
 		: unordered_set(bucketCount, alloc)
@@ -197,7 +199,8 @@ public:
 		insert_range(std::forward<Range>(values));
 	}
 
-	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	unordered_set(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
 		const allocator_type& alloc = allocator_type())
 		: unordered_set(bucketCount, hashFunc, alloc)
@@ -205,7 +208,8 @@ public:
 		insert_range(std::forward<Range>(values));
 	}
 
-	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	unordered_set(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
 		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
 		: unordered_set(bucketCount, hashFunc, equalFunc, alloc)
@@ -502,7 +506,8 @@ public:
 		mHashSet.Insert(values);
 	}
 
-	template<momo::internal::conceptCompatibleRange<value_type> Range>
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	void insert_range(Range&& values)
 	{
 		pvInsertRange(std::ranges::begin(values), std::ranges::end(values));
