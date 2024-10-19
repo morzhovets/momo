@@ -111,10 +111,14 @@ namespace internal
 			typename std::iterator_traits<Iterator>::iterator_category>;
 
 	template<typename Iterator>
-	concept conceptInputIterator = conceptIterator<Iterator, std::input_iterator_tag>;
+	concept conceptInputIterator = std::input_iterator<Iterator>;
 
 	template<typename Iterator>
 	concept conceptRandomIterator = conceptIterator<Iterator, std::random_access_iterator_tag>;
+
+	template<typename Sentinel, typename Iterator>
+	concept conceptSentinel =
+		requires (Iterator begin, Sentinel end) { { begin != end } -> std::convertible_to<bool>; };
 
 	template<typename Object,
 		size_t maxSize = sizeof(void*)>

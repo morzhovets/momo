@@ -494,15 +494,7 @@ public:
 	template<momo::internal::conceptInputIterator Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		if constexpr (momo::internal::conceptSetArgIterator<Iterator, value_type>)
-		{
-			mHashSet.Insert(first, last);
-		}
-		else
-		{
-			for (Iterator iter = first; iter != last; ++iter)
-				emplace(*iter);
-		}
+		pvInsertRange(first, last);
 	}
 
 	void insert(std::initializer_list<value_type> values)
@@ -513,8 +505,7 @@ public:
 	template<momo::internal::conceptCompatibleRange<value_type> Range>
 	void insert_range(Range&& values)
 	{
-		for (auto&& ref : values)
-			emplace(std::forward<decltype(ref)>(ref));
+		pvInsertRange(std::ranges::begin(values), std::ranges::end(values));
 	}
 
 	template<typename... ValueArgs>
@@ -695,6 +686,21 @@ private:
 		HashSet hashSet(right.mHashSet.GetHashTraits(), MemManager(alloc));
 		hashSet.MergeFrom(right.mHashSet);
 		return hashSet;
+	}
+
+	template<momo::internal::conceptInputIterator Iterator,
+		momo::internal::conceptSentinel<Iterator> Sentinel>
+	void pvInsertRange(Iterator begin, Sentinel end)
+	{
+		if constexpr (momo::internal::conceptSetArgIterator<Iterator, value_type>)
+		{
+			mHashSet.Insert(std::move(begin), std::move(end));
+		}
+		else
+		{
+			for (Iterator iter = std::move(begin); iter != end; ++iter)
+				emplace(*iter);
+		}
 	}
 
 private:

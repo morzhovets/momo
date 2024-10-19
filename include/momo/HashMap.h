@@ -576,11 +576,12 @@ public:
 		return { PositionProxy(res.position), res.inserted };
 	}
 
-	template<internal::conceptMapArgIterator<Key> ArgIterator>
-	size_t Insert(ArgIterator begin, ArgIterator end)
+	template<internal::conceptMapArgIterator<Key> ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
+	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
 		size_t initCount = GetCount();
-		for (ArgIterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			auto pair = internal::MapArgReferencer<>::GetReferencePair(iter);
 			InsertVar(std::forward<decltype(pair.first)>(pair.first),

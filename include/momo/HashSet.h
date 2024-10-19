@@ -831,11 +831,12 @@ public:
 			FastMovableFunctor(std::move(itemCreator)));
 	}
 
-	template<internal::conceptSetArgIterator<Item> ArgIterator>
-	size_t Insert(ArgIterator begin, ArgIterator end)
+	template<internal::conceptSetArgIterator<Item> ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
+	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
 		size_t initCount = GetCount();
-		for (ArgIterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			auto&& ref = *iter;
 			InsertVar(ItemTraits::GetKey(std::as_const(ref)), std::forward<decltype(ref)>(ref));

@@ -1031,10 +1031,11 @@ public:
 		return AddVar(keyIter, value);
 	}
 
-	template<internal::conceptMapArgIterator<Key> ArgIterator>
-	void Add(ArgIterator begin, ArgIterator end)
+	template<internal::conceptMapArgIterator<Key> ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
+	void Add(ArgIterator begin, ArgSentinel end)
 	{
-		for (ArgIterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			auto pair = internal::MapArgReferencer<>::GetReferencePair(iter);
 			AddVar(std::forward<decltype(pair.first)>(pair.first),

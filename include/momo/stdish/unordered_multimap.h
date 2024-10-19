@@ -520,15 +520,7 @@ public:
 	template<momo::internal::conceptInputIterator Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		if constexpr (momo::internal::conceptMapArgIterator<Iterator, key_type, false>)
-		{
-			mHashMultiMap.Add(first, last);
-		}
-		else
-		{
-			for (Iterator iter = first; iter != last; ++iter)
-				insert(*iter);
-		}
+		pvInsertRange(first, last);
 	}
 
 	void insert(std::initializer_list<value_type> values)
@@ -539,8 +531,7 @@ public:
 	template<momo::internal::conceptCompatibleRange<value_type> Range>
 	void insert_range(Range&& values)
 	{
-		for (auto&& ref : values)
-			insert(std::forward<decltype(ref)>(ref));
+		pvInsertRange(std::ranges::begin(values), std::ranges::end(values));
 	}
 
 	iterator emplace()
@@ -763,6 +754,21 @@ private:
 	{
 		return IteratorProxy(mHashMultiMap.AddCrt(
 			std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator)));
+	}
+
+	template<momo::internal::conceptInputIterator Iterator,
+		momo::internal::conceptSentinel<Iterator> Sentinel>
+	void pvInsertRange(Iterator begin, Sentinel end)
+	{
+		if constexpr (momo::internal::conceptMapArgIterator<Iterator, key_type, false>)
+		{
+			mHashMultiMap.Add(std::move(begin), std::move(end));
+		}
+		else
+		{
+			for (Iterator iter = std::move(begin); iter != end; ++iter)
+				insert(*iter);
+		}
 	}
 
 private:
