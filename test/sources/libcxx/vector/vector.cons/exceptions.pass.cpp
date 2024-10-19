@@ -89,9 +89,9 @@ struct Iterator {
   using reference         = int&;
   using pointer           = int*;
 
-  int i_;
+  mutable int i_;
   Iterator(int i = 0) : i_(i) {}
-  int& operator*() {
+  int& operator*() const {
     if (i_ == 1)
       throw 1;
     return i_;
