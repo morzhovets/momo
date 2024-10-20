@@ -105,13 +105,10 @@ namespace momo
 
 namespace internal
 {
-	template<typename Iterator, typename IteratorCategory>
-	concept conceptIterator17 =
-		std::is_base_of_v<IteratorCategory,
-			typename std::iterator_traits<Iterator>::iterator_category>;
-
 	template<typename Iterator>
-	concept conceptRandomIterator17 = conceptIterator17<Iterator, std::random_access_iterator_tag>;
+	concept conceptRandomIterator17 =
+		std::is_base_of_v<std::random_access_iterator_tag,
+			typename std::iterator_traits<Iterator>::iterator_category>;
 
 	template<typename Iterator>
 	concept conceptInputIterator = std::input_iterator<Iterator>;

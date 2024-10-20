@@ -321,7 +321,7 @@ namespace internal
 		}
 	};
 
-	template<conceptIterator17<std::bidirectional_iterator_tag> TBaseIterator,
+	template<std::bidirectional_iterator TBaseIterator,
 		template<typename BaseReference> class TReference>
 	class DerivedBidirectionalIterator
 	{
@@ -398,7 +398,7 @@ namespace internal
 		BaseIterator mBaseIterator;
 	};
 
-	template<conceptIterator17<std::forward_iterator_tag> TBaseIterator,
+	template<std::forward_iterator TBaseIterator,
 		template<typename BaseReference> class TReference>
 	class DerivedForwardIterator
 	{
