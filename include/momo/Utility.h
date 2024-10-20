@@ -245,13 +245,13 @@ namespace internal
 			return ((value + mod - 1) / mod) * mod;
 		}
 
-		template<conceptInputIterator Iterator>
+		template<std::forward_iterator Iterator>
 		static UInt Dist(Iterator begin, Iterator end)
 		{
 			return static_cast<UInt>(std::distance(begin, end));
 		}
 
-		template<conceptInputIterator Iterator>
+		template<std::forward_iterator Iterator>
 		static Iterator Next(Iterator iter, UInt dist)
 		{
 			return std::next(iter, static_cast<ptrdiff_t>(dist));

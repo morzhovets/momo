@@ -180,13 +180,13 @@ public:
 	{
 		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
 		MemManager& thisMemManager = GetMemManager();
-		if constexpr (internal::conceptIterator17<ArgIterator, std::forward_iterator_tag>)
+		if constexpr (std::forward_iterator<ArgIterator>)
 			pvInitCapacity(internal::UIntMath<>::Dist(begin, end));
 		try
 		{
 			for (ArgIterator iter = begin; iter != end; ++iter)
 			{
-				if constexpr (internal::conceptIterator17<ArgIterator, std::forward_iterator_tag>)
+				if constexpr (std::forward_iterator<ArgIterator>)
 					pvAddBackNogrow(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 				else
 					pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
@@ -549,7 +549,7 @@ public:
 	template<internal::conceptInputIterator ArgIterator>
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
-		if constexpr (internal::conceptIterator17<ArgIterator, std::forward_iterator_tag>)
+		if constexpr (std::forward_iterator<ArgIterator>)
 		{
 			size_t count = internal::UIntMath<>::Dist(begin, end);
 			Reserve(mCount + count);
