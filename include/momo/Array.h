@@ -494,18 +494,8 @@ public:
 
 	template<internal::conceptInputIterator ArgIterator>
 	explicit Array(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
-		: mData(std::forward_iterator<ArgIterator> ? SMath::Dist(begin, end) : 0,
-			std::move(memManager))
+		: Array(begin, end, std::move(memManager), nullptr)
 	{
-		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
-		MemManager& thisMemManager = GetMemManager();
-		for (ArgIterator iter = begin; iter != end; ++iter)
-		{
-			if constexpr (std::forward_iterator<ArgIterator>)
-				pvAddBackNogrow(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
-			else
-				pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
-		}
 	}
 
 	Array(std::initializer_list<Item> items)
@@ -919,6 +909,27 @@ private:
 	explicit Array(Data&& data) noexcept
 		: mData(std::move(data))
 	{
+	}
+
+	template<std::forward_iterator ArgIterator>
+	explicit Array(ArgIterator begin, ArgIterator end, MemManager&& memManager, std::nullptr_t)
+		: mData(SMath::Dist(begin, end), std::move(memManager))
+	{
+		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
+		MemManager& thisMemManager = GetMemManager();
+		for (ArgIterator iter = begin; iter != end; ++iter)
+			pvAddBackNogrow(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
+	}
+
+	template<internal::conceptInputIterator ArgIterator>
+	requires (!std::forward_iterator<ArgIterator>)
+	explicit Array(ArgIterator begin, ArgIterator end, MemManager&& memManager, std::nullptr_t)
+		: mData(std::move(memManager))
+	{
+		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
+		MemManager& thisMemManager = GetMemManager();
+		for (ArgIterator iter = begin; iter != end; ++iter)
+			pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 	}
 
 	size_t pvGrowCapacity(size_t minNewCapacity, ArrayGrowCause growCause, bool linear) const
