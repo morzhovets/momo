@@ -773,19 +773,21 @@ public:
 			FastMovableFunctor(std::move(itemCreator)));
 	}
 
-	template<internal::conceptSetArgIterator<Item> ArgIterator>
-	size_t Insert(ArgIterator begin, ArgIterator end)
+	template<internal::conceptSetArgIterator<Item> ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
+	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
-		if (begin == end)
+		if (!(begin != end))
 			return 0;
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
 		size_t initCount = GetCount();
-		auto&& ref0 = *begin;
+		ArgIterator iter = std::move(begin);
+		auto&& ref0 = *iter++;
 		typedef decltype(ref0) ItemArg;
 		Iterator pos = InsertVar(ItemTraits::GetKey(std::as_const(ref0)),
 			std::forward<ItemArg>(ref0)).position;
-		for (ArgIterator iter = std::next(begin); iter != end; ++iter)
+		for (; iter != end; ++iter)
 		{
 			ItemArg&& ref = *iter;
 			const Key& key = ItemTraits::GetKey(std::as_const(ref));

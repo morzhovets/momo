@@ -1002,7 +1002,7 @@ private:
 	}
 #endif // MOMO_USE_UNORDERED_HINT_ITERATORS
 
-	template<momo::internal::conceptInputIterator Iterator,
+	template<std::input_iterator Iterator,
 		momo::internal::conceptSentinel<Iterator> Sentinel>
 	void pvInsertRange(Iterator begin, Sentinel end)
 	{

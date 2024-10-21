@@ -543,20 +543,22 @@ public:
 		return { IteratorProxy(res.position), res.inserted };
 	}
 
-	template<internal::conceptMapArgIterator<Key> ArgIterator>
-	size_t Insert(ArgIterator begin, ArgIterator end)
+	template<internal::conceptMapArgIterator<Key> ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
+	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
-		if (begin == end)
+		if (!(begin != end))
 			return 0;
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
 		size_t initCount = GetCount();
-		auto pair0 = internal::MapArgReferencer<>::GetReferencePair(begin);
+		ArgIterator iter = std::move(begin);
+		auto pair0 = internal::MapArgReferencer<>::GetReferencePair(iter++);
 		typedef decltype(pair0.first) KeyArg;
 		typedef decltype(pair0.second) ValueArg;
 		Iterator pos = InsertVar(std::forward<KeyArg>(pair0.first),
 			std::forward<ValueArg>(pair0.second)).position;
-		for (ArgIterator iter = std::next(begin); iter != end; ++iter)
+		for (; iter != end; ++iter)
 		{
 			auto pair = internal::MapArgReferencer<>::GetReferencePair(iter);
 			const Key& key = pair.first;

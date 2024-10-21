@@ -1429,7 +1429,7 @@ namespace internal
 
 	template<typename MapArgIterator, typename Key,
 		bool allowKeyValue = true>
-	concept conceptMapArgIterator = conceptInputIterator<MapArgIterator> &&
+	concept conceptMapArgIterator = std::input_iterator<MapArgIterator> &&
 		std::is_same_v<Key, std::decay_t<decltype(
 			MapArgReferencer<allowKeyValue>::GetReferencePair(std::declval<MapArgIterator>()).first)>>;
 }

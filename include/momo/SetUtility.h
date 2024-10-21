@@ -347,7 +347,7 @@ namespace internal
 	};
 
 	template<typename SetArgIterator, typename Item>
-	concept conceptSetArgIterator = conceptInputIterator<SetArgIterator> &&
+	concept conceptSetArgIterator = std::input_iterator<SetArgIterator> &&
 		std::is_reference_v<std::iter_reference_t<SetArgIterator>> &&
 		std::is_same_v<Item, std::decay_t<std::iter_reference_t<SetArgIterator>>>;
 }
