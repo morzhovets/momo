@@ -819,7 +819,7 @@ public:
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 			InsertVar(index, std::move(item));
 		else
-			ArrayShifter::InsertNogrow(*this, index, std::make_move_iterator(std::addressof(item)), 1);
+			ArrayShifter::InsertNogrow(*this, index, std::move(item));
 	}
 
 	void Insert(size_t index, const Item& item)
@@ -1042,7 +1042,7 @@ private:
 		size_t newCount = GetCount() + 1;
 		if (newCount > GetCapacity())
 			pvGrow(newCount, ArrayGrowCause::add);
-		ArrayShifter::InsertNogrow(*this, index, std::make_move_iterator(&itemHandler), 1);
+		ArrayShifter::InsertNogrow(*this, index, std::move(*&itemHandler));
 	}
 
 	void pvRemoveBack(size_t count) noexcept

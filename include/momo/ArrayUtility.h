@@ -208,7 +208,7 @@ namespace internal
 
 		template<conceptInputIterator ArgIterator>
 		requires (std::forward_iterator<ArgIterator> ||
-			std::is_same_v<ArgIterator, std::move_iterator<Item*>>)	// vs2019, gcc12
+			std::is_same_v<ArgIterator, std::move_iterator<Item*>>)	// vs2019, gcc10
 		static void InsertNogrow(Array& array, size_t index, ArgIterator begin, size_t count)
 		{
 			size_t initCount = array.GetCount();
@@ -229,7 +229,8 @@ namespace internal
 			{
 				typedef typename ItemTraits::template Creator<
 					std::iter_reference_t<ArgIterator>> IterCreator;
-				ArgIterator iter = UIntMath<>::Next(begin, initCount - index);
+				ArgIterator iter = std::next(begin, static_cast<ptrdiff_t>(initCount - index));
+				//UIntMath<>::Next(begin, initCount - index);	// move_iterator
 				for (size_t i = initCount; i < index + count; ++i, (void)++iter)
 					array.AddBackNogrowCrt(IterCreator(memManager, *iter));
 				iter = begin;
@@ -240,6 +241,11 @@ namespace internal
 					ItemTraits::Assign(memManager, *iter, arrayItem);
 				}
 			}
+		}
+
+		static void InsertNogrow(Array& array, size_t index, Item&& item)
+		{
+			InsertNogrow(array, index, std::make_move_iterator(std::addressof(item)), 1);
 		}
 
 		static void Remove(Array& array, size_t index, size_t count)

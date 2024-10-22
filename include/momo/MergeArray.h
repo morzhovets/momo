@@ -811,7 +811,7 @@ private:
 	{
 		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));
 		Reserve(mCount + 1);
-		ArrayShifter::InsertNogrow(*this, index, std::make_move_iterator(&itemHandler), 1);
+		ArrayShifter::InsertNogrow(*this, index, std::move(*&itemHandler));
 	}
 
 	void pvRemoveBack(size_t count) noexcept
