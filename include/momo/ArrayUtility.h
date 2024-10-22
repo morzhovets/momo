@@ -167,7 +167,7 @@ namespace internal
 		typedef typename Array::Settings Settings;
 
 	public:
-		static void Insert(Array& array, size_t index, size_t count, const Item& item)
+		static void InsertNogrow(Array& array, size_t index, size_t count, const Item& item)
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
@@ -196,7 +196,6 @@ namespace internal
 		}
 
 		template<conceptInputIterator ArgIterator>
-		requires (!std::forward_iterator<ArgIterator>)
 		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
 		{
 			typedef typename ItemTraits::template Creator<
@@ -207,8 +206,10 @@ namespace internal
 				array.InsertCrt(index + count, IterCreator(memManager, *iter));
 		}
 
-		template<std::forward_iterator ArgIterator>
-		static void Insert(Array& array, size_t index, ArgIterator begin, size_t count)
+		template<conceptInputIterator ArgIterator>
+		requires (std::forward_iterator<ArgIterator> ||
+			std::is_same_v<ArgIterator, std::move_iterator<Item*>>)	// vs2019, gcc12
+		static void InsertNogrow(Array& array, size_t index, ArgIterator begin, size_t count)
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);

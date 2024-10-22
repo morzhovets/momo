@@ -819,7 +819,7 @@ public:
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 			InsertVar(index, std::move(item));
 		else
-			ArrayShifter::Insert(*this, index, std::make_move_iterator(std::addressof(item)), 1);
+			ArrayShifter::InsertNogrow(*this, index, std::make_move_iterator(std::addressof(item)), 1);
 	}
 
 	void Insert(size_t index, const Item& item)
@@ -840,11 +840,11 @@ public:
 			ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
 			if (grow)
 				pvGrow(newCount, ArrayGrowCause::add);
-			ArrayShifter::Insert(*this, index, count, *&itemHandler);
+			ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
 		}
 		else
 		{
-			ArrayShifter::Insert(*this, index, count, item);
+			ArrayShifter::InsertNogrow(*this, index, count, item);
 		}
 	}
 
@@ -858,7 +858,7 @@ public:
 			size_t newCount = GetCount() + count;
 			if (newCount > GetCapacity())
 				pvGrow(newCount, ArrayGrowCause::add);
-			ArrayShifter::Insert(*this, index, begin, count);
+			ArrayShifter::InsertNogrow(*this, index, begin, count);
 		}
 		else
 		{
@@ -1042,7 +1042,7 @@ private:
 		size_t newCount = GetCount() + 1;
 		if (newCount > GetCapacity())
 			pvGrow(newCount, ArrayGrowCause::add);
-		ArrayShifter::Insert(*this, index, std::make_move_iterator(&itemHandler), 1);
+		ArrayShifter::InsertNogrow(*this, index, std::make_move_iterator(&itemHandler), 1);
 	}
 
 	void pvRemoveBack(size_t count) noexcept

@@ -543,7 +543,7 @@ public:
 		MemManager& memManager = GetMemManager();
 		ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
 		Reserve(mCount + count);
-		ArrayShifter::Insert(*this, index, count, *&itemHandler);
+		ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
 	}
 
 	template<internal::conceptInputIterator ArgIterator>
@@ -553,7 +553,7 @@ public:
 		{
 			size_t count = internal::UIntMath<>::Dist(begin, end);
 			Reserve(mCount + count);
-			ArrayShifter::Insert(*this, index, begin, count);
+			ArrayShifter::InsertNogrow(*this, index, begin, count);
 		}
 		else
 		{
@@ -811,7 +811,7 @@ private:
 	{
 		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));
 		Reserve(mCount + 1);
-		ArrayShifter::Insert(*this, index, std::make_move_iterator(&itemHandler), 1);
+		ArrayShifter::InsertNogrow(*this, index, std::make_move_iterator(&itemHandler), 1);
 	}
 
 	void pvRemoveBack(size_t count) noexcept
