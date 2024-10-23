@@ -116,14 +116,14 @@ public:
 	{
 	}
 
-	template<momo::internal::conceptInputIterator Iterator>
+	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	set(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
 		: set(alloc)
 	{
 		insert(first, last);
 	}
 
-	template<momo::internal::conceptInputIterator Iterator>
+	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	set(Iterator first, Iterator last, const key_compare& lessFunc,
 		const allocator_type& alloc = allocator_type())
 		: set(lessFunc, alloc)
@@ -447,7 +447,7 @@ public:
 		return mTreeSet.Add(hint, std::move(NodeTypeProxy::GetExtractedItem(node)));
 	}
 
-	template<momo::internal::conceptInputIterator Iterator>
+	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	void insert(Iterator first, Iterator last)
 	{
 		if constexpr (momo::internal::conceptSetArgIterator<Iterator, value_type>)

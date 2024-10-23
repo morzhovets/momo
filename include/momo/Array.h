@@ -492,7 +492,7 @@ public:
 			AddBackNogrow(item);
 	}
 
-	template<internal::conceptInputIterator ArgIterator>
+	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
 	explicit Array(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
 		: Array(begin, end, std::move(memManager), nullptr)
 	{
@@ -848,7 +848,7 @@ public:
 		}
 	}
 
-	template<internal::conceptInputIterator ArgIterator>
+	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
 		MOMO_ASSERT(begin == end || !pvIsInside(*begin));	//?
@@ -921,7 +921,7 @@ private:
 			pvAddBackNogrow(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 	}
 
-	template<internal::conceptInputIterator ArgIterator>
+	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
 	requires (!std::forward_iterator<ArgIterator>)
 	explicit Array(ArgIterator begin, ArgIterator end, MemManager&& memManager, std::nullptr_t)
 		: mData(std::move(memManager))

@@ -86,7 +86,7 @@ public:
 	{
 	}
 
-	template<momo::internal::conceptInputIterator Iterator>
+	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	vector(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
 		: mArray(first, last, MemManager(alloc))
 	{
@@ -373,7 +373,7 @@ public:
 		return SMath::Next(begin(), index);
 	}
 
-	template<momo::internal::conceptInputIterator Iterator>
+	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	iterator insert(const_iterator where, Iterator first, Iterator last)
 	{
 		size_t index = SMath::Dist(cbegin(), where);
@@ -439,7 +439,7 @@ public:
 		mArray = Array(count, value, MemManager(get_allocator()));
 	}
 
-	template<momo::internal::conceptInputIterator Iterator>
+	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	void assign(Iterator first, Iterator last)
 	{
 		mArray = Array(first, last, MemManager(get_allocator()));

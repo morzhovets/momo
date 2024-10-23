@@ -100,7 +100,7 @@ namespace internal
 	};
 
 	template<typename DataRowIterator, typename RowReference>
-	concept conceptDataRowIterator = conceptInputIterator<DataRowIterator> &&
+	concept conceptDataRowIterator = conceptIterator17<DataRowIterator, std::input_iterator_tag> &&
 		requires (DataRowIterator iter) { { *iter } -> std::convertible_to<RowReference>; };
 
 	template<typename TRawIterator, typename TRowReference>

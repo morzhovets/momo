@@ -134,14 +134,14 @@ namespace internal
 		{
 		}
 
-		template<momo::internal::conceptInputIterator Iterator>
+		template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 		map_base(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
 			: map_base(alloc)
 		{
 			insert(first, last);
 		}
 
-		template<momo::internal::conceptInputIterator Iterator>
+		template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 		map_base(Iterator first, Iterator last, const key_compare& lessFunc,
 			const allocator_type& alloc = allocator_type())
 			: map_base(lessFunc, alloc)
@@ -544,7 +544,7 @@ namespace internal
 				std::move(NodeTypeProxy::GetExtractedPair(node))));
 		}
 
-		template<momo::internal::conceptInputIterator Iterator>
+		template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 		void insert(Iterator first, Iterator last)
 		{
 			if constexpr (momo::internal::conceptMapArgIterator<Iterator, key_type, false>)
@@ -1099,7 +1099,7 @@ public:
 		return BaseMap::emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
-	template<momo::internal::conceptInputIterator Iterator>
+	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	void insert(Iterator first, Iterator last)
 	{
 		BaseMap::insert(first, last);

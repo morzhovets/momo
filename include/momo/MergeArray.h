@@ -174,7 +174,7 @@ public:
 		}
 	}
 
-	template<internal::conceptInputIterator ArgIterator>
+	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
 	explicit MergeArray(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
 		: MergeArray(std::move(memManager))
 	{
@@ -546,7 +546,7 @@ public:
 		ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
 	}
 
-	template<internal::conceptInputIterator ArgIterator>
+	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
 		if constexpr (std::forward_iterator<ArgIterator>)
