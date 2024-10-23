@@ -553,12 +553,12 @@ public:
 		MemManager& memManager = GetMemManager();
 		size_t initCount = GetCount();
 		ArgIterator iter = std::move(begin);
-		auto pair0 = internal::MapArgReferencer<>::GetReferencePair(iter++);
+		auto pair0 = internal::MapArgReferencer<>::GetReferencePair(iter);
 		typedef decltype(pair0.first) KeyArg;
 		typedef decltype(pair0.second) ValueArg;
 		Iterator pos = InsertVar(std::forward<KeyArg>(pair0.first),
 			std::forward<ValueArg>(pair0.second)).position;
-		for (; iter != end; ++iter)
+		for (++iter; iter != end; ++iter)
 		{
 			auto pair = internal::MapArgReferencer<>::GetReferencePair(iter);
 			const Key& key = pair.first;

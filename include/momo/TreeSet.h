@@ -783,11 +783,11 @@ public:
 		MemManager& memManager = GetMemManager();
 		size_t initCount = GetCount();
 		ArgIterator iter = std::move(begin);
-		auto&& ref0 = *iter++;
+		auto&& ref0 = *iter;
 		typedef decltype(ref0) ItemArg;
 		Iterator pos = InsertVar(ItemTraits::GetKey(std::as_const(ref0)),
 			std::forward<ItemArg>(ref0)).position;
-		for (; iter != end; ++iter)
+		for (++iter; iter != end; ++iter)
 		{
 			ItemArg&& ref = *iter;
 			const Key& key = ItemTraits::GetKey(std::as_const(ref));
