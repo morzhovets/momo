@@ -56,6 +56,9 @@
 # include "support/insert_range_maps_sets.h"
 # include "support/from_range_associative_containers.h"
 # include "support/from_range_unordered_containers.h"
+#else
+namespace libcxx_from_range_assoc {}
+namespace libcxx_from_range_unord {}
 #endif
 
 #define TEST_LIBCPP_ASSERT_FAILURE(expr, mess) try { (void)(expr); assert(false); } catch (...) {}
