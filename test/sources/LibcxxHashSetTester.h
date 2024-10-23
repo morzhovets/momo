@@ -19,6 +19,8 @@
 namespace
 {
 
+using namespace libcxx_from_range_unord;
+
 class LibcxxHashSetSettings : public momo::HashSetSettings
 {
 public:

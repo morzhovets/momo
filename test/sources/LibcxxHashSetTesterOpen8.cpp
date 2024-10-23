@@ -28,6 +28,8 @@
 namespace
 {
 
+using namespace libcxx_from_range_unord;
+
 namespace libcxx_test_hash_set
 {
 

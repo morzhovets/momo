@@ -21,6 +21,8 @@
 namespace
 {
 
+using namespace libcxx_from_range_unord;
+
 class LibcxxHashMultiMapSettings : public momo::HashMultiMapSettings
 {
 public:

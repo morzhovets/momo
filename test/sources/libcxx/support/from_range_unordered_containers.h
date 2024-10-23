@@ -44,6 +44,8 @@
 //   unordered-container(from_range_t, R&& rg, size_type n, const hasher& hf, const allocator_type& a)
 //     : unordered-container(from_range, std::forward<R>(rg), n, hf, key_equal(), a) { }       // C++23
 
+namespace libcxx_from_range_unord {
+
 template <class Container, class Range>
 concept HasFromRangeCtr = requires (Range&& range) {
   // (from_range, range)
@@ -448,5 +450,7 @@ void test_set_exception_safety_throwing_allocator() {
   }
 #endif
 }
+
+} // namespace libcxx_from_range_unord
 
 #endif // SUPPORT_FROM_RANGE_UNORDERED_CONTAINERS_H
