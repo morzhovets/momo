@@ -142,6 +142,25 @@ public:
 	{
 	}
 
+#if defined(__cpp_lib_containers_ranges)
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	set(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
+		: set(alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	set(std::from_range_t, Range&& values, const key_compare& lessFunc,
+		const allocator_type& alloc = allocator_type())
+		: set(lessFunc, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+#endif // __cpp_lib_containers_ranges
+
 	set(set&& right) noexcept
 		: mTreeSet(std::move(right.mTreeSet))
 	{
@@ -450,20 +469,19 @@ public:
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		if constexpr (momo::internal::conceptSetArgIterator<Iterator, value_type>)
-		{
-			mTreeSet.Insert(first, last);
-		}
-		else
-		{
-			for (Iterator iter = first; iter != last; ++iter)
-				emplace(*iter);
-		}
+		pvInsertRange(first, last);
 	}
 
 	void insert(std::initializer_list<value_type> values)
 	{
 		mTreeSet.Insert(values);
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	void insert_range(Range&& values)
+	{
+		pvInsertRange(std::ranges::begin(values), std::ranges::end(values));
 	}
 
 	template<typename... ValueArgs>
@@ -609,6 +627,21 @@ private:
 		return true;
 	}
 
+	template<std::input_iterator Iterator,
+		momo::internal::conceptSentinel<Iterator> Sentinel>
+	void pvInsertRange(Iterator begin, Sentinel end)
+	{
+		if constexpr (momo::internal::conceptSetArgIterator<Iterator, value_type>)
+		{
+			mTreeSet.Insert(std::move(begin), std::move(end));
+		}
+		else
+		{
+			for (Iterator iter = std::move(begin); iter != end; ++iter)
+				emplace(*iter);
+		}
+	}
+
 private:
 	TreeSet mTreeSet;
 };
@@ -711,9 +744,30 @@ requires momo::internal::conceptLessFunc<LessFunc, Key> && \
 set(std::initializer_list<Key>, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>;
 
+#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set) \
+template<std::ranges::input_range Range, \
+	typename Key = std::ranges::range_value_t<Range>, \
+	typename Allocator = std::allocator<Key>> \
+requires momo::internal::conceptAllocator<Allocator> \
+set(std::from_range_t, Range&&, Allocator = Allocator()) \
+	-> set<Key, std::less<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename LessFunc, \
+	typename Key = std::ranges::range_value_t<Range>, \
+	typename Allocator = std::allocator<Key>> \
+requires momo::internal::conceptLessFunc<LessFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
+set(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
+	-> set<Key, LessFunc, Allocator>;
+
 MOMO_DECLARE_DEDUCTION_GUIDES(set)
 MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
 
+#if defined(__cpp_lib_containers_ranges)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multiset)
+#endif
+
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
+#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace momo::stdish
