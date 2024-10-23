@@ -116,6 +116,12 @@ LIBCXX_TEST_BEGIN(insert_node_type_hint)
 #include "set/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(insert_range)
+#include "set/insert_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(insert_rv)
 #include "set/insert_rv.pass.cpp"
 LIBCXX_TEST_END
@@ -203,6 +209,12 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
 #include "set/set.cons/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(cons_from_range)
+#include "set/set.cons/from_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "set/set.cons/initializer_list.pass.cpp"
