@@ -18,6 +18,11 @@
 
 #include "../../include/momo/stdish/set.h"
 
+namespace
+{
+
+using namespace libcxx_from_range_assoc;
+
 namespace libcxx_test_tree_set
 {
 
@@ -41,5 +46,7 @@ namespace std
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace libcxx_test_tree_set
+
+} // namespace
 
 #endif // TEST_LIBCXX_TREE_SET

@@ -20,6 +20,11 @@
 
 #include "../../include/momo/stdish/vector.h"
 
+namespace
+{
+
+using namespace libcxx_from_range_assoc;
+
 namespace libcxx_test_tree_map
 {
 
@@ -67,5 +72,7 @@ namespace std
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace libcxx_test_tree_map_vp
+
+} // namespace
 
 #endif // TEST_LIBCXX_TREE_MAP

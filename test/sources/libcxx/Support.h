@@ -54,6 +54,7 @@
 
 #if TEST_STD_VER >= 23
 # include "support/insert_range_maps_sets.h"
+# include "support/from_range_associative_containers.h"
 # include "support/from_range_unordered_containers.h"
 #endif
 
