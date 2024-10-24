@@ -108,6 +108,12 @@ LIBCXX_TEST_BEGIN(insert_node_type_hint)
 #include "multiset/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(insert_range)
+#include "multiset/insert_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(insert_rv)
 #include "multiset/insert_rv.pass.cpp"
 LIBCXX_TEST_END
@@ -207,6 +213,12 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
 #include "multiset/multiset.cons/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(cons_from_range)
+#include "multiset/multiset.cons/from_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "multiset/multiset.cons/initializer_list.pass.cpp"
