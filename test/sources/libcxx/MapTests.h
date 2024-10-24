@@ -126,6 +126,12 @@ LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
 #include "map/map.cons/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(cons_from_range)
+#include "map/map.cons/from_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "map/map.cons/initializer_list.pass.cpp"
 LIBCXX_TEST_END
@@ -241,6 +247,12 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
 #include "map/map.modifiers/insert_or_assign.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(modifiers_insert_range)
+#include "map/map.modifiers/insert_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_insert_rv)
 #include "map/map.modifiers/insert_rv.pass.cpp"
