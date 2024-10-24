@@ -16,15 +16,14 @@
 
 // map();
 
-struct X
-{
-    std::map<int, X> m;
-    std::map<int, X>::iterator i;
-    std::map<int, X>::const_iterator ci;
+struct X {
+  std::map<int, X> m;
+  std::map<int, X>::iterator i;
+  std::map<int, X>::const_iterator ci;
 #if TEST_STD_VER <= 17
-    // These reverse_iterator specializations require X to be complete in C++20.
-    std::map<int, X>::reverse_iterator ri;
-    std::map<int, X>::const_reverse_iterator cri;
+  // These reverse_iterator specializations require X to be complete in C++20.
+  std::map<int, X>::reverse_iterator ri;
+  std::map<int, X>::const_reverse_iterator cri;
 #endif // TEST_STD_VER <= 17
 };
 

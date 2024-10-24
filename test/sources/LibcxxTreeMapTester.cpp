@@ -41,6 +41,9 @@ namespace std
 			momo::MemManagerStd<TAllocator>,
 			momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, false>,
 			momo::TreeMapSettings>>;
+
+	template<typename TKey>
+	using vector = momo::stdish::vector<TKey>;
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_map"
@@ -65,6 +68,9 @@ namespace std
 			momo::MemManagerStd<TAllocator>,
 			momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
 			momo::TreeMapSettings>>;
+
+	template<typename TKey>
+	using vector = momo::stdish::vector<TKey>;
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_map_vp"
