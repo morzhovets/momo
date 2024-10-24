@@ -6,11 +6,21 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/LibcxxHashMapTester.h
+  test/sources/LibcxxHashMapVPTesterLimP4.cpp
 
 \**********************************************************/
 
-#pragma once
+#include "pch.h"
+
+#ifdef TEST_LIBCXX_HASH_MAP
+
+#include "../../include/momo/details/HashBucketLimP4.h"
+
+//#define LIBCXX_TEST_BUCKET momo::HashBucketLimP4<>
+//#define LIBCXX_TEST_BUCKET_NAME "limp4"
+#define LIBCXX_TEST_DEFAULT_BUCKET
+
+//#include "LibcxxHashMapTester.h"
 
 #include "LibcxxTester.h"
 
@@ -27,7 +37,7 @@ public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 
-namespace libcxx_test_hash_map
+namespace libcxx_test_hash_map_vp
 {
 
 namespace std
@@ -39,18 +49,20 @@ namespace std
 		typename TEqualFunc = std::equal_to<TKey>,
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 	using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-		momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc, LIBCXX_TEST_BUCKET>,
+		momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc>,
 			momo::MemManagerStd<TAllocator>,
-			momo::HashMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, false>,
+			momo::HashMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
 			LibcxxHashMapSettings>>;
 }
 
 #define LIBCXX_TEST_FAILURE
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_" LIBCXX_TEST_BUCKET_NAME
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_vp_limp4"
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_FAILURE
 
-} // namespace libcxx_test_hash_map
+} // namespace libcxx_test_hash_map_vp
 
 } // namespace
+
+#endif // TEST_LIBCXX_HASH_MAP

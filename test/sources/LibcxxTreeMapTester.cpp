@@ -52,33 +52,6 @@ namespace std
 
 } // namespace libcxx_test_tree_map
 
-namespace libcxx_test_tree_map_vp
-{
-
-namespace std
-{
-	using namespace ::std;
-
-	template<typename TKey, typename TMapped,
-		typename TLessFunc = std::less<TKey>,
-		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-	using map = momo::stdish::map<TKey, TMapped, TLessFunc, TAllocator,
-		momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, false,
-			momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>,
-			momo::MemManagerStd<TAllocator>,
-			momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
-			momo::TreeMapSettings>>;
-
-	template<typename TKey>
-	using vector = momo::stdish::vector<TKey>;
-}
-
-#define LIBCXX_TEST_PREFIX "libcxx_test_tree_map_vp"
-#include "libcxx/MapTests.h"
-#undef LIBCXX_TEST_PREFIX
-
-} // namespace libcxx_test_tree_map_vp
-
 } // namespace
 
 #endif // TEST_LIBCXX_TREE_MAP

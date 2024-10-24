@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/LibcxxTreeMultiMapTester.cpp
+  test/sources/LibcxxTreeMapVPTester.cpp
 
 \**********************************************************/
 
@@ -18,12 +18,14 @@
 
 #include "../../include/momo/stdish/map.h"
 
+#include "../../include/momo/stdish/vector.h"
+
 namespace
 {
 
 using namespace libcxx_from_range_assoc;
 
-namespace libcxx_test_tree_multimap
+namespace libcxx_test_tree_map_vp
 {
 
 namespace std
@@ -33,19 +35,22 @@ namespace std
 	template<typename TKey, typename TMapped,
 		typename TLessFunc = std::less<TKey>,
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-	using multimap = momo::stdish::multimap<TKey, TMapped, TLessFunc, TAllocator,
-		momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, true,
-			momo::TreeNode<4, 2, momo::MemPoolParams<1>, false>>,
+	using map = momo::stdish::map<TKey, TMapped, TLessFunc, TAllocator,
+		momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, false,
+			momo::TreeNode<32, 4, momo::MemPoolParams<>, false>>,
 			momo::MemManagerStd<TAllocator>,
-			momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, false>,
+			momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
 			momo::TreeMapSettings>>;
+
+	template<typename TKey>
+	using vector = momo::stdish::vector<TKey>;
 }
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap"
-#include "libcxx/MultiMapTests.h"
+#define LIBCXX_TEST_PREFIX "libcxx_test_tree_map_vp"
+#include "libcxx/MapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace libcxx_test_tree_multimap
+} // namespace libcxx_test_tree_map_vp
 
 } // namespace
 
