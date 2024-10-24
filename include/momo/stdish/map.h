@@ -161,6 +161,25 @@ namespace internal
 		{
 		}
 
+#if defined(__cpp_lib_containers_ranges)
+		template<std::ranges::input_range Range>
+		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+		map_base(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
+			: map_base(alloc)
+		{
+			insert_range(std::forward<Range>(values));
+		}
+
+		template<std::ranges::input_range Range>
+		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+		map_base(std::from_range_t, Range&& values, const key_compare& lessFunc,
+			const allocator_type& alloc = allocator_type())
+			: map_base(lessFunc, alloc)
+		{
+			insert_range(std::forward<Range>(values));
+		}
+#endif // __cpp_lib_containers_ranges
+
 		map_base(map_base&& right) noexcept
 			: mTreeMap(std::move(right.mTreeMap))
 		{
@@ -547,20 +566,19 @@ namespace internal
 		template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 		void insert(Iterator first, Iterator last)
 		{
-			if constexpr (momo::internal::conceptMapArgIterator<Iterator, key_type, false>)
-			{
-				mTreeMap.Insert(first, last);
-			}
-			else
-			{
-				for (Iterator iter = first; iter != last; ++iter)
-					insert(*iter);
-			}
+			pvInsertRange(first, last);
 		}
 
 		void insert(std::initializer_list<value_type> values)
 		{
 			mTreeMap.Insert(values.begin(), values.end());
+		}
+
+		template<std::ranges::input_range Range>
+		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+		void insert_range(Range&& values)
+		{
+			pvInsertRange(std::ranges::begin(values), std::ranges::end(values));
 		}
 
 		std::pair<iterator, bool> emplace()
@@ -808,6 +826,21 @@ namespace internal
 			TreeMapIterator resIter = mTreeMap.AddCrt(IteratorProxy::GetBaseIterator(res.first),
 				std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator));
 			return { IteratorProxy(resIter), true };
+		}
+
+		template<std::input_iterator Iterator,
+			momo::internal::conceptSentinel<Iterator> Sentinel>
+		void pvInsertRange(Iterator begin, Sentinel end)
+		{
+			if constexpr (momo::internal::conceptMapArgIterator<Iterator, key_type, false>)
+			{
+				mTreeMap.Insert(std::move(begin), std::move(end));
+			}
+			else
+			{
+				for (Iterator iter = std::move(begin); iter != end; ++iter)
+					insert(*iter);
+			}
 		}
 
 	private:
@@ -1148,9 +1181,32 @@ requires momo::internal::conceptLessFunc<LessFunc, Key> && \
 map(std::initializer_list<std::pair<Key, Mapped>>, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>;
 
+#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map) \
+template<std::ranges::input_range Range, \
+	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
+	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
+requires momo::internal::conceptAllocator<Allocator> \
+map(std::from_range_t, Range&&, Allocator = Allocator()) \
+	-> map<Key, Mapped, std::less<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename LessFunc, \
+	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
+	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
+requires momo::internal::conceptLessFunc<LessFunc, Key> && \
+	momo::internal::conceptAllocator<Allocator> \
+map(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
+	-> map<Key, Mapped, LessFunc, Allocator>;
+
 MOMO_DECLARE_DEDUCTION_GUIDES(map)
 MOMO_DECLARE_DEDUCTION_GUIDES(multimap)
 
+#if defined(__cpp_lib_containers_ranges)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multimap)
+#endif
+
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
+#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace momo::stdish
