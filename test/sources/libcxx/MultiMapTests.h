@@ -114,7 +114,7 @@ LIBCXX_TEST_END
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(cons_default_recursive)
-#include "multimap/multimap.cons/default_recursive.pass.cpp"
+#include "multimap/multimap.cons/default_recursive.compile.pass.cpp"
 LIBCXX_TEST_END
 #endif
 
