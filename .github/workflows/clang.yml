@@ -38,22 +38,27 @@ jobs:
 #          flags: '-std=c++23 -Werror -msse2'
 #          ubuntu_ver: '24.04'
 
-        - clang_ver: '18'
+#        - clang_ver: '18'
+#          build_type: 'Release'
+#          flags: '-std=c++23 -Werror -msse2'
+#          ubuntu_ver: '24.04'
+
+        - clang_ver: '19'
           build_type: 'Release'
           flags: '-std=c++23 -Werror -msse2'
           ubuntu_ver: '24.04'
 
-        - clang_ver: '18'
+        - clang_ver: '19'
           build_type: 'Release'
           flags: '-std=c++23 -Werror -fsized-deallocation -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '24.04'
 
-        - clang_ver: '18'
+        - clang_ver: '19'
           build_type: 'Debug'
           flags: '-std=c++23 -Werror -fsanitize=address,undefined -msse2'
           ubuntu_ver: '24.04'
 
-        - clang_ver: '18'
+        - clang_ver: '19'
           build_type: 'Debug'
           flags: '-std=c++23 -Werror -fsanitize=address,undefined -fsized-deallocation -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '24.04'
