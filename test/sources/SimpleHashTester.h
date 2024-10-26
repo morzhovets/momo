@@ -223,7 +223,7 @@ public:
 		HashMultiMap mmap2;
 		mmap2 = mmap;
 		//mmap2.Shrink();
-		assert(mmap.GetKeyCount() == mmap2.GetKeyCount() && mmap.GetValueCount() == mmap2.GetValueCount());
+		assert(mmap.GetKeyCount() == mmap2.GetKeyCount() && mmap.GetCount() == mmap2.GetCount());
 	}
 
 	template<typename HashBucket, size_t size, size_t alignment>

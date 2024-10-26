@@ -884,7 +884,7 @@ public:
 		return mHashMap.GetMemManager();
 	}
 
-	size_t GetValueCount() const noexcept
+	size_t GetCount() const noexcept
 	{
 		return mValueCount;
 	}
