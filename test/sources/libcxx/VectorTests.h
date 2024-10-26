@@ -280,6 +280,10 @@ LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "vector/vector.erasure/erase_if.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_assert_push_back_invalidation)
+#include "vector/vector.modifiers/assert.push_back.invalidation.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_clear)
 #include "vector/vector.modifiers/clear.pass.cpp"
 LIBCXX_TEST_END
