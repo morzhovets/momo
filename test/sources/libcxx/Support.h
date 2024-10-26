@@ -53,10 +53,14 @@
 #include "support/min_allocator.h"
 
 #if TEST_STD_VER >= 23
+# include "support/insert_range_sequence_containers.h"
+# include "support/from_range_sequence_containers.h"
 # include "support/insert_range_maps_sets.h"
 # include "support/from_range_associative_containers.h"
 # include "support/from_range_unordered_containers.h"
 #else
+namespace libcxx_insert_range_seq {}
+namespace libcxx_from_range_seq {}
 namespace libcxx_insert_range_maps_sets {}
 namespace libcxx_from_range_assoc {}
 namespace libcxx_from_range_unord {}
