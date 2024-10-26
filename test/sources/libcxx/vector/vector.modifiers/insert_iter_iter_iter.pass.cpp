@@ -17,9 +17,7 @@
 
 namespace adl {
 struct S {};
-#if !defined(TEST_CLANG)  // clang 18 release
-void make_move_iterator(S*) {}
-#endif
+[[maybe_unused]] void make_move_iterator(S*) {}
 }
 
 TEST_CONSTEXPR_CXX20 bool tests()
