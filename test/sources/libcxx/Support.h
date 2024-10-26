@@ -57,6 +57,7 @@
 # include "support/from_range_associative_containers.h"
 # include "support/from_range_unordered_containers.h"
 #else
+namespace libcxx_insert_range_maps_sets {}
 namespace libcxx_from_range_assoc {}
 namespace libcxx_from_range_unord {}
 #endif

@@ -23,6 +23,7 @@
 namespace
 {
 
+using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_assoc;
 
 namespace libcxx_test_tree_map

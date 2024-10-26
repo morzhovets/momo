@@ -19,16 +19,17 @@
 namespace
 {
 
+using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_unord;
+
+namespace libcxx_test_hash_map
+{
 
 class LibcxxHashMapSettings : public momo::HashMapSettings
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
-
-namespace libcxx_test_hash_map
-{
 
 namespace std
 {

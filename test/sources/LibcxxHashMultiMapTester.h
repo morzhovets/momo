@@ -21,16 +21,17 @@
 namespace
 {
 
+using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_unord;
+
+namespace libcxx_test_hash_multimap
+{
 
 class LibcxxHashMultiMapSettings : public momo::HashMultiMapSettings
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
-
-namespace libcxx_test_hash_multimap
-{
 
 namespace std
 {

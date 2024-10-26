@@ -33,6 +33,8 @@
 #include "test_macros.h"
 #include "type_algorithms.h"
 
+namespace libcxx_insert_range_maps_sets {
+
 template <class Container, class Range>
 concept HasInsertRange = requires (Container& c, Range&& range) {
   c.insert_range(range);
@@ -414,5 +416,7 @@ void test_unord_map_insert_range_exception_safety_throwing_allocator() {
   }
 #endif
 }
+
+} // namespace libcxx_insert_range_maps_sets
 
 #endif // SUPPORT_INSERT_RANGE_MAPS_SETS_H
