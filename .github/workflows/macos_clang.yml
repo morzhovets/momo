@@ -8,7 +8,7 @@ jobs:
       matrix:
         include:
 
-        - clang_ver: '18'
+        - clang_ver: '19'
           build_type: 'Release'
           flags: '-std=c++23 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
           path_prefix: '/usr/local'
@@ -27,11 +27,11 @@ jobs:
 #          path_prefix: '/opt/homebrew'
 #          macos_ver: '14'
 
-        - clang_ver: '14'
-          build_type: 'Release'
-          flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '14'
+#        - clang_ver: '14'
+#          build_type: 'Release'
+#          flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES'
+#          path_prefix: '/opt/homebrew'
+#          macos_ver: '14'
 
         - clang_ver: '15'
           build_type: 'Release'
@@ -57,47 +57,53 @@ jobs:
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-        - clang_ver: '18'
+        - clang_ver: '19'
+          build_type: 'Release'
+          flags: '-std=c++23 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - clang_ver: '19'
           build_type: 'Release'
           flags: '-std=c++23 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-        - clang_ver: '18'
+        - clang_ver: '19'
           build_type: 'Debug'
           flags: '-std=c++23 -Werror -fsanitize=address,undefined -DLIBCPP_TEST_DEDUCTION_GUIDES'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-        - clang_ver: '18'
+        - clang_ver: '19'
           build_type: 'Debug'
           flags: '-std=c++23 -Werror -fsanitize=address,undefined -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-#        - clang_ver: '18'
-#          build_type: 'Release'
-#          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
-#          path_prefix: '/opt/homebrew'
-#          macos_ver: '14'
-#
-#        - clang_ver: '18'
-#          build_type: 'Release'
-#          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-#          path_prefix: '/opt/homebrew'
-#          macos_ver: '14'
-#
-#        - clang_ver: '18'
-#          build_type: 'Debug'
-#          flags: '-std=c++23 -Werror -fsanitize=address,undefined -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
-#          path_prefix: '/opt/homebrew'
-#          macos_ver: '14'
-#
-#        - clang_ver: '18'
-#          build_type: 'Debug'
-#          flags: '-std=c++23 -Werror -fsanitize=address,undefined -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-#          path_prefix: '/opt/homebrew'
-#          macos_ver: '14'
+        - clang_ver: '19'
+          build_type: 'Release'
+          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - clang_ver: '19'
+          build_type: 'Release'
+          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - clang_ver: '19'
+          build_type: 'Debug'
+          flags: '-std=c++23 -Werror -fsanitize=address,undefined -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - clang_ver: '19'
+          build_type: 'Debug'
+          flags: '-std=c++23 -Werror -fsanitize=address,undefined -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
 
     runs-on: macos-${{ matrix.macos_ver }}
 
