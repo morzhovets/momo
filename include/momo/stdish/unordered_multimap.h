@@ -374,7 +374,7 @@ public:
 
 	[[nodiscard]] bool empty() const noexcept
 	{
-		return size() == 0;
+		return mHashMultiMap.IsEmpty();
 	}
 
 	void clear() noexcept

@@ -889,6 +889,11 @@ public:
 		return mValueCount;
 	}
 
+	bool IsEmpty() const noexcept
+	{
+		return mValueCount == 0;
+	}
+
 	void Clear() noexcept
 	{
 		if (!mValueCrew.IsNull())
