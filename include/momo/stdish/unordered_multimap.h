@@ -337,12 +337,12 @@ public:
 
 	size_type size() const noexcept
 	{
-		return mHashMultiMap.GetValueCount();
+		return mHashMultiMap.GetCount();
 	}
 
 	MOMO_NODISCARD bool empty() const noexcept
 	{
-		return size() == 0;
+		return mHashMultiMap.IsEmpty();
 	}
 
 	void clear() noexcept
@@ -623,7 +623,7 @@ public:
 	{
 		if (mHashMultiMap.GetKeyCount() != right.mHashMultiMap.GetKeyCount())
 			return false;
-		if (mHashMultiMap.GetValueCount() != right.mHashMultiMap.GetValueCount())
+		if (mHashMultiMap.GetCount() != right.mHashMultiMap.GetCount())
 			return false;
 		for (typename HashMultiMap::ConstKeyIterator::Reference ref : mHashMultiMap.GetKeyBounds())
 		{

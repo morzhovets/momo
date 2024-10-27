@@ -854,9 +854,19 @@ public:
 		return mHashMap.GetMemManager();
 	}
 
-	size_t GetValueCount() const noexcept
+	size_t GetValueCount() const noexcept	// deprecated?
 	{
 		return mValueCount;
+	}
+
+	size_t GetCount() const noexcept
+	{
+		return mValueCount;
+	}
+
+	bool IsEmpty() const noexcept
+	{
+		return mValueCount == 0;
 	}
 
 	void Clear() noexcept
