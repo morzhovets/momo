@@ -127,186 +127,186 @@ TestCase<T> constexpr EmptyContainer_EmptyRange {
 };
 // Note: specializations for `bool` still use `vector<int>` for inputs. This is to avoid dealing with `vector<bool>` and
 // its iterators over proxy types.
-template <> constexpr TestCase<int> EmptyContainer_EmptyRange<bool> {
+template <> inline constexpr TestCase<int> EmptyContainer_EmptyRange<bool> {
   .initial = {}, .index = 0, .input = {}, .expected = {}
 };
 
 template <class T> constexpr TestCase<T> EmptyContainer_OneElementRange;
-template <> constexpr TestCase<int> EmptyContainer_OneElementRange<int> {
+template <> inline constexpr TestCase<int> EmptyContainer_OneElementRange<int> {
   .initial = {}, .index = 0, .input = {5}, .expected = {5}
 };
-template <> constexpr TestCase<char> EmptyContainer_OneElementRange<char> {
+template <> inline constexpr TestCase<char> EmptyContainer_OneElementRange<char> {
   .initial = {}, .index = 0, .input = "a", .expected = "a"
 };
-template <> constexpr TestCase<int> EmptyContainer_OneElementRange<bool> {
+template <> inline constexpr TestCase<int> EmptyContainer_OneElementRange<bool> {
   .initial = {}, .index = 0, .input = {true}, .expected = {true}
 };
 
 template <class T> constexpr TestCase<T> EmptyContainer_MidRange;
-template <> constexpr TestCase<int> EmptyContainer_MidRange<int> {
+template <> inline constexpr TestCase<int> EmptyContainer_MidRange<int> {
   .initial = {}, .index = 0, .input = {5, 3, 1, 7, 9}, .expected = {5, 3, 1, 7, 9}
 };
-template <> constexpr TestCase<char> EmptyContainer_MidRange<char> {
+template <> inline constexpr TestCase<char> EmptyContainer_MidRange<char> {
   .initial = {}, .index = 0, .input = "aeiou", .expected = "aeiou"
 };
-template <> constexpr TestCase<int> EmptyContainer_MidRange<bool> {
+template <> inline constexpr TestCase<int> EmptyContainer_MidRange<bool> {
   .initial = {}, .index = 0, .input = {1, 1, 0, 1, 1}, .expected = {1, 1, 0, 1, 1}
 };
 
 // One-element container.
 
 template <class T> constexpr TestCase<T> OneElementContainer_Begin_EmptyRange;
-template <> constexpr TestCase<int> OneElementContainer_Begin_EmptyRange<int> {
+template <> inline constexpr TestCase<int> OneElementContainer_Begin_EmptyRange<int> {
   .initial = {3}, .index = 0, .input = {}, .expected = {3}
 };
-template <> constexpr TestCase<char> OneElementContainer_Begin_EmptyRange<char> {
+template <> inline constexpr TestCase<char> OneElementContainer_Begin_EmptyRange<char> {
   .initial = "B", .index = 0, .input = {}, .expected = "B"
 };
-template <> constexpr TestCase<int> OneElementContainer_Begin_EmptyRange<bool> {
+template <> inline constexpr TestCase<int> OneElementContainer_Begin_EmptyRange<bool> {
   .initial = {0}, .index = 0, .input = {}, .expected = {0}
 };
 
 template <class T> constexpr TestCase<T> OneElementContainer_End_EmptyRange;
-template <> constexpr TestCase<int> OneElementContainer_End_EmptyRange<int> {
+template <> inline constexpr TestCase<int> OneElementContainer_End_EmptyRange<int> {
   .initial = {3}, .index = 1, .input = {}, .expected = {3}
 };
-template <> constexpr TestCase<char> OneElementContainer_End_EmptyRange<char> {
+template <> inline constexpr TestCase<char> OneElementContainer_End_EmptyRange<char> {
   .initial = "B", .index = 1, .input = {}, .expected = "B"
 };
-template <> constexpr TestCase<int> OneElementContainer_End_EmptyRange<bool> {
+template <> inline constexpr TestCase<int> OneElementContainer_End_EmptyRange<bool> {
   .initial = {0}, .index = 1, .input = {}, .expected = {0}
 };
 
 template <class T> constexpr TestCase<T> OneElementContainer_Begin_OneElementRange;
-template <> constexpr TestCase<int> OneElementContainer_Begin_OneElementRange<int> {
+template <> inline constexpr TestCase<int> OneElementContainer_Begin_OneElementRange<int> {
   .initial = {3}, .index = 0, .input = {-5}, .expected = {-5, 3}
 };
-template <> constexpr TestCase<char> OneElementContainer_Begin_OneElementRange<char> {
+template <> inline constexpr TestCase<char> OneElementContainer_Begin_OneElementRange<char> {
   .initial = "B", .index = 0, .input = "a", .expected = "aB"
 };
-template <> constexpr TestCase<int> OneElementContainer_Begin_OneElementRange<bool> {
+template <> inline constexpr TestCase<int> OneElementContainer_Begin_OneElementRange<bool> {
   .initial = {0}, .index = 0, .input = {1}, .expected = {1, 0}
 };
 
 template <class T> constexpr TestCase<T> OneElementContainer_End_OneElementRange;
-template <> constexpr TestCase<int> OneElementContainer_End_OneElementRange<int> {
+template <> inline constexpr TestCase<int> OneElementContainer_End_OneElementRange<int> {
   .initial = {3}, .index = 1, .input = {-5}, .expected = {3, -5}
 };
-template <> constexpr TestCase<char> OneElementContainer_End_OneElementRange<char> {
+template <> inline constexpr TestCase<char> OneElementContainer_End_OneElementRange<char> {
   .initial = "B", .index = 1, .input = "a", .expected = "Ba"
 };
-template <> constexpr TestCase<int> OneElementContainer_End_OneElementRange<bool> {
+template <> inline constexpr TestCase<int> OneElementContainer_End_OneElementRange<bool> {
   .initial = {0}, .index = 1, .input = {1}, .expected = {0, 1}
 };
 
 template <class T> constexpr TestCase<T> OneElementContainer_Begin_MidRange;
-template <> constexpr TestCase<int> OneElementContainer_Begin_MidRange<int> {
+template <> inline constexpr TestCase<int> OneElementContainer_Begin_MidRange<int> {
   .initial = {3}, .index = 0, .input = {-5, -3, -1, -7, -9}, .expected = {-5, -3, -1, -7, -9, 3}
 };
-template <> constexpr TestCase<char> OneElementContainer_Begin_MidRange<char> {
+template <> inline constexpr TestCase<char> OneElementContainer_Begin_MidRange<char> {
   .initial = "B", .index = 0, .input = "aeiou", .expected = "aeiouB"
 };
-template <> constexpr TestCase<int> OneElementContainer_Begin_MidRange<bool> {
+template <> inline constexpr TestCase<int> OneElementContainer_Begin_MidRange<bool> {
   .initial = {0}, .index = 0, .input = {1, 1, 0, 1, 1}, .expected = {1, 1, 0, 1, 1, 0}
 };
 
 template <class T> constexpr TestCase<T> OneElementContainer_End_MidRange;
-template <> constexpr TestCase<int> OneElementContainer_End_MidRange<int> {
+template <> inline constexpr TestCase<int> OneElementContainer_End_MidRange<int> {
   .initial = {3}, .index = 1, .input = {-5, -3, -1, -7, -9}, .expected = {3, -5, -3, -1, -7, -9}
 };
-template <> constexpr TestCase<char> OneElementContainer_End_MidRange<char> {
+template <> inline constexpr TestCase<char> OneElementContainer_End_MidRange<char> {
   .initial = "B", .index = 1, .input = "aeiou", .expected = "Baeiou"
 };
-template <> constexpr TestCase<int> OneElementContainer_End_MidRange<bool> {
+template <> inline constexpr TestCase<int> OneElementContainer_End_MidRange<bool> {
   .initial = {0}, .index = 1, .input = {1, 1, 0, 1, 1}, .expected = {0, 1, 1, 0, 1, 1}
 };
 
 // Full container / empty range.
 
 template <class T> constexpr TestCase<T> FullContainer_Begin_EmptyRange;
-template <> constexpr TestCase<int> FullContainer_Begin_EmptyRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_Begin_EmptyRange<int> {
   .initial = {11, 29, 35, 14, 84}, .index = 0, .input = {}, .expected = {11, 29, 35, 14, 84}
 };
-template <> constexpr TestCase<char> FullContainer_Begin_EmptyRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_Begin_EmptyRange<char> {
   .initial = "_BCD_", .index = 0, .input = {}, .expected = "_BCD_"
 };
-template <> constexpr TestCase<int> FullContainer_Begin_EmptyRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_Begin_EmptyRange<bool> {
   .initial = {0, 0, 1, 0, 0}, .index = 0, .input = {}, .expected = {0, 0, 1, 0, 0}
 };
 
 template <class T> constexpr TestCase<T> FullContainer_Mid_EmptyRange;
-template <> constexpr TestCase<int> FullContainer_Mid_EmptyRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_Mid_EmptyRange<int> {
   .initial = {11, 29, 35, 14, 84}, .index = 2, .input = {}, .expected = {11, 29, 35, 14, 84}
 };
-template <> constexpr TestCase<char> FullContainer_Mid_EmptyRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_Mid_EmptyRange<char> {
   .initial = "_BCD_", .index = 2, .input = {}, .expected = "_BCD_"
 };
-template <> constexpr TestCase<int> FullContainer_Mid_EmptyRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_Mid_EmptyRange<bool> {
   .initial = {0, 0, 1, 0, 0}, .index = 2, .input = {}, .expected = {0, 0, 1, 0, 0}
 };
 
 template <class T> constexpr TestCase<T> FullContainer_End_EmptyRange;
-template <> constexpr TestCase<int> FullContainer_End_EmptyRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_End_EmptyRange<int> {
   .initial = {11, 29, 35, 14, 84}, .index = 5, .input = {}, .expected = {11, 29, 35, 14, 84}
 };
-template <> constexpr TestCase<char> FullContainer_End_EmptyRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_End_EmptyRange<char> {
   .initial = "_BCD_", .index = 5, .input = {}, .expected = "_BCD_"
 };
-template <> constexpr TestCase<int> FullContainer_End_EmptyRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_End_EmptyRange<bool> {
   .initial = {0, 0, 1, 0, 0}, .index = 5, .input = {}, .expected = {0, 0, 1, 0, 0}
 };
 
 // Full container / one-element range.
 
 template <class T> constexpr TestCase<T> FullContainer_Begin_OneElementRange;
-template <> constexpr TestCase<int> FullContainer_Begin_OneElementRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_Begin_OneElementRange<int> {
   .initial = {11, 29, 35, 14, 84}, .index = 0, .input = {-5}, .expected = {-5, 11, 29, 35, 14, 84}
 };
-template <> constexpr TestCase<char> FullContainer_Begin_OneElementRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_Begin_OneElementRange<char> {
   .initial = "_BCD_", .index = 0, .input = "a", .expected = "a_BCD_"
 };
-template <> constexpr TestCase<int> FullContainer_Begin_OneElementRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_Begin_OneElementRange<bool> {
   .initial = {0, 0, 1, 0, 0}, .index = 0, .input = {1}, .expected = {1, 0, 0, 1, 0, 0}
 };
 
 template <class T> constexpr TestCase<T> FullContainer_Mid_OneElementRange;
-template <> constexpr TestCase<int> FullContainer_Mid_OneElementRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_Mid_OneElementRange<int> {
   .initial = {11, 29, 35, 14, 84}, .index = 2, .input = {-5}, .expected = {11, 29, -5, 35, 14, 84}
 };
-template <> constexpr TestCase<char> FullContainer_Mid_OneElementRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_Mid_OneElementRange<char> {
   .initial = "_BCD_", .index = 2, .input = "a", .expected = "_BaCD_"
 };
-template <> constexpr TestCase<int> FullContainer_Mid_OneElementRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_Mid_OneElementRange<bool> {
   .initial = {0, 0, 1, 0, 0}, .index = 2, .input = {1}, .expected = {0, 0, 1, 1, 0, 0}
 };
 
 template <class T> constexpr TestCase<T> FullContainer_End_OneElementRange;
-template <> constexpr TestCase<int> FullContainer_End_OneElementRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_End_OneElementRange<int> {
   .initial = {11, 29, 35, 14, 84}, .index = 5, .input = {-5}, .expected = {11, 29, 35, 14, 84, -5}
 };
-template <> constexpr TestCase<char> FullContainer_End_OneElementRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_End_OneElementRange<char> {
   .initial = "_BCD_", .index = 5, .input = "a", .expected = "_BCD_a"
 };
-template <> constexpr TestCase<int> FullContainer_End_OneElementRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_End_OneElementRange<bool> {
   .initial = {0, 0, 1, 0, 0}, .index = 5, .input = {1}, .expected = {0, 0, 1, 0, 0, 1}
 };
 
 // Full container / mid-sized range.
 
 template <class T> constexpr TestCase<T> FullContainer_Begin_MidRange;
-template <> constexpr TestCase<int> FullContainer_Begin_MidRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_Begin_MidRange<int> {
   .initial = {11, 29, 35, 14, 84},
   .index = 0,
   .input = {-5, -3, -1, -7, -9},
   .expected = {-5, -3, -1, -7, -9, 11, 29, 35, 14, 84}
 };
-template <> constexpr TestCase<char> FullContainer_Begin_MidRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_Begin_MidRange<char> {
   .initial = "_BCD_",
   .index = 0,
   .input = "aeiou",
   .expected = "aeiou_BCD_"
 };
-template <> constexpr TestCase<int> FullContainer_Begin_MidRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_Begin_MidRange<bool> {
   .initial = {0, 0, 1, 0, 1},
   .index = 0,
   .input = {1, 1, 0, 1, 1},
@@ -314,19 +314,19 @@ template <> constexpr TestCase<int> FullContainer_Begin_MidRange<bool> {
 };
 
 template <class T> constexpr TestCase<T> FullContainer_Mid_MidRange;
-template <> constexpr TestCase<int> FullContainer_Mid_MidRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_Mid_MidRange<int> {
   .initial = {11, 29, 35, 14, 84},
   .index = 2,
   .input = {-5, -3, -1, -7, -9},
   .expected = {11, 29, -5, -3, -1, -7, -9, 35, 14, 84}
 };
-template <> constexpr TestCase<char> FullContainer_Mid_MidRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_Mid_MidRange<char> {
   .initial = "_BCD_",
   .index = 2,
   .input = "aeiou",
   .expected = "_BaeiouCD_"
 };
-template <> constexpr TestCase<int> FullContainer_Mid_MidRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_Mid_MidRange<bool> {
   .initial = {0, 0, 1, 0, 1},
   .index = 2,
   .input = {1, 1, 0, 1, 1},
@@ -334,19 +334,19 @@ template <> constexpr TestCase<int> FullContainer_Mid_MidRange<bool> {
 };
 
 template <class T> constexpr TestCase<T> FullContainer_End_MidRange;
-template <> constexpr TestCase<int> FullContainer_End_MidRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_End_MidRange<int> {
   .initial = {11, 29, 35, 14, 84},
   .index = 5,
   .input = {-5, -3, -1, -7, -9},
   .expected = {11, 29, 35, 14, 84, -5, -3, -1, -7, -9}
 };
-template <> constexpr TestCase<char> FullContainer_End_MidRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_End_MidRange<char> {
   .initial = "_BCD_",
   .index = 5,
   .input = "aeiou",
   .expected = "_BCD_aeiou"
 };
-template <> constexpr TestCase<int> FullContainer_End_MidRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_End_MidRange<bool> {
   .initial = {0, 0, 1, 0, 1},
   .index = 5,
   .input = {1, 1, 0, 1, 1},
@@ -356,7 +356,7 @@ template <> constexpr TestCase<int> FullContainer_End_MidRange<bool> {
 // Full container / long range.
 
 template <class T> constexpr TestCase<T> FullContainer_Begin_LongRange;
-template <> constexpr TestCase<int> FullContainer_Begin_LongRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_Begin_LongRange<int> {
   .initial = {11, 29, 35, 14, 84},
   .index = 0,
   .input = {-5, -3, -1, -7, -9, -19, -48, -56, -13, -14, -29, -88, -17, -1, -5, -11, -89, -21, -33, -48},
@@ -364,13 +364,13 @@ template <> constexpr TestCase<int> FullContainer_Begin_LongRange<int> {
       -5, -3, -1, -7, -9, -19, -48, -56, -13, -14, -29, -88, -17, -1, -5, -11, -89, -21, -33, -48, 11, 29, 35, 14, 84
   }
 };
-template <> constexpr TestCase<char> FullContainer_Begin_LongRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_Begin_LongRange<char> {
   .initial = "_BCD_",
   .index = 0,
   .input = "aeiouqwxyz5781964203",
   .expected = "aeiouqwxyz5781964203_BCD_"
 };
-template <> constexpr TestCase<int> FullContainer_Begin_LongRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_Begin_LongRange<bool> {
   .initial = {0, 0, 1, 0, 0},
   .index = 0,
   .input = {1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
@@ -380,7 +380,7 @@ template <> constexpr TestCase<int> FullContainer_Begin_LongRange<bool> {
 };
 
 template <class T> constexpr TestCase<T> FullContainer_Mid_LongRange;
-template <> constexpr TestCase<int> FullContainer_Mid_LongRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_Mid_LongRange<int> {
   .initial = {11, 29, 35, 14, 84},
   .index = 2,
   .input = {-5, -3, -1, -7, -9, -19, -48, -56, -13, -14, -29, -88, -17, -1, -5, -11, -89, -21, -33, -48},
@@ -388,13 +388,13 @@ template <> constexpr TestCase<int> FullContainer_Mid_LongRange<int> {
       11, 29, -5, -3, -1, -7, -9, -19, -48, -56, -13, -14, -29, -88, -17, -1, -5, -11, -89, -21, -33, -48, 35, 14, 84
   }
 };
-template <> constexpr TestCase<char> FullContainer_Mid_LongRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_Mid_LongRange<char> {
   .initial = "_BCD_",
   .index = 2,
   .input = "aeiouqwxyz5781964203",
   .expected = "_Baeiouqwxyz5781964203CD_"
 };
-template <> constexpr TestCase<int> FullContainer_Mid_LongRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_Mid_LongRange<bool> {
   .initial = {0, 0, 1, 0, 0},
   .index = 2,
   .input = {1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
@@ -404,7 +404,7 @@ template <> constexpr TestCase<int> FullContainer_Mid_LongRange<bool> {
 };
 
 template <class T> constexpr TestCase<T> FullContainer_End_LongRange;
-template <> constexpr TestCase<int> FullContainer_End_LongRange<int> {
+template <> inline constexpr TestCase<int> FullContainer_End_LongRange<int> {
   .initial = {11, 29, 35, 14, 84},
   .index = 5,
   .input = {-5, -3, -1, -7, -9, -19, -48, -56, -13, -14, -29, -88, -17, -1, -5, -11, -89, -21, -33, -48},
@@ -412,13 +412,13 @@ template <> constexpr TestCase<int> FullContainer_End_LongRange<int> {
       11, 29, 35, 14, 84, -5, -3, -1, -7, -9, -19, -48, -56, -13, -14, -29, -88, -17, -1, -5, -11, -89, -21, -33, -48
   }
 };
-template <> constexpr TestCase<char> FullContainer_End_LongRange<char> {
+template <> inline constexpr TestCase<char> FullContainer_End_LongRange<char> {
   .initial = "_BCD_",
   .index = 5,
   .input = "aeiouqwxyz5781964203",
   .expected = "_BCD_aeiouqwxyz5781964203"
 };
-template <> constexpr TestCase<int> FullContainer_End_LongRange<bool> {
+template <> inline constexpr TestCase<int> FullContainer_End_LongRange<bool> {
   .initial = {0, 0, 1, 0, 1},
   .index = 5,
   .input = {1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
