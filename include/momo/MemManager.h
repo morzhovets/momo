@@ -445,7 +445,7 @@ namespace internal
 
 		static void Assign(MemManager&& srcMemManager, MemManager& dstMemManager) noexcept
 		{
-			if (IsEqual(srcMemManager, dstMemManager))
+			if (&srcMemManager == &dstMemManager || std::is_empty_v<MemManager>)
 				return;
 			if constexpr (std::is_nothrow_move_assignable_v<MemManager>)
 			{
