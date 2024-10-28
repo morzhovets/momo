@@ -32,7 +32,8 @@ int main(int, char**)
         assert(std::distance(m.begin(), m.end()) == 0);
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        assert(mo.get_allocator() == A(test_alloc_base::moved_value));
+        assert(mo.get_allocator() == A(7));
+        assert(mo.get_allocator().get_id() == test_alloc_base::moved_value);
         assert(mo.key_comp() == C(5));
 #endif
         assert(mo.size() == 0);
@@ -64,7 +65,8 @@ int main(int, char**)
         assert(*std::next(m.begin(), 2) == V(3, 1));
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        assert(mo.get_allocator() == A(test_alloc_base::moved_value));
+        assert(mo.get_allocator() == A(7));
+        assert(mo.get_allocator().get_id() == test_alloc_base::moved_value);
         assert(mo.key_comp() == C(5));
 #endif
         assert(mo.size() == 0);
