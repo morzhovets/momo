@@ -134,7 +134,7 @@ void test_exception_safety_throwing_copy() {
 #if !defined(TEST_HAS_NO_EXCEPTIONS)
   constexpr int ThrowOn = 3;
   using T = ThrowingCopy<ThrowOn>;
-  test_exception_safety_throwing_copy<ThrowOn, /*Size=*/5>([](T* from, T* to) {
+  ::test_exception_safety_throwing_copy<ThrowOn, /*Size=*/5>([](T* from, T* to) {
     [[maybe_unused]] Container<T> c(std::from_range, std::ranges::subrange(from, to));
   });
 #endif
@@ -143,7 +143,7 @@ void test_exception_safety_throwing_copy() {
 template <template <class ...> class Container, class T>
 void test_exception_safety_throwing_allocator() {
 #if !defined(TEST_HAS_NO_EXCEPTIONS)
-  T in[] = {0, 1};
+  T in[] = {0, 1, 2, 3, 4, 5};
 
   try {
     ThrowingAllocator<T> alloc;

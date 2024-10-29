@@ -694,7 +694,7 @@ void test_insert_range_exception_safety_throwing_copy() {
 template <template <class ...> class Container, class T>
 void test_insert_range_exception_safety_throwing_allocator() {
 #if !defined(TEST_HAS_NO_EXCEPTIONS)
-  T in[] = {0, 1};
+  T in[] = {0, 1, 2, 3, 4, 5};
 
   try {
     ThrowingAllocator<T> alloc;
@@ -756,7 +756,7 @@ void test_append_range_exception_safety_throwing_copy() {
 template <template <class ...> class Container, class T>
 void test_append_range_exception_safety_throwing_allocator() {
 #if !defined(TEST_HAS_NO_EXCEPTIONS)
-  T in[] = {0, 1};
+  T in[] = {0, 1, 2, 3, 4, 5};
 
   try {
     ThrowingAllocator<T> alloc;
@@ -787,7 +787,7 @@ void test_assign_range_exception_safety_throwing_copy() {
 template <template <class ...> class Container, class T>
 void test_assign_range_exception_safety_throwing_allocator() {
 #if !defined(TEST_HAS_NO_EXCEPTIONS)
-  T in[] = {0, 1};
+  T in[] = {0, 1, 2, 3, 4, 5};
 
   try {
     ThrowingAllocator<T> alloc;
