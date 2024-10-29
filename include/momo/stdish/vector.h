@@ -97,6 +97,16 @@ public:
 	{
 	}
 
+#if defined(__cpp_lib_containers_ranges)
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	vector(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
+		: vector(alloc)
+	{
+		append_range(values);
+	}
+#endif
+
 	vector(vector&& right) noexcept
 		: mArray(std::move(right.mArray))
 	{
@@ -403,6 +413,25 @@ public:
 		return SMath::Next(begin(), index);
 	}
 
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	void append_range(Range&& values)
+	{
+		for (auto&& value : values)
+			mArray.AddBackVar(std::forward<decltype(value)>(value));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	iterator insert_range(const_iterator where, Range&& values)
+	{
+		size_t initIndex = SMath::Dist(cbegin(), where);
+		size_t index = initIndex;
+		for (auto&& value : values)
+			mArray.InsertVar(index++, std::forward<decltype(value)>(value));
+		return SMath::Next(begin(), initIndex);
+	}
+
 	void pop_back()
 	{
 		mArray.RemoveBack();
@@ -450,6 +479,14 @@ public:
 		assign(values.begin(), values.end());
 	}
 
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	void assign_range(Range&& values)
+	{
+		clear();
+		append_range(std::forward<Range>(values));
+	}
+
 	bool operator==(const vector& right) const
 	{
 		return mArray.IsEqual(right.mArray);
@@ -484,6 +521,14 @@ template<typename Iterator,
 requires momo::internal::conceptAllocator<Allocator>
 vector(Iterator, Iterator, Allocator = Allocator())
 	-> vector<std::iter_value_t<Iterator>, Allocator>;
+
+#if defined(__cpp_lib_containers_ranges)
+template<std::ranges::input_range Range,
+	typename Allocator = std::allocator<std::ranges::range_value_t<Range>>>
+requires momo::internal::conceptAllocator<Allocator>
+vector(std::from_range_t, Range&&, Allocator = Allocator())
+	-> vector<std::ranges::range_value_t<Range>, Allocator>;
+#endif
 
 /*!
 	\brief
