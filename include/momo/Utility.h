@@ -115,7 +115,11 @@ namespace internal
 
 	template<typename Sentinel, typename Iterator>
 	concept conceptSentinel =
-		requires (Iterator begin, Sentinel end) { { begin != end } -> std::convertible_to<bool>; };
+		requires (Iterator begin, Sentinel end)
+		{
+			{ begin == end } -> std::convertible_to<bool>;
+			{ begin != end } -> std::convertible_to<bool>;
+		};
 
 	template<typename Object,
 		size_t maxSize = sizeof(void*)>

@@ -547,7 +547,7 @@ public:
 		internal::conceptSentinel<ArgIterator> ArgSentinel>
 	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
-		if (!(begin != end))
+		if (begin == end)
 			return 0;
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
