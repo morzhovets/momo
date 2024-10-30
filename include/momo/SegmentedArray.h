@@ -215,8 +215,8 @@ public:
 		SetCount(count, item);
 	}
 
-	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
-	explicit SegmentedArray(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
+	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	explicit SegmentedArray(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
 		try
@@ -224,7 +224,7 @@ public:
 			typedef typename ItemTraits::template Creator<
 				std::iter_reference_t<ArgIterator>> IterCreator;
 			MemManager& thisMemManager = GetMemManager();
-			for (ArgIterator iter = begin; iter != end; ++iter)
+			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 				pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 		}
 		catch (...)
@@ -531,8 +531,8 @@ public:
 		ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
 	}
 
-	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
-	void Insert(size_t index, ArgIterator begin, ArgIterator end)
+	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	void Insert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
 		if constexpr (std::forward_iterator<ArgIterator>)
 		{
@@ -542,7 +542,7 @@ public:
 		}
 		else
 		{
-			ArrayShifter::Insert(*this, index, begin, end);
+			ArrayShifter::Insert(*this, index, std::move(begin), std::move(end));
 		}
 	}
 

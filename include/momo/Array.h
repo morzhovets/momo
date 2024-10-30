@@ -492,9 +492,9 @@ public:
 			AddBackNogrow(item);
 	}
 
-	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
-	explicit Array(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
-		: Array(begin, end, std::move(memManager), nullptr)
+	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	explicit Array(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
+		: Array(std::move(begin), std::move(end), std::move(memManager), nullptr)
 	{
 	}
 
@@ -848,8 +848,8 @@ public:
 		}
 	}
 
-	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
-	void Insert(size_t index, ArgIterator begin, ArgIterator end)
+	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	void Insert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
 		MOMO_ASSERT(begin == end || !pvIsInside(*begin));	//?
 		if constexpr (std::forward_iterator<ArgIterator>)
@@ -862,7 +862,7 @@ public:
 		}
 		else
 		{
-			ArrayShifter::Insert(*this, index, begin, end);
+			ArrayShifter::Insert(*this, index, std::move(begin), std::move(end));
 		}
 	}
 
@@ -911,8 +911,8 @@ private:
 	{
 	}
 
-	template<std::forward_iterator ArgIterator>
-	explicit Array(ArgIterator begin, ArgIterator end, MemManager&& memManager, std::nullptr_t)
+	template<std::forward_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	explicit Array(ArgIterator begin, ArgSentinel end, MemManager&& memManager, std::nullptr_t)
 		: mData(SMath::Dist(begin, end), std::move(memManager))
 	{
 		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
@@ -921,14 +921,13 @@ private:
 			pvAddBackNogrow(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 	}
 
-	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
-	requires (!std::forward_iterator<ArgIterator>)
-	explicit Array(ArgIterator begin, ArgIterator end, MemManager&& memManager, std::nullptr_t)
+	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	explicit Array(ArgIterator begin, ArgSentinel end, MemManager&& memManager, std::nullptr_t)
 		: mData(std::move(memManager))
 	{
 		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
 		MemManager& thisMemManager = GetMemManager();
-		for (ArgIterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 			pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 	}
 

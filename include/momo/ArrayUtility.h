@@ -195,18 +195,18 @@ namespace internal
 			}
 		}
 
-		template<conceptIterator17<std::input_iterator_tag> ArgIterator>
-		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
+		template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+		static void Insert(Array& array, size_t index, ArgIterator begin, ArgSentinel end)
 		{
 			typedef typename ItemTraits::template Creator<
 				std::iter_reference_t<ArgIterator>> IterCreator;
 			MemManager& memManager = array.GetMemManager();
 			size_t count = 0;
-			for (ArgIterator iter = begin; iter != end; (void)++iter, ++count)
+			for (ArgIterator iter = std::move(begin); iter != end; (void)++iter, ++count)
 				array.InsertCrt(index + count, IterCreator(memManager, *iter));
 		}
 
-		template<conceptIterator17<std::input_iterator_tag> ArgIterator>
+		template<std::input_iterator ArgIterator>
 		requires (std::forward_iterator<ArgIterator> ||
 			std::is_same_v<ArgIterator, std::move_iterator<Item*>>)	// vs2019, gcc10
 		static void InsertNogrow(Array& array, size_t index, ArgIterator begin, size_t count)

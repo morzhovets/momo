@@ -174,8 +174,8 @@ public:
 		}
 	}
 
-	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
-	explicit MergeArray(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
+	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	explicit MergeArray(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
 		: MergeArray(std::move(memManager))
 	{
 		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
@@ -184,7 +184,7 @@ public:
 			pvInitCapacity(internal::UIntMath<>::Dist(begin, end));
 		try
 		{
-			for (ArgIterator iter = begin; iter != end; ++iter)
+			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 			{
 				if constexpr (std::forward_iterator<ArgIterator>)
 					pvAddBackNogrow(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
@@ -546,8 +546,8 @@ public:
 		ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
 	}
 
-	template<internal::conceptIterator17<std::input_iterator_tag> ArgIterator>
-	void Insert(size_t index, ArgIterator begin, ArgIterator end)
+	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	void Insert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
 		if constexpr (std::forward_iterator<ArgIterator>)
 		{
@@ -557,7 +557,7 @@ public:
 		}
 		else
 		{
-			ArrayShifter::Insert(*this, index, begin, end);
+			ArrayShifter::Insert(*this, index, std::move(begin), std::move(end));
 		}
 	}
 

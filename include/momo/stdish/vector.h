@@ -101,9 +101,8 @@ public:
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	vector(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
-		: vector(alloc)
+		: mArray(std::ranges::begin(values), std::ranges::end(values), MemManager(alloc))
 	{
-		append_range(values);
 	}
 #endif
 
@@ -417,19 +416,16 @@ public:
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	void append_range(Range&& values)
 	{
-		for (auto&& value : values)
-			mArray.AddBackVar(std::forward<decltype(value)>(value));
+		insert_range(cend(), std::forward<Range>(values));
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	iterator insert_range(const_iterator where, Range&& values)
 	{
-		size_t initIndex = SMath::Dist(cbegin(), where);
-		size_t index = initIndex;
-		for (auto&& value : values)
-			mArray.InsertVar(index++, std::forward<decltype(value)>(value));
-		return SMath::Next(begin(), initIndex);
+		size_t index = SMath::Dist(cbegin(), where);
+		mArray.Insert(index, std::ranges::begin(values), std::ranges::end(values));
+		return SMath::Next(begin(), index);
 	}
 
 	void pop_back()
@@ -483,7 +479,7 @@ public:
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	void assign_range(Range&& values)
 	{
-		clear();
+		clear();	//?
 		append_range(std::forward<Range>(values));
 	}
 

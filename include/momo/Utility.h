@@ -246,10 +246,10 @@ namespace internal
 			return ((value + mod - 1) / mod) * mod;
 		}
 
-		template<std::forward_iterator Iterator>
-		static UInt Dist(Iterator begin, Iterator end)
+		template<std::forward_iterator Iterator, conceptSentinel<Iterator> Sentinel>
+		static UInt Dist(Iterator begin, Sentinel end)
 		{
-			return static_cast<UInt>(std::distance(begin, end));
+			return static_cast<UInt>(std::ranges::distance(begin, end));
 		}
 
 		template<std::forward_iterator Iterator>
