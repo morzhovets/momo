@@ -150,7 +150,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 
 #if MOMO_VERSION_MAJOR > 3
-#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11)
+#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11) \
+        && !(defined(__clang_major__) && !defined(_MSC_VER) && __clang_major__ == 19)   // clang 19
     SequenceContainerDeductionGuidesSfinaeAway<std::vector, std::vector<int>>();
 #endif
     SequenceContainerDeductionGuidesSfinaeAway<momo::stdish::vector, momo::stdish::vector<int>>();
