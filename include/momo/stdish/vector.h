@@ -467,20 +467,19 @@ public:
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	void assign(Iterator first, Iterator last)
 	{
-		mArray = Array(first, last, MemManager(get_allocator()));
+		pvAssign(std::move(first), std::move(last));
 	}
 
 	void assign(std::initializer_list<value_type> values)
 	{
-		assign(values.begin(), values.end());
+		pvAssign(values.begin(), values.end());
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	void assign_range(Range&& values)
 	{
-		clear();	//?
-		append_range(std::forward<Range>(values));
+		pvAssign(std::ranges::begin(values), std::ranges::end(values));
 	}
 
 	bool operator==(const vector& right) const
@@ -506,6 +505,13 @@ private:
 			std::make_move_iterator(right.end()), MemManager(alloc));
 		right.clear();
 		return array;
+	}
+
+	template<std::input_iterator Iterator,
+		momo::internal::conceptSentinel<Iterator> Sentinel>
+	void pvAssign(Iterator begin, Sentinel end)
+	{
+		mArray = Array(std::move(begin), std::move(end), MemManager(get_allocator()));
 	}
 
 private:

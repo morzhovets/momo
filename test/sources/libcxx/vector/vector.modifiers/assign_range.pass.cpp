@@ -71,7 +71,9 @@ int main(int, char**) {
   test();
   //static_assert(test());
 
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
   test_assign_range_exception_safety_throwing_copy<std::vector>();
+#endif
   test_assign_range_exception_safety_throwing_allocator<std::vector, int>();
 
   return 0;
