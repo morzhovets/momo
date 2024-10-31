@@ -293,9 +293,7 @@ int main(int, char**)
 #endif
 
 #if MOMO_VERSION_MAJOR > 3
-#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11)
-    UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_multimap, std::unordered_multimap<int, long>>();
-#endif
+    //UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_multimap, std::unordered_multimap<int, long>>();
     UnorderedContainerDeductionGuidesSfinaeAway<momo::stdish::unordered_multimap, momo::stdish::unordered_multimap<int, long>>();
 #endif
 

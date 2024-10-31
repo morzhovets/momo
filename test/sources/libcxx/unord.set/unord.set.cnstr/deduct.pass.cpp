@@ -263,9 +263,7 @@ int main(int, char**)
 #endif
 
 #if MOMO_VERSION_MAJOR > 3
-#if !(defined(TEST_MSVC) && _MSC_VER < 1930) && !(defined(TEST_GCC) && __GNUC__ < 11)
-    UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_set, std::unordered_set<int>>();
-#endif
+    //UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_set, std::unordered_set<int>>();
     UnorderedContainerDeductionGuidesSfinaeAway<momo::stdish::unordered_set, momo::stdish::unordered_set<int>>();
 #endif
 

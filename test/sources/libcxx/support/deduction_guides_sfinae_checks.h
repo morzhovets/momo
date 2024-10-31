@@ -230,7 +230,6 @@ constexpr void AssociativeContainerDeductionGuidesSfinaeAway() {
   // comparators.
 
 #if TEST_STD_VER >= 23
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   using Range = RangeT<ValueType>;
   using BadRange = BadRangeT<ValueType>;
 
@@ -264,7 +263,6 @@ constexpr void AssociativeContainerDeductionGuidesSfinaeAway() {
   // Cannot deduce from (from_range, BAD_range, alloc)
   static_assert(SFINAEs_away<Container, std::from_range_t, BadRange, Alloc>);
   // Note: (from_range, range, BAD_alloc) is interpreted as (from_range, range, comp) instead.
-#endif
 #endif
 }
 
@@ -434,7 +432,6 @@ constexpr void UnorderedContainerDeductionGuidesSfinaeAway() {
   static_assert(SFINAEs_away<Container, InitList, BadAlloc>);
 
 #if TEST_STD_VER >= 23
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   using Range = RangeT<ValueType>;
   using BadRange = BadRangeT<ValueType>;
 
@@ -513,7 +510,6 @@ constexpr void UnorderedContainerDeductionGuidesSfinaeAway() {
   // Cannot deduce from (from_range, range, buckets, hash, BAD_alloc)
   // Note: (from_range, range, buckets, hash, BAD_alloc) is interpreted as (from_range, range, buckets, hash, pred),
   // which is valid because the only requirement for the predicate parameter is that it does not resemble an allocator.
-#endif
 #endif
 }
 
