@@ -453,14 +453,14 @@ namespace internal
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
 		{
-			if (&memManager1 == &memManager2)
+			if (&memManager1 == &memManager2 || std::is_empty<MemManager>::value)
 				return true;
 			return pvIsEqual(memManager1, memManager2, HasIsEqual<MemManager>());
 		}
 
 		static void Assign(MemManager&& srcMemManager, MemManager& dstMemManager) noexcept
 		{
-			if (IsEqual(srcMemManager, dstMemManager))
+			if (&srcMemManager == &dstMemManager || std::is_empty<MemManager>::value)
 				return;
 			pvAssign(std::move(srcMemManager), dstMemManager,
 				std::is_nothrow_move_assignable<MemManager>());
@@ -490,7 +490,7 @@ namespace internal
 		static bool pvIsEqual(const MemManager& /*memManager1*/, const MemManager& /*memManager2*/,
 			std::false_type /*hasIsEqual*/) noexcept
 		{
-			return std::is_empty<MemManager>::value;
+			return false;
 		}
 
 		static void pvAssign(MemManager&& srcMemManager, MemManager& dstMemManager,
