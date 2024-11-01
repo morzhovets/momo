@@ -71,6 +71,28 @@
 		return object.GetEnd(); \
 	}
 
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+# define MOMO_MORE_COMPARISON_OPERATORS(ObjectArg)
+#else
+# define MOMO_MORE_COMPARISON_OPERATORS(ObjectArg) \
+	friend bool operator!=(ObjectArg obj1, ObjectArg obj2) noexcept(noexcept(obj1 == obj2)) \
+	{ \
+		return !(obj1 == obj2); \
+	} \
+	friend bool operator>(ObjectArg obj1, ObjectArg obj2) \
+	{ \
+		return obj2 < obj1; \
+	} \
+	friend bool operator<=(ObjectArg obj1, ObjectArg obj2) \
+	{ \
+		return !(obj2 < obj1); \
+	} \
+	friend bool operator>=(ObjectArg obj1, ObjectArg obj2) \
+	{ \
+		return obj2 <= obj1; \
+	}
+#endif
+
 #define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)
 
 #define MOMO_CHECK(expr) \

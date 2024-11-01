@@ -16,6 +16,7 @@
 #include "Utility.h"
 
 #define MOMO_MORE_ARRAY_ITERATOR_OPERATORS(Iterator) \
+	MOMO_MORE_COMPARISON_OPERATORS(Iterator) \
 	Iterator& operator++() \
 	{ \
 		return *this += 1; \
@@ -59,22 +60,6 @@
 	Reference operator[](ptrdiff_t diff) const \
 	{ \
 		return *(*this + diff); \
-	} \
-	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
-	{ \
-		return !(iter1 == iter2); \
-	} \
-	friend bool operator>(Iterator iter1, Iterator iter2) \
-	{ \
-		return iter2 < iter1; \
-	} \
-	friend bool operator<=(Iterator iter1, Iterator iter2) \
-	{ \
-		return !(iter2 < iter1); \
-	} \
-	friend bool operator>=(Iterator iter1, Iterator iter2) \
-	{ \
-		return iter2 <= iter1; \
 	}
 
 #define MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator) \

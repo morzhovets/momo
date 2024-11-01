@@ -82,11 +82,19 @@ namespace internal
 				&& iter1.pvGetIndex() == iter2.pvGetIndex();
 		}
 
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+		friend auto operator<=>(DataRawIterator iter1, DataRawIterator iter2)
+		{
+			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
+			return iter1.pvGetIndex() <=> iter2.pvGetIndex();
+		}
+#else
 		friend bool operator<(DataRawIterator iter1, DataRawIterator iter2)
 		{
 			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
 			return iter1.pvGetIndex() < iter2.pvGetIndex();
 		}
+#endif
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawIterator)
 
@@ -168,11 +176,19 @@ namespace internal
 				&& iter1.mRawIterator == iter2.mRawIterator;
 		}
 
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+		friend auto operator<=>(DataRowIterator iter1, DataRowIterator iter2)
+		{
+			MOMO_CHECK(iter1.mColumnList == iter2.mColumnList);
+			return iter1.mRawIterator <=> iter2.mRawIterator;
+		}
+#else
 		friend bool operator<(DataRowIterator iter1, DataRowIterator iter2)
 		{
 			MOMO_CHECK(iter1.mColumnList == iter2.mColumnList);
 			return iter1.mRawIterator < iter2.mRawIterator;
 		}
+#endif
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRowIterator)
 
@@ -327,11 +343,19 @@ namespace internal
 			return iter1.mOffset == iter2.mOffset && iter1.mRowIterator == iter2.mRowIterator;
 		}
 
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+		friend auto operator<=>(DataConstItemIterator iter1, DataConstItemIterator iter2)
+		{
+			MOMO_CHECK(iter1.mOffset == iter2.mOffset);
+			return iter1.mRowIterator <=> iter2.mRowIterator;
+		}
+#else
 		friend bool operator<(DataConstItemIterator iter1, DataConstItemIterator iter2)
 		{
 			MOMO_CHECK(iter1.mOffset == iter2.mOffset);
 			return iter1.mRowIterator < iter2.mRowIterator;
 		}
+#endif
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataConstItemIterator)
 

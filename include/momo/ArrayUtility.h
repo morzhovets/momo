@@ -96,11 +96,19 @@ namespace internal
 			return iter1.mArray == iter2.mArray && iter1.mIndex == iter2.mIndex;
 		}
 
+#ifdef MOMO_HAS_THREE_WAY_COMPARISON
+		friend auto operator<=>(ArrayIndexIterator iter1, ArrayIndexIterator iter2)
+		{
+			MOMO_CHECK(iter1.mArray == iter2.mArray);
+			return iter1.mIndex <=> iter2.mIndex;
+		}
+#else
 		friend bool operator<(ArrayIndexIterator iter1, ArrayIndexIterator iter2)
 		{
 			MOMO_CHECK(iter1.mArray == iter2.mArray);
 			return iter1.mIndex < iter2.mIndex;
 		}
+#endif
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIndexIterator)
 
