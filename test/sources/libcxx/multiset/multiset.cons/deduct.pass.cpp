@@ -227,10 +227,10 @@ int main(int, char **) {
     }
 #endif
 
-//#if MOMO_VERSION_MAJOR > 3
+#if MOMO_VERSION_MAJOR > 3
   //AssociativeContainerDeductionGuidesSfinaeAway<std::multiset, std::multiset<int>>();
   AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::multiset, momo::stdish::multiset<int>>();
-//#endif
+#endif
 
   return 0;
 }
