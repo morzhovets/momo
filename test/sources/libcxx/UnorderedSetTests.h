@@ -54,6 +54,10 @@ LIBCXX_TEST_BEGIN(empty)
 #include "unord.set/empty.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(eq_different_hash)
+#include "unord.set/eq.different_hash.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(eq)
 #include "unord.set/eq.pass.cpp"
 LIBCXX_TEST_END
@@ -110,6 +114,10 @@ LIBCXX_TEST_BEGIN(get_allocator)
 #include "unord.set/get_allocator.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(hash_function)
+#include "unord.set/hash_function.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(incomplete)
 #include "unord.set/incomplete.pass.cpp"
@@ -136,6 +144,10 @@ LIBCXX_TEST_BEGIN(insert_init)
 #include "unord.set/insert_init.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(insert_iter_iter)
+#include "unord.set/insert_iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(insert_node_type)
 #include "unord.set/insert_node_type.pass.cpp"
 LIBCXX_TEST_END
@@ -144,9 +156,11 @@ LIBCXX_TEST_BEGIN(insert_node_type_hint)
 #include "unord.set/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
 LIBCXX_TEST_BEGIN(insert_range)
 #include "unord.set/insert_range.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(insert_rvalue)
 #include "unord.set/insert_rvalue.pass.cpp"
@@ -158,6 +172,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "unord.set/iterators.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(key_eq)
+#include "unord.set/key_eq.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(load_factor)
@@ -211,6 +229,12 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(common_iterator_difference_type)
 #include "unord.set/common/iterator_difference_type.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(extra_insert_range_ext)
+#include "unord.set/extra/insert_range_ext.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 #ifdef LIBCXX_TEST_FAILURE
 
@@ -303,6 +327,12 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(cnstr_dtor_noexcept)
 #include "unord.set/unord.set.cnstr/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(cnstr_from_range)
+#include "unord.set/unord.set.cnstr/from_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(cnstr_init)
 #include "unord.set/unord.set.cnstr/init.pass.cpp"

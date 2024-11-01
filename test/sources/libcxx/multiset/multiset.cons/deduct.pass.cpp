@@ -31,6 +31,15 @@
 // template<class Key, class Allocator>
 // multiset(initializer_list<Key>, Allocator)
 //   -> multiset<Key, less<Key>, Allocator>;
+//
+// template<ranges::input_range R, class Compare = less<ranges::range_value_t<R>>,
+//          class Allocator = allocator<ranges::range_value_t<R>>>
+//   multiset(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
+//     -> multiset<ranges::range_value_t<R>, Compare, Allocator>;
+//
+// template<ranges::input_range R, class Allocator>
+//   multiset(from_range_t, R&&, Allocator)
+//     -> multiset<ranges::range_value_t<R>, less<ranges::range_value_t<R>>, Allocator>;
 
 struct NotAnAllocator {
   friend bool operator<(NotAnAllocator, NotAnAllocator) { return false; }
@@ -189,8 +198,38 @@ int main(int, char **) {
   }
 #endif
 
-#if !(defined(TEST_MSVC) && _MSC_VER < 1930)
-  AssociativeContainerDeductionGuidesSfinaeAway<std::multiset, std::multiset<int>>();
+#if TEST_STD_VER >= 23
+    {
+      using Range = std::array<int, 0>;
+      using Comp = std::greater<int>;
+      using DefaultComp = std::less<int>;
+      using Alloc = test_allocator<int>;
+
+      { // (from_range, range)
+        momo::stdish::multiset c(std::from_range, Range());
+        static_assert(std::is_same_v<decltype(c), momo::stdish::multiset<int>>);
+      }
+
+      { // (from_range, range, comp)
+        momo::stdish::multiset c(std::from_range, Range(), Comp());
+        static_assert(std::is_same_v<decltype(c), momo::stdish::multiset<int, Comp>>);
+      }
+
+      { // (from_range, range, comp, alloc)
+        momo::stdish::multiset c(std::from_range, Range(), Comp(), Alloc());
+        static_assert(std::is_same_v<decltype(c), momo::stdish::multiset<int, Comp, Alloc>>);
+      }
+
+      { // (from_range, range, alloc)
+        momo::stdish::multiset c(std::from_range, Range(), Alloc());
+        static_assert(std::is_same_v<decltype(c), momo::stdish::multiset<int, DefaultComp, Alloc>>);
+      }
+    }
+#endif
+
+#if MOMO_VERSION_MAJOR > 3
+  //AssociativeContainerDeductionGuidesSfinaeAway<std::multiset, std::multiset<int>>();
+  AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::multiset, momo::stdish::multiset<int>>();
 #endif
 
   return 0;

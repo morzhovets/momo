@@ -10,22 +10,23 @@
 //
 //===----------------------------------------------------------------------===//
 
-// <map>
+// <unordered_set>
 
-// class map
+// template <class Value, class Hash = hash<Value>, class Pred = equal_to<Value>,
+//           class Alloc = allocator<Value>>
+// class unordered_set
 
-// map();
+// hasher hash_function() const;
 
-struct X
-{
-    std::map<int, X> m;
-    std::map<int, X>::iterator i;
-    std::map<int, X>::const_iterator ci;
-#if TEST_STD_VER <= 17
-    // These reverse_iterator specializations require X to be complete in C++20.
-    std::map<int, X>::reverse_iterator ri;
-    std::map<int, X>::const_reverse_iterator cri;
-#endif // TEST_STD_VER <= 17
-};
+int main(int, char**) {
+  typedef std::unordered_set<int> set_type;
+  set_type s;
 
-int main(int, char**) { return 0; }
+  std::pair<set_type::iterator, bool> p = s.insert(1);
+
+  const set_type& cs = s;
+  assert(cs.hash_function()(*p.first) == cs.hash_function()(1));
+  assert(cs.hash_function()(1) == cs.hash_function()(*p.first));
+
+  return 0;
+}

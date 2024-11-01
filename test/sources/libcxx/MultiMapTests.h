@@ -114,13 +114,19 @@ LIBCXX_TEST_END
 
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(cons_default_recursive)
-#include "multimap/multimap.cons/default_recursive.pass.cpp"
+#include "multimap/multimap.cons/default_recursive.compile.pass.cpp"
 LIBCXX_TEST_END
 #endif
 
 LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
 #include "multimap/multimap.cons/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(cons_from_range)
+#include "multimap/multimap.cons/from_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "multimap/multimap.cons/initializer_list.pass.cpp"
@@ -233,6 +239,12 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(modifiers_insert_node_type_hint)
 #include "multimap/multimap.modifiers/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(modifiers_insert_range)
+#include "multimap/multimap.modifiers/insert_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_insert_rv)
 #include "multimap/multimap.modifiers/insert_rv.pass.cpp"

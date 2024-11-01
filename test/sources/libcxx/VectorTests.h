@@ -180,6 +180,12 @@ LIBCXX_TEST_BEGIN(cons_construct_default)
 #include "vector/vector.cons/construct_default.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(cons_construct_from_range)
+#include "vector/vector.cons/construct_from_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(cons_construct_iter_iter)
 #include "vector/vector.cons/construct_iter_iter.pass.cpp"
 LIBCXX_TEST_END
@@ -280,8 +286,28 @@ LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "vector/vector.erasure/erase_if.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(modifiers_append_range)
+#include "vector/vector.modifiers/append_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
+LIBCXX_TEST_BEGIN(modifiers_assert_push_back_invalidation)
+#include "vector/vector.modifiers/assert.push_back.invalidation.pass.cpp"
+LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(modifiers_assign_range)
+#include "vector/vector.modifiers/assign_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(modifiers_clear)
 #include "vector/vector.modifiers/clear.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(modifiers_destroy_elements)
+#include "vector/vector.modifiers/destroy_elements.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(modifiers_emplace)
@@ -323,6 +349,12 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(modifiers_insert_iter_size_value)
 #include "vector/vector.modifiers/insert_iter_size_value.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(modifiers_insert_range)
+#include "vector/vector.modifiers/insert_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_pop_back)
 #include "vector/vector.modifiers/pop_back.pass.cpp"

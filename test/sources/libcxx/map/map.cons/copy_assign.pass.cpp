@@ -17,8 +17,8 @@
 // map& operator=(const map& m);
 
 #if TEST_STD_VER >= 11
-momo::stdish::vector<int> ca_allocs;
-momo::stdish::vector<int> ca_deallocs;
+std::vector<int> ca_allocs;
+std::vector<int> ca_deallocs;
 
 template <class T>
 class counting_allocatorT {
@@ -67,7 +67,7 @@ public:
 };
 
 bool balanced_allocs() {
-    momo::stdish::vector<int> temp1, temp2;
+    std::vector<int> temp1, temp2;
 
     //std::printf("Allocations = %zu, deallocations = %zu\n", ca_allocs.size(),
     //            ca_deallocs.size());
@@ -77,10 +77,10 @@ bool balanced_allocs() {
     temp1 = ca_allocs;
     std::sort(temp1.begin(), temp1.end());
     temp2.clear();
-    std::unique_copy(temp1.begin(), temp1.end(), std::back_inserter<momo::stdish::vector<int>>(temp2));
+    std::unique_copy(temp1.begin(), temp1.end(), std::back_inserter<std::vector<int>>(temp2));
     //std::printf("There were %zu different allocators\n", temp2.size());
 
-    for (momo::stdish::vector<int>::const_iterator it = temp2.begin(); it != temp2.end(); ++it ) {
+    for (std::vector<int>::const_iterator it = temp2.begin(); it != temp2.end(); ++it ) {
         std::ptrdiff_t const allocs = std::count(ca_allocs.begin(), ca_allocs.end(), *it);
         std::ptrdiff_t const deallocs = std::count(ca_deallocs.begin(), ca_deallocs.end(), *it);
         //std::printf("%d: %td vs %td\n", *it, allocs, deallocs);
@@ -91,10 +91,10 @@ bool balanced_allocs() {
     temp1 = ca_allocs;
     std::sort(temp1.begin(), temp1.end());
     temp2.clear();
-    std::unique_copy(temp1.begin(), temp1.end(), std::back_inserter<momo::stdish::vector<int>>(temp2));
+    std::unique_copy(temp1.begin(), temp1.end(), std::back_inserter<std::vector<int>>(temp2));
     //std::printf("There were %zu different (de)allocators\n", temp2.size());
 
-    for (momo::stdish::vector<int>::const_iterator it = ca_deallocs.begin(); it != ca_deallocs.end(); ++it ) {
+    for (std::vector<int>::const_iterator it = ca_deallocs.begin(); it != ca_deallocs.end(); ++it ) {
         std::ptrdiff_t const allocs = std::count(ca_allocs.begin(), ca_allocs.end(), *it);
         std::ptrdiff_t const deallocs = std::count(ca_deallocs.begin(), ca_deallocs.end(), *it);
         //std::printf("%d: %td vs %td\n", *it, allocs, deallocs);

@@ -89,9 +89,9 @@ struct Iterator {
   using reference         = int&;
   using pointer           = int*;
 
-  int i_;
+  mutable int i_;
   Iterator(int i = 0) : i_(i) {}
-  int& operator*() {
+  int& operator*() const {
     if (i_ == 1)
       throw 1;
     return i_;
@@ -115,10 +115,10 @@ struct Iterator {
 
 void check_new_delete_called() {
   assert(GlobalMemCounter::size == 0);
-  //assert(globalMemCounter.new_called == globalMemCounter.delete_called);
-  //assert(globalMemCounter.new_array_called == globalMemCounter.delete_array_called);
-  //assert(globalMemCounter.aligned_new_called == globalMemCounter.aligned_delete_called);
-  //assert(globalMemCounter.aligned_new_array_called == globalMemCounter.aligned_delete_array_called);
+  assert(globalMemCounter.new_called == globalMemCounter.delete_called);
+  assert(globalMemCounter.new_array_called == globalMemCounter.delete_array_called);
+  assert(globalMemCounter.aligned_new_called == globalMemCounter.aligned_delete_called);
+  assert(globalMemCounter.aligned_new_array_called == globalMemCounter.aligned_delete_array_called);
 }
 
 template<typename T>

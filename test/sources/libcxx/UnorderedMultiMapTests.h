@@ -26,6 +26,10 @@ LIBCXX_TEST_BEGIN(empty)
 #include "unord.multimap/empty.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(eq_different_hash)
+#include "unord.multimap/eq.different_hash.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(eq)
 #include "unord.multimap/eq.pass.cpp"
 LIBCXX_TEST_END
@@ -62,6 +66,10 @@ LIBCXX_TEST_BEGIN(get_allocator)
 #include "unord.multimap/get_allocator.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(hash_function)
+#include "unord.multimap/hash_function.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(incomplete)
 #include "unord.multimap/incomplete.pass.cpp"
@@ -74,6 +82,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "unord.multimap/iterators.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(key_eq)
+#include "unord.multimap/key_eq.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(max_size)
@@ -192,6 +204,12 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(cnstr_dtor_noexcept)
 #include "unord.multimap/unord.multimap.cnstr/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(cnstr_from_range)
+#include "unord.multimap/unord.multimap.cnstr/from_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(cnstr_init)
 #include "unord.multimap/unord.multimap.cnstr/init.pass.cpp"
@@ -333,9 +351,15 @@ LIBCXX_TEST_BEGIN(modifiers_insert_init)
 #include "unord.multimap/unord.multimap.modifiers/insert_init.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_insert_iter_iter)
+#include "unord.multimap/unord.multimap.modifiers/insert_iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
+#if TEST_STD_VER >= 23
 LIBCXX_TEST_BEGIN(modifiers_insert_range)
 #include "unord.multimap/unord.multimap.modifiers/insert_range.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
 #include "unord.multimap/unord.multimap.modifiers/insert_rvalue.pass.cpp"

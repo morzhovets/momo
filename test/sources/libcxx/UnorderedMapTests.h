@@ -46,6 +46,10 @@ LIBCXX_TEST_BEGIN(empty)
 #include "unord.map/empty.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(eq_different_hash)
+#include "unord.map/eq.different_hash.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(eq)
 #include "unord.map/eq.pass.cpp"
 LIBCXX_TEST_END
@@ -82,6 +86,10 @@ LIBCXX_TEST_BEGIN(get_allocator)
 #include "unord.map/get_allocator.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(hash_function)
+#include "unord.map/hash_function.pass.cpp"
+LIBCXX_TEST_END
+
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 LIBCXX_TEST_BEGIN(incomplete_type)
 #include "unord.map/incomplete_type.pass.cpp"
@@ -94,6 +102,10 @@ LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(iterators)
 #include "unord.map/iterators.pass.cpp"
+LIBCXX_TEST_END
+
+LIBCXX_TEST_BEGIN(key_eq)
+#include "unord.map/key_eq.pass.cpp"
 LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(load_factor)
@@ -262,6 +274,12 @@ LIBCXX_TEST_BEGIN(cnstr_init)
 #include "unord.map/unord.map.cnstr/init.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
+LIBCXX_TEST_BEGIN(cnstr_from_range)
+#include "unord.map/unord.map.cnstr/from_range.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(cnstr_init_size)
 #include "unord.map/unord.map.cnstr/init_size.pass.cpp"
 LIBCXX_TEST_END
@@ -414,6 +432,10 @@ LIBCXX_TEST_BEGIN(modifiers_insert_init)
 #include "unord.map/unord.map.modifiers/insert_init.pass.cpp"
 LIBCXX_TEST_END
 
+LIBCXX_TEST_BEGIN(modifiers_insert_iter_iter)
+#include "unord.map/unord.map.modifiers/insert_iter_iter.pass.cpp"
+LIBCXX_TEST_END
+
 LIBCXX_TEST_BEGIN(modifiers_insert_node_type)
 #include "unord.map/unord.map.modifiers/insert_node_type.pass.cpp"
 LIBCXX_TEST_END
@@ -426,9 +448,11 @@ LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
 #include "unord.map/unord.map.modifiers/insert_or_assign.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
 LIBCXX_TEST_BEGIN(modifiers_insert_range)
 #include "unord.map/unord.map.modifiers/insert_range.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
 #include "unord.map/unord.map.modifiers/insert_rvalue.pass.cpp"

@@ -44,18 +44,13 @@ public:
     int get() const {return int_;}
 };
 
-namespace std {
-
 template <>
-struct hash<Emplaceable>
-{
-    typedef Emplaceable argument_type;
-    typedef std::size_t result_type;
+struct std::hash<Emplaceable> {
+  typedef Emplaceable argument_type;
+  typedef std::size_t result_type;
 
-    std::size_t operator()(const Emplaceable& x) const {return static_cast<size_t>(x.get());}
+  std::size_t operator()(const Emplaceable& x) const { return static_cast<size_t>(x.get()); }
 };
-
-}
 
 #endif // TEST_STD_VER >= 11
 #endif // EMPLACEABLE_H

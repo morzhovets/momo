@@ -17,7 +17,7 @@
 
 namespace adl {
 struct S {};
-void make_move_iterator(S*) {}
+[[maybe_unused]] void make_move_iterator(S*) {}
 }
 
 TEST_CONSTEXPR_CXX20 bool tests()

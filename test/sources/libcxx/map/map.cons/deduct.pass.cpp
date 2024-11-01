@@ -28,6 +28,15 @@
 // template<class Key, class Allocator>
 // map(initializer_list<Key>, Allocator)
 //   -> map<Key, less<Key>, Allocator>;
+//
+// template<ranges::input_range R, class Compare = less<range-key-type<R>,
+//          class Allocator = allocator<range-to-alloc-type<R>>>
+//   map(from_range_t, R&&, Compare = Compare(), Allocator = Allocator())
+//     -> map<range-key-type<R>, range-mapped-type<R>, Compare, Allocator>; // C++23
+//
+// template<ranges::input_range R, class Allocator>
+//   map(from_range_t, R&&, Allocator)
+//     -> map<range-key-type<R>, range-mapped-type<R>, less<range-key-type<R>>, Allocator>; // C++23
 
 using P = std::pair<int, long>;
 using PC = std::pair<const int, long>;
@@ -158,7 +167,37 @@ int main(int, char**)
 #endif
     }
 
+#if TEST_STD_VER >= 23
+    {
+      using Range = std::array<P, 0>;
+      using Comp = std::greater<int>;
+      using DefaultComp = std::less<int>;
+      using Alloc = test_allocator<PC>;
+
+      { // (from_range, range)
+        momo::stdish::map c(std::from_range, Range());
+        static_assert(std::is_same_v<decltype(c), momo::stdish::map<int, long>>);
+      }
+
+      { // (from_range, range, comp)
+        momo::stdish::map c(std::from_range, Range(), Comp());
+        static_assert(std::is_same_v<decltype(c), momo::stdish::map<int, long, Comp>>);
+      }
+
+      { // (from_range, range, comp, alloc)
+        momo::stdish::map c(std::from_range, Range(), Comp(), Alloc());
+        static_assert(std::is_same_v<decltype(c), momo::stdish::map<int, long, Comp, Alloc>>);
+      }
+
+      { // (from_range, range, alloc)
+        momo::stdish::map c(std::from_range, Range(), Alloc());
+        static_assert(std::is_same_v<decltype(c), momo::stdish::map<int, long, DefaultComp, Alloc>>);
+      }
+    }
+#endif
+
 #if MOMO_VERSION_MAJOR > 3
+    //AssociativeContainerDeductionGuidesSfinaeAway<std::map, std::map<int, long>>();
     AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::map, momo::stdish::map<int, long>>();
 #endif
 
