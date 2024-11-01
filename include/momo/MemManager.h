@@ -435,12 +435,12 @@ namespace internal
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
 		{
-			if (&memManager1 == &memManager2)
+			if (&memManager1 == &memManager2 || std::is_empty_v<MemManager>)
 				return true;
 			if constexpr (conceptMemManagerWithIsEqual<MemManager>)
 				return memManager1.IsEqual(memManager2);
 			else
-				return std::is_empty_v<MemManager>;
+				return false;
 		}
 
 		static void Assign(MemManager&& srcMemManager, MemManager& dstMemManager) noexcept
