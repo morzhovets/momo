@@ -453,46 +453,28 @@ public:
 		assign(values.begin(), values.end());
 	}
 
-	bool operator==(const vector& right) const
+	friend bool operator==(const vector& left, const vector& right)
 	{
-		return mArray.IsEqual(right.mArray);
-	}
-
-	bool operator!=(const vector& right) const
-	{
-		return !(*this == right);
+		return left.mArray.IsEqual(right.mArray);
 	}
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
-	auto operator<=>(const vector& right) const
+	friend auto operator<=>(const vector& left, const vector& right)
 		requires requires (const_reference ref) { std::tie(ref) <=> std::tie(ref); }
 	{
 		auto comp = [] (const value_type& value1, const value_type& value2)
 			{ return std::tie(value1) <=> std::tie(value2); };
-		return std::lexicographical_compare_three_way(begin(), end(),
+		return std::lexicographical_compare_three_way(left.begin(), left.end(),
 			right.begin(), right.end(), comp);
 	}
 #else
-	bool operator<(const vector& right) const
+	friend bool operator<(const vector& left, const vector& right)
 	{
-		return std::lexicographical_compare(begin(), end(), right.begin(), right.end());
-	}
-
-	bool operator>(const vector& right) const
-	{
-		return right < *this;
-	}
-
-	bool operator<=(const vector& right) const
-	{
-		return !(right < *this);
-	}
-
-	bool operator>=(const vector& right) const
-	{
-		return right <= *this;
+		return std::lexicographical_compare(left.begin(), left.end(), right.begin(), right.end());
 	}
 #endif
+
+	MOMO_MORE_COMPARISON_OPERATORS(const vector&)
 
 private:
 	static Array pvCreateArray(vector&& right, const allocator_type& alloc)

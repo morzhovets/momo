@@ -147,14 +147,16 @@ public:
 		momo::internal::ObjectManager<Value, MemManager>::Destroy(mMemPool->GetMemManager(), *ptr);
 	}
 
-	bool operator==(const unsynchronized_pool_allocator& alloc) const noexcept
+	friend bool operator==(const unsynchronized_pool_allocator& left,
+		const unsynchronized_pool_allocator& right) noexcept
 	{
-		return mMemPool == alloc.mMemPool;
+		return left.mMemPool == right.mMemPool;
 	}
 
-	bool operator!=(const unsynchronized_pool_allocator& alloc) const noexcept
+	friend bool operator!=(const unsynchronized_pool_allocator& left,
+		const unsynchronized_pool_allocator& right) noexcept
 	{
-		return !(*this == alloc);
+		return !(left == right);
 	}
 
 protected:

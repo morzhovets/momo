@@ -619,17 +619,18 @@ public:
 	//size_type bucket(const key_type& key) const
 	//float load_factor() const noexcept
 
-	bool operator==(const unordered_multimap& right) const
+	friend bool operator==(const unordered_multimap& left, const unordered_multimap& right)
 	{
-		if (mHashMultiMap.GetKeyCount() != right.mHashMultiMap.GetKeyCount())
+		if (left.mHashMultiMap.GetKeyCount() != right.mHashMultiMap.GetKeyCount())
 			return false;
-		if (mHashMultiMap.GetCount() != right.mHashMultiMap.GetCount())
+		if (left.mHashMultiMap.GetCount() != right.mHashMultiMap.GetCount())
 			return false;
-		for (typename HashMultiMap::ConstKeyIterator::Reference ref : mHashMultiMap.GetKeyBounds())
+		typedef typename HashMultiMap::ConstKeyIterator ConstKeyIterator;
+		for (typename ConstKeyIterator::Reference ref : left.mHashMultiMap.GetKeyBounds())
 		{
 			if (ref.GetCount() == 0)
 				continue;
-			typename HashMultiMap::ConstKeyIterator rightKeyIter = right.mHashMultiMap.Find(ref.key);
+			ConstKeyIterator rightKeyIter = right.mHashMultiMap.Find(ref.key);
 			if (!rightKeyIter)
 				return false;
 			if (ref.GetCount() != rightKeyIter->GetCount())
@@ -640,9 +641,9 @@ public:
 		return true;
 	}
 
-	bool operator!=(const unordered_multimap& right) const
+	friend bool operator!=(const unordered_multimap& left, const unordered_multimap& right)
 	{
-		return !(*this == right);
+		return !(left == right);
 	}
 
 private:

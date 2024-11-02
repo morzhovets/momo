@@ -811,11 +811,11 @@ public:
 		return static_cast<float>(count) / static_cast<float>(bucketCount);
 	}
 
-	bool operator==(const unordered_map& right) const
+	friend bool operator==(const unordered_map& left, const unordered_map& right)
 	{
-		if (size() != right.size())
+		if (left.size() != right.size())
 			return false;
-		for (const_reference ref : *this)
+		for (const_reference ref : left)
 		{
 			const_iterator iter = right.find(ref.first);
 			if (iter == right.end())
@@ -826,9 +826,9 @@ public:
 		return true;
 	}
 
-	bool operator!=(const unordered_map& right) const
+	friend bool operator!=(const unordered_map& left, const unordered_map& right)
 	{
-		return !(*this == right);
+		return !(left == right);
 	}
 
 private:

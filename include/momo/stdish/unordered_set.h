@@ -619,11 +619,11 @@ public:
 		return static_cast<float>(count) / static_cast<float>(bucketCount);
 	}
 
-	bool operator==(const unordered_set& right) const
+	friend bool operator==(const unordered_set& left, const unordered_set& right)
 	{
-		if (size() != right.size())
+		if (left.size() != right.size())
 			return false;
-		for (const_reference ref : *this)
+		for (const_reference ref : left)
 		{
 			if (right.find(ref) == right.end())
 				return false;
@@ -631,9 +631,9 @@ public:
 		return true;
 	}
 
-	bool operator!=(const unordered_set& right) const
+	friend bool operator!=(const unordered_set& left, const unordered_set& right)
 	{
-		return !(*this == right);
+		return !(left == right);
 	}
 
 private:

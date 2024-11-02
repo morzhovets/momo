@@ -650,44 +650,28 @@ namespace internal
 			mTreeMap.MergeFrom(map.get_nested_container());
 		}
 
-		bool operator==(const map_base& right) const
+		friend bool operator==(const map_base& left, const map_base& right)
 		{
-			return size() == right.size() && std::equal(begin(), end(), right.begin());
-		}
-
-		bool operator!=(const map_base& right) const
-		{
-			return !(*this == right);
+			return left.size() == right.size()
+				&& std::equal(left.begin(), left.end(), right.begin());
 		}
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
-		auto operator<=>(const map_base& right) const
+		friend auto operator<=>(const map_base& left, const map_base& right)
 			requires requires (const_reference ref) { ref <=> ref; }
 		{
-			return std::lexicographical_compare_three_way(begin(), end(),
+			return std::lexicographical_compare_three_way(left.begin(), left.end(),
 				right.begin(), right.end());
 		}
 #else
-		bool operator<(const map_base& right) const
+		friend bool operator<(const map_base& left, const map_base& right)
 		{
-			return std::lexicographical_compare(begin(), end(), right.begin(), right.end());
-		}
-
-		bool operator>(const map_base& right) const
-		{
-			return right < *this;
-		}
-
-		bool operator<=(const map_base& right) const
-		{
-			return !(right < *this);
-		}
-
-		bool operator>=(const map_base& right) const
-		{
-			return right <= *this;
+			return std::lexicographical_compare(left.begin(), left.end(),
+				right.begin(), right.end());
 		}
 #endif
+
+		MOMO_MORE_COMPARISON_OPERATORS(const map_base&)
 
 	protected:	//?
 		void ptAssign(std::initializer_list<value_type> values)
