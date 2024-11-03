@@ -664,12 +664,12 @@ public:
 		return { PositionProxy(res.position), res.inserted };
 	}
 
-	template<typename ArgIterator,
+	template<typename ArgIterator, typename ArgSentinel,
 		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
-	size_t Insert(ArgIterator begin, ArgIterator end)
+	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
 		size_t initCount = GetCount();
-		for (ArgIterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			typedef decltype(pair.first) KeyArg;

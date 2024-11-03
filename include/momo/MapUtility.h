@@ -980,7 +980,7 @@ namespace internal
 			std::pair<KeyArg, ValueArg>&& pair) noexcept
 		{
 			MOMO_STATIC_ASSERT((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
-				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);
+				|| std::is_reference<decltype(*std::declval<Iterator>())>::value);
 			return std::pair<KeyArg&&, ValueArg&&>(std::forward<KeyArg>(pair.first),
 				std::forward<ValueArg>(pair.second));
 		}
@@ -990,7 +990,7 @@ namespace internal
 			const std::pair<KeyArg, ValueArg>& pair) noexcept
 		{
 			MOMO_STATIC_ASSERT((std::is_reference<KeyArg>::value && std::is_reference<ValueArg>::value)
-				|| std::is_reference<typename std::iterator_traits<Iterator>::reference>::value);
+				|| std::is_reference<decltype(*std::declval<Iterator>())>::value);
 			return std::pair<const KeyArg&, const ValueArg&>(pair.first, pair.second);
 		}
 	};
@@ -999,7 +999,7 @@ namespace internal
 		typename KeyArg = decltype((*std::declval<ArgIterator>()).first)>
 	struct IsMapArgIteratorStd : public BoolConstant<((std::is_reference<KeyArg>::value
 		&& std::is_reference<decltype((*std::declval<ArgIterator>()).second)>::value)
-		|| std::is_reference<typename std::iterator_traits<ArgIterator>::reference>::value)
+		|| std::is_reference<decltype(*std::declval<ArgIterator>())>::value)
 		&& std::is_same<Key, typename std::decay<KeyArg>::type>::value>
 	{
 	};
