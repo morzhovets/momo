@@ -20,6 +20,10 @@
 #include "../HashSet.h"
 #include "node_handle.h"
 
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+# include <ranges>
+#endif
+
 namespace momo
 {
 
@@ -186,6 +190,42 @@ public:
 		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
 	{
 	}
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	unordered_set(std::from_range_t, Range&& values)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	unordered_set(std::from_range_t, Range&& values, size_type bucketCount,
+		const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	unordered_set(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
+		const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, hashFunc, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	unordered_set(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
+		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, hashFunc, equalFunc, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+#endif // MOMO_HAS_CONTAINERS_RANGES
 
 	unordered_set(unordered_set&& right) noexcept
 		: mHashSet(std::move(right.mHashSet))
@@ -471,13 +511,22 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		pvInsert(first, last, momo::internal::IsSetArgIterator<Iterator, value_type>());
+		pvInsertRange(first, last);
 	}
 
 	void insert(std::initializer_list<value_type> values)
 	{
 		mHashSet.Insert(values);
 	}
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	void insert_range(Range&& values)
+	{
+		pvInsertRange(std::ranges::begin(values), std::ranges::end(values));
+	}
+#endif // MOMO_HAS_CONTAINERS_RANGES
 
 	template<typename... ValueArgs>
 	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
@@ -646,16 +695,18 @@ private:
 		return hashSet;
 	}
 
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::true_type /*isSetArgIterator*/)
+	template<typename Iterator, typename Sentinel>
+	momo::internal::EnableIf<momo::internal::IsSetArgIterator<Iterator, value_type>::value,
+	void> pvInsertRange(Iterator begin, Sentinel end)
 	{
-		mHashSet.Insert(first, last);
+		mHashSet.Insert(std::move(begin), std::move(end));
 	}
 
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::false_type /*isSetArgIterator*/)
+	template<typename Iterator, typename Sentinel>
+	momo::internal::EnableIf<!momo::internal::IsSetArgIterator<Iterator, value_type>::value,
+	void> pvInsertRange(Iterator begin, Sentinel end)
 	{
-		for (Iterator iter = first; iter != last; ++iter)
+		for (Iterator iter = std::move(begin); iter != end; ++iter)
 			emplace(*iter);
 	}
 
@@ -712,8 +763,6 @@ public:
 	}
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set) \
 template<typename Iterator, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type> \
@@ -760,12 +809,45 @@ template<typename Key, typename HashFunc, typename EqualFunc, \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
 
+#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set) \
+template<std::ranges::input_range Range, \
+	typename Key = std::ranges::range_value_t<Range>> \
+unordered_set(std::from_range_t, Range&&) \
+	-> unordered_set<Key>; \
+template<std::ranges::input_range Range, \
+	typename Key = std::ranges::range_value_t<Range>, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+unordered_set(std::from_range_t, Range&&, size_t, Allocator = Allocator()) \
+	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename HashFunc, \
+	typename Key = std::ranges::range_value_t<Range>, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+unordered_set(std::from_range_t, Range&&, size_t, HashFunc, Allocator = Allocator()) \
+	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename HashFunc, typename EqualFunc, \
+	typename Key = std::ranges::range_value_t<Range>, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
+	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+unordered_set(std::from_range_t, Range&&, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
+	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
+
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set_open)
+#endif
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set_open)
+#endif
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#endif // MOMO_HAS_DEDUCTION_GUIDES
+#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace stdish
 

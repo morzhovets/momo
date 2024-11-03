@@ -790,12 +790,12 @@ public:
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
 	}
 
-	template<typename ArgIterator>
-	size_t Insert(ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel>
+	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
 		MOMO_STATIC_ASSERT((internal::IsSetArgIterator<ArgIterator, Item>::value));
 		size_t initCount = GetCount();
-		for (ArgIterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			auto&& ref = *iter;
 			InsertVar(ItemTraits::GetKey(static_cast<const Item&>(ref)),

@@ -338,7 +338,7 @@ namespace internal
 	};
 
 	template<typename ArgIterator, typename Item,
-		typename ArgReference = typename std::iterator_traits<ArgIterator>::reference>
+		typename ArgReference = decltype(*std::declval<ArgIterator>())>
 	struct IsSetArgIterator : public BoolConstant<std::is_reference<ArgReference>::value
 		&& std::is_same<Item, typename std::decay<ArgReference>::type>::value>
 	{

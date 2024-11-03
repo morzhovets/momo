@@ -176,8 +176,12 @@
 #endif
 
 #if defined(__cpp_impl_three_way_comparison) && defined(__cpp_lib_three_way_comparison) \
-	&& defined (__cpp_concepts)
+	&& defined(__cpp_concepts)
 # define MOMO_HAS_THREE_WAY_COMPARISON
+#endif
+
+#if defined(__cpp_lib_containers_ranges)
+# define MOMO_HAS_CONTAINERS_RANGES
 #endif
 
 #ifdef __has_cpp_attribute
