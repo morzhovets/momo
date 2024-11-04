@@ -745,8 +745,8 @@ public:
 		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()), itemCreator);
 	}
 
-	template<typename ArgIterator>
-	size_t Insert(ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel>
+	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
 		MOMO_STATIC_ASSERT((internal::IsSetArgIterator<ArgIterator, Item>::value));
 		if (begin == end)
@@ -754,11 +754,12 @@ public:
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
 		size_t initCount = GetCount();
-		auto&& ref0 = *begin;
+		ArgIterator iter = std::move(begin);
+		auto&& ref0 = *iter;
 		typedef decltype(ref0) ItemArg;
 		Iterator pos = InsertVar(ItemTraits::GetKey(static_cast<const Item&>(ref0)),
 			std::forward<ItemArg>(ref0)).position;
-		for (ArgIterator iter = std::next(begin); iter != end; ++iter)
+		for (++iter; iter != end; ++iter)
 		{
 			ItemArg&& ref = *iter;
 			const Key& key = ItemTraits::GetKey(static_cast<const Item&>(ref));

@@ -20,6 +20,10 @@
 #include "../TreeSet.h"
 #include "node_handle.h"
 
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+# include <ranges>
+#endif
+
 namespace momo
 {
 
@@ -146,6 +150,25 @@ public:
 		: mTreeSet(values, TreeTraits(lessFunc), MemManager(alloc))
 	{
 	}
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	set(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
+		: set(alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	set(std::from_range_t, Range&& values, const key_compare& lessFunc,
+		const allocator_type& alloc = allocator_type())
+		: set(lessFunc, alloc)
+	{
+		insert_range(std::forward<Range>(values));
+	}
+#endif // MOMO_HAS_CONTAINERS_RANGES
 
 	set(set&& right) noexcept
 		: mTreeSet(std::move(right.mTreeSet))
@@ -455,13 +478,22 @@ public:
 	template<typename Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		pvInsert(first, last, momo::internal::IsSetArgIterator<Iterator, value_type>());
+		pvInsertRange(first, last);
 	}
 
 	void insert(std::initializer_list<value_type> values)
 	{
 		mTreeSet.Insert(values);
 	}
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	void insert_range(Range&& values)
+	{
+		pvInsertRange(std::ranges::begin(values), std::ranges::end(values));
+	}
+#endif // MOMO_HAS_CONTAINERS_RANGES
 
 	template<typename... ValueArgs>
 	std::pair<iterator, bool> emplace(ValueArgs&&... valueArgs)
@@ -597,16 +629,18 @@ private:
 		return true;
 	}
 
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::true_type /*isSetArgIterator*/)
+	template<typename Iterator, typename Sentinel>
+	momo::internal::EnableIf<momo::internal::IsSetArgIterator<Iterator, value_type>::value,
+	void> pvInsertRange(Iterator begin, Sentinel end)
 	{
-		mTreeSet.Insert(first, last);
+		mTreeSet.Insert(std::move(begin), std::move(end));
 	}
 
-	template<typename Iterator>
-	void pvInsert(Iterator first, Iterator last, std::false_type /*isSetArgIterator*/)
+	template<typename Iterator, typename Sentinel>
+	momo::internal::EnableIf<!momo::internal::IsSetArgIterator<Iterator, value_type>::value,
+	void> pvInsertRange(Iterator begin, Sentinel end)
 	{
-		for (Iterator iter = first; iter != last; ++iter)
+		for (Iterator iter = std::move(begin); iter != end; ++iter)
 			emplace(*iter);
 	}
 
@@ -684,8 +718,6 @@ public:
 	}
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
 #define MOMO_DECLARE_DEDUCTION_GUIDES(set) \
 template<typename Iterator, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
@@ -710,12 +742,33 @@ template<typename Key, typename LessFunc, \
 set(std::initializer_list<Key>, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>;
 
+#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set) \
+template<std::ranges::input_range Range, \
+	typename Key = std::ranges::range_value_t<Range>, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+set(std::from_range_t, Range&&, Allocator = Allocator()) \
+	-> set<Key, std::less<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename LessFunc, \
+	typename Key = std::ranges::range_value_t<Range>, \
+	typename Allocator = std::allocator<Key>, \
+	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+set(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
+	-> set<Key, LessFunc, Allocator>;
+
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
 MOMO_DECLARE_DEDUCTION_GUIDES(set)
 MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
+#endif
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multiset)
+#endif
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#endif // MOMO_HAS_DEDUCTION_GUIDES
+#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace stdish
 
