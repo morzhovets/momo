@@ -559,22 +559,23 @@ public:
 		return { IteratorProxy(res.position), res.inserted };
 	}
 
-	template<typename ArgIterator,
+	template<typename ArgIterator, typename ArgSentinel,
 		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
-	size_t Insert(ArgIterator begin, ArgIterator end)
+	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
 		if (begin == end)
 			return 0;
 		const TreeTraits& treeTraits = GetTreeTraits();
 		MemManager& memManager = GetMemManager();
 		size_t initCount = GetCount();
-		auto pair0 = internal::MapPairConverter<ArgIterator>::Convert(*begin);
+		ArgIterator iter = std::move(begin);
+		auto pair0 = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 		typedef decltype(pair0.first) KeyArg;
 		typedef decltype(pair0.second) ValueArg;
 		MOMO_STATIC_ASSERT((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
 		Iterator pos = InsertVar(std::forward<KeyArg>(pair0.first),
 			std::forward<ValueArg>(pair0.second)).position;
-		for (ArgIterator iter = std::next(begin); iter != end; ++iter)
+		for (++iter; iter != end; ++iter)
 		{
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			const Key& key = pair.first;

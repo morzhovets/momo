@@ -20,6 +20,10 @@
 #include "../TreeMap.h"
 #include "node_handle.h"
 
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+# include <ranges>
+#endif
+
 namespace momo
 {
 
@@ -167,6 +171,25 @@ namespace internal
 			: map_base(values.begin(), values.end(), lessFunc, alloc)
 		{
 		}
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+		template<std::ranges::input_range Range>
+		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+		map_base(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
+			: map_base(alloc)
+		{
+			insert_range(std::forward<Range>(values));
+		}
+
+		template<std::ranges::input_range Range>
+		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+		map_base(std::from_range_t, Range&& values, const key_compare& lessFunc,
+			const allocator_type& alloc = allocator_type())
+			: map_base(lessFunc, alloc)
+		{
+			insert_range(std::forward<Range>(values));
+		}
+#endif // MOMO_HAS_CONTAINERS_RANGES
 
 		map_base(map_base&& right) noexcept
 			: mTreeMap(std::move(right.mTreeMap))
@@ -554,13 +577,22 @@ namespace internal
 		template<typename Iterator>
 		void insert(Iterator first, Iterator last)
 		{
-			pvInsert(first, last, momo::internal::IsMapArgIteratorStd<Iterator, key_type>());
+			pvInsertRange(first, last);
 		}
 
 		void insert(std::initializer_list<value_type> values)
 		{
 			mTreeMap.Insert(values.begin(), values.end());
 		}
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+		template<std::ranges::input_range Range>
+		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+		void insert_range(Range&& values)
+		{
+			pvInsertRange(std::ranges::begin(values), std::ranges::end(values));
+		}
+#endif // MOMO_HAS_CONTAINERS_RANGES
 
 		std::pair<iterator, bool> emplace()
 		{
@@ -798,16 +830,18 @@ namespace internal
 			return { IteratorProxy(resIter), true };
 		}
 
-		template<typename Iterator>
-		void pvInsert(Iterator first, Iterator last, std::true_type /*isMapArgIterator*/)
+		template<typename Iterator, typename Sentinel>
+		momo::internal::EnableIf<momo::internal::IsMapArgIteratorStd<Iterator, key_type>::value,
+		void> pvInsertRange(Iterator begin, Sentinel end)
 		{
-			mTreeMap.Insert(first, last);
+			mTreeMap.Insert(std::move(begin), std::move(end));
 		}
 
-		template<typename Iterator>
-		void pvInsert(Iterator first, Iterator last, std::false_type /*isMapArgIterator*/)
+		template<typename Iterator, typename Sentinel>
+		momo::internal::EnableIf<!momo::internal::IsMapArgIteratorStd<Iterator, key_type>::value,
+		void> pvInsertRange(Iterator begin, Sentinel end)
 		{
-			for (Iterator iter = first; iter != last; ++iter)
+			for (Iterator iter = std::move(begin); iter != end; ++iter)
 				insert(*iter);
 		}
 
@@ -1101,8 +1135,6 @@ public:
 	}
 };
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-
 #define MOMO_DECLARE_DEDUCTION_GUIDES(map) \
 template<typename Iterator, \
 	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
@@ -1129,12 +1161,35 @@ template<typename Key, typename Mapped, typename LessFunc, \
 map(std::initializer_list<std::pair<Key, Mapped>>, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>;
 
+#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map) \
+template<std::ranges::input_range Range, \
+	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
+	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+map(std::from_range_t, Range&&, Allocator = Allocator()) \
+	-> map<Key, Mapped, std::less<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename LessFunc, \
+	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
+	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
+	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+map(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
+	-> map<Key, Mapped, LessFunc, Allocator>;
+
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
 MOMO_DECLARE_DEDUCTION_GUIDES(map)
 MOMO_DECLARE_DEDUCTION_GUIDES(multimap)
+#endif
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multimap)
+#endif
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-
-#endif // MOMO_HAS_DEDUCTION_GUIDES
+#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace stdish
 
