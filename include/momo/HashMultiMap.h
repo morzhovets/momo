@@ -1005,11 +1005,11 @@ public:
 		return AddVar(keyIter, value);
 	}
 
-	template<typename ArgIterator,
+	template<typename ArgIterator, typename ArgSentinel,
 		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
-	void Add(ArgIterator begin, ArgIterator end)
+	void Add(ArgIterator begin, ArgSentinel end)
 	{
-		for (ArgIterator iter = begin; iter != end; ++iter)
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			typedef decltype(pair.first) KeyArg;
