@@ -533,7 +533,7 @@ public:
 	{
 		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
 		std::move_iterator<Item*> begin(&itemHandler);
-		Insert(index, begin, begin + 1);
+		pvInsert(index, begin, begin + 1);
 	}
 
 	template<typename... ItemArgs>
@@ -559,21 +559,19 @@ public:
 		ItemHandler itemHandler(memManager,
 			typename ItemTraits::template Creator<const Item&>(memManager, item));
 		Reserve(mCount + count);
-		ArrayShifter::Insert(*this, index, count, *&itemHandler);
+		ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
 	}
 
 	template<typename ArgIterator,
 		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
-		if (internal::IsForwardIterator<ArgIterator>::value)
-			Reserve(mCount + internal::UIntMath<>::Dist(begin, end));
-		ArrayShifter::Insert(*this, index, begin, end);
+		pvInsert(index, begin, end);
 	}
 
 	void Insert(size_t index, std::initializer_list<Item> items)
 	{
-		Insert(index, items.begin(), items.end());
+		pvInsert(index, items.begin(), items.end());
 	}
 
 	void RemoveBack(size_t count = 1)
@@ -720,6 +718,21 @@ private:
 		for (size_t i = segIndex; i < segCount; ++i)
 			pvDeallocateSegment(i, mSegments[i]);
 		mSegments.RemoveBack(segCount - segIndex);
+	}
+
+	template<typename ArgIterator>
+	internal::EnableIf<internal::IsForwardIterator<ArgIterator>::value>
+	pvInsert(size_t index, ArgIterator begin, ArgIterator end)
+	{
+		Reserve(mCount + internal::UIntMath<>::Dist(begin, end));
+		ArrayShifter::InsertNogrow(*this, index, begin, end);
+	}
+
+	template<typename ArgIterator>
+	internal::EnableIf<!internal::IsForwardIterator<ArgIterator>::value>
+	pvInsert(size_t index, ArgIterator begin, ArgIterator end)
+	{
+		ArrayShifter::Insert(*this, index, begin, end);
 	}
 
 private:

@@ -858,7 +858,7 @@ public:
 	{
 		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
 		std::move_iterator<Item*> begin(&itemHandler);
-		Insert(index, begin, begin + 1);
+		pvInsert(index, begin, begin + 1);
 	}
 
 	template<typename... ItemArgs>
@@ -881,7 +881,7 @@ public:
 		else
 		{
 			std::move_iterator<Item*> begin(std::addressof(item));
-			ArrayShifter::Insert(*this, index, begin, begin + 1);
+			ArrayShifter::InsertNogrow(*this, index, begin, begin + 1);
 		}
 	}
 
@@ -903,11 +903,11 @@ public:
 				typename ItemTraits::template Creator<const Item&>(memManager, item));
 			if (grow)
 				pvGrow(newCount, ArrayGrowCause::add);
-			ArrayShifter::Insert(*this, index, count, *&itemHandler);
+			ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
 		}
 		else
 		{
-			ArrayShifter::Insert(*this, index, count, item);
+			ArrayShifter::InsertNogrow(*this, index, count, item);
 		}
 	}
 
@@ -916,19 +916,12 @@ public:
 	void Insert(size_t index, ArgIterator begin, ArgIterator end)
 	{
 		MOMO_ASSERT(begin == end || !pvIsInside(*begin));	//?
-		if (internal::IsForwardIterator<ArgIterator>::value)
-		{
-			size_t count = SMath::Dist(begin, end);
-			size_t newCount = GetCount() + count;
-			if (newCount > GetCapacity())
-				pvGrow(newCount, ArrayGrowCause::add);
-		}
-		ArrayShifter::Insert(*this, index, begin, end);
+		pvInsert(index, begin, end);
 	}
 
 	void Insert(size_t index, std::initializer_list<Item> items)
 	{
-		Insert(index, items.begin(), items.end());
+		pvInsert(index, items.begin(), items.end());
 	}
 
 	void RemoveBack(size_t count = 1)
@@ -1089,6 +1082,24 @@ private:
 	void pvAddBackGrow(const Item& item, std::false_type /*isNothrowRelocatable*/)
 	{
 		pvAddBackGrow(typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
+	}
+
+	template<typename ArgIterator>
+	internal::EnableIf<internal::IsForwardIterator<ArgIterator>::value>
+	pvInsert(size_t index, ArgIterator begin, ArgIterator end)
+	{
+		size_t count = SMath::Dist(begin, end);
+		size_t newCount = GetCount() + count;
+		if (newCount > GetCapacity())
+			pvGrow(newCount, ArrayGrowCause::add);
+		ArrayShifter::InsertNogrow(*this, index, begin, end);
+	}
+
+	template<typename ArgIterator>
+	internal::EnableIf<!internal::IsForwardIterator<ArgIterator>::value>
+	pvInsert(size_t index, ArgIterator begin, ArgIterator end)
+	{
+		ArrayShifter::Insert(*this, index, begin, end);
 	}
 
 	void pvRemoveBack(size_t count) noexcept

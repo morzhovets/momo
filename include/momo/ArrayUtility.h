@@ -193,7 +193,7 @@ namespace internal
 		typedef typename Array::Settings Settings;
 
 	public:
-		static void Insert(Array& array, size_t index, size_t count, const Item& item)
+		static void InsertNogrow(Array& array, size_t index, size_t count, const Item& item)
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
@@ -223,7 +223,7 @@ namespace internal
 
 		template<typename ArgIterator>
 		static EnableIf<IsForwardIterator<ArgIterator>::value>
-		Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
+		InsertNogrow(Array& array, size_t index, ArgIterator begin, ArgIterator end)
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
