@@ -532,8 +532,8 @@ public:
 	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
-		std::move_iterator<Item*> begin(&itemHandler);
-		pvInsert(index, begin, begin + 1);
+		Reserve(mCount + 1);
+		ArrayShifter::InsertNogrow(*this, index, std::move(*&itemHandler));
 	}
 
 	template<typename... ItemArgs>
@@ -724,8 +724,9 @@ private:
 	internal::EnableIf<internal::IsForwardIterator<ArgIterator>::value>
 	pvInsert(size_t index, ArgIterator begin, ArgIterator end)
 	{
-		Reserve(mCount + internal::UIntMath<>::Dist(begin, end));
-		ArrayShifter::InsertNogrow(*this, index, begin, end);
+		size_t count = internal::UIntMath<>::Dist(begin, end);
+		Reserve(mCount + count);
+		ArrayShifter::InsertNogrow(*this, index, begin, count);
 	}
 
 	template<typename ArgIterator>

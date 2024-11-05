@@ -857,8 +857,10 @@ public:
 	void InsertCrt(size_t index, ItemCreator&& itemCreator)
 	{
 		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
-		std::move_iterator<Item*> begin(&itemHandler);
-		pvInsert(index, begin, begin + 1);
+		size_t newCount = GetCount() + 1;
+		if (newCount > GetCapacity())
+			pvGrow(newCount, ArrayGrowCause::add);
+		ArrayShifter::InsertNogrow(*this, index, std::move(*&itemHandler));
 	}
 
 	template<typename... ItemArgs>
@@ -874,15 +876,9 @@ public:
 		size_t grow = (initCount + 1 > GetCapacity());
 		size_t itemIndex = pvIndexOf(item);
 		if (grow || (index <= itemIndex && itemIndex < initCount))
-		{
-			InsertCrt(index, typename ItemTraits::template Creator<Item&&>(
-				GetMemManager(), std::move(item)));
-		}
+			InsertVar(index, std::move(item));
 		else
-		{
-			std::move_iterator<Item*> begin(std::addressof(item));
-			ArrayShifter::InsertNogrow(*this, index, begin, begin + 1);
-		}
+			ArrayShifter::InsertNogrow(*this, index, std::move(item));
 	}
 
 	void Insert(size_t index, const Item& item)
@@ -1092,7 +1088,7 @@ private:
 		size_t newCount = GetCount() + count;
 		if (newCount > GetCapacity())
 			pvGrow(newCount, ArrayGrowCause::add);
-		ArrayShifter::InsertNogrow(*this, index, begin, end);
+		ArrayShifter::InsertNogrow(*this, index, begin, count);
 	}
 
 	template<typename ArgIterator>

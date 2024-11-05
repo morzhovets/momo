@@ -223,11 +223,10 @@ namespace internal
 
 		template<typename ArgIterator>
 		static EnableIf<IsForwardIterator<ArgIterator>::value>
-		InsertNogrow(Array& array, size_t index, ArgIterator begin, ArgIterator end)
+		InsertNogrow(Array& array, size_t index, ArgIterator begin, size_t count)
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
-			size_t count = UIntMath<>::Dist(begin, end);
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
 			MemManager& memManager = array.GetMemManager();
 			if (index + count < initCount)
@@ -258,8 +257,7 @@ namespace internal
 		}
 
 		template<typename ArgIterator>
-		static EnableIf<!IsForwardIterator<ArgIterator>::value>
-		Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
+		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
 		{
 			typedef typename ItemTraits::template Creator<
 				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
@@ -267,6 +265,11 @@ namespace internal
 			size_t count = 0;
 			for (ArgIterator iter = begin; iter != end; (void)++iter, ++count)
 				array.InsertCrt(index + count, IterCreator(memManager, *iter));
+		}
+
+		static void InsertNogrow(Array& array, size_t index, Item&& item)
+		{
+			InsertNogrow(array, index, std::make_move_iterator(std::addressof(item)), 1);
 		}
 
 		static void Remove(Array& array, size_t index, size_t count)
