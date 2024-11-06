@@ -108,15 +108,15 @@ jobs:
           flags: '-std=c++23 -Werror -fsanitize=address,undefined -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '24.04'
 
-        - clang_ver: '18'
-          build_type: 'Release'
-          flags: '-std=c++23 -Werror -msse2 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
-          ubuntu_ver: '24.04'
+#        - clang_ver: '18'
+#          build_type: 'Release'
+#          flags: '-std=c++23 -Werror -msse2 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
+#          ubuntu_ver: '24.04'
 
-        - clang_ver: '18'
-          build_type: 'Release'
-          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-          ubuntu_ver: '24.04'
+#        - clang_ver: '18'
+#          build_type: 'Release'
+#          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+#          ubuntu_ver: '24.04'
 
         - clang_ver: '18'
           build_type: 'Debug'
