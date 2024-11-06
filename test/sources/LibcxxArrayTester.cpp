@@ -18,6 +18,12 @@
 
 #include "../../include/momo/stdish/vector.h"
 
+namespace
+{
+
+using namespace libcxx_insert_range_seq;
+using namespace libcxx_from_range_seq;
+
 namespace libcxx_test_array_0
 {
 
@@ -61,5 +67,7 @@ LIBCXX_NAMESPACE_STD_END
 #undef LIBCXX_TEST_INTCAP_ARRAY
 
 } // namespace libcxx_test_array_5
+
+} // namespace
 
 #endif // TEST_LIBCXX_ARRAY

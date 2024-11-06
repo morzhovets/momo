@@ -19,6 +19,12 @@
 #include "../../include/momo/stdish/vector.h"
 #include "../../include/momo/SegmentedArray.h"
 
+namespace
+{
+
+using namespace libcxx_insert_range_seq;
+using namespace libcxx_from_range_seq;
+
 namespace libcxx_test_segmented_array_sqrt
 {
 
@@ -76,5 +82,7 @@ LIBCXX_NAMESPACE_STD_END
 #undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_test_segmented_array_cnst
+
+} // namespace
 
 #endif // TEST_LIBCXX_ARRAY
