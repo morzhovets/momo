@@ -145,10 +145,6 @@ namespace internal
 {
 	typedef unsigned char Byte;
 
-	template<typename Iterator>
-	using IsForwardIterator = std::is_base_of<std::forward_iterator_tag,
-		typename std::iterator_traits<Iterator>::iterator_category>;
-
 	template<bool value>
 	using BoolConstant = std::integral_constant<bool, value>;
 
@@ -179,6 +175,21 @@ namespace internal
 
 	template<typename... Types>
 	using Void = typename VoidMaker<Types...>::Void;
+
+	template<typename Iterator,
+		typename Sentinel = Iterator,
+		typename = void>
+	struct IsForwardIterator17 : public std::false_type
+	{
+	};
+
+	template<typename Iterator>
+	struct IsForwardIterator17<Iterator, Iterator,
+		Void<typename std::iterator_traits<Iterator>::iterator_category>>
+		: public std::is_base_of<std::forward_iterator_tag,
+			typename std::iterator_traits<Iterator>::iterator_category>
+	{
+	};
 
 	template<typename Func, typename Result, typename... Args>
 	struct IsInvocable : public std::false_type
@@ -292,12 +303,14 @@ namespace internal
 		template<typename Iterator>
 		static UInt Dist(Iterator begin, Iterator end)
 		{
+			MOMO_STATIC_ASSERT(IsForwardIterator17<Iterator>::value);
 			return static_cast<UInt>(std::distance(begin, end));
 		}
 
 		template<typename Iterator>
 		static Iterator Next(Iterator iter, UInt dist)
 		{
+			MOMO_STATIC_ASSERT(IsForwardIterator17<Iterator>::value);
 			return std::next(iter, static_cast<ptrdiff_t>(dist));
 		}
 

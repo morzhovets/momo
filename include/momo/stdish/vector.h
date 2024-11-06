@@ -19,6 +19,10 @@
 
 #include "../Array.h"
 
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+# include <ranges>
+#endif
+
 namespace momo
 {
 
@@ -101,6 +105,15 @@ public:
 		: mArray(values, MemManager(alloc))
 	{
 	}
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	vector(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
+		: mArray(std::ranges::begin(values), std::ranges::end(values), MemManager(alloc))
+	{
+	}
+#endif // MOMO_HAS_CONTAINERS_RANGES
 
 	vector(vector&& right) noexcept
 		: mArray(std::move(right.mArray))
@@ -405,6 +418,24 @@ public:
 		return SMath::Next(begin(), index);
 	}
 
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	void append_range(Range&& values)
+	{
+		insert_range(cend(), std::forward<Range>(values));
+	}
+
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	iterator insert_range(const_iterator where, Range&& values)
+	{
+		size_t index = SMath::Dist(cbegin(), where);
+		mArray.Insert(index, std::ranges::begin(values), std::ranges::end(values));
+		return SMath::Next(begin(), index);
+	}
+#endif // MOMO_HAS_CONTAINERS_RANGES
+
 	void pop_back()
 	{
 		mArray.RemoveBack();
@@ -445,13 +476,22 @@ public:
 		typename = typename std::iterator_traits<Iterator>::iterator_category>
 	void assign(Iterator first, Iterator last)
 	{
-		mArray = Array(first, last, MemManager(get_allocator()));
+		pvAssign(first, last);
 	}
 
 	void assign(std::initializer_list<value_type> values)
 	{
-		assign(values.begin(), values.end());
+		pvAssign(values.begin(), values.end());
 	}
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+	template<std::ranges::input_range Range>
+	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
+	void assign_range(Range&& values)
+	{
+		pvAssign(std::ranges::begin(values), std::ranges::end(values));
+	}
+#endif // MOMO_HAS_CONTAINERS_RANGES
 
 	friend bool operator==(const vector& left, const vector& right)
 	{
@@ -487,6 +527,12 @@ private:
 		return array;
 	}
 
+	template<typename Iterator, typename Sentinel>
+	void pvAssign(Iterator begin, Sentinel end)
+	{
+		mArray = Array(std::move(begin), std::move(end), MemManager(get_allocator()));
+	}
+
 private:
 	Array mArray;
 };
@@ -496,6 +542,14 @@ template<typename Iterator,
 	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>>
 vector(Iterator, Iterator, Allocator = Allocator())
 	-> vector<typename std::iterator_traits<Iterator>::value_type, Allocator>;
+#endif
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+template<std::ranges::input_range Range,
+	typename Allocator = std::allocator<std::ranges::range_value_t<Range>>,
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))>
+vector(std::from_range_t, Range&&, Allocator = Allocator())
+	-> vector<std::ranges::range_value_t<Range>, Allocator>;
 #endif
 
 /*!

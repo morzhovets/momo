@@ -222,7 +222,7 @@ namespace internal
 		}
 
 		template<typename ArgIterator>
-		static EnableIf<IsForwardIterator<ArgIterator>::value>
+		static EnableIf<IsForwardIterator17<ArgIterator>::value>
 		InsertNogrow(Array& array, size_t index, ArgIterator begin, size_t count)
 		{
 			size_t initCount = array.GetCount();
@@ -241,8 +241,7 @@ namespace internal
 			}
 			else
 			{
-				typedef typename ItemTraits::template Creator<
-					typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+				typedef typename ItemTraits::template Creator<decltype(*begin)> IterCreator;
 				ArgIterator iter = UIntMath<>::Next(begin, initCount - index);
 				for (size_t i = initCount; i < index + count; ++i, (void)++iter)
 					array.AddBackNogrowCrt(IterCreator(memManager, *iter));
@@ -256,14 +255,13 @@ namespace internal
 			}
 		}
 
-		template<typename ArgIterator>
-		static void Insert(Array& array, size_t index, ArgIterator begin, ArgIterator end)
+		template<typename ArgIterator, typename ArgSentinel>
+		static void Insert(Array& array, size_t index, ArgIterator begin, ArgSentinel end)
 		{
-			typedef typename ItemTraits::template Creator<
-				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
+			typedef typename ItemTraits::template Creator<decltype(*begin)> IterCreator;
 			MemManager& memManager = array.GetMemManager();
 			size_t count = 0;
-			for (ArgIterator iter = begin; iter != end; (void)++iter, ++count)
+			for (ArgIterator iter = std::move(begin); iter != end; (void)++iter, ++count)
 				array.InsertCrt(index + count, IterCreator(memManager, *iter));
 		}
 

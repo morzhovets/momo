@@ -528,13 +528,11 @@ public:
 			AddBackNogrow(item);
 	}
 
-	template<typename ArgIterator,
-		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
-	explicit Array(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
-		: mData(internal::IsForwardIterator<ArgIterator>::value ? SMath::Dist(begin, end) : 0,
-			std::move(memManager))
+	template<typename ArgIterator, typename ArgSentinel,
+		typename = decltype(*std::declval<ArgIterator>())>
+	explicit Array(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
+		: Array(std::move(begin), std::move(end), std::move(memManager), nullptr)
 	{
-		pvFill(begin, end);
 	}
 
 	Array(std::initializer_list<Item> items)
@@ -560,7 +558,8 @@ public:
 	explicit Array(const Array& array, bool shrink)
 		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
 	{
-		pvFill(array.GetBegin(), array.GetEnd());
+		for (const Item& item : array)
+			AddBackNogrow(item);
 	}
 
 	explicit Array(const Array& array, MemManager memManager)
@@ -907,12 +906,12 @@ public:
 		}
 	}
 
-	template<typename ArgIterator,
-		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
-	void Insert(size_t index, ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel,
+		typename = decltype(*std::declval<ArgIterator>())>
+	void Insert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
 		MOMO_ASSERT(begin == end || !pvIsInside(*begin));	//?
-		pvInsert(index, begin, end);
+		pvInsert(index, std::move(begin), std::move(end));
 	}
 
 	void Insert(size_t index, std::initializer_list<Item> items)
@@ -958,26 +957,26 @@ private:
 	{
 	}
 
-	template<typename ArgIterator>
-	internal::EnableIf<internal::IsForwardIterator<ArgIterator>::value>
-	pvFill(ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel>
+	explicit Array(ArgIterator begin, ArgSentinel end, MemManager&& memManager,
+		internal::EnableIf<internal::IsForwardIterator17<ArgIterator, ArgSentinel>::value, std::nullptr_t>)
+		: mData(SMath::Dist(begin, end), std::move(memManager))
 	{
-		typedef typename ItemTraits::template Creator<
-			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
-		MemManager& memManager = GetMemManager();
+		typedef typename ItemTraits::template Creator<decltype(*begin)> IterCreator;
+		MemManager& thisMemManager = GetMemManager();
 		for (ArgIterator iter = begin; iter != end; ++iter)
-			AddBackNogrowCrt(IterCreator(memManager, *iter));
+			AddBackNogrowCrt(IterCreator(thisMemManager, *iter));
 	}
 
-	template<typename ArgIterator>
-	internal::EnableIf<!internal::IsForwardIterator<ArgIterator>::value>
-	pvFill(ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel>
+	explicit Array(ArgIterator begin, ArgSentinel end, MemManager&& memManager,
+		internal::EnableIf<!internal::IsForwardIterator17<ArgIterator, ArgSentinel>::value, std::nullptr_t>)
+		: mData(std::move(memManager))
 	{
-		typedef typename ItemTraits::template Creator<
-			typename std::iterator_traits<ArgIterator>::reference> IterCreator;
-		MemManager& memManager = GetMemManager();
-		for (ArgIterator iter = begin; iter != end; ++iter)
-			AddBackCrt(IterCreator(memManager, *iter));
+		typedef typename ItemTraits::template Creator<decltype(*begin)> IterCreator;
+		MemManager& thisMemManager = GetMemManager();
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
+			AddBackCrt(IterCreator(thisMemManager, *iter));
 	}
 
 	static size_t pvGrowCapacity(size_t capacity, size_t minNewCapacity,
@@ -1080,9 +1079,9 @@ private:
 		pvAddBackGrow(typename ItemTraits::template Creator<const Item&>(GetMemManager(), item));
 	}
 
-	template<typename ArgIterator>
-	internal::EnableIf<internal::IsForwardIterator<ArgIterator>::value>
-	pvInsert(size_t index, ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel>
+	internal::EnableIf<internal::IsForwardIterator17<ArgIterator, ArgSentinel>::value>
+	pvInsert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
 		size_t count = SMath::Dist(begin, end);
 		size_t newCount = GetCount() + count;
@@ -1091,11 +1090,11 @@ private:
 		ArrayShifter::InsertNogrow(*this, index, begin, count);
 	}
 
-	template<typename ArgIterator>
-	internal::EnableIf<!internal::IsForwardIterator<ArgIterator>::value>
-	pvInsert(size_t index, ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel>
+	internal::EnableIf<!internal::IsForwardIterator17<ArgIterator, ArgSentinel>::value>
+	pvInsert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
-		ArrayShifter::Insert(*this, index, begin, end);
+		ArrayShifter::Insert(*this, index, std::move(begin), std::move(end));
 	}
 
 	void pvRemoveBack(size_t count) noexcept

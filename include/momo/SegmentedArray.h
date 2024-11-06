@@ -215,16 +215,15 @@ public:
 		SetCount(count, item);
 	}
 
-	template<typename ArgIterator,
-		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
-	explicit SegmentedArray(ArgIterator begin, ArgIterator end, MemManager memManager = MemManager())
+	template<typename ArgIterator, typename ArgSentinel,
+		typename = decltype(*std::declval<ArgIterator>())>
+	explicit SegmentedArray(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
 		try
 		{
-			typedef typename ItemTraits::template Creator<
-				typename std::iterator_traits<ArgIterator>::reference> IterCreator;
-			for (ArgIterator iter = begin; iter != end; ++iter)
+			typedef typename ItemTraits::template Creator<decltype(*begin)> IterCreator;
+			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 				AddBackCrt(IterCreator(GetMemManager(), *iter));
 		}
 		catch (...)
@@ -562,11 +561,11 @@ public:
 		ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
 	}
 
-	template<typename ArgIterator,
-		typename = typename std::iterator_traits<ArgIterator>::iterator_category>
-	void Insert(size_t index, ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel,
+		typename = decltype(*std::declval<ArgIterator>())>
+	void Insert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
-		pvInsert(index, begin, end);
+		pvInsert(index, std::move(begin), std::move(end));
 	}
 
 	void Insert(size_t index, std::initializer_list<Item> items)
@@ -720,20 +719,20 @@ private:
 		mSegments.RemoveBack(segCount - segIndex);
 	}
 
-	template<typename ArgIterator>
-	internal::EnableIf<internal::IsForwardIterator<ArgIterator>::value>
-	pvInsert(size_t index, ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel>
+	internal::EnableIf<internal::IsForwardIterator17<ArgIterator, ArgSentinel>::value>
+	pvInsert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
 		size_t count = internal::UIntMath<>::Dist(begin, end);
 		Reserve(mCount + count);
 		ArrayShifter::InsertNogrow(*this, index, begin, count);
 	}
 
-	template<typename ArgIterator>
-	internal::EnableIf<!internal::IsForwardIterator<ArgIterator>::value>
-	pvInsert(size_t index, ArgIterator begin, ArgIterator end)
+	template<typename ArgIterator, typename ArgSentinel>
+	internal::EnableIf<!internal::IsForwardIterator17<ArgIterator, ArgSentinel>::value>
+	pvInsert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
-		ArrayShifter::Insert(*this, index, begin, end);
+		ArrayShifter::Insert(*this, index, std::move(begin), std::move(end));
 	}
 
 private:
