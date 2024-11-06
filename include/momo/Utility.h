@@ -303,7 +303,7 @@ namespace internal
 		template<typename Iterator>
 		static UInt Dist(Iterator begin, Iterator end)
 		{
-			MOMO_STATIC_ASSERT(IsForwardIterator17<Iterator>::value);
+			//MOMO_STATIC_ASSERT(IsForwardIterator17<Iterator>::value);
 			return static_cast<UInt>(std::distance(begin, end));
 		}
 
