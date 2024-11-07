@@ -467,7 +467,7 @@ public:
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	void assign(Iterator first, Iterator last)
 	{
-		pvAssign(std::move(first), std::move(last));
+		pvAssign(first, last);
 	}
 
 	void assign(std::initializer_list<value_type> values)
