@@ -539,7 +539,8 @@ private:
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
 template<typename Iterator,
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>>
+	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>,
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))>
 vector(Iterator, Iterator, Allocator = Allocator())
 	-> vector<typename std::iterator_traits<Iterator>::value_type, Allocator>;
 #endif
