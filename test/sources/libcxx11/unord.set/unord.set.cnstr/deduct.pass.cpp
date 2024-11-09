@@ -148,14 +148,12 @@ void main()
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
     momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>(), std::equal_to<>());
 
     ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
-#endif
 
     {
     momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>(), std::equal_to<>(), test_allocator<int>(0, 43));

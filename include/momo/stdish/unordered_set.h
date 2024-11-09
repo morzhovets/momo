@@ -76,7 +76,7 @@ public:
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
 
-	typedef key_type value_type;
+	typedef momo::internal::Identity<key_type> value_type;
 
 	typedef typename HashSet::ConstIterator const_iterator;
 	typedef typename HashSet::Iterator iterator;
@@ -785,7 +785,8 @@ template<typename Iterator, typename HashFunc, typename EqualFunc, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
 	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
+	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>; \
 template<typename Key> \
@@ -805,7 +806,8 @@ unordered_set(std::initializer_list<Key>, size_t, HashFunc, Allocator = Allocato
 template<typename Key, typename HashFunc, typename EqualFunc, \
 	typename Allocator = std::allocator<Key>, \
 	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
+	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
+	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
 
