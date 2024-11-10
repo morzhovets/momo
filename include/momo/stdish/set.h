@@ -71,7 +71,7 @@ public:
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
 
-	typedef key_type value_type;
+	typedef momo::internal::Identity<key_type> value_type;
 	typedef key_compare value_compare;
 
 	typedef typename TreeSet::ConstIterator const_iterator;
@@ -714,57 +714,61 @@ public:
 	}
 };
 
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
+
 #define MOMO_DECLARE_DEDUCTION_GUIDES(set) \
 template<typename Iterator, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::ordered_checker<Key, Allocator>> \
 set(Iterator, Iterator, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessFunc, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
+	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
 set(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>; \
 template<typename Key, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::ordered_checker<Key, Allocator>> \
 set(std::initializer_list<Key>, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Key, typename LessFunc, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
+	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
 set(std::initializer_list<Key>, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>;
+
+MOMO_DECLARE_DEDUCTION_GUIDES(set)
+MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
+
+#undef MOMO_DECLARE_DEDUCTION_GUIDES
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set) \
 template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::ordered_checker<Key, Allocator>> \
 set(std::from_range_t, Range&&, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename LessFunc, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
 set(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>;
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-MOMO_DECLARE_DEDUCTION_GUIDES(set)
-MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
-#endif
-
-#ifdef MOMO_HAS_CONTAINERS_RANGES
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multiset)
-#endif
 
-#undef MOMO_DECLARE_DEDUCTION_GUIDES
 #undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
+
+#endif // MOMO_HAS_CONTAINERS_RANGES
+
+#endif // MOMO_HAS_DEDUCTION_GUIDES
 
 } // namespace stdish
 

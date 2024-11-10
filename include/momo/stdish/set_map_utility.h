@@ -207,6 +207,15 @@ namespace internal
 	class unordered_checker
 	{
 	};
+
+	template<typename Key, typename Allocator,
+		typename LessFunc = std::less<Key>,
+		typename = decltype(std::declval<Allocator&>().allocate(size_t{})),
+		typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(),
+			std::declval<const Key&>()))>
+	class ordered_checker
+	{
+	};
 #endif // MOMO_HAS_DEDUCTION_GUIDES
 }
 

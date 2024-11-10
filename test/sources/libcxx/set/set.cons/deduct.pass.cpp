@@ -217,10 +217,8 @@ int main(int, char **) {
     }
 #endif
 
-#if MOMO_VERSION_MAJOR > 3
   //AssociativeContainerDeductionGuidesSfinaeAway<std::set, std::set<int>>();
   AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::set, momo::stdish::set<int>>();
-#endif
 
   return 0;
 }
