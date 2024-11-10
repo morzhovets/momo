@@ -76,7 +76,7 @@ namespace internal
 		typedef size_t size_type;
 		typedef ptrdiff_t difference_type;
 
-		typedef std::pair<const key_type, mapped_type> value_type;
+		typedef momo::internal::Identity<std::pair<const key_type, mapped_type>> value_type;
 
 		typedef map_value_compare<key_type, key_compare> value_compare;
 
@@ -1131,61 +1131,71 @@ public:
 	}
 };
 
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
+
 #define MOMO_DECLARE_DEDUCTION_GUIDES(map) \
 template<typename Iterator, \
-	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-	typename Mapped = typename std::iterator_traits<Iterator>::value_type::second_type, \
+	typename Value = typename std::iterator_traits<Iterator>::value_type, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::ordered_checker<Key, Allocator>> \
 map(Iterator, Iterator, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessFunc, \
-	typename Key = std::remove_const_t<typename std::iterator_traits<Iterator>::value_type::first_type>, \
-	typename Mapped = typename std::iterator_traits<Iterator>::value_type::second_type, \
+	typename Value = typename std::iterator_traits<Iterator>::value_type, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
+	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
 map(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>; \
-template<typename Key, typename Mapped, \
+template<typename CKey, typename Mapped, \
+	typename Key = std::remove_const_t<CKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
-map(std::initializer_list<std::pair<Key, Mapped>>, Allocator = Allocator()) \
+	typename = internal::ordered_checker<Key, Allocator>> \
+map(std::initializer_list<std::pair<CKey, Mapped>>, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
-template<typename Key, typename Mapped, typename LessFunc, \
+template<typename CKey, typename Mapped, typename LessFunc, \
+	typename Key = std::remove_const_t<CKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))> \
-map(std::initializer_list<std::pair<Key, Mapped>>, LessFunc, Allocator = Allocator()) \
+	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
+map(std::initializer_list<std::pair<CKey, Mapped>>, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>;
+
+MOMO_DECLARE_DEDUCTION_GUIDES(map)
+MOMO_DECLARE_DEDUCTION_GUIDES(multimap)
+
+#undef MOMO_DECLARE_DEDUCTION_GUIDES
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map) \
 template<std::ranges::input_range Range, \
-	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
-	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Value = std::ranges::range_value_t<Range>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::ordered_checker<Key, Allocator>> \
 map(std::from_range_t, Range&&, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename LessFunc, \
-	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
-	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Value = std::ranges::range_value_t<Range>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
 map(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>;
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-MOMO_DECLARE_DEDUCTION_GUIDES(map)
-MOMO_DECLARE_DEDUCTION_GUIDES(multimap)
-#endif
-
-#ifdef MOMO_HAS_CONTAINERS_RANGES
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multimap)
-#endif
 
-#undef MOMO_DECLARE_DEDUCTION_GUIDES
 #undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
+
+#endif // MOMO_HAS_CONTAINERS_RANGES
+
+#endif // MOMO_HAS_DEDUCTION_GUIDES
 
 } // namespace stdish
 

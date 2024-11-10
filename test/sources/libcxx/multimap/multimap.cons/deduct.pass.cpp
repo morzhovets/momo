@@ -94,7 +94,6 @@ int main(int, char**)
     }
 #endif
 
-#if !defined(TEST_GCC)
     {
     momo::stdish::multimap m{ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
 
@@ -102,7 +101,6 @@ int main(int, char**)
     const PC expected_m[] = { {1,1L}, {1,1L}, {2,2L}, {3,1L}, {INT_MAX,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
-#endif
 
     {
     momo::stdish::multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, std::greater<int>());
@@ -140,31 +138,23 @@ int main(int, char**)
     assert(m.get_allocator().get_id() == 45);
     }
 
-#if !defined(TEST_GCC)
     {
     // Examples from LWG3025
     momo::stdish::multimap m{std::pair{1, 1}, {2, 2}, {3, 3}};
     ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, int>);
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     momo::stdish::multimap m2{m.begin(), m.end()};
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::multimap<int, int>);
-#endif
     }
-#endif
 
     {
     // Examples from LWG3531
     momo::stdish::multimap m1{{std::pair{1, 2}, {3, 4}}, std::less<int>()};
     ASSERT_SAME_TYPE(decltype(m1), momo::stdish::multimap<int, int>);
 
-#if !defined(TEST_GCC) && !defined(TEST_CLANG)
-#if MOMO_VERSION_MAJOR > 3
     using value_type = std::pair<const int, int>;
     momo::stdish::multimap m2{{value_type{1, 2}, {3, 4}}, std::less<int>()};
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::multimap<int, int>);
-#endif
-#endif
     }
 
 #if TEST_STD_VER >= 23
@@ -196,10 +186,8 @@ int main(int, char**)
     }
 #endif
 
-#if MOMO_VERSION_MAJOR > 3
     //AssociativeContainerDeductionGuidesSfinaeAway<std::multimap, std::multimap<int, long>>();
     AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::multimap, momo::stdish::multimap<int, long>>();
-#endif
 
     return 0;
 }

@@ -65,7 +65,6 @@ int main(int, char**)
     }
 #endif
 
-#if !defined(TEST_GCC) && !defined(TEST_CLANG)
     {
     momo::stdish::multimap m{ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} };
 
@@ -74,7 +73,6 @@ int main(int, char**)
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
-#if MOMO_VERSION_MAJOR > 3
     {
     momo::stdish::multimap m({ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} }, std::greater<int>());
 
@@ -82,7 +80,6 @@ int main(int, char**)
     const PC expected_m[] = { {INT_MAX,1L}, {3,1L}, {2,2L}, {1,1L}, {1,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
-#endif
 
     {
     momo::stdish::multimap m({ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} }, std::greater<int>(), test_allocator<PC>(0, 43));
@@ -93,7 +90,6 @@ int main(int, char**)
     assert(m.get_allocator().get_id() == 43);
     }
 
-#if MOMO_VERSION_MAJOR > 3
     {
     momo::stdish::multimap m({ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} }, test_allocator<PC>(0, 45));
 
@@ -102,8 +98,6 @@ int main(int, char**)
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 45);
     }
-#endif
-#endif
 
     return 0;
 }
