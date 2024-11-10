@@ -538,20 +538,33 @@ private:
 };
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
+
+namespace internal
+{
+	template<typename Allocator,
+		typename = decltype(std::declval<Allocator&>().allocate(size_t{}))>
+	class vector_checker
+	{
+	};
+}
+
 template<typename Iterator,
-	typename Allocator = std::allocator<typename std::iterator_traits<Iterator>::value_type>,
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))>
+	typename Value = typename std::iterator_traits<Iterator>::value_type,
+	typename Allocator = std::allocator<Value>,
+	typename = internal::vector_checker<Allocator>>
 vector(Iterator, Iterator, Allocator = Allocator())
-	-> vector<typename std::iterator_traits<Iterator>::value_type, Allocator>;
-#endif
+	-> vector<Value, Allocator>;
 
 #ifdef MOMO_HAS_CONTAINERS_RANGES
 template<std::ranges::input_range Range,
-	typename Allocator = std::allocator<std::ranges::range_value_t<Range>>,
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))>
+	typename Value = std::ranges::range_value_t<Range>,
+	typename Allocator = std::allocator<Value>,
+	typename = internal::vector_checker<Allocator>>
 vector(std::from_range_t, Range&&, Allocator = Allocator())
-	-> vector<std::ranges::range_value_t<Range>, Allocator>;
-#endif
+	-> vector<Value, Allocator>;
+#endif // MOMO_HAS_CONTAINERS_RANGES
+
+#endif // MOMO_HAS_DEDUCTION_GUIDES
 
 /*!
 	\brief

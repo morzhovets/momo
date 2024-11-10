@@ -763,6 +763,21 @@ public:
 	}
 };
 
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
+
+namespace internal
+{
+	template<typename Key, typename Allocator,
+		typename HashFunc = HashCoder<Key>,
+		typename EqualFunc = std::equal_to<Key>,
+		typename = decltype(std::declval<Allocator&>().allocate(size_t{})),
+		typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())),
+		typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>()))>
+	class unordered_set_checker
+	{
+	};
+}
+
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set) \
 template<typename Iterator, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type> \
@@ -771,22 +786,19 @@ unordered_set(Iterator, Iterator) \
 template<typename Iterator, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::unordered_set_checker<Key, Allocator>> \
 unordered_set(Iterator, Iterator, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::unordered_set_checker<Key, Allocator, HashFunc>> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, typename EqualFunc, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::unordered_set_checker<Key, Allocator, HashFunc, EqualFunc>> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>; \
 template<typename Key> \
@@ -794,22 +806,26 @@ unordered_set(std::initializer_list<Key>) \
 	-> unordered_set<Key>; \
 template<typename Key, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::unordered_set_checker<Key, Allocator>> \
 unordered_set(std::initializer_list<Key>, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename HashFunc, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::unordered_set_checker<Key, Allocator, HashFunc>> \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename HashFunc, typename EqualFunc, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::unordered_set_checker<Key, Allocator, HashFunc, EqualFunc>> \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
+
+MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set)
+MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set_open)
+
+#undef MOMO_DECLARE_DEDUCTION_GUIDES
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set) \
 template<std::ranges::input_range Range, \
@@ -819,37 +835,30 @@ unordered_set(std::from_range_t, Range&&) \
 template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::unordered_set_checker<Key, Allocator>> \
 unordered_set(std::from_range_t, Range&&, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename HashFunc, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::unordered_set_checker<Key, Allocator, HashFunc>> \
 unordered_set(std::from_range_t, Range&&, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename HashFunc, typename EqualFunc, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())), \
-	typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(), std::declval<const Key&>())), \
-	typename = decltype(std::declval<Allocator&>().allocate(size_t{}))> \
+	typename = internal::unordered_set_checker<Key, Allocator, HashFunc, EqualFunc>> \
 unordered_set(std::from_range_t, Range&&, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
 
-#ifdef MOMO_HAS_DEDUCTION_GUIDES
-MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set)
-MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set_open)
-#endif
-
-#ifdef MOMO_HAS_CONTAINERS_RANGES
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set_open)
-#endif
 
-#undef MOMO_DECLARE_DEDUCTION_GUIDES
 #undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
+
+#endif // MOMO_HAS_CONTAINERS_RANGES
+
+#endif // MOMO_HAS_DEDUCTION_GUIDES
 
 } // namespace stdish
 
