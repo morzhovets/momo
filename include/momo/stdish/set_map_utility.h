@@ -6,15 +6,19 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  momo/stdish/node_handle.h
+  momo/stdish/set_map_utility.h
 
 \**********************************************************/
 
-#ifndef MOMO_INCLUDE_GUARD_STDISH_NODE_HANDLE
-#define MOMO_INCLUDE_GUARD_STDISH_NODE_HANDLE
+#ifndef MOMO_INCLUDE_GUARD_STDISH_SET_MAP_UTILITY
+#define MOMO_INCLUDE_GUARD_STDISH_SET_MAP_UTILITY
 
 #include "../SetUtility.h"
 #include "../MapUtility.h"
+
+#ifdef MOMO_HAS_CONTAINERS_RANGES
+# include <ranges>
+#endif
 
 namespace momo
 {
@@ -198,4 +202,4 @@ namespace internal
 
 } // namespace momo
 
-#endif // MOMO_INCLUDE_GUARD_STDISH_NODE_HANDLE
+#endif // MOMO_INCLUDE_GUARD_STDISH_SET_MAP_UTILITY

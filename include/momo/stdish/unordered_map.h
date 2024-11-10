@@ -18,11 +18,7 @@
 #define MOMO_INCLUDE_GUARD_STDISH_UNORDERED_MAP
 
 #include "../HashMap.h"
-#include "node_handle.h"
-
-#ifdef MOMO_HAS_CONTAINERS_RANGES
-# include <ranges>
-#endif
+#include "set_map_utility.h"
 
 namespace momo
 {

@@ -18,10 +18,7 @@
 #define MOMO_INCLUDE_GUARD_STDISH_UNORDERED_MULTIMAP
 
 #include "../HashMultiMap.h"
-
-#ifdef MOMO_HAS_CONTAINERS_RANGES
-# include <ranges>
-#endif
+#include "set_map_utility.h"
 
 namespace momo
 {
