@@ -196,6 +196,18 @@ namespace internal
 		bool inserted;
 		NodeHandle node;
 	};
+
+#ifdef MOMO_HAS_DEDUCTION_GUIDES
+	template<typename Key, typename Allocator, typename HashFunc,
+		typename EqualFunc = std::equal_to<Key>,
+		typename = decltype(std::declval<Allocator&>().allocate(size_t{})),
+		typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())),
+		typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(),
+			std::declval<const Key&>()))>
+	class unordered_checker
+	{
+	};
+#endif // MOMO_HAS_DEDUCTION_GUIDES
 }
 
 } // namespace stdish
