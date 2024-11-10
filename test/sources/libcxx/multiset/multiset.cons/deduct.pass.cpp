@@ -103,7 +103,7 @@ int main(int, char **) {
   }
 #endif
 
-#if !defined(TEST_GCC)
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
   {
     momo::stdish::multiset s{ 1, 2, 1, INT_MAX, 3 };
 
@@ -159,7 +159,7 @@ int main(int, char **) {
     assert(s.get_allocator().get_id() == 45);
   }
 
-#if !defined(TEST_GCC)
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
   {
     NotAnAllocator a;
     momo::stdish::multiset s{ a }; // multiset(initializer_list<NotAnAllocator>)
@@ -189,12 +189,14 @@ int main(int, char **) {
     assert(s.size() == 3);
   }
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
   {
     int source[3] = { 3, 4, 5 };
     momo::stdish::multiset s{ source, source + 3 }; // multiset(initializer_list<int*>)
     ASSERT_SAME_TYPE(decltype(s), momo::stdish::multiset<int *>);
     assert(s.size() == 2);
   }
+#endif
 
 #if TEST_STD_VER >= 23
     {
