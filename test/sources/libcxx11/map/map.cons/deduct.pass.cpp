@@ -95,7 +95,7 @@ void main()
     }
 #endif
 
-#if !defined(TEST_GCC)
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     momo::stdish::map m{ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
 

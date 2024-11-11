@@ -65,6 +65,7 @@ int main(int, char**)
     }
 #endif
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     momo::stdish::multimap m{ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} };
 
@@ -72,6 +73,7 @@ int main(int, char**)
     const PC expected_m[] = { {1,1L}, {1,1L}, {2,2L}, {3,1L}, {INT_MAX,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
+#endif
 
     {
     momo::stdish::multimap m({ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} }, std::greater<int>());

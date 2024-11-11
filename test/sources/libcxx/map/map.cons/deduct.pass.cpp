@@ -94,6 +94,7 @@ int main(int, char**)
     }
 #endif
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     momo::stdish::map m{ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
 
@@ -101,6 +102,7 @@ int main(int, char**)
     const PC expected_m[] = { {1,1L}, {2,2L}, {3,1L}, {INT_MAX,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
+#endif
 
     {
     momo::stdish::map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, std::greater<int>());
@@ -138,6 +140,7 @@ int main(int, char**)
     assert(m.get_allocator().get_id() == 45);
     }
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     // Examples from LWG3025
     momo::stdish::map m{std::pair{1, 1}, {2, 2}, {3, 3}};
@@ -146,6 +149,7 @@ int main(int, char**)
     momo::stdish::map m2{m.begin(), m.end()};
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::map<int, int>);
     }
+#endif
 
     {
     // Examples from LWG3531

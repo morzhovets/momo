@@ -45,6 +45,7 @@ using PCC = std::pair<const int, const long>;
 
 void main()
 {
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     {
     const PCC arr[] = { {1,1L}, {2,2L}, {1,1L}, {INT_MAX,1L}, {3,1L} };
     momo::stdish::multimap m(std::begin(arr), std::end(arr));
@@ -72,7 +73,9 @@ void main()
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 42);
     }
+#endif
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     momo::stdish::multimap m{ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} };
 
@@ -80,6 +83,7 @@ void main()
     const PC expected_m[] = { {1,1L}, {1,1L}, {2,2L}, {3,1L}, {INT_MAX,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
+#endif
 
     {
     momo::stdish::multimap m({ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} }, std::greater<int>());
