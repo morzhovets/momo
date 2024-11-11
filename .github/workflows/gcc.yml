@@ -46,7 +46,7 @@ jobs:
         - gcc_ver: '10'
           build_type: 'Release'
           flags: '-std=c++20 -msse2 -DTEST_LIBCXX_NEW'
-          ubuntu_ver: '20.04'
+          ubuntu_ver: '22.04'
 
         - gcc_ver: '11'
           build_type: 'Release'
