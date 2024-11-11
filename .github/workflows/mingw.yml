@@ -14,11 +14,7 @@ jobs:
 
         - arch: 'x64'
           build_type: 'Release'
-          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
-
-        - arch: 'x64'
-          build_type: 'Release'
-          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
+          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
 
 #        - arch: 'x86'
 #          build_type: 'Release'
@@ -30,19 +26,11 @@ jobs:
 #
 #        - arch: 'x86'
 #          build_type: 'Release'
-#          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+#          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
 #
 #        - arch: 'x86'
 #          build_type: 'Release'
-#          flags: '-std=c++23 -Wa,-mbig-obj -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-#
-#        - arch: 'x86'
-#          build_type: 'Release'
-#          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
-#
-#        - arch: 'x86'
-#          build_type: 'Release'
-#          flags: '-std=c++23 -Wa,-mbig-obj -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+#          flags: '-std=c++23 -Wa,-mbig-obj -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
     runs-on: windows-2022
 

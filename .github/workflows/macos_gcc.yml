@@ -10,50 +10,38 @@ jobs:
 
         - gcc_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++23 -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++23 -msse2 -DTEST_LIBCXX_NEW'
           path_prefix: '/usr/local'
           macos_ver: '13'
 
         # macOS-14-arm64
         - gcc_ver: '11'
           build_type: 'Release'
-          flags: '-std=c++23 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++23 -DTEST_LIBCXX_NEW'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
         - gcc_ver: '12'
           build_type: 'Release'
-          flags: '-std=c++23 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++23 -DTEST_LIBCXX_NEW'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
         - gcc_ver: '13'
           build_type: 'Release'
-          flags: '-std=c++23 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++23 -DTEST_LIBCXX_NEW'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
         - gcc_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++23 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++23 -DTEST_LIBCXX_NEW'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
         - gcc_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++23 -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '14'
-
-        - gcc_ver: '14'
-          build_type: 'Release'
-          flags: '-std=c++23 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '14'
-
-        - gcc_ver: '14'
-          build_type: 'Release'
-          flags: '-std=c++23 -DTEST_LIBCXX_NEW -DTEST_DISABLE_SIMPLE -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-std=c++23 -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
