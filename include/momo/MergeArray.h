@@ -249,14 +249,14 @@ public:
 		return array;
 	}
 
-	template<internal::conceptObjectMultiCreator<Item> MultiItemCreator>
-	static MergeArray CreateCrt(size_t count, MultiItemCreator multiItemCreator,
+	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>
+	static MergeArray CreateCrt(size_t count, ItemMultiCreator itemMultiCreator,
 		MemManager memManager = MemManager())
 	{
-		FastCopyableFunctor<MultiItemCreator> fastMultiItemCreator(multiItemCreator);
+		FastCopyableFunctor<ItemMultiCreator> fastItemMultiCreator(itemMultiCreator);
 		MergeArray array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
-			array.pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(fastMultiItemCreator)));
+			array.pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(fastItemMultiCreator)));
 		return array;
 	}
 
@@ -323,28 +323,28 @@ public:
 		return mCount;
 	}
 
-	template<internal::conceptObjectMultiCreator<Item> MultiItemCreator>
-	void SetCountCrt(size_t count, MultiItemCreator multiItemCreator)
+	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>
+	void SetCountCrt(size_t count, ItemMultiCreator itemMultiCreator)
 	{
-		pvSetCount(count, FastCopyableFunctor<MultiItemCreator>(multiItemCreator));
+		pvSetCount(count, FastCopyableFunctor<ItemMultiCreator>(itemMultiCreator));
 	}
 
 	void SetCount(size_t count)
 	{
 		typedef typename ItemTraits::template Creator<> ItemCreator;
 		MemManager& memManager = GetMemManager();
-		auto multiItemCreator = [&memManager] (Item* newItem)
+		auto itemMultiCreator = [&memManager] (Item* newItem)
 			{ (ItemCreator(memManager))(newItem); };
-		pvSetCount(count, FastCopyableFunctor(multiItemCreator));
+		pvSetCount(count, FastCopyableFunctor(itemMultiCreator));
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
 		typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
 		MemManager& memManager = GetMemManager();
-		auto multiItemCreator = [&memManager, &item] (Item* newItem)
+		auto itemMultiCreator = [&memManager, &item] (Item* newItem)
 			{ ItemCreator(memManager, item)(newItem); };
-		pvSetCount(count, FastCopyableFunctor(multiItemCreator));
+		pvSetCount(count, FastCopyableFunctor(itemMultiCreator));
 	}
 
 	bool IsEmpty() const noexcept
@@ -710,8 +710,8 @@ private:
 		return IteratorProxy(this, index);
 	}
 
-	template<internal::conceptObjectMultiCreator<Item> MultiItemCreator>
-	void pvSetCount(size_t count, FastCopyableFunctor<MultiItemCreator> multiItemCreator)
+	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>
+	void pvSetCount(size_t count, FastCopyableFunctor<ItemMultiCreator> itemMultiCreator)
 	{
 		if (count <= mCount)
 		{
@@ -724,7 +724,7 @@ private:
 			try
 			{
 				for (size_t i = initCount; i < count; ++i)
-					pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(multiItemCreator)));
+					pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(itemMultiCreator)));
 			}
 			catch (...)
 			{
