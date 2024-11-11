@@ -285,12 +285,12 @@ public:
 		return array;
 	}
 
-	template<typename MultiItemCreator>
-	static SegmentedArray CreateCrt(size_t count, const MultiItemCreator& multiItemCreator,
+	template<typename ItemMultiCreator>
+	static SegmentedArray CreateCrt(size_t count, const ItemMultiCreator& itemMultiCreator,
 		MemManager memManager = MemManager())
 	{
 		SegmentedArray array = CreateCap(count, std::move(memManager));
-		array.pvIncCount(count, multiItemCreator);
+		array.pvIncCount(count, itemMultiCreator);
 		return array;
 	}
 
@@ -358,31 +358,31 @@ public:
 		return mCount;
 	}
 
-	template<typename MultiItemCreator>
-	void SetCountCrt(size_t count, const MultiItemCreator& multiItemCreator)
+	template<typename ItemMultiCreator>
+	void SetCountCrt(size_t count, const ItemMultiCreator& itemMultiCreator)
 	{
 		if (count < mCount)
 			pvDecCount(count);
 		else if (count > mCount)
-			pvIncCount(count, multiItemCreator);
+			pvIncCount(count, itemMultiCreator);
 	}
 
 	void SetCount(size_t count)
 	{
 		typedef typename ItemTraits::template Creator<> Creator;
 		MemManager& memManager = GetMemManager();
-		auto multiItemCreator = [&memManager] (Item* newItem)
+		auto itemMultiCreator = [&memManager] (Item* newItem)
 			{ (Creator(memManager))(newItem); };
-		SetCountCrt(count, multiItemCreator);
+		SetCountCrt(count, itemMultiCreator);
 	}
 
 	void SetCount(size_t count, const Item& item)
 	{
 		typedef typename ItemTraits::template Creator<const Item&> Creator;
 		MemManager& memManager = GetMemManager();
-		auto multiItemCreator = [&memManager, &item] (Item* newItem)
+		auto itemMultiCreator = [&memManager, &item] (Item* newItem)
 			{ Creator(memManager, item)(newItem); };
-		SetCountCrt(count, multiItemCreator);
+		SetCountCrt(count, itemMultiCreator);
 	}
 
 	bool IsEmpty() const noexcept
@@ -630,8 +630,8 @@ private:
 		return mSegments[segIndex][itemIndex];
 	}
 
-	template<typename MultiItemCreator>
-	void pvIncCount(size_t count, const MultiItemCreator& multiItemCreator)
+	template<typename ItemMultiCreator>
+	void pvIncCount(size_t count, const ItemMultiCreator& itemMultiCreator)
 	{
 		MOMO_ASSERT(count >= mCount);
 		size_t initCapacity = GetCapacity();
@@ -647,7 +647,7 @@ private:
 				Item* segment = mSegments[segIndex];
 				size_t itemCount = Settings::GetItemCount(segIndex);
 				for (; itemIndex < itemCount && mCount < count; ++itemIndex, ++mCount)
-					multiItemCreator(segment + itemIndex);
+					itemMultiCreator(segment + itemIndex);
 				if (itemIndex == itemCount)
 				{
 					++segIndex;
