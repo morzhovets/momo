@@ -70,7 +70,6 @@
 
 #ifdef TEST_LIBCXX_NEW
 
-#include "../../include/momo/Version.h"
 #include "../../include/momo/ObjectManager.h"
 
 namespace momo
