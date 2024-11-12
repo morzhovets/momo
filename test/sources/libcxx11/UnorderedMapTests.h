@@ -191,9 +191,9 @@ LIBCXX_TEST_BEGIN(cnstr_deduct)
 #include "unord.map/unord.map.cnstr/deduct.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(cnstr_deduct_const)
-//#include "unord.map/unord.map.cnstr/deduct_const.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(cnstr_deduct_const)
+#include "unord.map/unord.map.cnstr/deduct_const.pass.cpp"
+LIBCXX_TEST_END
 
 #endif
 #endif
