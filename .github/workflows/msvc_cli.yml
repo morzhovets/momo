@@ -11,12 +11,12 @@ jobs:
         # Visual Studio 2019
         - win_ver: '2019'
           build_type: 'Release'
-          flags: '/clr /std:c++17 /WX /DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '/clr /std:c++17 /WX'
 
 #        # Visual Studio 2022
 #        - win_ver: '2022'
 #          build_type: 'Release'
-#          flags: '/clr /std:c++17 /WX /DLIBCPP_TEST_DEDUCTION_GUIDES'
+#          flags: '/clr /std:c++17 /WX'
 
     runs-on: windows-${{ matrix.win_ver }}
 

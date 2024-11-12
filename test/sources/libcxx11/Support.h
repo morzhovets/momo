@@ -20,17 +20,14 @@
 # include <optional>
 #endif
 
+#include "../../../include/momo/UserSettings.h"
+
 #if !defined(TEST_MSVC) && !defined(__cpp_lib_transparent_operators)
 # define LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 #endif
 
-#if !defined(LIBCPP_TEST_DEDUCTION_GUIDES) && defined(MOMO_HAS_DEDUCTION_GUIDES)
-# if defined(TEST_MSVC) && _MSC_VER >= 1924
-#  define LIBCPP_TEST_DEDUCTION_GUIDES
-# endif
-# if defined(TEST_GCC) && __GNUC__ >= 8
-#  define LIBCPP_TEST_DEDUCTION_GUIDES
-# endif
+#if defined(MOMO_HAS_DEDUCTION_GUIDES) && !defined(LIBCPP_DISABLE_TEST_DEDUCTION_GUIDES)
+# define LIBCPP_TEST_DEDUCTION_GUIDES
 #endif
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO

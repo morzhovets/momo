@@ -30,17 +30,17 @@ jobs:
 
         - gcc_ver: '7'
           build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2'
+          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '20.04'
 
         - gcc_ver: '8'
           build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++17 -Werror -msse2'
           ubuntu_ver: '20.04'
 
         - gcc_ver: '9'
           build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++17 -Werror -msse2'
           ubuntu_ver: '20.04'
 
         - gcc_ver: '10'

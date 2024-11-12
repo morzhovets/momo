@@ -25,37 +25,37 @@ jobs:
 
         - clang_ver: '5.0'
           build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2'
+          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '20.04'
 
         - clang_ver: '6.0'
           build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2'
+          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '20.04'
 
         - clang_ver: '7'
           build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2'
+          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           ubuntu_ver: '20.04'
 
         - clang_ver: '8'
           build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++17 -Werror -msse2'
           ubuntu_ver: '20.04'
 
         - clang_ver: '9'
           build_type: 'Release'
-          flags: '-std=c++17 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++17 -Werror -msse2'
           ubuntu_ver: '20.04'
 
         - clang_ver: '10'
           build_type: 'Release'
-          flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++20 -Werror -msse2'
           ubuntu_ver: '20.04'
 
         - clang_ver: '11'
           build_type: 'Release'
-          flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++20 -Werror -msse2'
           ubuntu_ver: '20.04'
 
         - clang_ver: '12'

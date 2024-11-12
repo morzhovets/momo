@@ -15,23 +15,23 @@ jobs:
 
         - macos_ver: '13'
           build_type: 'Release'
-          flags: '-std=c++20 -Werror -msse2 -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++20 -Werror -msse2'
 
         # macOS-14-arm64
         # Apple Clang 15.0.0
         - macos_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++20 -Werror'
 
         # macOS-15-arm64
         # Apple Clang 16.0.0
         - macos_ver: '15'
           build_type: 'Release'
-          flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++20 -Werror'
 
         - macos_ver: '15'
           build_type: 'Release'
-          flags: '-std=c++20 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-std=c++20 -Werror -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
         # -DTEST_LIBCXX_NEW
 
