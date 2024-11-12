@@ -47,13 +47,13 @@ jobs:
 
         - clang_ver: '17'
           build_type: 'Release'
-          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW'
+          flags: '-std=c++23 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
         - clang_ver: '18'
           build_type: 'Release'
-          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW'
+          flags: '-std=c++23 -Werror -DLIBCPP_TEST_DEDUCTION_GUIDES'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
