@@ -43,8 +43,8 @@ namespace std
 			momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, false>,
 			momo::TreeMapSettings>>;
 
-	template<typename TKey>
-	using vector = momo::stdish::vector<TKey>;
+	template<typename TValue>
+	using vector = momo::stdish::vector<TValue>;
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_map"
