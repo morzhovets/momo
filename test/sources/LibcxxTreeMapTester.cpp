@@ -32,6 +32,7 @@ namespace libcxx_test_tree_map
 {
 
 LIBCXX_NAMESPACE_STD_BEGIN
+
 template<typename TKey, typename TMapped,
 	typename TLessFunc = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
@@ -41,6 +42,12 @@ using map = momo::stdish::map<TKey, TMapped, TLessFunc, TAllocator,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 		momo::TreeMapSettings>>;
+
+#ifdef TEST_LIBCXX_NEW
+template<typename TValue>
+using vector = momo::stdish::vector<TValue>;
+#endif
+
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_map"
