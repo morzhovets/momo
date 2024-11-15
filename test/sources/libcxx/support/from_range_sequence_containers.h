@@ -115,20 +115,6 @@ constexpr void test_sequence_container_move_only() {
   [[maybe_unused]] Container<MoveOnly> c(std::from_range, in);
 }
 
-template <class Iter,
-          class Sent,
-          class Alloc,
-          class ValidateFunc>
-constexpr void test_vector_bool(ValidateFunc validate) {
-  // Normal input.
-  test_sequence_container_with_input<std::vector, bool, Iter, Sent, Alloc>(
-      std::array{true, false, false, true, false, true, true, true, false, true}, validate);
-  // Empty input.
-  test_sequence_container_with_input<std::vector, bool, Iter, Sent, Alloc>(std::array<bool, 0>{}, validate);
-  // Single-element input.
-  test_sequence_container_with_input<std::vector, bool, Iter, Sent, Alloc>(std::array{true}, validate);
-}
-
 template <template <class ...> class Container>
 void test_exception_safety_throwing_copy() {
 #if !defined(TEST_HAS_NO_EXCEPTIONS)

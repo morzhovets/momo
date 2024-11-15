@@ -131,7 +131,7 @@ constexpr void ContainerAdaptorDeductionGuidesSfinaeAway() {
   // (container, alloc)
   //
   // Cannot deduce from (container, BAD_alloc)
-  static_assert(SFINAEs_away<Container, std::vector<T>, BadAlloc>);
+  static_assert(SFINAEs_away<Container, std::array<T, 1>, BadAlloc>);
 
   // (iter, iter)
   //
