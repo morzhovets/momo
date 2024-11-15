@@ -17,7 +17,6 @@
 #include <cstddef>
 #include <iterator>
 #include <type_traits>
-#include <vector>
 
 #include "min_allocator.h"
 #include "test_allocator.h"
@@ -40,17 +39,10 @@ constexpr auto wrap_input(Range&& input) {
   return std::ranges::subrange(std::move(b), std::move(e));
 }
 
-template <class Iter, class Sent, class T, std::size_t N>
-constexpr auto wrap_input(std::array<T, N>& input) {
-  auto b = Iter(input.data());
-  auto e = Sent(Iter(input.data() + input.size()));
-  return std::ranges::subrange(std::move(b), std::move(e));
-}
-
-template <class Iter, class Sent, class T>
-constexpr auto wrap_input(std::vector<T>& input) {
-  auto b = Iter(input.data());
-  auto e = Sent(Iter(input.data() + input.size()));
+template <class Iter, class Sent, std::ranges::contiguous_range Range>
+constexpr auto wrap_input(Range&& input) {
+  auto b = Iter(std::ranges::data(input));
+  auto e = Sent(Iter(std::ranges::data(input) + std::ranges::size(input)));
   return std::ranges::subrange(std::move(b), std::move(e));
 }
 

@@ -262,10 +262,8 @@ int main(int, char**)
     }
 #endif
 
-#if MOMO_VERSION_MAJOR > 3
     //UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_set, std::unordered_set<int>>();
     UnorderedContainerDeductionGuidesSfinaeAway<momo::stdish::unordered_set, momo::stdish::unordered_set<int>>();
-#endif
 
     return 0;
 }

@@ -114,7 +114,6 @@ int main(int, char**)
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
-#if MOMO_VERSION_MAJOR > 3
     {
     momo::stdish::unordered_map m({ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} }, 42, std::hash<long long>());
     ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>>);
@@ -126,7 +125,6 @@ int main(int, char**)
     ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
-#endif
 
     {
     momo::stdish::unordered_map m({ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} }, 42, std::hash<long long>(), std::equal_to<>(), test_allocator<PC>(0, 44));
@@ -151,7 +149,6 @@ int main(int, char**)
     assert(m.get_allocator().get_id() == 46);
     }
 
-#if MOMO_VERSION_MAJOR > 3
     {
     momo::stdish::unordered_map m({ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} }, 42, test_allocator<PC>(0, 47));
     ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, momo::HashCoder<int>, std::equal_to<int>, test_allocator<PC>>);
@@ -165,7 +162,6 @@ int main(int, char**)
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 48);
     }
-#endif
 
     return 0;
 }

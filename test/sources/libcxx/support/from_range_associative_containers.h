@@ -17,7 +17,7 @@
 #include <cassert>
 #include <cstddef>
 #include <ranges>
-#include <vector>
+#include <span>
 #include <utility>
 
 #include "exception_safety_helpers.h"
@@ -64,7 +64,7 @@ template <template <class ...> class Container,
           class Comp,
           class Alloc,
           class ValueType = std::pair<const K, V>>
-void test_associative_map_with_input(std::vector<ValueType>&& input) {
+void test_associative_map_with_input(std::span<ValueType> input) {
   { // (range)
     auto in = wrap_input<Iter, Sent>(input);
     Container<K, V> c(std::from_range, in);
@@ -114,12 +114,14 @@ template <template <class ...> class Container,
           class Comp,
           class Alloc>
 void test_associative_map() {
-  auto test_with_input = &test_associative_map_with_input<Container, K, V, Iter, Sent, Comp, Alloc>;
+  //auto test_with_input = &test_associative_map_with_input<Container, K, V, Iter, Sent, Comp, Alloc>;
+  auto test_with_input = [] <size_t N> (std::pair<const K, V> (&&input)[N], size_t count = N)
+    { return test_associative_map_with_input<Container, K, V, Iter, Sent, Comp, Alloc>(std::span(input, count)); };
 
   // Normal input.
   test_with_input({{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}});
   // Empty input.
-  test_with_input({});
+  test_with_input({{}}, 0);
   // Single-element input.
   test_with_input({{1, 2}});
 }
@@ -206,7 +208,7 @@ template <template <class ...> class Container,
           class Sent,
           class Comp,
           class Alloc>
-void test_associative_set_with_input(std::vector<T>&& input) {
+void test_associative_set_with_input(std::span<T> input) {
   { // (range)
     std::ranges::subrange in(Iter(input.data()), Sent(Iter(input.data() + input.size())));
     Container<T> c(std::from_range, in);
@@ -255,12 +257,14 @@ template <template <class ...> class Container,
           class Comp,
           class Alloc>
 void test_associative_set() {
-  auto test_with_input = &test_associative_set_with_input<Container, T, Iter, Sent, Comp, Alloc>;
+  //auto test_with_input = &test_associative_set_with_input<Container, T, Iter, Sent, Comp, Alloc>;
+  auto test_with_input = [] <size_t N> (T (&&input)[N], size_t count = N)
+    { return test_associative_set_with_input<Container, T, Iter, Sent, Comp, Alloc>(std::span(input, count)); };
 
   // Normal input.
   test_with_input({0, 5, 12, 7, -1, 8, 26});
   // Empty input.
-  test_with_input({});
+  test_with_input({{}}, 0);
   // Single-element input.
   test_with_input({5});
 }

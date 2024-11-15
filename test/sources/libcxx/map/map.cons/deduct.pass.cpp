@@ -94,7 +94,7 @@ int main(int, char**)
     }
 #endif
 
-#if !defined(TEST_GCC)
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     momo::stdish::map m{ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
 
@@ -140,16 +140,14 @@ int main(int, char**)
     assert(m.get_allocator().get_id() == 45);
     }
 
-#if !defined(TEST_GCC)
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     // Examples from LWG3025
     momo::stdish::map m{std::pair{1, 1}, {2, 2}, {3, 3}};
     ASSERT_SAME_TYPE(decltype(m), momo::stdish::map<int, int>);
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     momo::stdish::map m2{m.begin(), m.end()};
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::map<int, int>);
-#endif
     }
 #endif
 
@@ -158,13 +156,9 @@ int main(int, char**)
     momo::stdish::map m1{{std::pair{1, 2}, {3, 4}}, std::less<int>()};
     ASSERT_SAME_TYPE(decltype(m1), momo::stdish::map<int, int>);
 
-#if !defined(TEST_GCC) && !defined(TEST_CLANG)
-#if MOMO_VERSION_MAJOR > 3
     using value_type = std::pair<const int, int>;
     momo::stdish::map m2{{value_type{1, 2}, {3, 4}}, std::less<int>()};
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::map<int, int>);
-#endif
-#endif
     }
 
 #if TEST_STD_VER >= 23
@@ -196,10 +190,8 @@ int main(int, char**)
     }
 #endif
 
-#if MOMO_VERSION_MAJOR > 3
     //AssociativeContainerDeductionGuidesSfinaeAway<std::map, std::map<int, long>>();
     AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::map, momo::stdish::map<int, long>>();
-#endif
 
     return 0;
 }

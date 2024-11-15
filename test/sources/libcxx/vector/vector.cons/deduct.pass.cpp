@@ -149,10 +149,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         }
     }
 
-#if MOMO_VERSION_MAJOR > 3
     //SequenceContainerDeductionGuidesSfinaeAway<std::vector, std::vector<int>>();
     SequenceContainerDeductionGuidesSfinaeAway<momo::stdish::vector, momo::stdish::vector<int>>();
-#endif
 
     return true;
 }

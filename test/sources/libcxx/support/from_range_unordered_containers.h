@@ -19,7 +19,7 @@
 #include <cstddef>
 #include <limits>
 #include <ranges>
-#include <vector>
+#include <span>
 #include <utility>
 
 #include "exception_safety_helpers.h"
@@ -93,7 +93,7 @@ template <template <class ...> class Container,
           class Equal,
           class Alloc,
           class ValueType = std::pair<const K, V>>
-void test_unordered_map_with_input(std::vector<ValueType>&& input) {
+void test_unordered_map_with_input(std::span<ValueType> input) {
   using DefaultHash = std::hash<int>;
   using DefaultEqual = std::equal_to<int>;
 
@@ -193,12 +193,14 @@ template <template <class ...> class Container,
           class Equal,
           class Alloc>
 void test_unordered_map() {
-  auto test_with_input = &test_unordered_map_with_input<Container, K, V, Iter, Sent, Hash, Equal, Alloc>;
+  //auto test_with_input = &test_unordered_map_with_input<Container, K, V, Iter, Sent, Hash, Equal, Alloc>;
+  auto test_with_input = [] <size_t N> (std::pair<const K, V> (&&input)[N], size_t count = N)
+    { return test_unordered_map_with_input<Container, K, V, Iter, Sent, Hash, Equal, Alloc>(std::span(input, count)); };
 
   // Normal input.
   test_with_input({{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}});
   // Empty input.
-  test_with_input({});
+  test_with_input({{}}, 0);
   // Single-element input.
   test_with_input({{1, 2}});
 }
@@ -299,7 +301,7 @@ template <template <class ...> class Container,
           class Hash,
           class Equal,
           class Alloc>
-void test_unordered_set_with_input(std::vector<T>&& input) {
+void test_unordered_set_with_input(std::span<T> input) {
   using DefaultHash = std::hash<int>;
   using DefaultEqual = std::equal_to<int>;
 
@@ -397,12 +399,14 @@ template <template <class ...> class Container,
           class Equal,
           class Alloc>
 void test_unordered_set() {
-  auto test_with_input = &test_unordered_set_with_input<Container, T, Iter, Sent, Hash, Equal, Alloc>;
+  //auto test_with_input = &test_unordered_set_with_input<Container, T, Iter, Sent, Hash, Equal, Alloc>;
+  auto test_with_input = [] <size_t N> (T (&&input)[N], size_t count = N)
+    { return test_unordered_set_with_input<Container, T, Iter, Sent, Hash, Equal, Alloc>(std::span(input, count)); };
 
   // Normal input.
   test_with_input({0, 5, 12, 7, -1, 8, 26});
   // Empty input.
-  test_with_input({});
+  test_with_input({{}}, 0);
   // Single-element input.
   test_with_input({5});
 }

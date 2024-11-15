@@ -217,18 +217,14 @@ int main(int, char**)
     assert(m.get_allocator().get_id() == 48);
     }
 
-#if !defined(TEST_GCC)
     {
     // Examples from LWG3025
     momo::stdish::unordered_map m{std::pair{1, 1}, {2, 2}, {3, 3}};
     ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, int>);
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     momo::stdish::unordered_map m2{m.begin(), m.end()};
     ASSERT_SAME_TYPE(decltype(m2), momo::stdish::unordered_map<int, int>);
-#endif
     }
-#endif
 
     {
     // Examples from LWG3531
@@ -292,10 +288,8 @@ int main(int, char**)
     }
 #endif
 
-#if MOMO_VERSION_MAJOR > 3
     //UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_map, std::unordered_map<int, long>>();
     UnorderedContainerDeductionGuidesSfinaeAway<momo::stdish::unordered_map, momo::stdish::unordered_map<int, long>>();
-#endif
 
     return 0;
 }
