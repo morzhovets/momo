@@ -722,25 +722,19 @@ public:
 template<typename Iterator, \
 	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptAllocator<Allocator> \
 set(Iterator, Iterator, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessFunc, \
 	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptLessFunc<LessFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 set(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>; \
 template<typename Key, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptAllocator<Allocator> \
 set(std::initializer_list<Key>, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Key, typename LessFunc, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptLessFunc<LessFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 set(std::initializer_list<Key>, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>;
 
@@ -748,14 +742,11 @@ set(std::initializer_list<Key>, LessFunc, Allocator = Allocator()) \
 template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptAllocator<Allocator> \
 set(std::from_range_t, Range&&, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename LessFunc, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptLessFunc<LessFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 set(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
 	-> set<Key, LessFunc, Allocator>;
 

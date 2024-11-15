@@ -1098,84 +1098,78 @@ public:
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map) \
 template<typename Iterator, \
-	typename Key = std::remove_const_t<typename std::iter_value_t<Iterator>::first_type>, \
-	typename Mapped = typename std::iter_value_t<Iterator>::second_type> \
+	typename Value = std::iter_value_t<Iterator>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>> \
 unordered_map(Iterator, Iterator) \
 	-> unordered_map<Key, Mapped>; \
 template<typename Iterator, \
-	typename Key = std::remove_const_t<typename std::iter_value_t<Iterator>::first_type>, \
-	typename Mapped = typename std::iter_value_t<Iterator>::second_type, \
+	typename Value = std::iter_value_t<Iterator>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptAllocator<Allocator> \
 unordered_map(Iterator, Iterator, size_t, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, \
-	typename Key = std::remove_const_t<typename std::iter_value_t<Iterator>::first_type>, \
-	typename Mapped = typename std::iter_value_t<Iterator>::second_type, \
+	typename Value = std::iter_value_t<Iterator>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_map(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, typename EqualFunc, \
-	typename Key = std::remove_const_t<typename std::iter_value_t<Iterator>::first_type>, \
-	typename Mapped = typename std::iter_value_t<Iterator>::second_type, \
+	typename Value = std::iter_value_t<Iterator>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_map(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, EqualFunc, Allocator>; \
-template<typename Key, typename Mapped> \
-unordered_map(std::initializer_list<std::pair<Key, Mapped>>) \
+template<typename CKey, typename Mapped, \
+	typename Key = std::remove_const_t<CKey>> \
+unordered_map(std::initializer_list<std::pair<CKey, Mapped>>) \
 	-> unordered_map<Key, Mapped>; \
-template<typename Key, typename Mapped, \
+template<typename CKey, typename Mapped, \
+	typename Key = std::remove_const_t<CKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptAllocator<Allocator> \
-unordered_map(std::initializer_list<std::pair<Key, Mapped>>, size_t, Allocator = Allocator()) \
+unordered_map(std::initializer_list<std::pair<CKey, Mapped>>, size_t, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename Key, typename Mapped, typename HashFunc, \
+template<typename CKey, typename Mapped, typename HashFunc, \
+	typename Key = std::remove_const_t<CKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
-unordered_map(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, Allocator = Allocator()) \
+unordered_map(std::initializer_list<std::pair<CKey, Mapped>>, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
-template<typename Key, typename Mapped, typename HashFunc, typename EqualFunc, \
+template<typename CKey, typename Mapped, typename HashFunc, typename EqualFunc, \
+	typename Key = std::remove_const_t<CKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
-unordered_map(std::initializer_list<std::pair<Key, Mapped>>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
+unordered_map(std::initializer_list<std::pair<CKey, Mapped>>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, EqualFunc, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_map) \
 template<std::ranges::input_range Range, \
-	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
-	typename Mapped = typename std::ranges::range_value_t<Range>::second_type> \
+	typename Value = std::ranges::range_value_t<Range>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>> \
 unordered_map(std::from_range_t, Range&&) \
 	-> unordered_map<Key, Mapped>; \
 template<std::ranges::input_range Range, \
-	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
-	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Value = std::ranges::range_value_t<Range>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptAllocator<Allocator> \
 unordered_map(std::from_range_t, Range&&, size_t, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename HashFunc, \
-	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
-	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Value = std::ranges::range_value_t<Range>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_map(std::from_range_t, Range&&, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename HashFunc, typename EqualFunc, \
-	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
-	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Value = std::ranges::range_value_t<Range>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_map(std::from_range_t, Range&&, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, EqualFunc, Allocator>;
 

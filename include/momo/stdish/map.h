@@ -1155,46 +1155,43 @@ public:
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(map) \
 template<typename Iterator, \
-	typename Key = std::remove_const_t<typename std::iter_value_t<Iterator>::first_type>, \
-	typename Mapped = typename std::iter_value_t<Iterator>::second_type, \
+	typename Value = std::iter_value_t<Iterator>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptAllocator<Allocator> \
 map(Iterator, Iterator, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessFunc, \
-	typename Key = std::remove_const_t<typename std::iter_value_t<Iterator>::first_type>, \
-	typename Mapped = typename std::iter_value_t<Iterator>::second_type, \
+	typename Value = std::iter_value_t<Iterator>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptLessFunc<LessFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 map(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>; \
-template<typename Key, typename Mapped, \
+template<typename CKey, typename Mapped, \
+	typename Key = std::remove_const_t<CKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptAllocator<Allocator> \
-map(std::initializer_list<std::pair<Key, Mapped>>, Allocator = Allocator()) \
+map(std::initializer_list<std::pair<CKey, Mapped>>, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
-template<typename Key, typename Mapped, typename LessFunc, \
+template<typename CKey, typename Mapped, typename LessFunc, \
+	typename Key = std::remove_const_t<CKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptLessFunc<LessFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
-map(std::initializer_list<std::pair<Key, Mapped>>, LessFunc, Allocator = Allocator()) \
+map(std::initializer_list<std::pair<CKey, Mapped>>, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map) \
 template<std::ranges::input_range Range, \
-	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
-	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Value = std::ranges::range_value_t<Range>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptAllocator<Allocator> \
 map(std::from_range_t, Range&&, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename LessFunc, \
-	typename Key = std::remove_const_t<typename std::ranges::range_value_t<Range>::first_type>, \
-	typename Mapped = typename std::ranges::range_value_t<Range>::second_type, \
+	typename Value = std::ranges::range_value_t<Range>, \
+	typename Key = std::decay_t<typename Value::first_type>, \
+	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-requires momo::internal::conceptLessFunc<LessFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 map(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>;
 

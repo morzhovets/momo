@@ -519,17 +519,17 @@ private:
 };
 
 template<typename Iterator,
-	typename Allocator = std::allocator<std::iter_value_t<Iterator>>>
-requires momo::internal::conceptAllocator<Allocator>
+	typename Value = std::iter_value_t<Iterator>,
+	typename Allocator = std::allocator<Value>>
 vector(Iterator, Iterator, Allocator = Allocator())
-	-> vector<std::iter_value_t<Iterator>, Allocator>;
+	-> vector<Value, Allocator>;
 
 #if defined(__cpp_lib_containers_ranges)
 template<std::ranges::input_range Range,
-	typename Allocator = std::allocator<std::ranges::range_value_t<Range>>>
-requires momo::internal::conceptAllocator<Allocator>
+	typename Value = std::ranges::range_value_t<Range>,
+	typename Allocator = std::allocator<Value>>
 vector(std::from_range_t, Range&&, Allocator = Allocator())
-	-> vector<std::ranges::range_value_t<Range>, Allocator>;
+	-> vector<Value, Allocator>;
 #endif
 
 /*!

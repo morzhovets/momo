@@ -769,22 +769,16 @@ unordered_set(Iterator, Iterator) \
 template<typename Iterator, \
 	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptAllocator<Allocator> \
 unordered_set(Iterator, Iterator, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, \
 	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename HashFunc, typename EqualFunc, \
 	typename Key = std::iter_value_t<Iterator>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_set(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>; \
 template<typename Key> \
@@ -792,20 +786,14 @@ unordered_set(std::initializer_list<Key>) \
 	-> unordered_set<Key>; \
 template<typename Key, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptAllocator<Allocator> \
 unordered_set(std::initializer_list<Key>, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename HashFunc, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<typename Key, typename HashFunc, typename EqualFunc, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_set(std::initializer_list<Key>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
 
@@ -817,22 +805,16 @@ unordered_set(std::from_range_t, Range&&) \
 template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptAllocator<Allocator> \
 unordered_set(std::from_range_t, Range&&, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename HashFunc, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_set(std::from_range_t, Range&&, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename HashFunc, typename EqualFunc, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>> \
-requires momo::internal::conceptHashFunc<HashFunc, Key> && \
-	momo::internal::conceptEqualFunc<EqualFunc, Key> && \
-	momo::internal::conceptAllocator<Allocator> \
 unordered_set(std::from_range_t, Range&&, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
 
