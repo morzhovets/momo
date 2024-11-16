@@ -206,9 +206,7 @@ namespace internal
 				array.InsertCrt(index + count, IterCreator(memManager, *iter));
 		}
 
-		template<std::input_iterator ArgIterator>
-		requires (std::forward_iterator<ArgIterator> ||
-			std::is_same_v<ArgIterator, std::move_iterator<Item*>>)	// vs2019, gcc10
+		template<internal::conceptForwardIterator ArgIterator>
 		static void InsertNogrow(Array& array, size_t index, ArgIterator begin, size_t count)
 		{
 			size_t initCount = array.GetCount();
@@ -229,8 +227,7 @@ namespace internal
 			{
 				typedef typename ItemTraits::template Creator<
 					std::iter_reference_t<ArgIterator>> IterCreator;
-				ArgIterator iter = std::next(begin, static_cast<ptrdiff_t>(initCount - index));
-				//UIntMath<>::Next(begin, initCount - index);	// move_iterator
+				ArgIterator iter = UIntMath<>::Next(begin, initCount - index);
 				for (size_t i = initCount; i < index + count; ++i, (void)++iter)
 					array.AddBackNogrowCrt(IterCreator(memManager, *iter));
 				iter = begin;

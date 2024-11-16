@@ -852,7 +852,7 @@ public:
 	void Insert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
 		MOMO_ASSERT(begin == end || !pvIsInside(*begin));	//?
-		if constexpr (std::forward_iterator<ArgIterator>)
+		if constexpr (internal::conceptForwardIterator<ArgIterator>)
 		{
 			size_t count = SMath::Dist(begin, end);
 			size_t newCount = GetCount() + count;
@@ -911,7 +911,8 @@ private:
 	{
 	}
 
-	template<std::forward_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	template<internal::conceptForwardIterator ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
 	explicit Array(ArgIterator begin, ArgSentinel end, MemManager&& memManager, std::nullptr_t)
 		: mData(SMath::Dist(begin, end), std::move(memManager))
 	{

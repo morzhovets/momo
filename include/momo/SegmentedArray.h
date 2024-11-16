@@ -534,7 +534,7 @@ public:
 	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
 	void Insert(size_t index, ArgIterator begin, ArgSentinel end)
 	{
-		if constexpr (std::forward_iterator<ArgIterator>)
+		if constexpr (internal::conceptForwardIterator<ArgIterator>)
 		{
 			size_t count = internal::UIntMath<>::Dist(begin, end);
 			Reserve(mCount + count);

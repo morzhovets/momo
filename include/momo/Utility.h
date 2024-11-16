@@ -113,6 +113,11 @@ namespace internal
 	template<typename Iterator>
 	concept conceptRandomIterator17 = conceptIterator17<Iterator, std::random_access_iterator_tag>;
 
+	template<typename Iterator>
+	concept conceptForwardIterator = std::input_iterator<Iterator> &&
+		(std::forward_iterator<Iterator> ||
+			std::is_same_v<Iterator, std::move_iterator<std::iter_value_t<Iterator>*>>);	// c++20
+
 	template<typename Sentinel, typename Iterator>
 	concept conceptSentinel =
 		requires (Iterator begin, Sentinel end)
@@ -246,13 +251,13 @@ namespace internal
 			return ((value + mod - 1) / mod) * mod;
 		}
 
-		template<std::forward_iterator Iterator, conceptSentinel<Iterator> Sentinel>
+		template<conceptForwardIterator Iterator, conceptSentinel<Iterator> Sentinel>
 		static UInt Dist(Iterator begin, Sentinel end)
 		{
 			return static_cast<UInt>(std::ranges::distance(begin, end));
 		}
 
-		template<std::forward_iterator Iterator>
+		template<conceptForwardIterator Iterator>
 		static Iterator Next(Iterator iter, UInt dist)
 		{
 			return std::next(iter, static_cast<ptrdiff_t>(dist));
