@@ -623,11 +623,11 @@ namespace internal
 				mColumnList->GetOffset(column));
 		}
 
-		template<typename RowIterator>
-		void Assign(RowIterator begin, RowIterator end)
+		template<typename RowIterator, typename RowSentinel>
+		void Assign(RowIterator begin, RowSentinel end)
 		{
 			size_t initCount = GetCount();
-			Add(begin, end);	//?
+			Add(std::move(begin), std::move(end));	//?
 			mRaws.Remove(0, initCount);
 		}
 
@@ -638,13 +638,13 @@ namespace internal
 			mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
 		}
 
-		template<typename RowIterator>
-		void Add(RowIterator begin, RowIterator end)
+		template<typename RowIterator, typename RowSentinel>
+		void Add(RowIterator begin, RowSentinel end)
 		{
 			size_t initCount = GetCount();
 			try
 			{
-				for (RowIterator iter = begin; iter != end; ++iter)
+				for (RowIterator iter = std::move(begin); iter != end; ++iter)
 				{
 					RowReference rowRef = *iter;
 					MOMO_CHECK(&rowRef.GetColumnList() == mColumnList);
@@ -666,12 +666,12 @@ namespace internal
 			mRaws.Insert(index, RowReferenceProxy::GetRaw(rowRef));
 		}
 
-		template<typename RowIterator>
-		void Insert(size_t index, RowIterator begin, RowIterator end)
+		template<typename RowIterator, typename RowSentinel>
+		void Insert(size_t index, RowIterator begin, RowSentinel end)
 		{
 			size_t initCount = GetCount();
 			MOMO_CHECK(index <= initCount);
-			Add(begin, end);
+			Add(std::move(begin), std::move(end));
 			std::rotate(UIntMath<>::Next(mRaws.GetBegin(), index),
 				UIntMath<>::Next(mRaws.GetBegin(), initCount), mRaws.GetEnd());
 		}

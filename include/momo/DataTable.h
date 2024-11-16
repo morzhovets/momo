@@ -664,16 +664,16 @@ public:
 		return pvTryUpdate(rowRef, column, newItem);
 	}
 
-	template<typename RowIterator>
-	void Assign(RowIterator begin, RowIterator end)
+	template<typename RowIterator, typename RowSentinel>
+	void Assign(RowIterator begin, RowSentinel end)
 	{
-		pvAssign(begin, end);
+		pvAssign(std::move(begin), std::move(end));
 	}
 
-	template<typename RowIterator>
-	void Remove(RowIterator begin, RowIterator end)
+	template<typename RowIterator, typename RowSentinel>
+	void Remove(RowIterator begin, RowSentinel end)
 	{
-		pvRemove(begin, end);
+		pvRemove(std::move(begin), std::move(end));
 	}
 
 	template<typename RowFilter>
@@ -1166,10 +1166,10 @@ private:
 		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
-	template<typename RowIterator,
+	template<typename RowIterator, typename RowSentinel,
 		bool keepRowNumber = Settings::keepRowNumber>
 	internal::EnableIf<keepRowNumber>
-	pvAssign(RowIterator begin, RowIterator end)
+	pvAssign(RowIterator begin, RowSentinel end)
 	{
 		const ColumnList& columnList = GetColumnList();
 		for (Raw* raw : mRaws)
@@ -1177,7 +1177,7 @@ private:
 		size_t count = 0;
 		try
 		{
-			for (RowIterator iter = begin; iter != end; ++iter)
+			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
 				ConstRowReference rowRef = *iter;
 				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
@@ -1207,17 +1207,17 @@ private:
 		}
 	}
 
-	template<typename RowIterator,
+	template<typename RowIterator, typename RowSentinel,
 		bool keepRowNumber = Settings::keepRowNumber>
 	internal::EnableIf<!keepRowNumber>
-	pvAssign(RowIterator begin, RowIterator end)
+	pvAssign(RowIterator begin, RowSentinel end)
 	{
 		typedef HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr,
 			HashMapKeyValueTraits<void*, size_t, MemManagerPtr>,
 			internal::NestedHashMapSettings> RawMap;
 		RawMap rawMap((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		size_t count = 0;
-		for (RowIterator iter = begin; iter != end; ++iter)
+		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			ConstRowReference rowRef = *iter;
 			MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
@@ -1241,15 +1241,15 @@ private:
 		}
 	}
 
-	template<typename RowIterator,
+	template<typename RowIterator, typename RowSentinel,
 		bool keepRowNumber = Settings::keepRowNumber>
 	internal::EnableIf<keepRowNumber>
-	pvRemove(RowIterator begin, RowIterator end)
+	pvRemove(RowIterator begin, RowSentinel end)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
 		{
-			for (RowIterator iter = begin; iter != end; ++iter)
+			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
 				ConstRowReference rowRef = *iter;
 				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
@@ -1265,15 +1265,15 @@ private:
 		pvSetNumbers();
 	}
 
-	template<typename RowIterator,
+	template<typename RowIterator, typename RowSentinel,
 		bool keepRowNumber = Settings::keepRowNumber>
 	internal::EnableIf<!keepRowNumber>
-	pvRemove(RowIterator begin, RowIterator end)
+	pvRemove(RowIterator begin, RowSentinel end)
 	{
 		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
 			HashSetItemTraits<void*, MemManagerPtr>, internal::NestedHashSetSettings> RawSet;
 		RawSet rawSet((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
-		for (RowIterator iter = begin; iter != end; ++iter)
+		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			ConstRowReference rowRef = *iter;
 			MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
