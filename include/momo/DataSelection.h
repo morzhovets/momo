@@ -100,7 +100,7 @@ namespace internal
 	};
 
 	template<typename DataRowIterator, typename RowReference>
-	concept conceptDataRowIterator = conceptIterator17<DataRowIterator, std::input_iterator_tag> &&
+	concept conceptDataRowIterator = std::input_iterator<DataRowIterator> &&
 		requires (DataRowIterator iter) { { *iter } -> std::convertible_to<RowReference>; };
 
 	template<typename TRawIterator, typename TRowReference>
@@ -599,11 +599,12 @@ namespace internal
 				mColumnList->GetOffset(column));
 		}
 
-		template<conceptDataRowIterator<RowReference> RowIterator>
-		void Assign(RowIterator begin, RowIterator end)
+		template<conceptDataRowIterator<RowReference> RowIterator,
+			conceptSentinel<RowIterator> RowSentinel>
+		void Assign(RowIterator begin, RowSentinel end)
 		{
 			size_t initCount = GetCount();
-			Add(begin, end);	//?
+			Add(std::move(begin), std::move(end));	//?
 			mRaws.Remove(0, initCount);
 		}
 
@@ -614,13 +615,14 @@ namespace internal
 			mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
 		}
 
-		template<conceptDataRowIterator<RowReference> RowIterator>
-		void Add(RowIterator begin, RowIterator end)
+		template<conceptDataRowIterator<RowReference> RowIterator,
+			conceptSentinel<RowIterator> RowSentinel>
+		void Add(RowIterator begin, RowSentinel end)
 		{
 			size_t initCount = GetCount();
 			try
 			{
-				for (RowIterator iter = begin; iter != end; ++iter)
+				for (RowIterator iter = std::move(begin); iter != end; ++iter)
 				{
 					RowReference rowRef = *iter;
 					MOMO_CHECK(&rowRef.GetColumnList() == mColumnList);
@@ -642,12 +644,13 @@ namespace internal
 			mRaws.Insert(index, RowReferenceProxy::GetRaw(rowRef));
 		}
 
-		template<conceptDataRowIterator<RowReference> RowIterator>
-		void Insert(size_t index, RowIterator begin, RowIterator end)
+		template<conceptDataRowIterator<RowReference> RowIterator,
+			conceptSentinel<RowIterator> RowSentinel>
+		void Insert(size_t index, RowIterator begin, RowSentinel end)
 		{
 			size_t initCount = GetCount();
 			MOMO_CHECK(index <= initCount);
-			Add(begin, end);
+			Add(std::move(begin), std::move(end));
 			std::rotate(UIntMath<>::Next(mRaws.GetBegin(), index),
 				UIntMath<>::Next(mRaws.GetBegin(), initCount), mRaws.GetEnd());
 		}

@@ -662,16 +662,18 @@ public:
 		return pvTryUpdate(rowRef, column, newItem);
 	}
 
-	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void Assign(RowIterator begin, RowIterator end)
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator,
+		internal::conceptSentinel<RowIterator> RowSentinel>
+	void Assign(RowIterator begin, RowSentinel end)
 	{
-		pvAssign(begin, end);
+		pvAssign(std::move(begin), std::move(end));
 	}
 
-	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void Remove(RowIterator begin, RowIterator end)
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator,
+		internal::conceptSentinel<RowIterator> RowSentinel>
+	void Remove(RowIterator begin, RowSentinel end)
 	{
-		pvRemove(begin, end);
+		pvRemove(std::move(begin), std::move(end));
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter>
@@ -1099,8 +1101,9 @@ private:
 		return { pvMakeRowReference(raw), UniqueHashIndex::empty };
 	}
 
-	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void pvAssign(RowIterator begin, RowIterator end)
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator,
+		internal::conceptSentinel<RowIterator> RowSentinel>
+	void pvAssign(RowIterator begin, RowSentinel end)
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
@@ -1109,7 +1112,7 @@ private:
 		size_t count = 0;
 		try
 		{
-			for (RowIterator iter = begin; iter != end; ++iter)
+			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
 				ConstRowReference rowRef = *iter;
 				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
@@ -1139,8 +1142,9 @@ private:
 		}
 	}
 
-	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void pvAssign(RowIterator begin, RowIterator end)
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator,
+		internal::conceptSentinel<RowIterator> RowSentinel>
+	void pvAssign(RowIterator begin, RowSentinel end)
 		requires (!Settings::keepRowNumber)
 	{
 		typedef HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr,
@@ -1148,7 +1152,7 @@ private:
 			internal::NestedHashMapSettings> RawMap;
 		RawMap rawMap((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		size_t count = 0;
-		for (RowIterator iter = begin; iter != end; ++iter)
+		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			ConstRowReference rowRef = *iter;
 			MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
@@ -1172,14 +1176,15 @@ private:
 		}
 	}
 
-	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void pvRemove(RowIterator begin, RowIterator end)
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator,
+		internal::conceptSentinel<RowIterator> RowSentinel>
+	void pvRemove(RowIterator begin, RowSentinel end)
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
 		try
 		{
-			for (RowIterator iter = begin; iter != end; ++iter)
+			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
 				ConstRowReference rowRef = *iter;
 				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
@@ -1195,14 +1200,15 @@ private:
 		pvSetNumbers();
 	}
 
-	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator>
-	void pvRemove(RowIterator begin, RowIterator end)
+	template<internal::conceptDataRowIterator<ConstRowReference> RowIterator,
+		internal::conceptSentinel<RowIterator> RowSentinel>
+	void pvRemove(RowIterator begin, RowSentinel end)
 		requires (!Settings::keepRowNumber)
 	{
 		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
 			HashSetItemTraits<void*, MemManagerPtr>, internal::NestedHashSetSettings> RawSet;
 		RawSet rawSet((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
-		for (RowIterator iter = begin; iter != end; ++iter)
+		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			ConstRowReference rowRef = *iter;
 			MOMO_CHECK(&rowRef.GetColumnList() == &GetColumnList());
