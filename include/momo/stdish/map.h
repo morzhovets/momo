@@ -76,7 +76,7 @@ namespace internal
 		typedef size_t size_type;
 		typedef ptrdiff_t difference_type;
 
-		typedef momo::internal::Identity<std::pair<const key_type, mapped_type>> value_type;
+		typedef std::pair<const key_type, mapped_type> value_type;
 
 		typedef map_value_compare<key_type, key_compare> value_compare;
 
@@ -156,14 +156,14 @@ namespace internal
 			insert(first, last);
 		}
 
-		map_base(std::initializer_list<value_type> values,
+		map_base(std::initializer_list<momo::internal::Identity<value_type>> values,
 			const allocator_type& alloc = allocator_type())
 			: map_base(values.begin(), values.end(), alloc)
 		{
 		}
 
-		map_base(std::initializer_list<value_type> values, const key_compare& lessFunc,
-			const allocator_type& alloc = allocator_type())
+		map_base(std::initializer_list<momo::internal::Identity<value_type>> values,
+			const key_compare& lessFunc, const allocator_type& alloc = allocator_type())
 			: map_base(values.begin(), values.end(), lessFunc, alloc)
 		{
 		}

@@ -72,7 +72,7 @@ public:
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
 
-	typedef momo::internal::Identity<key_type> value_type;
+	typedef key_type value_type;
 
 	typedef typename HashSet::ConstIterator const_iterator;
 	typedef typename HashSet::Iterator iterator;
@@ -163,25 +163,25 @@ public:
 		insert(first, last);
 	}
 
-	unordered_set(std::initializer_list<value_type> values)
+	unordered_set(std::initializer_list<momo::internal::Identity<value_type>> values)
 		: mHashSet(values)
 	{
 	}
 
-	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
-		const allocator_type& alloc = allocator_type())
+	unordered_set(std::initializer_list<momo::internal::Identity<value_type>> values,
+		size_type bucketCount, const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount), MemManager(alloc))
 	{
 	}
 
-	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+	unordered_set(std::initializer_list<momo::internal::Identity<value_type>> values,
+		size_type bucketCount, const hasher& hashFunc, const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount, hashFunc), MemManager(alloc))
 	{
 	}
 
-	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc,
+	unordered_set(std::initializer_list<momo::internal::Identity<value_type>> values,
+		size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc,
 		const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
 	{

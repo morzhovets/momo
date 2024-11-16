@@ -79,7 +79,7 @@ public:
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
 
-	typedef momo::internal::Identity<std::pair<const key_type, mapped_type>> value_type;
+	typedef std::pair<const key_type, mapped_type> value_type;
 
 	typedef momo::internal::HashDerivedIterator<HashMapIterator,
 		momo::internal::MapReferenceStd> iterator;
@@ -197,25 +197,25 @@ public:
 		insert(first, last);
 	}
 
-	unordered_map(std::initializer_list<value_type> values)
+	unordered_map(std::initializer_list<momo::internal::Identity<value_type>> values)
 		: unordered_map(values.begin(), values.end())
 	{
 	}
 
-	unordered_map(std::initializer_list<value_type> values, size_type bucketCount,
-		const allocator_type& alloc = allocator_type())
+	unordered_map(std::initializer_list<momo::internal::Identity<value_type>> values,
+		size_type bucketCount, const allocator_type& alloc = allocator_type())
 		: unordered_map(values.begin(), values.end(), bucketCount, alloc)
 	{
 	}
 
-	unordered_map(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+	unordered_map(std::initializer_list<momo::internal::Identity<value_type>> values,
+		size_type bucketCount, const hasher& hashFunc, const allocator_type& alloc = allocator_type())
 		: unordered_map(values.begin(), values.end(), bucketCount, hashFunc, alloc)
 	{
 	}
 
-	unordered_map(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc,
+	unordered_map(std::initializer_list<momo::internal::Identity<value_type>> values,
+		size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc,
 		const allocator_type& alloc = allocator_type())
 		: unordered_map(values.begin(), values.end(), bucketCount, hashFunc, equalFunc, alloc)
 	{

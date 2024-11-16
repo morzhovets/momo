@@ -71,7 +71,7 @@ public:
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
 
-	typedef momo::internal::Identity<key_type> value_type;
+	typedef key_type value_type;
 	typedef key_compare value_compare;
 
 	typedef typename TreeSet::ConstIterator const_iterator;
@@ -136,13 +136,14 @@ public:
 		insert(first, last);
 	}
 
-	set(std::initializer_list<value_type> values, const allocator_type& alloc = allocator_type())
+	set(std::initializer_list<momo::internal::Identity<value_type>> values,
+		const allocator_type& alloc = allocator_type())
 		: mTreeSet(values, TreeTraits(), MemManager(alloc))
 	{
 	}
 
-	set(std::initializer_list<value_type> values, const key_compare& lessFunc,
-		const allocator_type& alloc = allocator_type())
+	set(std::initializer_list<momo::internal::Identity<value_type>> values,
+		const key_compare& lessFunc, const allocator_type& alloc = allocator_type())
 		: mTreeSet(values, TreeTraits(lessFunc), MemManager(alloc))
 	{
 	}
