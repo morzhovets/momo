@@ -17,8 +17,6 @@
 #include <cmath>
 #include <optional>
 
-#include "../../../include/momo/Version.h"
-
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 
 #if defined(__cpp_lib_containers_ranges)

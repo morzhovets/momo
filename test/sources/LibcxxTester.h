@@ -12,6 +12,11 @@
 
 #pragma once
 
+#include "TestSettings.h"
+
+#include "../../include/momo/Version.h"
+#include "../../include/momo/UserSettings.h"
+
 #include <iostream>
 
 #define LIBCXX_TO_STR(expr) #expr
