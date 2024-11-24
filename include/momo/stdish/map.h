@@ -478,68 +478,18 @@ namespace internal
 			return { lower_bound(key), upper_bound(key) };
 		}
 
-		//template<typename Value>
-		//requires std::is_constructible_v<value_type, Value>
-		//std::pair<iterator, bool> insert(Value&& value)
-
-		//template<typename Value>
-		//requires std::is_constructible_v<value_type, Value>
-		//iterator insert(const_iterator hint, Value&& value)
-
-		//std::pair<iterator, bool> insert(value_type&& value)
-
-		//iterator insert(const_iterator hint, value_type&& value)
-
-		//std::pair<iterator, bool> insert(const value_type& value)
-
-		//iterator insert(const_iterator hint, const value_type& value)
-
-		std::pair<iterator, bool> insert(std::pair<key_type, mapped_type>&& value)
+		template<typename ValueArg = std::pair<key_type, mapped_type>>
+		requires std::is_constructible_v<value_type, ValueArg&&>
+		std::pair<iterator, bool> insert(ValueArg&& valueArg)
 		{
-			return ptEmplace(nullptr, std::forward_as_tuple(std::move(value.first)),
-				std::forward_as_tuple(std::move(value.second)));
+			return emplace(std::forward<ValueArg>(valueArg));
 		}
 
-		iterator insert(const_iterator hint, std::pair<key_type, mapped_type>&& value)
+		template<typename ValueArg = std::pair<key_type, mapped_type>>
+		requires std::is_constructible_v<value_type, ValueArg&&>
+		iterator insert(const_iterator hint, ValueArg&& valueArg)
 		{
-			return ptEmplace(hint, std::forward_as_tuple(std::move(value.first)),
-				std::forward_as_tuple(std::move(value.second))).first;
-		}
-
-		template<typename First, typename Second>
-		requires std::is_constructible_v<key_type, const First&>
-			&& std::is_constructible_v<mapped_type, const Second&>
-		std::pair<iterator, bool> insert(const std::pair<First, Second>& value)
-		{
-			return ptEmplace(nullptr, std::forward_as_tuple(value.first),
-				std::forward_as_tuple(value.second));
-		}
-
-		template<typename First, typename Second>
-		requires std::is_constructible_v<key_type, const First&>
-			&& std::is_constructible_v<mapped_type, const Second&>
-		iterator insert(const_iterator hint, const std::pair<First, Second>& value)
-		{
-			return ptEmplace(hint, std::forward_as_tuple(value.first),
-				std::forward_as_tuple(value.second)).first;
-		}
-
-		template<typename First, typename Second>
-		requires std::is_constructible_v<key_type, First&&>
-			&& std::is_constructible_v<mapped_type, Second&&>
-		std::pair<iterator, bool> insert(std::pair<First, Second>&& value)
-		{
-			return ptEmplace(nullptr, std::forward_as_tuple(std::forward<First>(value.first)),
-				std::forward_as_tuple(std::forward<Second>(value.second)));
-		}
-
-		template<typename First, typename Second>
-		requires std::is_constructible_v<key_type, First&&>
-			&& std::is_constructible_v<mapped_type, Second&&>
-		iterator insert(const_iterator hint, std::pair<First, Second>&& value)
-		{
-			return ptEmplace(hint, std::forward_as_tuple(std::forward<First>(value.first)),
-				std::forward_as_tuple(std::forward<Second>(value.second))).first;
+			return emplace_hint(hint, std::forward<ValueArg>(valueArg));
 		}
 
 		insert_return_type insert(node_type&& node)
@@ -594,13 +544,17 @@ namespace internal
 		template<typename ValueArg>
 		std::pair<iterator, bool> emplace(ValueArg&& valueArg)
 		{
-			return insert(std::forward<ValueArg>(valueArg));
+			return ptEmplace(nullptr,
+				std::forward_as_tuple(std::get<0>(std::forward<ValueArg>(valueArg))),
+				std::forward_as_tuple(std::get<1>(std::forward<ValueArg>(valueArg))));
 		}
 
 		template<typename ValueArg>
 		iterator emplace_hint(const_iterator hint, ValueArg&& valueArg)
 		{
-			return insert(hint, std::forward<ValueArg>(valueArg));
+			return ptEmplace(hint,
+				std::forward_as_tuple(std::get<0>(std::forward<ValueArg>(valueArg))),
+				std::forward_as_tuple(std::get<1>(std::forward<ValueArg>(valueArg)))).first;
 		}
 
 		template<typename KeyArg, typename MappedArg>
@@ -1074,46 +1028,18 @@ public:
 
 	//using BaseMap::insert;	// vs clang
 
-	iterator insert(std::pair<key_type, mapped_type>&& value)
+	template<typename ValueArg = std::pair<key_type, mapped_type>>
+	requires std::is_constructible_v<value_type, ValueArg&&>
+	iterator insert(ValueArg&& valueArg)
 	{
-		return BaseMap::insert(std::move(value)).first;
+		return BaseMap::insert(std::forward<ValueArg>(valueArg)).first;
 	}
 
-	iterator insert(const_iterator hint, std::pair<key_type, mapped_type>&& value)
+	template<typename ValueArg = std::pair<key_type, mapped_type>>
+	requires std::is_constructible_v<value_type, ValueArg&&>
+	iterator insert(const_iterator hint, ValueArg&& valueArg)
 	{
-		return BaseMap::insert(hint, std::move(value));
-	}
-
-	template<typename First, typename Second>
-	requires std::is_constructible_v<key_type, const First&>
-		&& std::is_constructible_v<mapped_type, const Second&>
-	iterator insert(const std::pair<First, Second>& value)
-	{
-		return BaseMap::insert(value).first;
-	}
-
-	template<typename First, typename Second>
-	requires std::is_constructible_v<key_type, const First&>
-		&& std::is_constructible_v<mapped_type, const Second&>
-	iterator insert(const_iterator hint, const std::pair<First, Second>& value)
-	{
-		return BaseMap::insert(hint, value);
-	}
-
-	template<typename First, typename Second>
-	requires std::is_constructible_v<key_type, First&&>
-		&& std::is_constructible_v<mapped_type, Second&&>
-	iterator insert(std::pair<First, Second>&& value)
-	{
-		return BaseMap::insert(std::move(value)).first;
-	}
-
-	template<typename First, typename Second>
-	requires std::is_constructible_v<key_type, First&&>
-		&& std::is_constructible_v<mapped_type, Second&&>
-	iterator insert(const_iterator hint, std::pair<First, Second>&& value)
-	{
-		return BaseMap::insert(hint, std::move(value));
+		return BaseMap::insert(hint, std::forward<ValueArg>(valueArg));
 	}
 
 	iterator insert(node_type&& node)
@@ -1126,12 +1052,6 @@ public:
 		return BaseMap::insert(hint, std::move(node));
 	}
 
-	template<typename... ValueArgs>
-	iterator emplace(ValueArgs&&... valueArgs)
-	{
-		return BaseMap::emplace(std::forward<ValueArgs>(valueArgs)...).first;
-	}
-
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	void insert(Iterator first, Iterator last)
 	{
@@ -1141,6 +1061,12 @@ public:
 	void insert(std::initializer_list<value_type> values)
 	{
 		BaseMap::insert(values);
+	}
+
+	template<typename... ValueArgs>
+	iterator emplace(ValueArgs&&... valueArgs)
+	{
+		return BaseMap::emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
 	template<momo::internal::conceptPredicate<const_reference> ValueFilter>

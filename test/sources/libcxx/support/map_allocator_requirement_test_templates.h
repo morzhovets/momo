@@ -78,7 +78,7 @@ void testMapInsert()
     cc->expect<const ValueTp&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<Mapped&>();
 #endif
     assert(c.insert(v).second);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -124,7 +124,7 @@ void testMapInsert()
     cc->expect<const ValueTp&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<const Mapped&&>();
 #endif
     assert(c.insert(std::move(v)).second);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -311,7 +311,7 @@ void testMapInsertHint()
     cc->expect<ValueTp const&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<Mapped&>();
 #endif
     It ret = c.insert(c.end(), v);
     assert(ret != c.end());
@@ -403,7 +403,7 @@ void testMapInsertHint()
     cc->expect<const ValueTp&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<const Mapped&&>();
 #endif
     It ret = c.insert(c.end(), std::move(v));
     assert(ret != c.end());
@@ -539,7 +539,7 @@ void testMapEmplace()
     cc->expect<ValueTp&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<Mapped&>();
 #endif
     assert(c.emplace(v).second);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -585,7 +585,7 @@ void testMapEmplace()
     cc->expect<const ValueTp&&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<const Mapped&&>();
 #endif
     assert(c.emplace(std::move(v)).second);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -810,7 +810,7 @@ void testMapEmplaceHint()
     cc->expect<ValueTp&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<Mapped&>();
 #endif
     It ret = c.emplace_hint(c.end(), v);
     assert(ret != c.end());
@@ -872,7 +872,7 @@ void testMapEmplaceHint()
     cc->expect<const ValueTp&&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<const Mapped&&>();
 #endif
     It ret = c.emplace_hint(c.end(), std::move(v));
     assert(ret != c.end());
@@ -1138,7 +1138,7 @@ void testMultimapInsert()
     cc->expect<ValueTp&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<Mapped&>();
 #endif
     c.insert(v);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
@@ -1299,7 +1299,7 @@ void testMultimapInsertHint()
     cc->expect<ValueTp&>();
 #else
     cc1.expect<const Key&>();
-    cc2.expect<const Mapped&>();
+    cc2.expect<Mapped&>();
 #endif
     c.insert(c.begin(), v);
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
