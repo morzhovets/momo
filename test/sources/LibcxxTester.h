@@ -12,9 +12,13 @@
 
 #pragma once
 
-#include "libcxx/Support.h"
+#include "TestSettings.h"
 
 #include "../../include/momo/Version.h"
+#include "../../include/momo/UserSettings.h"
+
+#include "libcxx/Support.h"
+
 #include "../../include/momo/ObjectManager.h"
 
 #include <iostream>
