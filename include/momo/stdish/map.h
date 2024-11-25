@@ -485,68 +485,18 @@ namespace internal
 			return { lower_bound(key), upper_bound(key) };
 		}
 
-		//template<typename Value>
-		//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value,
-		//std::pair<iterator, bool>> insert(Value&& value)
-
-		//template<typename Value>
-		//momo::internal::EnableIf<std::is_constructible<value_type, Value>::value,
-		//iterator> insert(const_iterator hint, Value&& value)
-
-		//std::pair<iterator, bool> insert(value_type&& value)
-
-		//iterator insert(const_iterator hint, value_type&& value)
-
-		//std::pair<iterator, bool> insert(const value_type& value)
-
-		//iterator insert(const_iterator hint, const value_type& value)
-
-		std::pair<iterator, bool> insert(std::pair<key_type, mapped_type>&& value)
+		template<typename ValueArg = std::pair<key_type, mapped_type>>
+		momo::internal::EnableIf<std::is_constructible<value_type, ValueArg&&>::value,
+		std::pair<iterator, bool>> insert(ValueArg&& valueArg)
 		{
-			return ptEmplace(nullptr, std::forward_as_tuple(std::move(value.first)),
-				std::forward_as_tuple(std::move(value.second)));
+			return emplace(std::forward<ValueArg>(valueArg));
 		}
 
-		iterator insert(const_iterator hint, std::pair<key_type, mapped_type>&& value)
+		template<typename ValueArg = std::pair<key_type, mapped_type>>
+		momo::internal::EnableIf<std::is_constructible<value_type, ValueArg&&>::value,
+		iterator> insert(const_iterator hint, ValueArg&& valueArg)
 		{
-			return ptEmplace(hint, std::forward_as_tuple(std::move(value.first)),
-				std::forward_as_tuple(std::move(value.second))).first;
-		}
-
-		template<typename First, typename Second>
-		momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
-			&& std::is_constructible<mapped_type, const Second&>::value,
-		std::pair<iterator, bool>> insert(const std::pair<First, Second>& value)
-		{
-			return ptEmplace(nullptr, std::forward_as_tuple(value.first),
-				std::forward_as_tuple(value.second));
-		}
-
-		template<typename First, typename Second>
-		momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
-			&& std::is_constructible<mapped_type, const Second&>::value,
-		iterator> insert(const_iterator hint, const std::pair<First, Second>& value)
-		{
-			return ptEmplace(hint, std::forward_as_tuple(value.first),
-				std::forward_as_tuple(value.second)).first;
-		}
-
-		template<typename First, typename Second>
-		momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
-			&& std::is_constructible<mapped_type, Second&&>::value,
-		std::pair<iterator, bool>> insert(std::pair<First, Second>&& value)
-		{
-			return ptEmplace(nullptr, std::forward_as_tuple(std::forward<First>(value.first)),
-				std::forward_as_tuple(std::forward<Second>(value.second)));
-		}
-
-		template<typename First, typename Second>
-		momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
-			&& std::is_constructible<mapped_type, Second&&>::value,
-		iterator> insert(const_iterator hint, std::pair<First, Second>&& value)
-		{
-			return ptEmplace(hint, std::forward_as_tuple(std::forward<First>(value.first)),
-				std::forward_as_tuple(std::forward<Second>(value.second))).first;
+			return emplace_hint(hint, std::forward<ValueArg>(valueArg));
 		}
 
 		insert_return_type insert(node_type&& node)
@@ -603,13 +553,17 @@ namespace internal
 		template<typename ValueArg>
 		std::pair<iterator, bool> emplace(ValueArg&& valueArg)
 		{
-			return insert(std::forward<ValueArg>(valueArg));
+			return ptEmplace(nullptr,
+				std::forward_as_tuple(std::get<0>(std::forward<ValueArg>(valueArg))),
+				std::forward_as_tuple(std::get<1>(std::forward<ValueArg>(valueArg))));
 		}
 
 		template<typename ValueArg>
 		iterator emplace_hint(const_iterator hint, ValueArg&& valueArg)
 		{
-			return insert(hint, std::forward<ValueArg>(valueArg));
+			return ptEmplace(hint,
+				std::forward_as_tuple(std::get<0>(std::forward<ValueArg>(valueArg))),
+				std::forward_as_tuple(std::get<1>(std::forward<ValueArg>(valueArg)))).first;
 		}
 
 		template<typename KeyArg, typename MappedArg>
@@ -1053,46 +1007,18 @@ public:
 
 	//using BaseMap::insert;	// gcc 5 & 6
 
-	iterator insert(std::pair<key_type, mapped_type>&& value)
+	template<typename ValueArg = std::pair<key_type, mapped_type>>
+	momo::internal::EnableIf<std::is_constructible<value_type, ValueArg&&>::value,
+	iterator> insert(ValueArg&& valueArg)
 	{
-		return BaseMap::insert(std::move(value)).first;
+		return BaseMap::insert(std::forward<ValueArg>(valueArg)).first;
 	}
 
-	iterator insert(const_iterator hint, std::pair<key_type, mapped_type>&& value)
+	template<typename ValueArg = std::pair<key_type, mapped_type>>
+	momo::internal::EnableIf<std::is_constructible<value_type, ValueArg&&>::value,
+	iterator> insert(const_iterator hint, ValueArg&& valueArg)
 	{
-		return BaseMap::insert(hint, std::move(value));
-	}
-
-	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value,
-	iterator> insert(const std::pair<First, Second>& value)
-	{
-		return BaseMap::insert(value).first;
-	}
-
-	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, const First&>::value
-		&& std::is_constructible<mapped_type, const Second&>::value,
-	iterator> insert(const_iterator hint, const std::pair<First, Second>& value)
-	{
-		return BaseMap::insert(hint, value);
-	}
-
-	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value,
-	iterator> insert(std::pair<First, Second>&& value)
-	{
-		return BaseMap::insert(std::move(value)).first;
-	}
-
-	template<typename First, typename Second>
-	momo::internal::EnableIf<std::is_constructible<key_type, First&&>::value
-		&& std::is_constructible<mapped_type, Second&&>::value,
-	iterator> insert(const_iterator hint, std::pair<First, Second>&& value)
-	{
-		return BaseMap::insert(hint, std::move(value));
+		return BaseMap::insert(hint, std::forward<ValueArg>(valueArg));
 	}
 
 	iterator insert(node_type&& node)

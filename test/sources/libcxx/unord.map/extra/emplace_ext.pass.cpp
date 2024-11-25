@@ -53,6 +53,12 @@ void main()
         assert(c.size() == 4);
         assert(r.first->first == 0);
         assert(r.first->second == Emplaceable());
+
+        r = c.emplace(std::make_tuple(6, Emplaceable(7, 8)));
+        assert(r.second);
+        assert(c.size() == 5);
+        assert(r.first->first == 6);
+        assert(r.first->second == Emplaceable(7, 8));
     }
     {
         typedef std::unordered_map<int, Emplaceable> C;
@@ -79,5 +85,10 @@ void main()
         assert(c.size() == 4);
         assert(r->first == 0);
         assert(r->second == Emplaceable());
+
+        r = c.emplace_hint(c.find(6), std::make_tuple(6, Emplaceable(7, 8)));
+        assert(c.size() == 5);
+        assert(r->first == 6);
+        assert(r->second == Emplaceable(7, 8));
     }
 }

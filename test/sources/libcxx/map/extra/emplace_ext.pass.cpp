@@ -47,6 +47,13 @@ void main()
         assert(m.size() == 3);
         assert(m.begin()->first == 0);
         assert(m.begin()->second == 0.0);
+
+        r = m.emplace(std::make_tuple(-1, 4.5));
+        assert(r.second);
+        assert(r.first == m.begin());
+        assert(m.size() == 4);
+        assert(m.begin()->first == -1);
+        assert(m.begin()->second == 4.5);
     }
     {
         typedef std::map<std::string, double> M;
@@ -89,5 +96,11 @@ void main()
         assert(m.size() == 3);
         assert(m.begin()->first == 0);
         assert(m.begin()->second == 0.0);
+
+        r = m.emplace_hint(m.end(), std::make_tuple(-1, 4.5));
+        assert(r == m.begin());
+        assert(m.size() == 4);
+        assert(m.begin()->first == -1);
+        assert(m.begin()->second == 4.5);
     }
 }
