@@ -49,6 +49,11 @@ void main()
         assert(c.size() == 4);
         assert(r->first == 0);
         assert(r->second == Emplaceable());
+
+        r = c.emplace(std::make_tuple(0, Emplaceable(7, 8)));
+        assert(c.size() == 5);
+        assert(r->first == 0);
+        assert(r->second == Emplaceable(7, 8));
     }
     {
         typedef std::unordered_multimap<std::string, double> C;
@@ -65,8 +70,7 @@ void main()
         typedef std::unordered_multimap<int, Emplaceable> C;
         typedef C::iterator R;
         C c;
-        C::const_iterator e = c.end();
-        R r = c.emplace_hint(e, std::piecewise_construct, std::forward_as_tuple(3),
+        R r = c.emplace_hint(c.end(), std::piecewise_construct, std::forward_as_tuple(3),
                                                           std::forward_as_tuple());
         assert(c.size() == 1);
         assert(r->first == 3);
@@ -78,7 +82,7 @@ void main()
         assert(r->second == Emplaceable(5, 6));
         assert(r == next(c.begin()));
 
-        r = c.emplace_hint(r, 3, Emplaceable(6, 7));
+        r = c.emplace_hint(c.end(), 3, Emplaceable(6, 7));
         assert(c.size() == 3);
         assert(r->first == 3);
         assert(r->second == Emplaceable(6, 7));
@@ -92,5 +96,10 @@ void main()
         assert(c.size() == 4);
         assert(r->first == 0);
         assert(r->second == Emplaceable());
+
+        r = c.emplace_hint(c.end(), std::make_tuple(0, Emplaceable(7, 8)));
+        assert(c.size() == 5);
+        assert(r->first == 0);
+        assert(r->second == Emplaceable(7, 8));
     }
 }
