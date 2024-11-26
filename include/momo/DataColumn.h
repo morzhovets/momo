@@ -58,7 +58,7 @@ enum class DataColumnCodeOffset : size_t
 };
 
 template<>
-struct HashCoder<DataColumnCodeOffset, size_t>	// gcc 4.9, clang 3.6
+struct HashCoder<DataColumnCodeOffset, size_t>	// clang 3.6
 {
 	size_t operator()(const DataColumnCodeOffset& key) const noexcept
 	{

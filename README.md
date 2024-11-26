@@ -75,7 +75,7 @@ Some examples are [here](https://github.com/morzhovets/momo/blob/branch_cpp11/te
 
 - MS Visual C++ (19.0+, Visual Studio 2015+)
 
-- GCC (4.9+)
+- GCC (5+)
 
 - Clang (3.6+)
 

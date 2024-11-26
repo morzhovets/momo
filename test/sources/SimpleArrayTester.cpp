@@ -66,8 +66,7 @@ public:
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::ArrayIntCap<..., std::string>: " << std::flush;
-		TestStrArray<momo::ArrayIntCap<std::is_nothrow_move_constructible<std::string>::value ? 2 : 0,	// gcc 4.9
-			std::string>>();
+		TestStrArray<momo::ArrayIntCap<2, std::string>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::SegmentedArray<std::string>: " << std::flush;

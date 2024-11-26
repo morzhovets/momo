@@ -8,12 +8,12 @@ jobs:
       matrix:
         include:
 
-        - gcc_ver: '4.9'
+        - gcc_ver: '5'
           build_type: 'Release'
           flags: '-std=c++11 -Werror -msse2'
           ubuntu_ver: '20.04'
 
-        - gcc_ver: '4.9'
+        - gcc_ver: '5'
           build_type: 'Release'
           flags: '-std=c++11 -Werror -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '20.04'

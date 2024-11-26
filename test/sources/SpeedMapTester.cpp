@@ -146,11 +146,7 @@ public:
 		while (true)
 		{
 			for (size_t i = GetCount(); i < count; ++i)
-			{
-				std::stringstream sstream;
-				sstream << random() % 100000000;
-				AddBackNogrow(sstream.str());
-			}
+				AddBackNogrow(std::to_string(random() % 100000000));
 			std::sort(begin, end);
 			size_t newCount = momo::internal::UIntMath<>::Dist(begin, std::unique(begin, end));
 			if (newCount == count)

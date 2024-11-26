@@ -164,17 +164,8 @@ namespace internal
 		typedef internal::Sequence<sequence...> Sequence;
 	};
 
-	//template<typename...>
-	//using Void = void;	// gcc 4.9
-
 	template<typename...>
-	struct VoidMaker
-	{
-		typedef void Void;
-	};
-
-	template<typename... Types>
-	using Void = typename VoidMaker<Types...>::Void;
+	using Void = void;
 
 	template<typename Iterator,
 		typename Sentinel = Iterator,
