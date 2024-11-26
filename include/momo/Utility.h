@@ -193,14 +193,15 @@ namespace internal
 	{
 	public:
 		template<typename Object>
-		requires std::is_trivial_v<Object>
+		requires (std::is_trivially_copyable_v<Object>)
 		static void ToBuffer(Object object, void* buffer) noexcept
 		{
 			std::memcpy(buffer, &object, sizeof(Object));
 		}
 
 		template<typename ResObject>
-		requires std::is_trivial_v<ResObject>
+		requires (std::is_trivially_copyable_v<ResObject> &&
+			std::is_nothrow_default_constructible_v<ResObject>)
 		static ResObject FromBuffer(const void* buffer) noexcept
 		{
 			ResObject object{};
