@@ -234,14 +234,15 @@ namespace internal
 		template<typename Object>
 		static void ToBuffer(Object object, void* buffer) noexcept
 		{
-			MOMO_STATIC_ASSERT(std::is_trivial<Object>::value);
+			MOMO_STATIC_ASSERT(std::is_trivially_copyable<Object>::value);
 			std::memcpy(buffer, &object, sizeof(Object));
 		}
 
 		template<typename ResObject>
 		static ResObject FromBuffer(const void* buffer) noexcept
 		{
-			MOMO_STATIC_ASSERT(std::is_trivial<ResObject>::value);
+			MOMO_STATIC_ASSERT(std::is_trivially_copyable<ResObject>::value
+				&& std::is_nothrow_default_constructible<ResObject>::value);
 			ResObject object{};
 			std::memcpy(&object, buffer, sizeof(ResObject));
 			return object;
