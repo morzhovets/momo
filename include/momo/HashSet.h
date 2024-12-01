@@ -147,7 +147,7 @@ namespace internal
 
 		Bucket* pvGetBuckets() noexcept
 		{
-			return PtrCaster::Shift<Bucket>(this, pvGetBucketOffset());
+			return PtrCaster::FromBytePtr<Bucket>(PtrCaster::ToBytePtr(this) + pvGetBucketOffset());
 		}
 
 		static size_t pvGetBufferSize(size_t logBucketCount) noexcept

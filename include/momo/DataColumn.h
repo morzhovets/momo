@@ -574,8 +574,8 @@ public:
 	{
 		static Struct staticStruct;	//?
 		return static_cast<Code>(
-			reinterpret_cast<const std::byte*>(std::addressof(staticStruct.*column))
-			- reinterpret_cast<const std::byte*>(std::addressof(staticStruct)));
+			internal::PtrCaster::ToBytePtr(std::addressof(staticStruct.*column))
+			- internal::PtrCaster::ToBytePtr(std::addressof(staticStruct)));
 	}
 
 	template<internal::conceptDataPtrVisitor<const void, DataColumnInfoNative> PtrVisitor>
@@ -1032,7 +1032,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < mTotalSize);
 		//MOMO_ASSERT(offset % ItemTraits::template GetAlignment<Item>() == 0);
-		return *pvGetItemPtr<Item>(raw, offset);
+		return *pvGetItemPtr<Item, true>(raw, offset);
 	}
 
 	template<typename Item, typename ItemArg>
@@ -1231,13 +1231,13 @@ private:
 		{
 			if constexpr (std::is_null_pointer_v<DataColumnListPtr>)
 			{
-				srcItem = pvGetItemPtr<Item>(srcRaw, offset);
+				srcItem = pvGetItemPtr<Item, true>(srcRaw, offset);
 			}
 			else
 			{
 				size_t srcOffset;
 				if (srcColumnList->Contains(*columnRecordPtr, &srcOffset))
-					srcItem = pvGetItemPtr<Item>(srcRaw, srcOffset);
+					srcItem = pvGetItemPtr<Item, true>(srcRaw, srcOffset);
 			}
 		}
 		if (srcItem == nullptr)
@@ -1252,7 +1252,7 @@ private:
 			}
 			catch (...)
 			{
-				ItemTraits::Destroy(&memManager, *item);
+				ItemTraits::Destroy(&memManager, *pvGetItemPtr<Item, true>(raw, offset));	//?
 				throw;
 			}
 		}
@@ -1263,7 +1263,7 @@ private:
 	{
 		const ColumnRecord* columnRecordPtr = columnRecords;
 		(ItemTraits::Destroy(memManager,
-			*pvGetItemPtr<Items>(raw, (columnRecordPtr++)->GetOffset())), ...);
+			*pvGetItemPtr<Items, true>(raw, (columnRecordPtr++)->GetOffset())), ...);
 	}
 
 	void pvCreateRaw(MemManager& memManager, const DataColumnList* srcColumnList,
@@ -1297,21 +1297,24 @@ private:
 	{
 		for (const ColumnRecord& columnRec : mColumnRecords)
 		{
-			Void* item = pvGetItemPtr<Void>(raw, columnRec.GetOffset());
+			Void* item = pvGetBytePtr(raw, columnRec.GetOffset());
 			columnRec.Visit(item, ptrVisitor);	//?
 		}
 	}
 
-	template<typename Item>
-	static const Item* pvGetItemPtr(const Raw* raw, size_t offset) noexcept
+	template<typename Item,
+		bool withinLifetime = false,
+		typename Raw>
+	static internal::ConstLike<Item, Raw>* pvGetItemPtr(Raw* raw, size_t offset) noexcept
 	{
-		return internal::PtrCaster::Shift<const Item>(raw, offset);
+		return internal::PtrCaster::FromBytePtr<internal::ConstLike<Item, Raw>, withinLifetime>(
+			pvGetBytePtr(raw, offset));
 	}
 
-	template<typename Item>
-	static Item* pvGetItemPtr(Raw* raw, size_t offset) noexcept
+	template<typename Raw>
+	static auto pvGetBytePtr(Raw* raw, size_t offset) noexcept
 	{
-		return internal::PtrCaster::Shift<Item>(raw, offset);
+		return internal::PtrCaster::ToBytePtr(raw) + offset;
 	}
 
 private:
@@ -1449,7 +1452,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < sizeof(Struct));
 		//MOMO_ASSERT(offset % internal::ObjectAlignmenter<Item>::alignment == 0);
-		return *internal::PtrCaster::Shift<Item>(raw, offset);
+		return *internal::PtrCaster::FromBytePtr<Item, true>(pvGetBytePtr(raw, offset));
 	}
 
 	template<typename Item, typename ItemArg>
@@ -1462,7 +1465,7 @@ public:
 		requires (Settings::keepRowNumber)
 	{
 		return size_t{internal::MemCopyer::FromBuffer<typename Settings::RowNumber>(
-			internal::PtrCaster::Shift<const void>(raw, sizeof(Struct)))};
+			pvGetBytePtr(raw, sizeof(Struct)))};
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
@@ -1470,7 +1473,7 @@ public:
 	{
 		auto rowNumber = static_cast<typename Settings::RowNumber>(number);
 		MOMO_ASSERT(number == size_t{rowNumber});
-		internal::MemCopyer::ToBuffer(rowNumber, internal::PtrCaster::Shift<void>(raw, sizeof(Struct)));
+		internal::MemCopyer::ToBuffer(rowNumber, pvGetBytePtr(raw, sizeof(Struct)));
 	}
 
 	bool Contains(const ColumnInfo& columnInfo, size_t* resOffset = nullptr) const noexcept
@@ -1522,9 +1525,15 @@ private:
 			throw std::logic_error("Not prepared for visitors");
 		for (const ColumnInfo& columnInfo : mVisitableColumns)
 		{
-			Void* item = internal::PtrCaster::Shift<Void>(raw, pvGetOffset(columnInfo.GetCode()));
+			Void* item = pvGetBytePtr(raw, pvGetOffset(columnInfo.GetCode()));
 			columnInfo.Visit(item, ptrVisitor);
 		}
+	}
+
+	template<typename Raw>
+	static auto pvGetBytePtr(Raw* raw, size_t offset) noexcept
+	{
+		return internal::PtrCaster::ToBytePtr(raw) + offset;
 	}
 
 private:

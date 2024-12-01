@@ -289,7 +289,7 @@ namespace internal
 
 		static Item* pvGetItems(std::byte* ptr) noexcept
 		{
-			return PtrCaster::Shift<Item>(ptr, ItemTraits::alignment);
+			return PtrCaster::FromBytePtr<Item>(ptr + ItemTraits::alignment);
 		}
 
 	private:

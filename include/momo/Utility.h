@@ -158,6 +158,9 @@ namespace internal
 	template<typename Predicate, typename... Args>
 	concept conceptPredicate = conceptConstFunctor<Predicate, bool, Args...>;
 
+	template<typename Object, typename SrcObject>
+	using ConstLike = std::conditional_t<std::is_const_v<SrcObject>, const Object, Object>;
+
 	template<size_t size>
 	struct UIntSelector;
 
@@ -219,18 +222,24 @@ namespace internal
 			return reinterpret_cast<uintptr_t>(ptr);
 		}
 
-		template<typename ResObject = void>
+		template<typename ResObject>
 		static ResObject* FromUInt(uintptr_t intPtr) noexcept
 		{
 			return reinterpret_cast<ResObject*>(intPtr);
 		}
 
-		template<typename ResObject, typename Object, typename Offset>
-		static ResObject* Shift(Object* ptr, Offset byteOffset) noexcept
+		template<typename Object>
+		static ConstLike<std::byte, Object>* ToBytePtr(Object* ptr) noexcept
 		{
-			typedef std::conditional_t<std::is_const_v<Object>, const std::byte, std::byte> Byte;
-			return reinterpret_cast<ResObject*>(reinterpret_cast<Byte*>(ptr)
-				+ static_cast<ptrdiff_t>(byteOffset));
+			return reinterpret_cast<ConstLike<std::byte, Object>*>(ptr);
+		}
+
+		template<typename ResObject,
+			bool withinLifetime = false,
+			typename Byte>
+		static ResObject* FromBytePtr(Byte* ptr) noexcept
+		{
+			return reinterpret_cast<ResObject*>(ptr);
 		}
 	};
 

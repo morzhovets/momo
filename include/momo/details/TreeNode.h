@@ -151,8 +151,8 @@ namespace internal
 			}
 			else
 			{
-				void* internalBuffer = params.GetInternalMemPool().Allocate();
-				void* nodeBuffer = PtrCaster::Shift<void>(internalBuffer, internalOffset);
+				std::byte* internalBuffer = params.GetInternalMemPool().Allocate<std::byte>();
+				void* nodeBuffer = internalBuffer + internalOffset;
 				Node* node = ::new(nodeBuffer) Node(leafMemPoolCount, count);
 				std::uninitialized_default_construct_n(node->pvGetChildren(), maxCapacity + 1);
 				return node;
@@ -164,7 +164,7 @@ namespace internal
 			if (IsLeaf())
 				params.GetLeafMemPool(size_t{mMemPoolIndex}).Deallocate(this);
 			else
-				params.GetInternalMemPool().Deallocate(pvGetInternalBuffer<void>(this));
+				params.GetInternalMemPool().Deallocate(pvGetInternalBuffer(this));
 		}
 
 		bool IsLeaf() const noexcept
@@ -220,7 +220,7 @@ namespace internal
 		Item* GetItemPtr(size_t index) noexcept
 		{
 			static const size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
-			Item* items = PtrCaster::Shift<Item>(this, itemOffset);
+			Item* items = PtrCaster::FromBytePtr<Item>(PtrCaster::ToBytePtr(this) + itemOffset);
 			if constexpr (isContinuous)
 				return items + index;
 			else
@@ -316,19 +316,19 @@ namespace internal
 		Node* const* pvGetChildren() const noexcept
 		{
 			MOMO_ASSERT(!IsLeaf());
-			return pvGetInternalBuffer<Node* const>(this);
+			return PtrCaster::FromBytePtr<Node* const>(pvGetInternalBuffer(this));
 		}
 
 		Node** pvGetChildren() noexcept
 		{
 			MOMO_ASSERT(!IsLeaf());
-			return pvGetInternalBuffer<Node*>(this);
+			return PtrCaster::FromBytePtr<Node*>(pvGetInternalBuffer(this));
 		}
 
-		template<typename Result, typename Node>
-		static Result* pvGetInternalBuffer(Node* node) noexcept
+		template<typename Node>
+		static auto pvGetInternalBuffer(Node* node) noexcept
 		{
-			return PtrCaster::Shift<Result>(node, -static_cast<ptrdiff_t>(internalOffset));
+			return PtrCaster::ToBytePtr(node) - internalOffset;
 		}
 
 	private:
