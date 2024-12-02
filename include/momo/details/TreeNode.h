@@ -151,7 +151,7 @@ namespace internal
 			}
 			else
 			{
-				std::byte* internalBuffer = params.GetInternalMemPool().Allocate<std::byte>();
+				std::byte* internalBuffer = params.GetInternalMemPool().template Allocate<std::byte>();
 				void* nodeBuffer = internalBuffer + internalOffset;
 				Node* node = ::new(nodeBuffer) Node(leafMemPoolCount, count);
 				std::uninitialized_default_construct_n(node->pvGetChildren(), maxCapacity + 1);
