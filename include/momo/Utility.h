@@ -237,9 +237,11 @@ namespace internal
 		template<typename ResObject,
 			bool withinLifetime = false,
 			typename Byte>
-		static ResObject* FromBytePtr(Byte* ptr) noexcept
+		requires (std::is_same_v<std::byte, std::remove_const_t<Byte>> ||
+			std::is_same_v<void, std::remove_const_t<Byte>>)
+		static ConstLike<ResObject, Byte>* FromBytePtr(Byte* ptr) noexcept
 		{
-			return reinterpret_cast<ResObject*>(ptr);
+			return reinterpret_cast<ConstLike<ResObject, Byte>*>(ptr);
 		}
 	};
 

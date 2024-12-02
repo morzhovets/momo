@@ -185,9 +185,8 @@ namespace internal
 			if constexpr (index < std::tuple_size_v<VisitableItems>)
 			{
 				typedef std::tuple_element_t<index, VisitableItems> Item;
-				typedef std::conditional_t<std::is_const_v<Void>, const Item*, Item*> ItemPtr;
 				if (typeid(Item) == mTypeInfo)
-					pvVisit<ColumnInfo>(static_cast<ItemPtr>(item), ptrVisitor);
+					pvVisit<ColumnInfo>(PtrCaster::FromBytePtr<Item>(item), ptrVisitor);
 				else
 					pvVisitRec<ColumnInfo, index + 1>(item, ptrVisitor);
 			}
@@ -1073,13 +1072,13 @@ public:
 	template<internal::conceptDataPtrVisitor<const void, ColumnInfo> PtrVisitor>
 	void VisitPointers(const Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
-		pvVisitPointers<const void>(raw, ptrVisitor);
+		pvVisitPointers(raw, ptrVisitor);
 	}
 
 	template<internal::conceptDataPtrVisitor<void, ColumnInfo> PtrVisitor>
 	void VisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
-		pvVisitPointers<void>(raw, ptrVisitor);
+		pvVisitPointers(raw, ptrVisitor);
 	}
 
 private:
@@ -1291,15 +1290,12 @@ private:
 		}
 	}
 
-	template<typename Void, typename Raw,
-		internal::conceptDataPtrVisitor<Void, ColumnInfo> PtrVisitor>
+	template<typename Raw,
+		internal::conceptDataPtrVisitor<internal::ConstLike<void, Raw>, ColumnInfo> PtrVisitor>
 	void pvVisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		for (const ColumnRecord& columnRec : mColumnRecords)
-		{
-			Void* item = pvGetBytePtr(raw, columnRec.GetOffset());
-			columnRec.Visit(item, ptrVisitor);	//?
-		}
+			columnRec.Visit(pvGetBytePtr(raw, columnRec.GetOffset()), ptrVisitor);	//?
 	}
 
 	template<typename Item,
@@ -1307,12 +1303,11 @@ private:
 		typename Raw>
 	static internal::ConstLike<Item, Raw>* pvGetItemPtr(Raw* raw, size_t offset) noexcept
 	{
-		return internal::PtrCaster::FromBytePtr<internal::ConstLike<Item, Raw>, withinLifetime>(
-			pvGetBytePtr(raw, offset));
+		return internal::PtrCaster::FromBytePtr<Item, withinLifetime>(pvGetBytePtr(raw, offset));
 	}
 
 	template<typename Raw>
-	static auto pvGetBytePtr(Raw* raw, size_t offset) noexcept
+	static internal::ConstLike<std::byte, Raw>* pvGetBytePtr(Raw* raw, size_t offset) noexcept
 	{
 		return internal::PtrCaster::ToBytePtr(raw) + offset;
 	}
@@ -1495,13 +1490,13 @@ public:
 	template<internal::conceptDataPtrVisitor<const void, ColumnInfo> PtrVisitor>
 	void VisitPointers(const Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
-		pvVisitPointers<const void>(raw, ptrVisitor);
+		pvVisitPointers(raw, ptrVisitor);
 	}
 
 	template<internal::conceptDataPtrVisitor<void, ColumnInfo> PtrVisitor>
 	void VisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
-		pvVisitPointers<void>(raw, ptrVisitor);
+		pvVisitPointers(raw, ptrVisitor);
 	}
 
 private:
@@ -1517,21 +1512,18 @@ private:
 		return offset;
 	}
 
-	template<typename Void, typename Raw,
-		internal::conceptDataPtrVisitor<Void, ColumnInfo> PtrVisitor>
+	template<typename Raw,
+		internal::conceptDataPtrVisitor<internal::ConstLike<void, Raw>, ColumnInfo> PtrVisitor>
 	void pvVisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		if (mVisitableColumns.IsEmpty())
 			throw std::logic_error("Not prepared for visitors");
 		for (const ColumnInfo& columnInfo : mVisitableColumns)
-		{
-			Void* item = pvGetBytePtr(raw, pvGetOffset(columnInfo.GetCode()));
-			columnInfo.Visit(item, ptrVisitor);
-		}
+			columnInfo.Visit(pvGetBytePtr(raw, pvGetOffset(columnInfo.GetCode())), ptrVisitor);
 	}
 
 	template<typename Raw>
-	static auto pvGetBytePtr(Raw* raw, size_t offset) noexcept
+	static internal::ConstLike<std::byte, Raw>* pvGetBytePtr(Raw* raw, size_t offset) noexcept
 	{
 		return internal::PtrCaster::ToBytePtr(raw) + offset;
 	}

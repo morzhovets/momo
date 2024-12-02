@@ -191,12 +191,12 @@ namespace internal
 
 		const Object* operator&() const noexcept
 		{
-			return PtrCaster::FromBytePtr<const Object>(&mBuffer);
+			return PtrCaster::FromBytePtr<Object>(mBuffer);
 		}
 
 		Object* operator&() noexcept
 		{
-			return PtrCaster::FromBytePtr<Object>(&mBuffer);
+			return PtrCaster::FromBytePtr<Object>(mBuffer);
 		}
 
 	private:

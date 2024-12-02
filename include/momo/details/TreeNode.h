@@ -316,7 +316,7 @@ namespace internal
 		Node* const* pvGetChildren() const noexcept
 		{
 			MOMO_ASSERT(!IsLeaf());
-			return PtrCaster::FromBytePtr<Node* const>(pvGetInternalBuffer(this));
+			return PtrCaster::FromBytePtr<Node*>(pvGetInternalBuffer(this));
 		}
 
 		Node** pvGetChildren() noexcept
@@ -326,7 +326,7 @@ namespace internal
 		}
 
 		template<typename Node>
-		static auto pvGetInternalBuffer(Node* node) noexcept
+		static internal::ConstLike<std::byte, Node>* pvGetInternalBuffer(Node* node) noexcept
 		{
 			return PtrCaster::ToBytePtr(node) - internalOffset;
 		}
