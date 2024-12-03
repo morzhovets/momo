@@ -387,7 +387,7 @@ namespace internal
 			void* ptr = memManager.Allocate(size);
 			MOMO_ASSERT(ptr != nullptr);
 			pvCheckBits(ptr);
-			return static_cast<ResObject*>(ptr);
+			return PtrCaster::FromBytePtr<ResObject>(ptr);
 		}
 
 		template<typename ResObject, typename... ResObjectArgs>
@@ -411,17 +411,17 @@ namespace internal
 			memManager.Deallocate(ptr, size);
 		}
 
-		template<typename ResObject = void>
-		static ResObject* Reallocate(MemManager& memManager, void* ptr, size_t size, size_t newSize)
+		template<typename Object>
+		static Object* Reallocate(MemManager& memManager, Object* ptr, size_t size, size_t newSize)
 			requires canReallocate
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 			if (size == newSize)
-				return static_cast<ResObject*>(ptr);
+				return ptr;
 			void* newPtr = memManager.Reallocate(ptr, size, newSize);
 			MOMO_ASSERT(newPtr != nullptr);
 			pvCheckBits(newPtr);
-			return static_cast<ResObject*>(newPtr);
+			return static_cast<Object*>(newPtr);
 		}
 
 		static bool ReallocateInplace(MemManager& memManager, void* ptr, size_t size,

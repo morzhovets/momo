@@ -317,7 +317,7 @@ private:
 			if constexpr (pvCanReallocate())
 			{
 				pvCheckCapacity(capacityExp);
-				mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
+				mItems = MemManagerProxy::Reallocate(GetMemManager(),
 					mItems, mCapacity * sizeof(Item), capacityExp * sizeof(Item));
 				mCapacity = capacityExp;
 				return true;

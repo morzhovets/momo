@@ -29,10 +29,14 @@ namespace internal
 
 	public:
 		explicit BucketMemory(MemPool& memPool)
-			: mMemPool(memPool),
-			mPtr(static_cast<Pointer>(memPool.Allocate()))
+			: mMemPool(memPool)
 		{
-			MOMO_ASSERT(mPtr != nullPtr);
+			auto ptr = memPool.Allocate();
+			MOMO_ASSERT(ptr != nullPtr);
+			if constexpr (std::is_pointer_v<Pointer>)
+				mPtr = PtrCaster::FromBytePtr<std::remove_pointer_t<Pointer>>(ptr);
+			else
+				mPtr = ptr;
 		}
 
 		BucketMemory(const BucketMemory&) = delete;

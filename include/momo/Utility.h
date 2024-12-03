@@ -158,8 +158,8 @@ namespace internal
 	template<typename Predicate, typename... Args>
 	concept conceptPredicate = conceptConstFunctor<Predicate, bool, Args...>;
 
-	template<typename Object, typename SrcObject>
-	using ConstLike = std::conditional_t<std::is_const_v<SrcObject>, const Object, Object>;
+	template<typename Object, typename QSrcObject>
+	using ConstLike = std::conditional_t<std::is_const_v<QSrcObject>, const Object, Object>;
 
 	template<size_t size>
 	struct UIntSelector;
@@ -228,20 +228,26 @@ namespace internal
 			return reinterpret_cast<ResObject*>(intPtr);
 		}
 
-		template<typename Object>
-		static ConstLike<std::byte, Object>* ToBytePtr(Object* ptr) noexcept
+		template<typename QObject,
+			typename QByte = ConstLike<std::byte, QObject>>
+		static QByte* ToBytePtr(QObject* ptr) noexcept
 		{
-			return reinterpret_cast<ConstLike<std::byte, Object>*>(ptr);
+			return reinterpret_cast<QByte*>(ptr);
 		}
 
 		template<typename ResObject,
 			bool withinLifetime = false,
-			typename Byte>
-		requires (std::is_same_v<std::byte, std::remove_const_t<Byte>> ||
-			std::is_same_v<void, std::remove_const_t<Byte>>)
-		static ConstLike<ResObject, Byte>* FromBytePtr(Byte* ptr) noexcept
+			typename QByte,
+			typename QResObject = ConstLike<ResObject, QByte>>
+		requires (std::is_same_v<std::byte, std::remove_const_t<QByte>> || std::is_void_v<QByte>)
+		static QResObject* FromBytePtr(QByte* bytePtr) noexcept
 		{
-			return reinterpret_cast<ConstLike<ResObject, Byte>*>(ptr);
+			static const bool isResByte = std::is_same_v<std::byte, std::remove_const_t<QResObject>>
+				|| std::is_void_v<QResObject>;
+			if constexpr (isResByte)
+				return static_cast<QResObject*>(bytePtr);
+			else
+				return reinterpret_cast<QResObject*>(bytePtr);
 		}
 	};
 
