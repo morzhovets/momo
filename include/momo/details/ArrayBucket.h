@@ -408,10 +408,10 @@ namespace internal
 			return *pvGetArrayPtr<true>(mPtr);
 		}
 
-		template<bool withinLifetime = false>
+		template<bool isWithinLifetime = false>
 		static Array* pvGetArrayPtr(std::byte* ptr) noexcept
 		{
-			return PtrCaster::FromBytePtr<Array, withinLifetime>(ptr + arrayAlignment);
+			return PtrCaster::FromBytePtr<Array, isWithinLifetime, true>(ptr + arrayAlignment);
 		}
 
 		Bounds pvGetBounds() const noexcept

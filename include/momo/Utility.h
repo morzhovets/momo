@@ -232,22 +232,27 @@ namespace internal
 			typename QByte = ConstLike<std::byte, QObject>>
 		static QByte* ToBytePtr(QObject* ptr) noexcept
 		{
-			return reinterpret_cast<QByte*>(ptr);
+			return MOMO_PTR_CAST(QByte, ptr, false, false);
 		}
 
 		template<typename ResObject,
-			bool withinLifetime = false,
+			bool isWithinLifetime = false,
+			bool isSingleObject = false,
 			typename QByte,
 			typename QResObject = ConstLike<ResObject, QByte>>
 		requires (std::is_same_v<std::byte, std::remove_const_t<QByte>> || std::is_void_v<QByte>)
 		static QResObject* FromBytePtr(QByte* bytePtr) noexcept
 		{
-			static const bool isResByte = std::is_same_v<std::byte, std::remove_const_t<QResObject>>
-				|| std::is_void_v<QResObject>;
-			if constexpr (isResByte)
+			if constexpr (std::is_same_v<std::byte, std::remove_const_t<QResObject>>
+				|| std::is_void_v<QResObject>)
+			{
+				static_assert(!isWithinLifetime && !isSingleObject);
 				return static_cast<QResObject*>(bytePtr);
+			}
 			else
-				return reinterpret_cast<QResObject*>(bytePtr);
+			{
+				return MOMO_PTR_CAST(QResObject, bytePtr, isWithinLifetime, isSingleObject);
+			}
 		}
 	};
 

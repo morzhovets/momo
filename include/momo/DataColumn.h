@@ -186,7 +186,7 @@ namespace internal
 			{
 				typedef std::tuple_element_t<index, VisitableItems> Item;
 				if (typeid(Item) == mTypeInfo)
-					pvVisit<ColumnInfo>(PtrCaster::FromBytePtr<Item>(item), ptrVisitor);
+					pvVisit<ColumnInfo>(PtrCaster::FromBytePtr<Item, true, true>(item), ptrVisitor);
 				else
 					pvVisitRec<ColumnInfo, index + 1>(item, ptrVisitor);
 			}
@@ -1299,17 +1299,18 @@ private:
 	}
 
 	template<typename Item,
-		bool withinLifetime = false,
+		bool isWithinLifetime = false,
 		typename Raw>
 	static internal::ConstLike<Item, Raw>* pvGetItemPtr(Raw* raw, size_t offset) noexcept
 	{
-		return internal::PtrCaster::FromBytePtr<Item, withinLifetime>(pvGetBytePtr(raw, offset));
+		return internal::PtrCaster::FromBytePtr<Item, isWithinLifetime, true>(
+			pvGetBytePtr(raw, offset));
 	}
 
 	template<typename Raw>
 	static internal::ConstLike<std::byte, Raw>* pvGetBytePtr(Raw* raw, size_t offset) noexcept
 	{
-		return internal::PtrCaster::ToBytePtr(raw) + offset;
+		return static_cast<internal::ConstLike<std::byte, Raw>*>(raw) + offset;
 	}
 
 private:
@@ -1447,7 +1448,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < sizeof(Struct));
 		//MOMO_ASSERT(offset % internal::ObjectAlignmenter<Item>::alignment == 0);
-		return *internal::PtrCaster::FromBytePtr<Item, true>(pvGetBytePtr(raw, offset));
+		return *internal::PtrCaster::FromBytePtr<Item, true, true>(pvGetBytePtr(raw, offset));
 	}
 
 	template<typename Item, typename ItemArg>

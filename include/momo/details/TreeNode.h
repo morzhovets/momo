@@ -154,7 +154,8 @@ namespace internal
 				std::byte* internalBuffer = params.GetInternalMemPool().template Allocate<std::byte>();
 				void* nodeBuffer = internalBuffer + internalOffset;
 				Node* node = ::new(nodeBuffer) Node(leafMemPoolCount, count);
-				std::uninitialized_default_construct_n(node->pvGetChildren(), maxCapacity + 1);
+				std::uninitialized_default_construct_n(
+					node->pvGetChildren<false>(), maxCapacity + 1);
 				return node;
 			}
 		}
@@ -316,13 +317,14 @@ namespace internal
 		Node* const* pvGetChildren() const noexcept
 		{
 			MOMO_ASSERT(!IsLeaf());
-			return PtrCaster::FromBytePtr<Node*>(pvGetInternalBuffer(this));
+			return PtrCaster::FromBytePtr<Node*, true>(pvGetInternalBuffer(this));
 		}
 
+		template<bool isWithinLifetime = true>
 		Node** pvGetChildren() noexcept
 		{
 			MOMO_ASSERT(!IsLeaf());
-			return PtrCaster::FromBytePtr<Node*>(pvGetInternalBuffer(this));
+			return PtrCaster::FromBytePtr<Node*, isWithinLifetime>(pvGetInternalBuffer(this));
 		}
 
 		template<typename Node>
