@@ -232,7 +232,7 @@ namespace internal
 			typename QByte = ConstLike<std::byte, QObject>>
 		static QByte* ToBytePtr(QObject* ptr) noexcept
 		{
-			return MOMO_PTR_CAST(QByte, ptr, false, false);
+			return MOMO_CAST_POINTER(QByte, ptr, false, false);
 		}
 
 		template<typename ResObject,
@@ -251,7 +251,7 @@ namespace internal
 			}
 			else
 			{
-				return MOMO_PTR_CAST(QResObject, bytePtr, isWithinLifetime, isSingleObject);
+				return MOMO_CAST_POINTER(QResObject, bytePtr, isWithinLifetime, isSingleObject);
 			}
 		}
 	};

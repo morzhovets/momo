@@ -135,5 +135,5 @@
 #define MOMO_CHECK_EXCEPTION(expr) \
 	do { if (!(expr)) throw std::invalid_argument(#expr); } while (false)
 
-#define MOMO_PTR_CAST(ResObject, ptr, isWithinLifetime, isSingleObject) \
-	(isWithinLifetime ? std::launder(reinterpret_cast<ResObject*>(ptr)) : reinterpret_cast<ResObject*>(ptr))
+#define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
+	reinterpret_cast<ResObject*>(ptr)
