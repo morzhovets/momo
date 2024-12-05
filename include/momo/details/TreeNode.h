@@ -155,7 +155,7 @@ namespace internal
 				void* nodeBuffer = internalBuffer + internalOffset;
 				Node* node = ::new(nodeBuffer) Node(leafMemPoolCount, count);
 				std::uninitialized_default_construct_n(
-					node->pvGetChildren<false>(), maxCapacity + 1);
+					pvGetChildren<false>(node), maxCapacity + 1);
 				return node;
 			}
 		}
@@ -199,19 +199,19 @@ namespace internal
 		Node* GetChild(size_t index) noexcept
 		{
 			MOMO_ASSERT(index <= GetCount());
-			return pvGetChildren()[index];
+			return pvGetChildren(this)[index];
 		}
 
 		void SetChild(size_t index, Node* child) noexcept
 		{
 			MOMO_ASSERT(index <= GetCount());
-			pvGetChildren()[index] = child;
+			pvGetChildren(this)[index] = child;
 		}
 
 		size_t GetChildIndex(const Node* child) const noexcept
 		{
 			size_t count = GetCount();
-			Node* const* children = pvGetChildren();
+			Node* const* children = pvGetChildren(this);
 			size_t index = UIntMath<>::Dist(children,
 				std::find(children, children + count + 1, child));
 			MOMO_ASSERT(index <= count);
@@ -247,7 +247,7 @@ namespace internal
 			}
 			if (!IsLeaf())
 			{
-				Node** children = pvGetChildren();
+				Node** children = pvGetChildren(this);
 				std::copy_backward(children + index + 1, children + count + 1,
 					children + count + 2);
 			}
@@ -283,7 +283,7 @@ namespace internal
 			}
 			if (!IsLeaf())
 			{
-				Node** children = pvGetChildren();
+				Node** children = pvGetChildren(this);
 				std::copy(children + index + 1, children + count + 1, children + index);
 			}
 			--mCounter.count;
@@ -314,21 +314,16 @@ namespace internal
 			return leafMemPoolIndex;
 		}
 
-		Node* const* pvGetChildren() const noexcept
+		template<bool isWithinLifetime = true,
+			typename QNode>
+		static ConstLike<Node*, QNode>* pvGetChildren(QNode* node) noexcept
 		{
-			MOMO_ASSERT(!IsLeaf());
-			return PtrCaster::FromBytePtr<Node*, true>(pvGetInternalBuffer(this));
+			MOMO_ASSERT(!node->IsLeaf());
+			return PtrCaster::FromBytePtr<Node*, isWithinLifetime>(pvGetInternalBuffer(node));
 		}
 
-		template<bool isWithinLifetime = true>
-		Node** pvGetChildren() noexcept
-		{
-			MOMO_ASSERT(!IsLeaf());
-			return PtrCaster::FromBytePtr<Node*, isWithinLifetime>(pvGetInternalBuffer(this));
-		}
-
-		template<typename Node>
-		static internal::ConstLike<std::byte, Node>* pvGetInternalBuffer(Node* node) noexcept
+		template<typename QNode>
+		static ConstLike<std::byte, QNode>* pvGetInternalBuffer(QNode* node) noexcept
 		{
 			return PtrCaster::ToBytePtr(node) - internalOffset;
 		}

@@ -31,14 +31,14 @@ namespace internal
 		{
 		}
 
-		template<typename Item, typename ColumnInfo>
-		void operator()(Item* item, const ColumnInfo& columnInfo) const
+		template<typename QItem, typename ColumnInfo>
+		void operator()(QItem* item, const ColumnInfo& columnInfo) const
 		{
-			if constexpr (!std::is_void_v<Item>)
+			if constexpr (!std::is_void_v<QItem>)
 			{
-				if constexpr (conceptConstFunctor<RefVisitor, void, Item&, const ColumnInfo&>)
+				if constexpr (conceptConstFunctor<RefVisitor, void, QItem&, const ColumnInfo&>)
 					mRefVisitor(*item, columnInfo);
-				else if constexpr (conceptConstFunctor<RefVisitor, void, Item&>)
+				else if constexpr (conceptConstFunctor<RefVisitor, void, QItem&>)
 					mRefVisitor(*item);
 				else
 					pvVisitError();

@@ -169,17 +169,17 @@ namespace internal
 			mCode = code;
 		}
 
-		template<typename ColumnInfo, typename Void,
-			conceptDataPtrVisitor<Void, ColumnInfo> PtrVisitor>
-		void ptVisit(Void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+		template<typename ColumnInfo, typename QVoid,
+			conceptDataPtrVisitor<QVoid, ColumnInfo> PtrVisitor>
+		void ptVisit(QVoid* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
 			pvVisitRec<ColumnInfo, 0>(item, ptrVisitor);
 		}
 
 	private:
-		template<typename ColumnInfo, size_t index, typename Void,
-			conceptDataPtrVisitor<Void, ColumnInfo> PtrVisitor>
-		void pvVisitRec(Void* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+		template<typename ColumnInfo, size_t index, typename QVoid,
+			conceptDataPtrVisitor<QVoid, ColumnInfo> PtrVisitor>
+		void pvVisitRec(QVoid* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
 #ifndef MOMO_DISABLE_TYPE_INFO
 			if constexpr (index < std::tuple_size_v<VisitableItems>)
@@ -197,11 +197,11 @@ namespace internal
 			}
 		}
 
-		template<typename ColumnInfo, typename Item,
-			conceptDataPtrVisitor<Item, ColumnInfo> PtrVisitor>
-		void pvVisit(Item* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+		template<typename ColumnInfo, typename QItem,
+			conceptDataPtrVisitor<QItem, ColumnInfo> PtrVisitor>
+		void pvVisit(QItem* item, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 		{
-			if constexpr (conceptConstFunctor<PtrVisitor, void, Item*, const ColumnInfo&>)
+			if constexpr (conceptConstFunctor<PtrVisitor, void, QItem*, const ColumnInfo&>)
 				ptrVisitor(item, *static_cast<const ColumnInfo*>(this));
 			else
 				ptrVisitor(item);
@@ -1290,9 +1290,9 @@ private:
 		}
 	}
 
-	template<typename Raw,
-		internal::conceptDataPtrVisitor<internal::ConstLike<void, Raw>, ColumnInfo> PtrVisitor>
-	void pvVisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+	template<typename QRaw,
+		internal::conceptDataPtrVisitor<internal::ConstLike<void, QRaw>, ColumnInfo> PtrVisitor>
+	void pvVisitPointers(QRaw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		for (const ColumnRecord& columnRec : mColumnRecords)
 			columnRec.Visit(pvGetBytePtr(raw, columnRec.GetOffset()), ptrVisitor);	//?
@@ -1300,17 +1300,18 @@ private:
 
 	template<typename Item,
 		bool isWithinLifetime = false,
-		typename Raw>
-	static internal::ConstLike<Item, Raw>* pvGetItemPtr(Raw* raw, size_t offset) noexcept
+		typename QRaw>
+	static internal::ConstLike<Item, QRaw>* pvGetItemPtr(QRaw* raw, size_t offset) noexcept
 	{
 		return internal::PtrCaster::FromBytePtr<Item, isWithinLifetime, true>(
 			pvGetBytePtr(raw, offset));
 	}
 
-	template<typename Raw>
-	static internal::ConstLike<std::byte, Raw>* pvGetBytePtr(Raw* raw, size_t offset) noexcept
+	template<typename QRaw,
+		typename QByte = internal::ConstLike<std::byte, QRaw>>
+	static QByte* pvGetBytePtr(QRaw* raw, size_t offset) noexcept
 	{
-		return static_cast<internal::ConstLike<std::byte, Raw>*>(raw) + offset;
+		return static_cast<QByte*>(raw) + offset;
 	}
 
 private:
@@ -1513,9 +1514,9 @@ private:
 		return offset;
 	}
 
-	template<typename Raw,
-		internal::conceptDataPtrVisitor<internal::ConstLike<void, Raw>, ColumnInfo> PtrVisitor>
-	void pvVisitPointers(Raw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
+	template<typename QRaw,
+		internal::conceptDataPtrVisitor<internal::ConstLike<void, QRaw>, ColumnInfo> PtrVisitor>
+	void pvVisitPointers(QRaw* raw, FastCopyableFunctor<PtrVisitor> ptrVisitor) const
 	{
 		if (mVisitableColumns.IsEmpty())
 			throw std::logic_error("Not prepared for visitors");
@@ -1523,8 +1524,8 @@ private:
 			columnInfo.Visit(pvGetBytePtr(raw, pvGetOffset(columnInfo.GetCode())), ptrVisitor);
 	}
 
-	template<typename Raw>
-	static internal::ConstLike<std::byte, Raw>* pvGetBytePtr(Raw* raw, size_t offset) noexcept
+	template<typename QRaw>
+	static internal::ConstLike<std::byte, QRaw>* pvGetBytePtr(QRaw* raw, size_t offset) noexcept
 	{
 		return internal::PtrCaster::ToBytePtr(raw) + offset;
 	}
