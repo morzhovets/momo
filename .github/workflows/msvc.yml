@@ -12,20 +12,20 @@ jobs:
         - toolset: '14.2'
           arch: 'x64'
           build_type: 'Release'
-          flags: '/std:c++20'
+          flags: '/std:c++20 /wd4702'
           win_ver: '2022'
 
         # Visual Studio 2022
         - toolset: '14.4'
           arch: 'x64'
           build_type: 'Release'
-          flags: '/std:c++latest'
+          flags: '/std:c++latest /wd4702'
           win_ver: '2022'
 
         - toolset: '14.4'
           arch: 'x64'
           build_type: 'Release'
-          flags: '/std:c++latest /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+          flags: '/std:c++latest /wd4702 /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
           win_ver: '2022'
 
         - toolset: '14.4'
@@ -37,13 +37,13 @@ jobs:
         - toolset: '14.4'
           arch: 'x86'
           build_type: 'Release'
-          flags: '/std:c++latest'
+          flags: '/std:c++latest /wd4702'
           win_ver: '2022'
 
         - toolset: '14.4'
           arch: 'x86'
           build_type: 'Release'
-          flags: '/std:c++latest /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+          flags: '/std:c++latest /wd4702 /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
           win_ver: '2022'
 
 #        - toolset: '14.4'
