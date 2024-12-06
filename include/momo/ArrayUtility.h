@@ -135,7 +135,7 @@ namespace internal
 		~ArrayItemHandler() noexcept
 		{
 			if (mMemManager != nullptr)
-				ItemTraits::Destroy(*mMemManager, &mItemBuffer, 1);
+				ItemTraits::Destroy(*mMemManager, &*this, 1);
 		}
 
 		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
@@ -143,7 +143,7 @@ namespace internal
 		Item* operator&() noexcept
 		{
 			MOMO_ASSERT(mMemManager != nullptr);
-			return &mItemBuffer;
+			return std::launder(&mItemBuffer);
 		}
 
 		void Release() noexcept
