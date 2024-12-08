@@ -327,7 +327,7 @@ public:
 		if (pvUseCache() && mCachedCount > 0)
 		{
 			block = mCacheHead;
-			mCacheHead = internal::MemCopyer::FromBuffer<void*>(block);
+			mCacheHead = internal::MemCopyer::FromBuffer<Byte*>(block);
 			--mCachedCount;
 		}
 		else
@@ -340,13 +340,15 @@ public:
 				block = pvNewBlock1();
 		}
 		++mData.allocCount;
-		return static_cast<ResObject*>(block);
+		return internal::PtrCaster::FromBytePtr<ResObject>(block);
 	}
 
-	void Deallocate(void* block) noexcept
+	template<typename Object>
+	void Deallocate(Object* ptr) noexcept
 	{
-		MOMO_ASSERT(block != nullptr);
+		MOMO_ASSERT(ptr != nullptr);
 		MOMO_ASSERT(mData.allocCount > 0);
+		Byte* block = internal::PtrCaster::ToBytePtr(ptr);
 		if (pvUseCache())
 		{
 			if (mCachedCount >= Params::GetCachedFreeBlockCount())
@@ -357,7 +359,7 @@ public:
 		}
 		else
 		{
-			pvDeleteBlock(block);
+			pvDeallocate(block);
 		}
 		--mData.allocCount;
 	}
@@ -479,28 +481,28 @@ private:
 	bool pvUseCache() const noexcept
 	{
 		return Params::GetCachedFreeBlockCount() > 0
-			&& Params::GetBlockSize() >= sizeof(void*);	//?
+			&& Params::GetBlockSize() >= sizeof(Byte*);	//?
 	}
 
 	MOMO_NOINLINE void pvFlushDeallocate() noexcept
 	{
 		for (size_t i = 0; i < mCachedCount; ++i)
 		{
-			void* block = mCacheHead;
-			mCacheHead = internal::MemCopyer::FromBuffer<void*>(block);
-			pvDeleteBlock(block);
+			Byte* block = mCacheHead;
+			mCacheHead = internal::MemCopyer::FromBuffer<Byte*>(block);
+			pvDeallocate(block);
 		}
 		mCachedCount = 0;
 	}
 
-	void pvDeleteBlock(void* block) noexcept
+	void pvDeallocate(Byte* block) noexcept
 	{
 		if (Params::GetBlockCount() > 1)
-			pvDeleteBlock(static_cast<Byte*>(block));	//?
+			pvDeleteBlock(block);
 		else if (pvGetAlignmentAddend() == 0)
 			MemManagerProxy::Deallocate(GetMemManager(), block, pvGetBufferSize0());
 		else
-			pvDeleteBlock1(static_cast<Byte*>(block));
+			pvDeleteBlock1(block);
 	}
 
 	size_t pvGetAlignmentAddend() const noexcept
@@ -840,7 +842,7 @@ private:
 	Data mData;
 	Byte* mFreeBufferHead;
 	size_t mCachedCount;
-	void* mCacheHead;
+	Byte* mCacheHead;
 };
 
 namespace internal

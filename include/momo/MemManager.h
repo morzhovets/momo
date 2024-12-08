@@ -405,10 +405,11 @@ namespace internal
 			}
 		}
 
-		static void Deallocate(MemManager& memManager, void* ptr, size_t size) noexcept
+		template<typename Object>
+		static void Deallocate(MemManager& memManager, Object* ptr, size_t size) noexcept
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0);
-			memManager.Deallocate(ptr, size);
+			memManager.Deallocate(PtrCaster::ToBytePtr(ptr), size);
 		}
 
 		template<typename Object>
@@ -418,10 +419,10 @@ namespace internal
 			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 			if (size == newSize)
 				return ptr;
-			void* newPtr = memManager.Reallocate(ptr, size, newSize);
+			void* newPtr = memManager.Reallocate(PtrCaster::ToBytePtr(ptr), size, newSize);
 			MOMO_ASSERT(newPtr != nullptr);
 			pvCheckBits(newPtr);
-			return static_cast<Object*>(newPtr);
+			return PtrCaster::FromBytePtr<Object>(newPtr);
 		}
 
 		static bool ReallocateInplace(MemManager& memManager, void* ptr, size_t size,
@@ -430,7 +431,7 @@ namespace internal
 			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 			if (size == newSize)
 				return true;
-			return memManager.ReallocateInplace(ptr, size, newSize);
+			return memManager.ReallocateInplace(ptr, size, newSize);	//?
 		}
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept

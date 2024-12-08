@@ -232,6 +232,7 @@ namespace internal
 			typename QByte = ConstLike<std::byte, QObject>>
 		static QByte* ToBytePtr(QObject* ptr) noexcept
 		{
+			MOMO_ASSERT(ptr != nullptr);
 			return MOMO_CAST_POINTER(QByte, ptr, false, false);
 		}
 
@@ -243,6 +244,7 @@ namespace internal
 		requires (std::is_same_v<std::byte, std::remove_const_t<QByte>> || std::is_void_v<QByte>)
 		static QResObject* FromBytePtr(QByte* bytePtr) noexcept
 		{
+			MOMO_ASSERT(bytePtr != nullptr);
 			if constexpr (std::is_same_v<std::byte, std::remove_const_t<QResObject>>
 				|| std::is_void_v<QResObject>)
 			{
