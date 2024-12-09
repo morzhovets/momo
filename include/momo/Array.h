@@ -361,9 +361,18 @@ private:
 			{
 				MOMO_ASSERT(!pvIsInternal());
 				size_t initCapacity = mCapacity;
-				std::move(itemsCreator)(&mInternalItems);
+				Item* items = pvActivateInternalItems();
+				try
+				{
+					std::move(itemsCreator)(items);
+				}
+				catch (...)
+				{
+					mCapacity = initCapacity;	// deactivate mInternalItems
+					throw;
+				}
 				pvDeallocate(mItems, initCapacity);
-				mItems = &mInternalItems;
+				mItems = items;
 				mCount = count;
 			}
 		}
@@ -397,7 +406,7 @@ private:
 			}
 			else
 			{
-				mItems = &mInternalItems;
+				mItems = pvActivateInternalItems();
 			}
 			mCount = 0;
 		}
@@ -410,7 +419,7 @@ private:
 				static_assert(ItemTraits::isNothrowRelocatable);
 				if (data.pvIsInternal())
 				{
-					mItems = &mInternalItems;
+					mItems = pvActivateInternalItems();
 					ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
 					inited = true;
 				}
@@ -424,6 +433,11 @@ private:
 			data.pvInit();
 		}
 
+		Item* pvActivateInternalItems() noexcept
+		{
+			return &*std::construct_at(std::addressof(mInternalItems));
+		}
+
 		void pvDestroy() noexcept
 		{
 			ItemTraits::Destroy(GetMemManager(), mItems, mCount);
@@ -433,10 +447,8 @@ private:
 
 		bool pvIsInternal() const noexcept
 		{
-			if constexpr (internalCapacity == 0)
-				return false;
-			else
-				return mItems == &mInternalItems;
+			return (internalCapacity == 0) ? false
+				: static_cast<void*>(mItems) == std::addressof(mInternalItems);
 		}
 
 		static constexpr bool pvCanReallocate() noexcept
