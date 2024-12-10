@@ -205,6 +205,8 @@ private:
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
+		typedef internal::ArrayBuffer<ItemTraits, internalCapacity> InternalItems;
+
 	public:
 		explicit Data(MemManager&& memManager) noexcept
 			: MemManager(std::move(memManager))
@@ -359,7 +361,7 @@ private:
 		internal::EnableIf<hasInternalCapacity>
 		pvInit() noexcept
 		{
-			mItems = &mInternalItems;
+			mItems = pvActivateInternalItems();
 			mCount = 0;
 		}
 
@@ -379,7 +381,7 @@ private:
 			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
 			if (data.pvIsInternal())
 			{
-				mItems = &mInternalItems;
+				mItems = pvActivateInternalItems();
 				ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
 			}
 			else
@@ -401,6 +403,11 @@ private:
 			data.pvInit();
 		}
 
+		Item* pvActivateInternalItems() noexcept
+		{
+			return &*::new(static_cast<void*>(std::addressof(mInternalItems))) InternalItems();
+		}
+
 		void pvDestroy() noexcept
 		{
 			ItemTraits::Destroy(GetMemManager(), mItems, mCount);
@@ -413,18 +420,10 @@ private:
 				MemManagerProxy::Deallocate(GetMemManager(), mItems, mCapacity * sizeof(Item));
 		}
 
-		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		internal::EnableIf<hasInternalCapacity,
-		bool> pvIsInternal() const noexcept
+		bool pvIsInternal() const noexcept
 		{
-			return mItems == &mInternalItems;
-		}
-
-		template<bool hasInternalCapacity = (internalCapacity > 0)>
-		internal::EnableIf<!hasInternalCapacity,
-		bool> pvIsInternal() const noexcept
-		{
-			return false;
+			return (internalCapacity == 0) ? false
+				: static_cast<void*>(mItems) == std::addressof(mInternalItems);
 		}
 
 		bool pvReallocateInplace(size_t capacity, std::true_type /*canReallocateInplace*/)
@@ -466,9 +465,18 @@ private:
 		{
 			MOMO_ASSERT(!pvIsInternal());
 			size_t initCapacity = mCapacity;
-			std::forward<ItemsCreator>(itemsCreator)(&mInternalItems);
+			Item* items = pvActivateInternalItems();
+			try
+			{
+				std::forward<ItemsCreator>(itemsCreator)(items);
+			}
+			catch (...)
+			{
+				mCapacity = initCapacity;	// deactivate mInternalItems
+				throw;
+			}
 			MemManagerProxy::Deallocate(GetMemManager(), mItems, initCapacity * sizeof(Item));
-			mItems = &mInternalItems;
+			mItems = items;
 			mCount = count;
 		}
 
@@ -489,7 +497,7 @@ private:
 		union
 		{
 			size_t mCapacity;
-			internal::ArrayBuffer<ItemTraits, internalCapacity> mInternalItems;
+			InternalItems mInternalItems;
 		};
 	};
 
