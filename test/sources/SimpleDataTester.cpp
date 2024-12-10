@@ -25,8 +25,10 @@ namespace
 {
 	typedef momo::DataStructDefault<int, double, std::string> BaseStruct;
 
-	struct Struct : public BaseStruct
+	struct Struct //: public BaseStruct	// gcc <14
 	{
+		typedef std::tuple<int, double, std::string> VisitableItems;
+
 		int intStruct;
 		double dblStruct;
 		std::string strStruct;
