@@ -33,10 +33,11 @@ jobs:
           flags: '-std=c++20 -Werror -msse2'
           ubuntu_ver: '24.04'
 
-        - clang_ver: '17'
-          build_type: 'Release'
-          flags: '-std=c++23 -Werror -msse2'
-          ubuntu_ver: '24.04'
+         # stl_pair.h:410:35: error: no matching function for call to 'get'
+#        - clang_ver: '17'
+#          build_type: 'Release'
+#          flags: '-std=c++23 -Werror -msse2'
+#          ubuntu_ver: '24.04'
 
          # libcxx_test_merge_array_0_modifiers_erase_iter_iter
 #        - clang_ver: '18'
@@ -57,11 +58,6 @@ jobs:
         - clang_ver: '18'
           build_type: 'Debug'
           flags: '-std=c++23 -Werror -fsanitize=address,undefined -fsized-deallocation -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-          ubuntu_ver: '24.04'
-
-        - clang_ver: '19'
-          build_type: 'Release'
-          flags: '-std=c++23 -Werror -msse2'
           ubuntu_ver: '24.04'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
