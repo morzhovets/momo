@@ -688,22 +688,24 @@ private:
 	iterator pvInsert(std::tuple<KeyArgs...>&& keyArgs, FastMovableFunctor<MappedCreator> mappedCreator)
 	{
 		MemManager& memManager = mHashMultiMap.GetMemManager();
-		typedef momo::internal::ObjectBuffer<key_type, HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
+		typedef momo::internal::ObjectBuffer<key_type,
+			HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
-		KeyCreator(memManager, std::move(keyArgs))(&keyBuffer);
+		KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPointer());
 		iterator resIter;
 		try
 		{
-			resIter = pvInsert(std::forward_as_tuple(std::move(*&keyBuffer)), std::move(mappedCreator));
+			resIter = pvInsert(std::forward_as_tuple(
+				std::move(keyBuffer.GetReference())), std::move(mappedCreator));
 		}
 		catch (...)
 		{
-			KeyManager::Destroy(&memManager, *&keyBuffer);
+			KeyManager::Destroy(&memManager, keyBuffer.GetReference());
 			throw;
 		}
-		KeyManager::Destroy(&memManager, *&keyBuffer);
+		KeyManager::Destroy(&memManager, keyBuffer.GetReference());
 		return resIter;
 	}
 

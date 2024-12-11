@@ -310,8 +310,8 @@ namespace internal
 			for (size_t i = 1; i < 2 * initialItemCount; ++i)
 			{
 				ObjectBuffer<Item, alignment> itemBuffer;
-				pvRelocate(memManager, items[i], &itemBuffer);
-				const Key& key = MergeSetItemTraits::GetKey(*&itemBuffer);
+				pvRelocate(memManager, items[i], itemBuffer.GetPointer());
+				const Key& key = MergeSetItemTraits::GetKey(itemBuffer.GetReference());
 				size_t j = i;
 				for (; j > 0; --j)
 				{
@@ -319,7 +319,7 @@ namespace internal
 						break;
 					pvRelocate(memManager, items[j - 1], items + j);
 				}
-				pvRelocate(memManager, *&itemBuffer, items + j);
+				pvRelocate(memManager, itemBuffer.GetReference(), items + j);
 			}
 		}
 		

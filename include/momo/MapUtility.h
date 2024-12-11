@@ -655,17 +655,17 @@ namespace internal
 
 		const Key* GetKeyPtr() const noexcept
 		{
-			return &mKeyBuffer;
+			return mKeyBuffer.template GetPointer<true>();
 		}
 
 		Key* GetKeyPtr() noexcept
 		{
-			return &mKeyBuffer;
+			return mKeyBuffer.GetPointer();
 		}
 
 		Value* GetValuePtr() const noexcept
 		{
-			return &mValueBuffer;
+			return mValueBuffer.GetPointer();
 		}
 
 	private:
@@ -745,12 +745,12 @@ namespace internal
 
 		const Key* GetKeyPtr() const noexcept
 		{
-			return &mKeyBuffer;
+			return mKeyBuffer.template GetPointer<true>();
 		}
 
 		Key* GetKeyPtr() noexcept
 		{
-			return &mKeyBuffer;
+			return mKeyBuffer.GetPointer();
 		}
 
 		Value* GetValuePtr() const noexcept

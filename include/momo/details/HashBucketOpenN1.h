@@ -132,7 +132,7 @@ namespace internal
 
 		Item* ptGetItemPtr(size_t index) noexcept
 		{
-			return &mItems + (reverse ? maxCount - 1 - index : index);
+			return mItems.GetPointer() + (reverse ? maxCount - 1 - index : index);
 		}
 
 		static uint8_t ptCalcShortHash(size_t hashCode) noexcept
@@ -158,8 +158,9 @@ namespace internal
 			{
 				if (thisShortHashes[i] == shortHash)
 				{
-					if (itemPred(std::as_const((&mItems)[i]))) [[likely]]
-						return pvMakeIterator(&mItems + i);
+					Item* items = mItems.GetPointer();
+					if (itemPred(std::as_const(items[i]))) [[likely]]
+						return pvMakeIterator(items + i);
 				}
 			}
 			return Iterator();

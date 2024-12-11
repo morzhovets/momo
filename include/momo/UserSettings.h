@@ -136,4 +136,4 @@
 	do { if (!(expr)) throw std::invalid_argument(#expr); } while (false)
 
 #define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
-	reinterpret_cast<ResObject*>(ptr)
+	((isWithinLifetime) ? std::launder(reinterpret_cast<ResObject*>(ptr)) : reinterpret_cast<ResObject*>(ptr))

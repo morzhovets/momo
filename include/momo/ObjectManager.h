@@ -189,14 +189,28 @@ namespace internal
 
 		ObjectBuffer& operator=(const ObjectBuffer&) = delete;
 
-		const Object* operator&() const noexcept
+		template<bool isWithinLifetime = false>
+		const Object* GetPointer() const noexcept
 		{
-			return PtrCaster::FromBytePtr<Object, false, count == 1>(mBuffer);
+			return PtrCaster::FromBytePtr<Object, isWithinLifetime, count == 1>(mBuffer);
 		}
 
-		Object* operator&() noexcept
+		template<bool isWithinLifetime = false>
+		Object* GetPointer() noexcept
 		{
-			return PtrCaster::FromBytePtr<Object, false, count == 1>(mBuffer);
+			return PtrCaster::FromBytePtr<Object, isWithinLifetime, count == 1>(mBuffer);
+		}
+
+		const Object& GetReference() const noexcept
+			requires (count == 1)
+		{
+			return *GetPointer<true>();
+		}
+
+		Object& GetReference() noexcept
+			requires (count == 1)
+		{
+			return *GetPointer<true>();
 		}
 
 	private:
@@ -511,9 +525,9 @@ namespace internal
 				if (std::addressof(srcObject) != std::addressof(dstObject))
 				{
 					ObjectBuffer<Object, alignment> objectBuffer;
-					Relocate(memManager, dstObject, &objectBuffer);
+					Relocate(memManager, dstObject, objectBuffer.GetPointer());
 					Relocate(memManager, srcObject, std::addressof(dstObject));
-					Relocate(memManager, *&objectBuffer, std::addressof(srcObject));
+					Relocate(memManager, objectBuffer.GetReference(), std::addressof(srcObject));
 				}
 			}
 			else
@@ -648,14 +662,14 @@ namespace internal
 			{
 				ObjectBuffer<Object, alignment> objectBuffer;
 				Object* objectPtr = std::to_address(iter++);
-				Relocate(memManager, *objectPtr, &objectBuffer);
+				Relocate(memManager, *objectPtr, objectBuffer.GetPointer());
 				for (size_t i = 0; i < shift; ++i)
 				{
 					Object* nextObjectPtr = std::to_address(iter++);
 					Relocate(memManager, *nextObjectPtr, objectPtr);
 					objectPtr = nextObjectPtr;
 				}
-				Relocate(memManager, *&objectBuffer, objectPtr);
+				Relocate(memManager, objectBuffer.GetReference(), objectPtr);
 			}
 			else
 			{

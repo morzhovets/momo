@@ -435,7 +435,7 @@ private:
 
 		Item* pvActivateInternalItems() noexcept
 		{
-			return &*std::construct_at(std::addressof(mInternalItems));
+			return std::construct_at(&mInternalItems)->GetPointer();
 		}
 
 		void pvDestroy() noexcept
@@ -448,7 +448,7 @@ private:
 		bool pvIsInternal() const noexcept
 		{
 			return (internalCapacity == 0) ? false
-				: static_cast<void*>(mItems) == std::addressof(mInternalItems);
+				: static_cast<void*>(mItems) == &mInternalItems;
 		}
 
 		static constexpr bool pvCanReallocate() noexcept

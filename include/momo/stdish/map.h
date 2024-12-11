@@ -728,23 +728,22 @@ namespace internal
 			typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 			typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 			KeyBuffer keyBuffer;
-			KeyCreator(memManager, std::move(keyArgs))(&keyBuffer);
-			bool keyDestroyed = false;
+			KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPointer());
+			key_type* keyPtr = keyBuffer.template GetPointer<true>();
 			try
 			{
-				std::pair<iterator, bool> res = pvFind(hint, *&keyBuffer);
+				std::pair<iterator, bool> res = pvFind(hint, *keyPtr);
 				if (!res.second)
 				{
-					KeyManager::Destroy(&memManager, *&keyBuffer);
-					keyDestroyed = true;
+					KeyManager::Destroy(&memManager, *keyPtr);
+					keyPtr = nullptr;
 					return res;
 				}
-				auto valueCreator = [&memManager, &keyBuffer, &keyDestroyed,
-					mappedCreator = std::move(mappedCreator)]
+				auto valueCreator = [&memManager, &keyPtr, mappedCreator = std::move(mappedCreator)]
 					(key_type* newKey, mapped_type* newMapped) mutable
 				{
-					KeyManager::Relocate(memManager, *&keyBuffer, newKey);
-					keyDestroyed = true;
+					KeyManager::Relocate(memManager, *keyPtr, newKey);
+					keyPtr = nullptr;
 					try
 					{
 						std::move(mappedCreator)(newMapped);
@@ -761,8 +760,8 @@ namespace internal
 			}
 			catch (...)
 			{
-				if (!keyDestroyed)
-					KeyManager::Destroy(&memManager, *&keyBuffer);
+				if (keyPtr != nullptr)
+					KeyManager::Destroy(&memManager, *keyPtr);
 				throw;
 			}
 		}

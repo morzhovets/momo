@@ -66,7 +66,7 @@ namespace internal
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
-			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
+			return IsFull() ? Bounds(pvGetItemPtr<false>(), 1) : Bounds();
 		}
 
 		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
@@ -75,8 +75,9 @@ namespace internal
 		{
 			if (mHashState == pvGetHashState(hashCode))
 			{
-				if (itemPred(std::as_const(*&mItemBuffer))) [[likely]]
-					return &mItemBuffer;
+				Item* itemPtr = pvGetItemPtr<true>();
+				if (itemPred(std::as_const(*itemPtr))) [[likely]]
+					return itemPtr;
 			}
 			return nullptr;
 		}
@@ -102,18 +103,19 @@ namespace internal
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
 			MOMO_ASSERT(!IsFull());
-			std::move(itemCreator)(&mItemBuffer);
+			std::move(itemCreator)(pvGetItemPtr<false>());
 			mHashState = pvGetHashState(hashCode);
-			return &mItemBuffer;
+			return pvGetItemPtr<true>();
 		}
 
 		template<conceptObjectReplacer<Item> ItemReplacer>
 		Iterator Remove(Params& /*params*/, [[maybe_unused]] Iterator iter,
 			FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
-			MOMO_ASSERT(iter == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
-			std::move(itemReplacer)(*&mItemBuffer, *&mItemBuffer);
+			Item* itemPtr = pvGetItemPtr<true>();
+			MOMO_ASSERT(iter == itemPtr);
+			std::move(itemReplacer)(*itemPtr, *itemPtr);
 			mHashState = HashState{2};
 			return nullptr;
 		}
@@ -123,7 +125,7 @@ namespace internal
 			[[maybe_unused]] Iterator iter, size_t /*bucketIndex*/, size_t /*logBucketCount*/,
 			size_t /*newLogBucketCount*/)
 		{
-			MOMO_ASSERT(iter == &mItemBuffer);
+			MOMO_ASSERT(iter == pvGetItemPtr<true>());
 			if (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();
 			return static_cast<size_t>(mHashState >> 1);
@@ -141,6 +143,12 @@ namespace internal
 			{
 				return (static_cast<HashState>(hashCode) << 1) | 1;
 			}
+		}
+
+		template<bool isWithinLifetime>
+		Item* pvGetItemPtr() noexcept
+		{
+			return mItemBuffer.template GetPointer<isWithinLifetime>();
 		}
 
 	private:

@@ -210,8 +210,8 @@ private:
 			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
 				sizeof(Data));
 			std::construct_at(mData, std::move(columnList));
-			std::construct_at(&mData->rawMemPoolBuffer, std::move(rawMemPoolParams),
-				MemManagerPtr(GetMemManager()));	//? nothrow
+			std::construct_at(mData->rawMemPoolBuffer.GetPointer(),
+				std::move(rawMemPoolParams), MemManagerPtr(GetMemManager()));	//? nothrow
 		}
 
 		Crew(Crew&& crew) noexcept
@@ -226,7 +226,7 @@ private:
 		{
 			if (!IsNull())
 			{
-				std::destroy_at(&mData->rawMemPoolBuffer);
+				std::destroy_at(&GetRawMemPool());
 				ColumnList columnList = std::move(mData->columnList);
 				std::destroy_at(mData);
 				MemManagerProxy::Deallocate(columnList.GetMemManager(), mData, sizeof(Data));
@@ -290,7 +290,7 @@ private:
 		RawMemPool& GetRawMemPool() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
-			return *&mData->rawMemPoolBuffer;
+			return mData->rawMemPoolBuffer.GetReference();
 		}
 
 	private:
