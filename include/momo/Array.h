@@ -799,7 +799,8 @@ public:
 			ItemHandler itemHandler(memManager,
 				FastMovableFunctor(ItemCreator(memManager, item)));
 			pvGrow(newCount, ArrayGrowCause::add);
-			ItemTraits::Relocate(memManager, &itemHandler, GetItems() + initCount, 1);
+			ItemTraits::Relocate(memManager, std::addressof(itemHandler.GetItem()),
+				GetItems() + initCount, 1);
 			itemHandler.Release();
 			mData.SetCount(newCount);
 		}
@@ -852,7 +853,7 @@ public:
 			ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
 			if (grow)
 				pvGrow(newCount, ArrayGrowCause::add);
-			ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
+			ArrayShifter::InsertNogrow(*this, index, count, itemHandler.GetItem());
 		}
 		else
 		{
@@ -1054,7 +1055,7 @@ private:
 		size_t newCount = GetCount() + 1;
 		if (newCount > GetCapacity())
 			pvGrow(newCount, ArrayGrowCause::add);
-		ArrayShifter::InsertNogrow(*this, index, std::move(*&itemHandler));
+		ArrayShifter::InsertNogrow(*this, index, std::move(itemHandler.GetItem()));
 	}
 
 	void pvRemoveBack(size_t count) noexcept

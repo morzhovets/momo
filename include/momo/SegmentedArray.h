@@ -528,7 +528,7 @@ public:
 		MemManager& memManager = GetMemManager();
 		ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
 		Reserve(mCount + count);
-		ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
+		ArrayShifter::InsertNogrow(*this, index, count, itemHandler.GetItem());
 	}
 
 	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
@@ -678,7 +678,7 @@ private:
 	{
 		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));
 		Reserve(mCount + 1);
-		ArrayShifter::InsertNogrow(*this, index, std::move(*&itemHandler));
+		ArrayShifter::InsertNogrow(*this, index, std::move(itemHandler.GetItem()));
 	}
 
 	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>
