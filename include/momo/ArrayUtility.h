@@ -135,12 +135,12 @@ namespace internal
 		~ArrayItemHandler() noexcept
 		{
 			if (mMemManager != nullptr)
-				ItemTraits::Destroy(*mMemManager, std::addressof(GetItem()), 1);
+				ItemTraits::Destroy(*mMemManager, std::addressof(Get()), 1);
 		}
 
 		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
 
-		Item& GetItem() noexcept
+		Item& Get() noexcept
 		{
 			MOMO_ASSERT(mMemManager != nullptr);
 			return mItemBuffer.Get();

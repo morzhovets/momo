@@ -543,7 +543,7 @@ public:
 		MemManager& memManager = GetMemManager();
 		ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
 		Reserve(mCount + count);
-		ArrayShifter::InsertNogrow(*this, index, count, itemHandler.GetItem());
+		ArrayShifter::InsertNogrow(*this, index, count, itemHandler.Get());
 	}
 
 	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
@@ -811,7 +811,7 @@ private:
 	{
 		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));
 		Reserve(mCount + 1);
-		ArrayShifter::InsertNogrow(*this, index, std::move(itemHandler.GetItem()));
+		ArrayShifter::InsertNogrow(*this, index, std::move(itemHandler.Get()));
 	}
 
 	void pvRemoveBack(size_t count) noexcept
