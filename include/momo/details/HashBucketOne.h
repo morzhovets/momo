@@ -148,7 +148,7 @@ namespace internal
 		template<bool isWithinLifetime>
 		Item* pvGetItemPtr() noexcept
 		{
-			return mItemBuffer.template GetPointer<isWithinLifetime>();
+			return mItemBuffer.template GetPtr<isWithinLifetime>();
 		}
 
 	private:

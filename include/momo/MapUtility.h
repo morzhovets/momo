@@ -656,28 +656,28 @@ namespace internal
 		template<bool isWithinLifetime = false>
 		Key* GetKeyPtr() noexcept
 		{
-			return mKeyBuffer.template GetPointer<isWithinLifetime>();
+			return mKeyBuffer.template GetPtr<isWithinLifetime>();
 		}
 
 		template<bool isWithinLifetime = false>
 		Value* GetValuePtr() const noexcept
 		{
-			return mValueBuffer.template GetPointer<isWithinLifetime>();
+			return mValueBuffer.template GetPtr<isWithinLifetime>();
 		}
 
 		const Key& GetKey() const noexcept
 		{
-			return mKeyBuffer.GetReference();
+			return mKeyBuffer.Get();
 		}
 
 		Key& GetKey() noexcept
 		{
-			return mKeyBuffer.GetReference();
+			return mKeyBuffer.Get();
 		}
 
 		Value& GetValue() const noexcept
 		{
-			return mValueBuffer.GetReference();
+			return mValueBuffer.Get();
 		}
 
 	private:
@@ -758,7 +758,7 @@ namespace internal
 		template<bool isWithinLifetime = false>
 		Key* GetKeyPtr() noexcept
 		{
-			return mKeyBuffer.template GetPointer<isWithinLifetime>();
+			return mKeyBuffer.template GetPtr<isWithinLifetime>();
 		}
 
 		Value*& GetValuePtr() noexcept
@@ -768,12 +768,12 @@ namespace internal
 
 		const Key& GetKey() const noexcept
 		{
-			return mKeyBuffer.GetReference();
+			return mKeyBuffer.Get();
 		}
 
 		Key& GetKey() noexcept
 		{
-			return mKeyBuffer.GetReference();
+			return mKeyBuffer.Get();
 		}
 
 		Value& GetValue() const noexcept

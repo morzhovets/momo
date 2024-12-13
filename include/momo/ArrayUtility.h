@@ -127,7 +127,7 @@ namespace internal
 		explicit ArrayItemHandler(MemManager& memManager, FastMovableFunctor<ItemCreator> itemCreator)
 			: mMemManager(&memManager)
 		{
-			std::move(itemCreator)(mItemBuffer.GetPointer());
+			std::move(itemCreator)(mItemBuffer.GetPtr());
 		}
 
 		ArrayItemHandler(const ArrayItemHandler&) = delete;
@@ -143,7 +143,7 @@ namespace internal
 		Item& GetItem() noexcept
 		{
 			MOMO_ASSERT(mMemManager != nullptr);
-			return mItemBuffer.GetReference();
+			return mItemBuffer.Get();
 		}
 
 		void Release() noexcept

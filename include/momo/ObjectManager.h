@@ -190,27 +190,27 @@ namespace internal
 		ObjectBuffer& operator=(const ObjectBuffer&) = delete;
 
 		template<bool isWithinLifetime = false>
-		const Object* GetPointer() const noexcept
+		const Object* GetPtr() const noexcept
 		{
 			return PtrCaster::FromBytePtr<Object, isWithinLifetime, count == 1>(mBuffer);
 		}
 
 		template<bool isWithinLifetime = false>
-		Object* GetPointer() noexcept
+		Object* GetPtr() noexcept
 		{
 			return PtrCaster::FromBytePtr<Object, isWithinLifetime, count == 1>(mBuffer);
 		}
 
-		const Object& GetReference() const noexcept
+		const Object& Get() const noexcept
 			requires (count == 1)
 		{
-			return *GetPointer<true>();
+			return *GetPtr<true>();
 		}
 
-		Object& GetReference() noexcept
+		Object& Get() noexcept
 			requires (count == 1)
 		{
-			return *GetPointer<true>();
+			return *GetPtr<true>();
 		}
 
 	private:
@@ -525,9 +525,9 @@ namespace internal
 				if (std::addressof(srcObject) != std::addressof(dstObject))
 				{
 					ObjectBuffer<Object, alignment> objectBuffer;
-					Relocate(memManager, dstObject, objectBuffer.GetPointer());
+					Relocate(memManager, dstObject, objectBuffer.GetPtr());
 					Relocate(memManager, srcObject, std::addressof(dstObject));
-					Relocate(memManager, objectBuffer.GetReference(), std::addressof(srcObject));
+					Relocate(memManager, objectBuffer.Get(), std::addressof(srcObject));
 				}
 			}
 			else
@@ -662,14 +662,14 @@ namespace internal
 			{
 				ObjectBuffer<Object, alignment> objectBuffer;
 				Object* objectPtr = std::to_address(iter++);
-				Relocate(memManager, *objectPtr, objectBuffer.GetPointer());
+				Relocate(memManager, *objectPtr, objectBuffer.GetPtr());
 				for (size_t i = 0; i < shift; ++i)
 				{
 					Object* nextObjectPtr = std::to_address(iter++);
 					Relocate(memManager, *nextObjectPtr, objectPtr);
 					objectPtr = nextObjectPtr;
 				}
-				Relocate(memManager, objectBuffer.GetReference(), objectPtr);
+				Relocate(memManager, objectBuffer.Get(), objectPtr);
 			}
 			else
 			{

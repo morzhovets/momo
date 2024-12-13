@@ -693,19 +693,19 @@ private:
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
-		KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPointer());
+		KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPtr());
 		iterator resIter;
 		try
 		{
 			resIter = pvInsert(std::forward_as_tuple(
-				std::move(keyBuffer.GetReference())), std::move(mappedCreator));
+				std::move(keyBuffer.Get())), std::move(mappedCreator));
 		}
 		catch (...)
 		{
-			KeyManager::Destroy(&memManager, keyBuffer.GetReference());
+			KeyManager::Destroy(&memManager, keyBuffer.Get());
 			throw;
 		}
-		KeyManager::Destroy(&memManager, keyBuffer.GetReference());
+		KeyManager::Destroy(&memManager, keyBuffer.Get());
 		return resIter;
 	}
 

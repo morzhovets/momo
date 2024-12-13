@@ -92,7 +92,7 @@ namespace internal
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
-			return Bounds(Iterator(mItems.GetPointer() + maxCount), pvGetCount());
+			return Bounds(Iterator(mItems.GetPtr() + maxCount), pvGetCount());
 		}
 
 		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
@@ -155,7 +155,7 @@ namespace internal
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
-			size_t index = UIntMath<>::Dist(mItems.GetPointer(), std::to_address(iter));
+			size_t index = UIntMath<>::Dist(mItems.GetPtr(), std::to_address(iter));
 			uint8_t hashProbe = mHashData.hashProbes[index];
 			bool useFullGetter = (hashProbe == emptyHashProbe ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
@@ -195,7 +195,7 @@ namespace internal
 			{
 				if (mHashData.shortHashes[i] == shortHash)
 				{
-					Item* items = mItems.GetPointer();
+					Item* items = mItems.GetPtr();
 					if (itemPred(std::as_const(items[i]))) [[likely]]
 						return Iterator(items + i + 1);
 				}
@@ -209,7 +209,7 @@ namespace internal
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
-			Item* newItem = mItems.GetPointer() + maxCount - 1 - count;
+			Item* newItem = mItems.GetPtr() + maxCount - 1 - count;
 			std::move(itemCreator)(newItem);
 			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
 			if constexpr (useHashCodePartGetter)
@@ -229,7 +229,7 @@ namespace internal
 		Iterator pvRemove(Iterator iter, FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
 			size_t count = pvGetCount();
-			Item* items = mItems.GetPointer();
+			Item* items = mItems.GetPtr();
 			size_t index = UIntMath<>::Dist(items, std::to_address(iter));
 			MOMO_ASSERT(index >= maxCount - count);
 			std::move(itemReplacer)(items[maxCount - count], items[index]);

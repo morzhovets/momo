@@ -728,8 +728,8 @@ namespace internal
 			typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 			typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 			KeyBuffer keyBuffer;
-			KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPointer());
-			key_type* keyPtr = keyBuffer.template GetPointer<true>();
+			KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPtr());
+			key_type* keyPtr = keyBuffer.template GetPtr<true>();
 			try
 			{
 				std::pair<iterator, bool> res = pvFind(hint, *keyPtr);

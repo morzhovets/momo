@@ -125,7 +125,7 @@ namespace internal
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 		{
 			mData = MemManagerProxy::template AllocateCreate<Data>(memManager, containerTraits);
-			std::construct_at(mData->memManagerBuffer.GetPointer(), std::move(memManager));
+			std::construct_at(mData->memManagerBuffer.GetPtr(), std::move(memManager));
 		}
 
 		SetCrew(SetCrew&& crew) noexcept
@@ -176,13 +176,13 @@ namespace internal
 		const MemManager& GetMemManager() const noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
-			return mData->memManagerBuffer.GetReference();
+			return mData->memManagerBuffer.Get();
 		}
 
 		MemManager& GetMemManager() noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
-			return mData->memManagerBuffer.GetReference();
+			return mData->memManagerBuffer.Get();
 		}
 
 	private:
@@ -291,7 +291,7 @@ namespace internal
 			if (mHasItem)
 			{
 				ItemTraits::Relocate(nullptr, nullptr,
-					extractedItem.mItemBuffer.GetReference(), mItemBuffer.GetPointer());
+					extractedItem.mItemBuffer.Get(), mItemBuffer.GetPtr());
 			}
 			extractedItem.mHasItem = false;
 		}
@@ -313,27 +313,27 @@ namespace internal
 		void Clear() noexcept
 		{
 			if (mHasItem)
-				ItemTraits::Destroy(nullptr, mItemBuffer.GetReference());
+				ItemTraits::Destroy(nullptr, mItemBuffer.Get());
 			mHasItem = false;
 		}
 
 		const Item& GetItem() const
 		{
 			MOMO_CHECK(mHasItem);
-			return mItemBuffer.GetReference();
+			return mItemBuffer.Get();
 		}
 
 		Item& GetItem()
 		{
 			MOMO_CHECK(mHasItem);
-			return mItemBuffer.GetReference();
+			return mItemBuffer.Get();
 		}
 
 		template<internal::conceptObjectCreator<Item> ItemCreator>
 		void Create(ItemCreator itemCreator)	//?
 		{
 			MOMO_CHECK(!mHasItem);
-			std::forward<ItemCreator>(itemCreator)(mItemBuffer.GetPointer());
+			std::forward<ItemCreator>(itemCreator)(mItemBuffer.GetPtr());
 			mHasItem = true;
 		}
 
@@ -341,7 +341,7 @@ namespace internal
 		void Remove(ItemRemover itemRemover)
 		{
 			MOMO_CHECK(mHasItem);
-			std::forward<ItemRemover>(itemRemover)(mItemBuffer.GetReference());
+			std::forward<ItemRemover>(itemRemover)(mItemBuffer.Get());
 			mHasItem = false;
 		}
 

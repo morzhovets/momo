@@ -435,7 +435,7 @@ private:
 
 		Item* pvActivateInternalItems() noexcept
 		{
-			return std::construct_at(&mInternalItems)->GetPointer();
+			return std::construct_at(&mInternalItems)->GetPtr();
 		}
 
 		void pvDestroy() noexcept

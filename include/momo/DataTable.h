@@ -210,7 +210,7 @@ private:
 			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
 				sizeof(Data));
 			std::construct_at(mData, std::move(columnList));
-			std::construct_at(mData->rawMemPoolBuffer.GetPointer(),
+			std::construct_at(mData->rawMemPoolBuffer.GetPtr(),
 				std::move(rawMemPoolParams), MemManagerPtr(GetMemManager()));	//? nothrow
 		}
 
@@ -290,7 +290,7 @@ private:
 		RawMemPool& GetRawMemPool() noexcept
 		{
 			MOMO_ASSERT(!IsNull());
-			return mData->rawMemPoolBuffer.GetReference();
+			return mData->rawMemPoolBuffer.Get();
 		}
 
 	private:
