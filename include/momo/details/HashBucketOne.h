@@ -66,7 +66,7 @@ namespace internal
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
-			return IsFull() ? Bounds(pvGetItemPtr<false>(), 1) : Bounds();
+			return IsFull() ? Bounds(pvGetItemPtr(), 1) : Bounds();
 		}
 
 		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
@@ -75,7 +75,7 @@ namespace internal
 		{
 			if (mHashState == pvGetHashState(hashCode))
 			{
-				Item* itemPtr = pvGetItemPtr<true>();
+				Item* itemPtr = pvGetItemPtr();
 				if (itemPred(std::as_const(*itemPtr))) [[likely]]
 					return itemPtr;
 			}
@@ -105,7 +105,7 @@ namespace internal
 			MOMO_ASSERT(!IsFull());
 			std::move(itemCreator)(pvGetItemPtr<false>());
 			mHashState = pvGetHashState(hashCode);
-			return pvGetItemPtr<true>();
+			return pvGetItemPtr();
 		}
 
 		template<conceptObjectReplacer<Item> ItemReplacer>
@@ -113,7 +113,7 @@ namespace internal
 			FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
 			MOMO_ASSERT(IsFull());
-			Item* itemPtr = pvGetItemPtr<true>();
+			Item* itemPtr = pvGetItemPtr();
 			MOMO_ASSERT(iter == itemPtr);
 			std::move(itemReplacer)(*itemPtr, *itemPtr);
 			mHashState = HashState{2};
@@ -125,7 +125,7 @@ namespace internal
 			[[maybe_unused]] Iterator iter, size_t /*bucketIndex*/, size_t /*logBucketCount*/,
 			size_t /*newLogBucketCount*/)
 		{
-			MOMO_ASSERT(iter == pvGetItemPtr<true>());
+			MOMO_ASSERT(iter == pvGetItemPtr());
 			if (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();
 			return static_cast<size_t>(mHashState >> 1);
@@ -145,7 +145,7 @@ namespace internal
 			}
 		}
 
-		template<bool isWithinLifetime>
+		template<bool isWithinLifetime = true>
 		Item* pvGetItemPtr() noexcept
 		{
 			return mItemBuffer.template GetPtr<isWithinLifetime>();
