@@ -52,10 +52,10 @@ namespace internal
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			IncIterator keyIter = [iter = begin] () mutable noexcept
-				{ return (iter++)->GetKeyPtr(); };
+				{ return (iter++)->template GetKeyPtr<true>(); };
 			KeyValueTraits::ShiftKeyNothrow(memManager, keyIter, shift);
 			IncIterator valueIter = [iter = begin] () mutable noexcept
-				{ return (iter++)->GetValuePtr(); };
+				{ return (iter++)->template GetValuePtr<true>(); };
 			KeyValueTraits::ShiftValueNothrow(memManager, valueIter, shift);
 		}
 	};
@@ -82,7 +82,7 @@ namespace internal
 		static void ShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{
 			IncIterator keyIter = [iter = begin] () mutable noexcept
-				{ return (iter++)->GetKeyPtr(); };
+				{ return (iter++)->template GetKeyPtr<true>(); };
 			KeyValueTraits::ShiftKeyNothrow(memManager, keyIter, shift);
 			IncIterator valueIter = [iter = begin] () mutable noexcept
 				{ return &(iter++)->GetValuePtr(); };
@@ -734,7 +734,7 @@ public:
 	{
 		FastCopyableFunctor<PairFilter> fastPairFilter(pairFilter);
 		auto itemFilter = [fastPairFilter] (const KeyValuePair& item)
-			{ return fastPairFilter(*item.GetKeyPtr(), std::as_const(*item.GetValuePtr())); };
+			{ return fastPairFilter(item.GetKey(), std::as_const(item.GetValue())); };
 		return mTreeSet.Remove(itemFilter);
 	}
 

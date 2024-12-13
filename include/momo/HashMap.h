@@ -745,7 +745,7 @@ public:
 	{
 		FastCopyableFunctor<PairFilter> fastPairFilter(pairFilter);
 		auto itemFilter = [fastPairFilter] (const KeyValuePair& item)
-			{ return fastPairFilter(*item.GetKeyPtr(), std::as_const(*item.GetValuePtr())); };
+			{ return fastPairFilter(item.GetKey(), std::as_const(item.GetValue())); };
 		return mHashSet.Remove(itemFilter);
 	}
 

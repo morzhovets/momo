@@ -80,8 +80,8 @@ namespace internal
 
 	protected:
 		explicit MapReference(SetReference setRef) noexcept
-			: key(*setRef.GetKeyPtr()),
-			value(*setRef.GetValuePtr())
+			: key(setRef.GetKey()),
+			value(setRef.GetValue())
 		{
 		}
 
@@ -653,19 +653,31 @@ namespace internal
 			std::construct_at(newPair, memManager, FastMovableFunctor(std::move(pairCreator)));
 		}
 
-		const Key* GetKeyPtr() const noexcept
-		{
-			return mKeyBuffer.template GetPointer<true>();
-		}
-
+		template<bool isWithinLifetime = false>
 		Key* GetKeyPtr() noexcept
 		{
-			return mKeyBuffer.GetPointer();
+			return mKeyBuffer.template GetPointer<isWithinLifetime>();
 		}
 
+		template<bool isWithinLifetime = false>
 		Value* GetValuePtr() const noexcept
 		{
-			return mValueBuffer.GetPointer();
+			return mValueBuffer.template GetPointer<isWithinLifetime>();
+		}
+
+		const Key& GetKey() const noexcept
+		{
+			return mKeyBuffer.GetReference();
+		}
+
+		Key& GetKey() noexcept
+		{
+			return mKeyBuffer.GetReference();
+		}
+
+		Value& GetValue() const noexcept
+		{
+			return mValueBuffer.GetReference();
 		}
 
 	private:
@@ -743,24 +755,30 @@ namespace internal
 			std::construct_at(newPair, dstMemManager, FastMovableFunctor(std::move(pairCreator)));
 		}
 
-		const Key* GetKeyPtr() const noexcept
-		{
-			return mKeyBuffer.template GetPointer<true>();
-		}
-
+		template<bool isWithinLifetime = false>
 		Key* GetKeyPtr() noexcept
 		{
-			return mKeyBuffer.GetPointer();
-		}
-
-		Value* GetValuePtr() const noexcept
-		{
-			return mValuePtr;
+			return mKeyBuffer.template GetPointer<isWithinLifetime>();
 		}
 
 		Value*& GetValuePtr() noexcept
 		{
 			return mValuePtr;
+		}
+
+		const Key& GetKey() const noexcept
+		{
+			return mKeyBuffer.GetReference();
+		}
+
+		Key& GetKey() noexcept
+		{
+			return mKeyBuffer.GetReference();
+		}
+
+		Value& GetValue() const noexcept
+		{
+			return *mValuePtr;
 		}
 
 	private:
@@ -809,8 +827,8 @@ namespace internal
 			void operator()(Item* newItem) &&
 			{
 				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
-				Item::template Create<KeyValueTraits>(newItem, mMemManager, *mItem.GetKeyPtr(),
-					FastMovableFunctor(ValueCreator(mMemManager, *mItem.GetValuePtr())));
+				Item::template Create<KeyValueTraits>(newItem, mMemManager, mItem.GetKey(),
+					FastMovableFunctor(ValueCreator(mMemManager, std::as_const(mItem.GetValue()))));
 			}
 
 		private:
@@ -821,14 +839,14 @@ namespace internal
 	public:
 		static const Key& GetKey(const Item& item) noexcept
 		{
-			return *item.GetKeyPtr();
+			return item.GetKey();
 		}
 
 		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
 		static void Destroy(MemManagerOrNullPtr memManager, Item& item) noexcept
 		{
-			KeyValueTraits::DestroyKey(memManager, *item.GetKeyPtr());
-			KeyValueTraits::DestroyValue(memManager, *item.GetValuePtr());
+			KeyValueTraits::DestroyKey(memManager, item.GetKey());
+			KeyValueTraits::DestroyValue(memManager, item.GetValue());
 		}
 
 		template<conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
@@ -838,22 +856,22 @@ namespace internal
 		{
 			Item::Create(dstItem);
 			KeyValueTraits::Relocate(srcMemManager, dstMemManager,
-				*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
+				srcItem.GetKey(), srcItem.GetValue(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
 		{
-			KeyValueTraits::Replace(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
-				*dstItem.GetKeyPtr(), *dstItem.GetValuePtr());
+			KeyValueTraits::Replace(memManager, srcItem.GetKey(), srcItem.GetValue(),
+				dstItem.GetKey(), dstItem.GetValue());
 		}
 
 		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
 			Item* dstItem)
 		{
 			Item::Create(dstItem);
-			KeyValueTraits::ReplaceRelocate(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
-				*midItem.GetKeyPtr(), *midItem.GetValuePtr(),
+			KeyValueTraits::ReplaceRelocate(memManager, srcItem.GetKey(), srcItem.GetValue(),
+				midItem.GetKey(), midItem.GetValue(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
@@ -866,9 +884,9 @@ namespace internal
 			for (size_t i = 0; i < count; ++i)
 				Item::Create(std::to_address(dstIter++));
 			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable noexcept
-				{ return (srcIter++)->GetKeyPtr(); };
+				{ return (srcIter++)->template GetKeyPtr<true>(); };
 			IncIterator srcValueIter = [srcIter = srcBegin] () mutable noexcept
-				{ return (srcIter++)->GetValuePtr(); };
+				{ return (srcIter++)->template GetValuePtr<true>(); };
 			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable noexcept
 				{ return (dstIter++)->GetKeyPtr(); };
 			IncIterator dstValueIter = [dstIter = dstBegin] () mutable noexcept
@@ -882,7 +900,7 @@ namespace internal
 		template<typename KeyArg>
 		static void AssignKey(MemManager& memManager, KeyArg&& keyArg, Item& item)
 		{
-			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), *item.GetKeyPtr());
+			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), item.GetKey());
 		}
 	};
 
@@ -920,8 +938,8 @@ namespace internal
 			void operator()(Item* newItem) &&
 			{
 				typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
-				Item::template Create<KeyValueTraits>(newItem, mMemManager, *mItem.GetKeyPtr(),
-					FastMovableFunctor(ValueCreator(mMemManager, *mItem.GetValuePtr())));
+				Item::template Create<KeyValueTraits>(newItem, mMemManager, mItem.GetKey(),
+					FastMovableFunctor(ValueCreator(mMemManager, std::as_const(mItem.GetValue()))));
 			}
 
 		private:
@@ -932,13 +950,13 @@ namespace internal
 	public:
 		static const Key& GetKey(const Item& item) noexcept
 		{
-			return *item.GetKeyPtr();
+			return item.GetKey();
 		}
 
 		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
 		static void Destroy(MemManagerOrNullPtr memManager, Item& item) noexcept
 		{
-			KeyValueTraits::DestroyKey(memManager, *item.GetKeyPtr());
+			KeyValueTraits::DestroyKey(memManager, item.GetKey());
 			Value* valuePtr = item.GetValuePtr();
 			KeyValueTraits::DestroyValue(memManager, *valuePtr);
 			if constexpr (!std::is_null_pointer_v<MemManagerOrNullPtr>)
@@ -950,7 +968,7 @@ namespace internal
 		static void Relocate(SrcMemManagerOrNullPtr srcMemManager,
 			DstMemManagerOrNullPtr dstMemManager, Item& srcItem, Item* dstItem)
 		{
-			Key* srcKeyPtr = srcItem.GetKeyPtr();
+			Key& srcKey = srcItem.GetKey();
 			Value* srcValuePtr = srcItem.GetValuePtr();
 			bool done = false;
 			if constexpr (!std::is_null_pointer_v<SrcMemManagerOrNullPtr>
@@ -959,7 +977,7 @@ namespace internal
 				if (srcMemManager != dstMemManager)
 				{
 					Item::template CreateRelocate<KeyValueTraits>(dstItem,
-						srcMemManager, *dstMemManager, *srcKeyPtr, *srcValuePtr);
+						srcMemManager, *dstMemManager, srcKey, *srcValuePtr);
 					srcMemManager->GetMemPool().Deallocate(srcValuePtr);
 					done = true;
 				}
@@ -968,14 +986,14 @@ namespace internal
 			{
 				Item::Create(dstItem);
 				KeyValueTraits::RelocateKey(srcMemManager, dstMemManager,
-					*srcKeyPtr, dstItem->GetKeyPtr());
+					srcKey, dstItem->GetKeyPtr());
 				dstItem->GetValuePtr() = srcValuePtr;
 			}
 		}
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
 		{
-			KeyValueTraits::ReplaceKey(memManager, *srcItem.GetKeyPtr(), *dstItem.GetKeyPtr());
+			KeyValueTraits::ReplaceKey(memManager, srcItem.GetKey(), dstItem.GetKey());
 			Value*& dstValuePtr = dstItem.GetValuePtr();
 			KeyValueTraits::DestroyValue(&memManager, *dstValuePtr);
 			memManager.GetMemPool().Deallocate(dstValuePtr);
@@ -985,8 +1003,8 @@ namespace internal
 		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem)
 		{
 			Item::Create(dstItem);
-			KeyValueTraits::ReplaceRelocateKeys(memManager, *srcItem.GetKeyPtr(),
-				*midItem.GetKeyPtr(), dstItem->GetKeyPtr());
+			KeyValueTraits::ReplaceRelocateKeys(memManager, srcItem.GetKey(),
+				midItem.GetKey(), dstItem->GetKeyPtr());
 			dstItem->GetValuePtr() = midItem.GetValuePtr();
 			midItem.GetValuePtr() = srcItem.GetValuePtr();
 		}
@@ -1000,7 +1018,7 @@ namespace internal
 			for (size_t i = 0; i < count; ++i)
 				Item::Create(std::to_address(dstIter++));
 			IncIterator srcKeyIter = [srcIter = srcBegin] () mutable noexcept
-				{ return (srcIter++)->GetKeyPtr(); };
+				{ return (srcIter++)->template GetKeyPtr<true>(); };
 			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable noexcept
 				{ return (dstIter++)->GetKeyPtr(); };
 			auto exec = [itemCreator = std::move(itemCreator), newItem] () mutable
@@ -1017,7 +1035,7 @@ namespace internal
 		template<typename KeyArg>
 		static void AssignKey(MemManager& memManager, KeyArg&& keyArg, Item& item)
 		{
-			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), *item.GetKeyPtr());
+			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), item.GetKey());
 		}
 	};
 
@@ -1070,22 +1088,22 @@ namespace internal
 
 		const Key& GetKey() const
 		{
-			return *mSetExtractedItem.GetItem().GetKeyPtr();
+			return mSetExtractedItem.GetItem().GetKey();
 		}
 
 		Key& GetKey()
 		{
-			return *mSetExtractedItem.GetItem().GetKeyPtr();
+			return mSetExtractedItem.GetItem().GetKey();
 		}
 
 		const Value& GetValue() const
 		{
-			return *mSetExtractedItem.GetItem().GetValuePtr();
+			return mSetExtractedItem.GetItem().GetValue();
 		}
 
 		Value& GetValue()
 		{
-			return *mSetExtractedItem.GetItem().GetValuePtr();
+			return mSetExtractedItem.GetItem().GetValue();
 		}
 
 		template<conceptMapPairRemover<Key, Value> PairRemover>
@@ -1105,7 +1123,7 @@ namespace internal
 		void pvRemove(FastMovableFunctor<PairRemover> pairRemover)
 		{
 			auto itemRemover = [pairRemover = std::move(pairRemover)] (KeyValuePair& item) mutable
-				{ std::move(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr()); };
+				{ std::move(pairRemover)(item.GetKey(), item.GetValue()); };
 			mSetExtractedItem.Remove(std::move(itemRemover));
 		}
 
@@ -1175,22 +1193,22 @@ namespace internal
 
 		const Key& GetKey() const
 		{
-			return *mSetExtractedItem.GetItem().GetKeyPtr();
+			return mSetExtractedItem.GetItem().GetKey();
 		}
 
 		Key& GetKey()
 		{
-			return *mSetExtractedItem.GetItem().GetKeyPtr();
+			return mSetExtractedItem.GetItem().GetKey();
 		}
 
 		const Value& GetValue() const
 		{
-			return *mSetExtractedItem.GetItem().GetValuePtr();
+			return mSetExtractedItem.GetItem().GetValue();
 		}
 
 		Value& GetValue()
 		{
-			return *mSetExtractedItem.GetItem().GetValuePtr();
+			return mSetExtractedItem.GetItem().GetValue();
 		}
 
 		template<conceptMapPairRemover<Key, Value> PairRemover>
@@ -1219,7 +1237,7 @@ namespace internal
 			{
 				MOMO_ASSERT(mValueMemPool != nullptr);
 				Value* valuePtr = mSetExtractedItem.GetItem().GetValuePtr();
-				std::move(pairRemover)(*item.GetKeyPtr(), *valuePtr);
+				std::move(pairRemover)(item.GetKey(), *valuePtr);
 				mValueMemPool->DeallocateLazy(valuePtr);
 			};
 			mSetExtractedItem.Remove(std::move(itemRemover));
