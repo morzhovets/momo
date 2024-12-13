@@ -49,7 +49,7 @@ namespace internal
 
 		BucketMemory& operator=(const BucketMemory&) = delete;
 
-		Pointer GetPointer() const noexcept
+		Pointer Get() const noexcept
 		{
 			return mPtr;
 		}

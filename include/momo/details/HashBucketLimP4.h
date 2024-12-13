@@ -478,7 +478,7 @@ namespace internal
 		Item* pvAdd0(Params& params, FastMovableFunctor<ItemCreator> itemCreator, size_t hashCode)
 		{
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
-			Item* items = memory.GetPointer();
+			Item* items = memory.Get();
 			std::move(itemCreator)(items);
 			mShortHashes[0] = pvCalcShortHash(hashCode);
 			pvSetPtrState(memory.Extract(), memPoolIndex);
@@ -492,7 +492,7 @@ namespace internal
 			static const size_t newMemPoolIndex = memPoolIndex + 1;
 			size_t count = memPoolIndex;
 			Memory<newMemPoolIndex> memory(params.template GetMemPool<newMemPoolIndex>());
-			Item* newItems = memory.GetPointer();
+			Item* newItems = memory.Get();
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				std::move(itemCreator), newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);

@@ -203,7 +203,7 @@ namespace internal
 			{
 				size_t memPoolIndex = pvGetFastMemPoolIndex(count);
 				FastMemory memory(params.GetFastMemPool(memPoolIndex));
-				Item* items = pvGetFastItems(memory.GetPointer());
+				Item* items = pvGetFastItems(memory.Get());
 				size_t index = 0;
 				try
 				{
@@ -220,7 +220,7 @@ namespace internal
 			else
 			{
 				ArrayMemory memory(params.GetArrayMemPool());
-				std::construct_at(pvGetArrayPtr(memory.GetPointer()),
+				std::construct_at(pvGetArrayPtr(memory.Get()),
 					bounds.GetBegin(), bounds.GetEnd(), MemManagerPtr(memManager));
 				pvSet(memory.Extract(), uint8_t{0});
 			}
@@ -264,7 +264,7 @@ namespace internal
 				size_t newCount = 1;
 				size_t newMemPoolIndex = pvGetFastMemPoolIndex(newCount);
 				FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
-				std::move(itemCreator)(pvGetFastItems(memory.GetPointer()));
+				std::move(itemCreator)(pvGetFastItems(memory.Get()));
 				pvSet(memory.Extract(), pvMakeState(newMemPoolIndex, newCount));
 			}
 			else
@@ -282,7 +282,7 @@ namespace internal
 						{
 							size_t newMemPoolIndex = pvGetFastMemPoolIndex(newCount);
 							FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
-							Item* newItems = pvGetFastItems(memory.GetPointer());
+							Item* newItems = pvGetFastItems(memory.Get());
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, std::move(itemCreator), newItems + count);
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
@@ -298,7 +298,7 @@ namespace internal
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, std::move(itemCreator), newItems + count);
 							array.SetCountCrt(newCount, [] (Item* /*newItem*/) noexcept {});
-							std::construct_at(pvGetArrayPtr(memory.GetPointer()), std::move(array));
+							std::construct_at(pvGetArrayPtr(memory.Get()), std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							pvSet(memory.Extract(), uint8_t{0});
 						}
