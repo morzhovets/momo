@@ -306,9 +306,11 @@ private:
 				if (!pvCanReallocate() || capacityLin < capacityExp)
 				{
 					pvCheckCapacity(capacityLin);
-					if (MemManagerProxy::ReallocateInplace(GetMemManager(),
-						mItems, mCapacity * sizeof(Item), capacityLin * sizeof(Item)))
+					Item* items = MemManagerProxy::ReallocateInplace(GetMemManager(),
+						mItems, mCapacity * sizeof(Item), capacityLin * sizeof(Item));
+					if (items)
 					{
+						mItems = items;
 						mCapacity = capacityLin;
 						return true;
 					}

@@ -38,7 +38,7 @@
 
 		void* Reallocate(void* ptr, size_t size, size_t newSize); // optional
 
-		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept; // optional
+		void* ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept; // optional
 
 		bool IsEqual(const UserMemManager& memManager) const noexcept; // optional
 	};
@@ -76,7 +76,7 @@ namespace internal
 	template<typename MemManager>
 	concept conceptMemManagerWithReallocateInplace = conceptMemManager<MemManager> &&
 		requires (MemManager& memManager, void* ptr, size_t size)
-			{ { memManager.ReallocateInplace(ptr, size, size) } noexcept -> std::same_as<bool>; };
+			{ { memManager.ReallocateInplace(ptr, size, size) } noexcept -> std::same_as<void*>; };
 
 	template<typename MemManager>
 	concept conceptMemManagerWithIsEqual = conceptMemManager<MemManager> &&
@@ -208,12 +208,9 @@ public:
 		return newPtr;
 	}
 
-	[[nodiscard]] bool ReallocateInplace(void* ptr, size_t /*size*/, size_t newSize) noexcept
+	[[nodiscard]] void* ReallocateInplace(void* ptr, size_t /*size*/, size_t newSize) noexcept
 	{
-		void* newPtr = HeapReAlloc(GetProcessHeap(), HEAP_REALLOC_IN_PLACE_ONLY,
-			ptr, newSize);
-		MOMO_ASSERT(newPtr == ptr || newPtr == nullptr);
-		return newPtr == ptr;
+		return HeapReAlloc(GetProcessHeap(), HEAP_REALLOC_IN_PLACE_ONLY, ptr, newSize);
 	}
 };
 #endif // MOMO_USE_MEM_MANAGER_WIN
@@ -425,13 +422,18 @@ namespace internal
 			return PtrCaster::FromBytePtr<Object>(newPtr);
 		}
 
-		static bool ReallocateInplace(MemManager& memManager, void* ptr, size_t size,
+		template<typename Object>
+		static Object* ReallocateInplace(MemManager& memManager, Object* ptr, size_t size,
 			size_t newSize) noexcept requires canReallocateInplace
 		{
 			MOMO_ASSERT(ptr != nullptr && size > 0 && newSize > 0);
 			if (size == newSize)
-				return true;
-			return memManager.ReallocateInplace(ptr, size, newSize);	//?
+				return ptr;
+			void* newPtr = memManager.ReallocateInplace(PtrCaster::ToBytePtr(ptr), size, newSize);
+			if (newPtr == nullptr)
+				return nullptr;
+			MOMO_ASSERT(newPtr == ptr);
+			return PtrCaster::FromBytePtr<Object>(newPtr);
 		}
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
@@ -541,7 +543,7 @@ namespace internal
 			return mBaseMemManager->Reallocate(ptr, size, newSize);
 		}
 
-		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+		void* ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 			requires BaseMemManagerProxy::canReallocateInplace
 		{
 			return mBaseMemManager->ReallocateInplace(ptr, size, newSize);
@@ -606,7 +608,7 @@ namespace internal
 			return GetBaseMemManager().Reallocate(ptr, size, newSize);
 		}
 
-		bool ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
+		void* ReallocateInplace(void* ptr, size_t size, size_t newSize) noexcept
 			requires BaseMemManagerProxy::canReallocateInplace
 		{
 			return GetBaseMemManager().ReallocateInplace(ptr, size, newSize);
