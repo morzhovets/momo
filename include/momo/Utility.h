@@ -200,6 +200,10 @@ namespace internal
 	template<typename Type>
 	using Identity = EnableIf<true, Type>;
 
+	template<typename Object, typename QSrcObject>
+	using ConstLike = typename std::conditional<std::is_const<QSrcObject>::value,
+		const Object, Object>::type;
+
 	template<size_t size,
 		typename = void>
 	struct UIntSelector;
@@ -258,10 +262,31 @@ namespace internal
 			return reinterpret_cast<uintptr_t>(ptr);
 		}
 
-		template<typename ResObject = void>
+		template<typename ResObject>
 		static ResObject* FromUInt(uintptr_t intPtr) noexcept
 		{
 			return reinterpret_cast<ResObject*>(intPtr);
+		}
+
+		template<typename QObject,
+			typename QByte = ConstLike<Byte, QObject>>
+		static QByte* ToBytePtr(QObject* ptr) noexcept
+		{
+			MOMO_ASSERT(ptr != nullptr);
+			return MOMO_CAST_POINTER(QByte, ptr, false, false);
+		}
+
+		template<typename ResObject,
+			bool isWithinLifetime = false,
+			bool isSingleObject = false,
+			typename QByte,
+			typename QResObject = ConstLike<ResObject, QByte>>
+		static QResObject* FromBytePtr(QByte* bytePtr) noexcept
+		{
+			MOMO_STATIC_ASSERT((std::is_same<Byte, typename std::remove_const<QByte>::type>::value
+				|| std::is_void<QByte>::value));
+			MOMO_ASSERT(bytePtr != nullptr);
+			return pvFromBytePtr<QResObject, isWithinLifetime, isSingleObject>(bytePtr);
 		}
 
 		template<typename ResObject, typename Object, typename Offset>
@@ -271,6 +296,25 @@ namespace internal
 				const Byte, Byte>::type CByte;
 			return reinterpret_cast<ResObject*>(reinterpret_cast<CByte*>(ptr)
 				+ static_cast<ptrdiff_t>(byteOffset));
+		}
+
+	private:
+		template<typename QResObject, bool isWithinLifetime, bool isSingleObject, typename QByte>
+		static EnableIf<std::is_same<Byte, typename std::remove_const<QResObject>::type>::value
+			|| std::is_void<QResObject>::value, QResObject*>
+		pvFromBytePtr(QByte* bytePtr) noexcept
+		{
+			MOMO_STATIC_ASSERT(!isWithinLifetime && !isSingleObject);
+			return static_cast<QResObject*>(bytePtr);
+		}
+
+		template<typename QResObject, bool isWithinLifetime, bool isSingleObject, typename QByte>
+		static EnableIf<!std::is_same<Byte, typename std::remove_const<QResObject>::type>::value
+			&& !std::is_void<QResObject>::value, QResObject*>
+		pvFromBytePtr(QByte* bytePtr) noexcept
+		{
+			//MOMO_STATIC_ASSERT(isWithinLifetime || !std::is_const<QResObject>::value);
+			return MOMO_CAST_POINTER(QResObject, bytePtr, isWithinLifetime, isSingleObject);
 		}
 	};
 
