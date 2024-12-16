@@ -164,10 +164,10 @@
 #define MOMO_CHECK_EXCEPTION(expr) \
 	do { if (!(expr)) throw std::invalid_argument(#expr); } while (false)
 
-#ifdef __cpp_lib_launder
-# define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
+#define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
 	((isWithinLifetime) ? std::launder(reinterpret_cast<ResObject*>(ptr)) : reinterpret_cast<ResObject*>(ptr))
-#else
+#if !defined(__cpp_lib_launder) || (defined(_MSC_VER) && defined(_M_CEE))
+# undef MOMO_CAST_POINTER
 # define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) reinterpret_cast<ResObject*>(ptr)
 #endif
 
