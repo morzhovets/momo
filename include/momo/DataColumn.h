@@ -162,8 +162,8 @@ namespace internal
 			mCode = code;
 		}
 
-		template<typename ColumnInfo, typename Void, typename PtrVisitor>
-		void ptVisit(Void* item, const PtrVisitor& ptrVisitor) const
+		template<typename ColumnInfo, typename QVoid, typename PtrVisitor>
+		void ptVisit(QVoid* item, const PtrVisitor& ptrVisitor) const
 		{
 #ifndef MOMO_DISABLE_TYPE_INFO
 			pvVisitRec<ColumnInfo, 0>(item, ptrVisitor);
@@ -174,38 +174,36 @@ namespace internal
 
 	private:
 #ifndef MOMO_DISABLE_TYPE_INFO
-		template<typename ColumnInfo, size_t index, typename Void, typename PtrVisitor>
+		template<typename ColumnInfo, size_t index, typename QVoid, typename PtrVisitor>
 		EnableIf<(index < std::tuple_size<VisitableItems>::value)>
-		pvVisitRec(Void* item, const PtrVisitor& ptrVisitor) const
+		pvVisitRec(QVoid* item, const PtrVisitor& ptrVisitor) const
 		{
 			typedef typename std::tuple_element<index, VisitableItems>::type Item;
-			typedef typename std::conditional<std::is_const<Void>::value,
-				const Item*, Item*>::type ItemPtr;
 			if (typeid(Item) == mTypeInfo)
-				pvVisit<ColumnInfo>(static_cast<ItemPtr>(item), ptrVisitor);
+				pvVisit<ColumnInfo>(PtrCaster::FromBytePtr<Item, true, true>(item), ptrVisitor);
 			else
 				pvVisitRec<ColumnInfo, index + 1>(item, ptrVisitor);
 		}
 
-		template<typename ColumnInfo, size_t index, typename Void, typename PtrVisitor>
+		template<typename ColumnInfo, size_t index, typename QVoid, typename PtrVisitor>
 		EnableIf<(index == std::tuple_size<VisitableItems>::value)>
-		pvVisitRec(Void* item, const PtrVisitor& ptrVisitor) const
+		pvVisitRec(QVoid* item, const PtrVisitor& ptrVisitor) const
 		{
 			pvVisit<ColumnInfo>(item, ptrVisitor);
 		}
 #endif
 
-		template<typename ColumnInfo, typename Item, typename PtrVisitor>
-		EnableIf<IsInvocable<const PtrVisitor&, void, Item*, const ColumnInfo&>::value>
-		pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
+		template<typename ColumnInfo, typename QItem, typename PtrVisitor>
+		EnableIf<IsInvocable<const PtrVisitor&, void, QItem*, const ColumnInfo&>::value>
+		pvVisit(QItem* item, const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item, *static_cast<const ColumnInfo*>(this));
 		}
 
-		template<typename ColumnInfo, typename Item, typename PtrVisitor>
-		EnableIf<IsInvocable<const PtrVisitor&, void, Item*>::value &&
-			!IsInvocable<const PtrVisitor&, void, Item*, const ColumnInfo&>::value>
-		pvVisit(Item* item, const PtrVisitor& ptrVisitor) const
+		template<typename ColumnInfo, typename QItem, typename PtrVisitor>
+		EnableIf<IsInvocable<const PtrVisitor&, void, QItem*>::value &&
+			!IsInvocable<const PtrVisitor&, void, QItem*, const ColumnInfo&>::value>
+		pvVisit(QItem* item, const PtrVisitor& ptrVisitor) const
 		{
 			ptrVisitor(item);
 		}
@@ -1048,7 +1046,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < mTotalSize);
 		//MOMO_ASSERT(offset % ItemTraits::template GetAlignment<Item>() == 0);
-		return *pvGetItemPtr<Item>(raw, offset);
+		return *pvGetItemPtr<Item, true>(raw, offset);
 	}
 
 	template<typename Item, typename ItemArg>
@@ -1087,13 +1085,13 @@ public:
 	template<typename PtrVisitor>
 	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
-		pvVisitPointers<const void>(raw, ptrVisitor);
+		pvVisitPointers(raw, ptrVisitor);
 	}
 
 	template<typename PtrVisitor>
 	void VisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
-		pvVisitPointers<void>(raw, ptrVisitor);
+		pvVisitPointers(raw, ptrVisitor);
 	}
 
 private:
@@ -1245,7 +1243,7 @@ private:
 			if (srcColumnListPtr == nullptr //std::is_same<DataColumnListPtr, std::nullptr_t>::value	// gcc 11
 				|| srcColumnListPtr->Contains(*columns, &srcOffset))
 			{
-				srcItem = pvGetItemPtr<Item>(static_cast<const Raw*>(srcRaw), srcOffset);
+				srcItem = pvGetItemPtr<Item, true>(static_cast<const Raw*>(srcRaw), srcOffset);
 			}
 		}
 		if (srcItem == nullptr)
@@ -1258,7 +1256,7 @@ private:
 		}
 		catch (...)
 		{
-			ItemTraits::Destroy(&memManager, *item);
+			ItemTraits::Destroy(&memManager, *pvGetItemPtr<Item, true>(raw, offset));	//?
 			throw;
 		}
 	}
@@ -1273,7 +1271,7 @@ private:
 	static void pvDestroy(MemManager* memManager, const ColumnRecord* columns, Raw* raw) noexcept
 	{
 		size_t offset = columns->GetOffset();
-		ItemTraits::Destroy(memManager, *pvGetItemPtr<Item>(raw, offset));
+		ItemTraits::Destroy(memManager, *pvGetItemPtr<Item, true>(raw, offset));
 		pvDestroy<void, Items...>(memManager, columns + 1, raw);
 	}
 
@@ -1308,26 +1306,27 @@ private:
 		}
 	}
 
-	template<typename Void, typename Raw, typename PtrVisitor>
-	void pvVisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
+	template<typename QRaw, typename PtrVisitor>
+	void pvVisitPointers(QRaw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		for (const ColumnRecord& columnRec : mColumns)
-		{
-			Void* item = pvGetItemPtr<Void>(raw, columnRec.GetOffset());
-			columnRec.Visit(item, ptrVisitor);	//?
-		}
+			columnRec.Visit(pvGetBytePtr(raw, columnRec.GetOffset()), ptrVisitor);	//?
 	}
 
-	template<typename Item>
-	static const Item* pvGetItemPtr(const Raw* raw, size_t offset) noexcept
+	template<typename Item,
+		bool isWithinLifetime = false,
+		typename QRaw>
+	static internal::ConstLike<Item, QRaw>* pvGetItemPtr(QRaw* raw, size_t offset) noexcept
 	{
-		return internal::PtrCaster::Shift<const Item>(raw, offset);
+		return internal::PtrCaster::FromBytePtr<Item, isWithinLifetime, true>(
+			pvGetBytePtr(raw, offset));
 	}
 
-	template<typename Item>
-	static Item* pvGetItemPtr(Raw* raw, size_t offset) noexcept
+	template<typename QRaw,
+		typename QByte = internal::ConstLike<internal::Byte, QRaw>>
+	static QByte* pvGetBytePtr(QRaw* raw, size_t offset) noexcept
 	{
-		return internal::PtrCaster::Shift<Item>(raw, offset);
+		return static_cast<QByte*>(raw) + offset;
 	}
 
 private:
@@ -1463,7 +1462,7 @@ public:
 	{
 		//MOMO_ASSERT(offset < sizeof(Struct));
 		//MOMO_ASSERT(offset % internal::ObjectAlignmenter<Item>::alignment == 0);
-		return *internal::PtrCaster::Shift<Item>(raw, offset);
+		return *internal::PtrCaster::FromBytePtr<Item, true, true>(pvGetBytePtr(raw, offset));
 	}
 
 	template<typename Item, typename ItemArg>
@@ -1475,14 +1474,13 @@ public:
 	size_t GetNumber(const Raw* raw) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		return internal::MemCopyer::FromBuffer<size_t>(
-			internal::PtrCaster::Shift<const void>(raw, sizeof(Struct)));
+		return internal::MemCopyer::FromBuffer<size_t>(pvGetBytePtr(raw, sizeof(Struct)));
 	}
 
 	void SetNumber(Raw* raw, size_t number) const noexcept
 	{
 		MOMO_STATIC_ASSERT(Settings::keepRowNumber);
-		internal::MemCopyer::ToBuffer(number, internal::PtrCaster::Shift<void>(raw, sizeof(Struct)));
+		internal::MemCopyer::ToBuffer(number, pvGetBytePtr(raw, sizeof(Struct)));
 	}
 
 	bool Contains(const ColumnInfo& columnInfo, size_t* resOffset = nullptr) const noexcept
@@ -1504,13 +1502,13 @@ public:
 	template<typename PtrVisitor>
 	void VisitPointers(const Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
-		pvVisitPointers<const void>(raw, ptrVisitor);
+		pvVisitPointers(raw, ptrVisitor);
 	}
 
 	template<typename PtrVisitor>
 	void VisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
 	{
-		pvVisitPointers<void>(raw, ptrVisitor);
+		pvVisitPointers(raw, ptrVisitor);
 	}
 
 private:
@@ -1543,16 +1541,19 @@ private:
 	{
 	}
 
-	template<typename Void, typename Raw, typename PtrVisitor>
-	void pvVisitPointers(Raw* raw, const PtrVisitor& ptrVisitor) const
+	template<typename QRaw, typename PtrVisitor>
+	void pvVisitPointers(QRaw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		if (mColumns.IsEmpty())
 			throw std::logic_error("Not prepared for visitors");
 		for (const ColumnInfo& columnInfo : mColumns)
-		{
-			Void* item = internal::PtrCaster::Shift<Void>(raw, pvGetOffset(columnInfo.GetCode()));
-			columnInfo.Visit(item, ptrVisitor);
-		}
+			columnInfo.Visit(pvGetBytePtr(raw, pvGetOffset(columnInfo.GetCode())), ptrVisitor);
+	}
+
+	template<typename QRaw>
+	static internal::ConstLike<internal::Byte, QRaw>* pvGetBytePtr(QRaw* raw, size_t offset) noexcept
+	{
+		return internal::PtrCaster::ToBytePtr(raw) + offset;
 	}
 
 private:
