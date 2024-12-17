@@ -57,7 +57,7 @@ namespace internal
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
 			void* buffer = MemManagerProxy::Allocate(memManager, bufferSize);
 			HashSetBuckets* resBuckets = ::new(buffer) HashSetBuckets(logBucketCount);
-			Bucket* buckets = resBuckets->pvGetBuckets();
+			Bucket* buckets = resBuckets->pvGetBuckets<false>();
 			size_t bucketIndex = 0;
 			try
 			{
@@ -156,9 +156,11 @@ namespace internal
 
 		~HashSetBuckets() = default;
 
+		template<bool isWithinLifetime = true>
 		Bucket* pvGetBuckets() noexcept
 		{
-			return PtrCaster::Shift<Bucket>(this, pvGetBucketOffset());
+			return PtrCaster::FromBytePtr<Bucket, isWithinLifetime>(
+				PtrCaster::ToBytePtr(this) + pvGetBucketOffset());
 		}
 
 		static size_t pvGetBufferSize(size_t logBucketCount) noexcept

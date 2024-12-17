@@ -151,10 +151,11 @@ namespace internal
 			}
 			else
 			{
-				void* internalBuffer = params.GetInternalMemPool().Allocate();
-				void* nodeBuffer = PtrCaster::Shift<void>(internalBuffer, internalOffset);
+				Byte* internalBuffer = params.GetInternalMemPool().template Allocate<Byte>();
+				void* nodeBuffer = internalBuffer + internalOffset;
 				Node* node = ::new(nodeBuffer) Node(leafMemPoolCount, count);
-				std::uninitialized_fill_n(node->pvGetChildren(), maxCapacity + 1, nullptr);
+				std::uninitialized_fill_n(pvGetChildren<false>(node),
+					maxCapacity + 1, nullptr);
 				return node;
 			}
 		}
@@ -170,7 +171,7 @@ namespace internal
 			else
 			{
 				this->~Node();
-				params.GetInternalMemPool().Deallocate(pvGetInternalBuffer<void>(this));
+				params.GetInternalMemPool().Deallocate(pvGetInternalBuffer(this));
 			}
 		}
 
@@ -205,19 +206,19 @@ namespace internal
 		Node* GetChild(size_t index) noexcept
 		{
 			MOMO_ASSERT(index <= GetCount());
-			return pvGetChildren()[index];
+			return pvGetChildren(this)[index];
 		}
 
 		void SetChild(size_t index, Node* child) noexcept
 		{
 			MOMO_ASSERT(index <= GetCount());
-			pvGetChildren()[index] = child;
+			pvGetChildren(this)[index] = child;
 		}
 
 		size_t GetChildIndex(const Node* child) const noexcept
 		{
 			size_t count = GetCount();
-			Node* const* children = pvGetChildren();
+			Node* const* children = pvGetChildren(this);
 			size_t index = UIntMath<>::Dist(children,
 				std::find(children, children + count + 1, child));
 			MOMO_ASSERT(index <= count);
@@ -227,7 +228,7 @@ namespace internal
 		Item* GetItemPtr(size_t index) noexcept
 		{
 			static const size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
-			Item* items = PtrCaster::Shift<Item>(this, itemOffset);
+			Item* items = PtrCaster::FromBytePtr<Item>(PtrCaster::ToBytePtr(this) + itemOffset);
 			return pvGetItemPtr(items, index, IsContinuous());
 		}
 
@@ -239,7 +240,7 @@ namespace internal
 			pvAcceptBackItem(params, index, count, IsContinuous());
 			if (!IsLeaf())
 			{
-				Node** children = pvGetChildren();
+				Node** children = pvGetChildren(this);
 				std::copy_backward(children + index + 1, children + count + 1,
 					children + count + 2);
 			}
@@ -254,7 +255,7 @@ namespace internal
 			pvRemove(params, index, count, std::forward<ItemRemover>(itemRemover), IsContinuous());
 			if (!IsLeaf())
 			{
-				Node** children = pvGetChildren();
+				Node** children = pvGetChildren(this);
 				std::copy(children + index + 1, children + count + 1, children + index);
 			}
 			--mCounter.count;
@@ -281,16 +282,12 @@ namespace internal
 			return leafMemPoolIndex;
 		}
 
-		Node* const* pvGetChildren() const noexcept
+		template<bool isWithinLifetime = true,
+			typename QNode>
+		static ConstLike<Node*, QNode>* pvGetChildren(QNode* node) noexcept
 		{
-			MOMO_ASSERT(!IsLeaf());
-			return pvGetInternalBuffer<Node* const>(this);
-		}
-
-		Node** pvGetChildren() noexcept
-		{
-			MOMO_ASSERT(!IsLeaf());
-			return pvGetInternalBuffer<Node*>(this);
+			MOMO_ASSERT(!node->IsLeaf());
+			return PtrCaster::FromBytePtr<Node*, isWithinLifetime>(pvGetInternalBuffer(node));
 		}
 
 		void pvInitIndexes(std::true_type /*isContinuous*/) noexcept
@@ -357,10 +354,10 @@ namespace internal
 			mCounter.indexes[count - 1] = realIndex;
 		}
 
-		template<typename Result, typename Node>
-		static Result* pvGetInternalBuffer(Node* node) noexcept
+		template<typename QNode>
+		static ConstLike<Byte, QNode>* pvGetInternalBuffer(QNode* node) noexcept
 		{
-			return PtrCaster::Shift<Result>(node, -static_cast<ptrdiff_t>(internalOffset));
+			return PtrCaster::ToBytePtr(node) - internalOffset;
 		}
 
 	private:

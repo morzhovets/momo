@@ -289,15 +289,6 @@ namespace internal
 			return pvFromBytePtr<QResObject, isWithinLifetime, isSingleObject>(bytePtr);
 		}
 
-		template<typename ResObject, typename Object, typename Offset>
-		static ResObject* Shift(Object* ptr, Offset byteOffset) noexcept
-		{
-			typedef typename std::conditional<std::is_const<Object>::value,
-				const Byte, Byte>::type CByte;
-			return reinterpret_cast<ResObject*>(reinterpret_cast<CByte*>(ptr)
-				+ static_cast<ptrdiff_t>(byteOffset));
-		}
-
 	private:
 		template<typename QResObject, bool isWithinLifetime, bool isSingleObject, typename QByte>
 		static EnableIf<std::is_same<Byte, typename std::remove_const<QResObject>::type>::value

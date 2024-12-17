@@ -403,18 +403,19 @@ namespace internal
 
 		static Item* pvGetFastItems(Byte* ptr) noexcept
 		{
-			return PtrCaster::Shift<Item>(ptr, ItemTraits::alignment);
+			return PtrCaster::FromBytePtr<Item>(ptr + ItemTraits::alignment);
 		}
 
 		Array& pvGetArray() const noexcept
 		{
 			MOMO_ASSERT(pvGetMemPoolIndex() == 0);
-			return *pvGetArrayPtr(mPtr);
+			return *pvGetArrayPtr<true>(mPtr);
 		}
 
+		template<bool isWithinLifetime = false>
 		static Array* pvGetArrayPtr(Byte* ptr) noexcept
 		{
-			return PtrCaster::Shift<Array>(ptr, arrayAlignment);
+			return PtrCaster::FromBytePtr<Array, isWithinLifetime, true>(ptr + arrayAlignment);
 		}
 
 		Bounds pvGetBounds() const noexcept
