@@ -429,11 +429,11 @@ private:
 		bool pvReallocateInplace(size_t capacity, std::true_type /*canReallocateInplace*/)
 		{
 			pvCheckCapacity(capacity);
-			if (!MemManagerProxy::ReallocateInplace(GetMemManager(),
-				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item)))
-			{
+			Item* items = MemManagerProxy::ReallocateInplace(GetMemManager(),
+				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
+			if (items == nullptr)
 				return false;
-			}
+			mItems = items;
 			mCapacity = capacity;
 			return true;
 		}
