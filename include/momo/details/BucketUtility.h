@@ -30,10 +30,11 @@ namespace internal
 
 	public:
 		explicit BucketMemory(MemPool& memPool)
-			: mMemPool(memPool),
-			mPtr(static_cast<Pointer>(memPool.Allocate()))
+			: mMemPool(memPool)
 		{
-			MOMO_ASSERT(mPtr != nullPtr);
+			auto ptr = memPool.Allocate();
+			MOMO_ASSERT(ptr != nullPtr);
+			pvInit(ptr);
 		}
 
 		BucketMemory(const BucketMemory&) = delete;
@@ -56,6 +57,19 @@ namespace internal
 			Pointer ptr = mPtr;
 			mPtr = nullPtr;
 			return ptr;
+		}
+
+	private:
+		template<typename ArgPointer>
+		EnableIf<std::is_pointer<ArgPointer>::value> pvInit(ArgPointer ptr) noexcept
+		{
+			mPtr = PtrCaster::FromBytePtr<typename std::remove_pointer<Pointer>::type>(ptr);
+		}
+
+		template<typename ArgPointer>
+		EnableIf<!std::is_pointer<ArgPointer>::value> pvInit(ArgPointer ptr) noexcept
+		{
+			mPtr = ptr;
 		}
 
 	private:
