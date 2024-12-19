@@ -447,7 +447,7 @@ private:
 		bool pvReallocate(size_t capacity, std::true_type /*canReallocate*/)
 		{
 			pvCheckCapacity(capacity);
-			mItems = MemManagerProxy::template Reallocate<Item>(GetMemManager(),
+			mItems = MemManagerProxy::Reallocate(GetMemManager(),
 				mItems, mCapacity * sizeof(Item), capacity * sizeof(Item));
 			mCapacity = capacity;
 			return true;
