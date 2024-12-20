@@ -40,7 +40,7 @@ namespace internal
 		template<typename ItemArg>
 		class Creator
 		{
-			MOMO_STATIC_ASSERT((std::is_same<ItemArg, const Item&>::value));
+			MOMO_STATIC_ASSERT(std::is_same<ItemArg, const Item&>::value);
 
 		public:
 			explicit Creator(MemManager& memManager, const Item& item) noexcept

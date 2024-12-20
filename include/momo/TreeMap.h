@@ -572,7 +572,7 @@ public:
 		auto pair0 = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 		typedef decltype(pair0.first) KeyArg;
 		typedef decltype(pair0.second) ValueArg;
-		MOMO_STATIC_ASSERT((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
+		MOMO_STATIC_ASSERT(std::is_same<Key, typename std::decay<KeyArg>::type>::value);
 		Iterator pos = InsertVar(std::forward<KeyArg>(pair0.first),
 			std::forward<ValueArg>(pair0.second)).position;
 		for (++iter; iter != end; ++iter)

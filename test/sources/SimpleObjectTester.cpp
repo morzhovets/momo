@@ -29,7 +29,7 @@ struct ObjectDefCopy
 };
 
 MOMO_STATIC_ASSERT(!momo::IsTriviallyRelocatable<ObjectDefCopy>::value);
-MOMO_STATIC_ASSERT((momo::ObjectRelocator<ObjectDefCopy, momo::MemManagerDefault>::isNothrowRelocatable));
+MOMO_STATIC_ASSERT(momo::ObjectRelocator<ObjectDefCopy, momo::MemManagerDefault>::isNothrowRelocatable);
 
 struct ObjectDelCopy
 {
@@ -41,7 +41,7 @@ struct ObjectDelCopy
 };
 
 MOMO_STATIC_ASSERT(!momo::IsTriviallyRelocatable<ObjectDelCopy>::value);
-MOMO_STATIC_ASSERT((!momo::ObjectRelocator<ObjectDelCopy, momo::MemManagerDefault>::isNothrowRelocatable));
+MOMO_STATIC_ASSERT(!momo::ObjectRelocator<ObjectDelCopy, momo::MemManagerDefault>::isNothrowRelocatable);
 
 struct ObjectCopy
 {
@@ -51,7 +51,7 @@ struct ObjectCopy
 };
 
 MOMO_STATIC_ASSERT(!momo::IsTriviallyRelocatable<ObjectCopy>::value);
-MOMO_STATIC_ASSERT((!momo::ObjectRelocator<ObjectCopy, momo::MemManagerDefault>::isNothrowRelocatable));
+MOMO_STATIC_ASSERT(!momo::ObjectRelocator<ObjectCopy, momo::MemManagerDefault>::isNothrowRelocatable);
 
 struct ObjectMove
 {
@@ -61,7 +61,7 @@ struct ObjectMove
 };
 
 MOMO_STATIC_ASSERT(!momo::IsTriviallyRelocatable<ObjectMove>::value);
-MOMO_STATIC_ASSERT((momo::ObjectRelocator<ObjectMove, momo::MemManagerDefault>::isNothrowRelocatable));
+MOMO_STATIC_ASSERT(momo::ObjectRelocator<ObjectMove, momo::MemManagerDefault>::isNothrowRelocatable);
 
 struct ObjectMoveCopy
 {
@@ -74,9 +74,9 @@ struct ObjectMoveCopy
 
 MOMO_STATIC_ASSERT(!momo::IsTriviallyRelocatable<ObjectMoveCopy>::value);
 #if defined(TEST_MSVC)
-MOMO_STATIC_ASSERT((!momo::ObjectRelocator<ObjectMoveCopy, momo::MemManagerDefault>::isNothrowRelocatable));
+MOMO_STATIC_ASSERT(!momo::ObjectRelocator<ObjectMoveCopy, momo::MemManagerDefault>::isNothrowRelocatable);
 #else
-MOMO_STATIC_ASSERT((momo::ObjectRelocator<ObjectMoveCopy, momo::MemManagerDefault>::isNothrowRelocatable));
+MOMO_STATIC_ASSERT(momo::ObjectRelocator<ObjectMoveCopy, momo::MemManagerDefault>::isNothrowRelocatable);
 #endif
 
 } // namespace

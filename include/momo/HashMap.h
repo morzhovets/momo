@@ -674,7 +674,7 @@ public:
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			typedef decltype(pair.first) KeyArg;
 			typedef decltype(pair.second) ValueArg;
-			MOMO_STATIC_ASSERT((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
+			MOMO_STATIC_ASSERT(std::is_same<Key, typename std::decay<KeyArg>::type>::value);
 			InsertVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
 		}
 		return GetCount() - initCount;

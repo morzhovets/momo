@@ -367,7 +367,7 @@ namespace internal
 		template<typename ValueArg>
 		class ValueCreator : public ValueManager::template Creator<ValueArg>
 		{
-			MOMO_STATIC_ASSERT((std::is_same<ValueArg, Value>::value));
+			MOMO_STATIC_ASSERT(std::is_same<ValueArg, Value>::value);
 
 		private:
 			typedef typename ValueManager::template Creator<ValueArg> BaseCreator;
@@ -1014,7 +1014,7 @@ public:
 			auto pair = internal::MapPairConverter<ArgIterator>::Convert(*iter);
 			typedef decltype(pair.first) KeyArg;
 			typedef decltype(pair.second) ValueArg;
-			MOMO_STATIC_ASSERT((std::is_same<Key, typename std::decay<KeyArg>::type>::value));
+			MOMO_STATIC_ASSERT(std::is_same<Key, typename std::decay<KeyArg>::type>::value);
 			AddVar(std::forward<KeyArg>(pair.first), std::forward<ValueArg>(pair.second));
 		}
 	}

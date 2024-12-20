@@ -93,7 +93,11 @@
 	}
 #endif
 
-#define MOMO_STATIC_ASSERT(expr) static_assert((expr), #expr)
+#if __cpp_static_assert >= 201411L
+# define MOMO_STATIC_ASSERT(...) static_assert(__VA_ARGS__)
+#else
+# define MOMO_STATIC_ASSERT(...) static_assert((__VA_ARGS__), #__VA_ARGS__)
+#endif
 
 #define MOMO_CHECK(expr) \
 	do { \
@@ -107,7 +111,7 @@
 #define MOMO_DECLARE_PROXY_CONSTRUCTOR(Object) \
 	template<typename... Args> \
 	explicit Object##Proxy(Args&&... args) \
-		noexcept((std::is_nothrow_constructible<Object, Args&&...>::value)) \
+		noexcept(std::is_nothrow_constructible<Object, Args&&...>::value) \
 		: Object(std::forward<Args>(args)...) \
 	{ \
 	}
@@ -119,7 +123,7 @@
 		noexcept(noexcept((std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		MOMO_STATIC_ASSERT((std::is_same<Object, typename std::decay<ObjectArg>::type>::value)); \
+		MOMO_STATIC_ASSERT(std::is_same<Object, typename std::decay<ObjectArg>::type>::value); \
 		return (std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
@@ -283,8 +287,8 @@ namespace internal
 			typename QResObject = ConstLike<ResObject, QByte>>
 		static QResObject* FromBytePtr(QByte* bytePtr) noexcept
 		{
-			MOMO_STATIC_ASSERT((std::is_same<Byte, typename std::remove_const<QByte>::type>::value
-				|| std::is_void<QByte>::value));
+			MOMO_STATIC_ASSERT(std::is_same<Byte, typename std::remove_const<QByte>::type>::value
+				|| std::is_void<QByte>::value);
 			MOMO_ASSERT(bytePtr != nullptr);
 			return pvFromBytePtr<QResObject, isWithinLifetime, isSingleObject>(bytePtr);
 		}

@@ -795,7 +795,7 @@ public:
 	template<typename ArgIterator, typename ArgSentinel>
 	size_t Insert(ArgIterator begin, ArgSentinel end)
 	{
-		MOMO_STATIC_ASSERT((internal::IsSetArgIterator<ArgIterator, Item>::value));
+		MOMO_STATIC_ASSERT(internal::IsSetArgIterator<ArgIterator, Item>::value);
 		size_t initCount = GetCount();
 		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 		{
@@ -916,8 +916,8 @@ public:
 	template<typename Set>
 	void MergeTo(Set& dstSet)
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Key, typename Set::Key>::value));
-		MOMO_STATIC_ASSERT((std::is_same<Item, typename Set::Item>::value));
+		MOMO_STATIC_ASSERT(std::is_same<Key, typename Set::Key>::value);
+		MOMO_STATIC_ASSERT(std::is_same<Item, typename Set::Item>::value);
 		pvMergeTo(dstSet);
 	}
 

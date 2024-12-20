@@ -412,7 +412,7 @@ public:
 		: mCode(internal::StrHasher::GetHashCode64(name)),
 		mName(name)
 	{
-		MOMO_STATIC_ASSERT((std::is_same<Code, uint64_t>::value));
+		MOMO_STATIC_ASSERT(std::is_same<Code, uint64_t>::value);
 	}
 
 	constexpr explicit DataColumn(Code code, const char* name = "") noexcept
@@ -1367,7 +1367,7 @@ private:
 	typedef std::array<uint8_t, (sizeof(Struct) + 7) / 8> MutableOffsets;
 
 	typedef typename ColumnInfo::Code ColumnCode;
-	MOMO_STATIC_ASSERT((std::is_same<DataColumnCodeOffset, ColumnCode>::value));
+	MOMO_STATIC_ASSERT(std::is_same<DataColumnCodeOffset, ColumnCode>::value);
 
 public:
 	explicit DataColumnListStatic(MemManager memManager = MemManager())
