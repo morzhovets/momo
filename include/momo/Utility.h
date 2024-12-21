@@ -93,11 +93,7 @@
 	}
 #endif
 
-#if __cpp_static_assert >= 201411L
-# define MOMO_STATIC_ASSERT(...) static_assert(__VA_ARGS__)
-#else
-# define MOMO_STATIC_ASSERT(...) static_assert((__VA_ARGS__), #__VA_ARGS__)
-#endif
+#define MOMO_STATIC_ASSERT(...) static_assert((__VA_ARGS__), #__VA_ARGS__)
 
 #define MOMO_CHECK(expr) \
 	do { \
