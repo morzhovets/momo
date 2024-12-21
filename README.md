@@ -23,8 +23,7 @@ Classes are designed in close conformity with the standard C++23 including excep
 
 - All iterators and references to items will become invalid after each addition or removal of the item and should not be used.
 
-- In `map` and `unordered_map` type `reference` is a pair of references
-(same as in [std::flat_map](https://en.cppreference.com/w/cpp/container/flat_map)),
+- In `map` and `unordered_map` type `reference` is a pair of references (same as in `std::flat_map`),
 so `for (auto& p : map)` is illegal, but `for (auto p : map)` or `for (const auto& p : map)`
 or `for (auto&& p : map)` is allowed.
 
