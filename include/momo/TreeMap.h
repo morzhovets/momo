@@ -710,7 +710,7 @@ public:
 	size_t> Remove(const PairFilter& pairFilter)
 	{
 		auto itemFilter = [&pairFilter] (const KeyValuePair& item)
-			{ return pairFilter(*item.GetKeyPtr(), *static_cast<const Value*>(item.GetValuePtr())); };
+			{ return pairFilter(item.GetKey(), static_cast<const Value&>(item.GetValue())); };
 		return mTreeSet.Remove(itemFilter);
 	}
 

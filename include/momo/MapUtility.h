@@ -52,8 +52,8 @@ namespace internal
 
 	protected:
 		explicit MapReference(SetReference setRef) noexcept
-			: key(*setRef.GetKeyPtr()),
-			value(*setRef.GetValuePtr())
+			: key(setRef.GetKey()),
+			value(setRef.GetValue())
 		{
 		}
 
@@ -584,11 +584,6 @@ namespace internal
 			pair.~MapKeyValuePair();
 		}
 
-		const Key* GetKeyPtr() const noexcept
-		{
-			return mKeyBuffer.template GetPtr<true>();
-		}
-
 		Key* GetKeyPtr() noexcept
 		{
 			return mKeyBuffer.GetPtr();
@@ -597,6 +592,21 @@ namespace internal
 		Value* GetValuePtr() const noexcept
 		{
 			return mValueBuffer.GetPtr();
+		}
+
+		const Key& GetKey() const noexcept
+		{
+			return mKeyBuffer.Get();
+		}
+
+		Key& GetKey() noexcept
+		{
+			return mKeyBuffer.Get();
+		}
+
+		Value& GetValue() const noexcept
+		{
+			return mValueBuffer.Get();
 		}
 
 	private:
@@ -649,9 +659,9 @@ namespace internal
 			void operator()(Item* newItem) &&
 			{
 				typename KeyValueTraits::template ValueCreator<const Value&> valueCreator(
-					mMemManager, *mItem.GetValuePtr());
+					mMemManager, mItem.GetValue());
 				Item::template Create<KeyValueTraits>(newItem, mMemManager,
-					*mItem.GetKeyPtr(), std::move(valueCreator));
+					mItem.GetKey(), std::move(valueCreator));
 			}
 
 		private:
@@ -662,12 +672,12 @@ namespace internal
 	public:
 		static const Key& GetKey(const Item& item) noexcept
 		{
-			return *item.GetKeyPtr();
+			return item.GetKey();
 		}
 
 		static void Destroy(MemManager* memManager, Item& item) noexcept
 		{
-			KeyValueTraits::Destroy(memManager, *item.GetKeyPtr(), *item.GetValuePtr());
+			KeyValueTraits::Destroy(memManager, item.GetKey(), item.GetValue());
 			Item::Destroy(item);
 		}
 
@@ -676,7 +686,7 @@ namespace internal
 			auto pairCreator = [memManager, &srcItem] (Key* newKey, Value* newValue)
 			{
 				KeyValueTraits::Relocate(memManager,
-					*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(), newKey, newValue);
+					srcItem.GetKey(), srcItem.GetValue(), newKey, newValue);
 			};
 			Item::Create(dstItem, pairCreator);
 			Item::Destroy(srcItem);
@@ -684,8 +694,8 @@ namespace internal
 
 		static void Replace(MemManager& memManager, Item& srcItem, Item& dstItem)
 		{
-			KeyValueTraits::Replace(memManager, *srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
-				*dstItem.GetKeyPtr(), *dstItem.GetValuePtr());
+			KeyValueTraits::Replace(memManager, srcItem.GetKey(), srcItem.GetValue(),
+				dstItem.GetKey(), dstItem.GetValue());
 			Item::Destroy(srcItem);
 		}
 
@@ -695,8 +705,8 @@ namespace internal
 			auto pairCreator = [&memManager, &srcItem, &midItem] (Key* newKey, Value* newValue)
 			{
 				KeyValueTraits::ReplaceRelocate(memManager,
-					*srcItem.GetKeyPtr(), *srcItem.GetValuePtr(),
-					*midItem.GetKeyPtr(), *midItem.GetValuePtr(), newKey, newValue);
+					srcItem.GetKey(), srcItem.GetValue(),
+					midItem.GetKey(), midItem.GetValue(), newKey, newValue);
 			};
 			Item::Create(dstItem, pairCreator);
 			Item::Destroy(srcItem);
@@ -705,7 +715,7 @@ namespace internal
 		template<typename KeyArg>
 		static void AssignKey(MemManager& memManager, KeyArg&& keyArg, Item& item)
 		{
-			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), *item.GetKeyPtr());
+			KeyValueTraits::AssignKey(memManager, std::forward<KeyArg>(keyArg), item.GetKey());
 		}
 	};
 
@@ -912,22 +922,22 @@ namespace internal
 
 		const Key& GetKey() const
 		{
-			return *mSetExtractedItem.GetItem().GetKeyPtr();
+			return mSetExtractedItem.GetItem().GetKey();
 		}
 
 		Key& GetKey()
 		{
-			return *mSetExtractedItem.GetItem().GetKeyPtr();
+			return mSetExtractedItem.GetItem().GetKey();
 		}
 
 		const Value& GetValue() const
 		{
-			return *mSetExtractedItem.GetItem().GetValuePtr();
+			return mSetExtractedItem.GetItem().GetValue();
 		}
 
 		Value& GetValue()
 		{
-			return *mSetExtractedItem.GetItem().GetValuePtr();
+			return mSetExtractedItem.GetItem().GetValue();
 		}
 
 		template<typename PairCreator>
@@ -943,7 +953,7 @@ namespace internal
 		{
 			auto itemRemover = [&pairRemover] (KeyValuePair& item)
 			{
-				std::forward<PairRemover>(pairRemover)(*item.GetKeyPtr(), *item.GetValuePtr());
+				std::forward<PairRemover>(pairRemover)(item.GetKey(), item.GetValue());
 				KeyValuePair::Destroy(item);
 			};
 			mSetExtractedItem.Remove(itemRemover);
