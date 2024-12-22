@@ -586,17 +586,17 @@ namespace internal
 
 		const Key* GetKeyPtr() const noexcept
 		{
-			return &mKeyBuffer;
+			return mKeyBuffer.template GetPtr<true>();
 		}
 
 		Key* GetKeyPtr() noexcept
 		{
-			return &mKeyBuffer;
+			return mKeyBuffer.GetPtr();
 		}
 
 		Value* GetValuePtr() const noexcept
 		{
-			return &mValueBuffer;
+			return mValueBuffer.GetPtr();
 		}
 
 	private:

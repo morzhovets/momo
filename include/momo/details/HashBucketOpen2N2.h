@@ -93,7 +93,7 @@ namespace internal
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
-			return Bounds(Iterator(&mItems + maxCount), pvGetCount());
+			return Bounds(Iterator(mItems.GetPtr() + maxCount), pvGetCount());
 		}
 
 		template<bool first, typename ItemPredicate>
@@ -103,8 +103,12 @@ namespace internal
 			ShortHash shortHash = pvCalcShortHash(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mHashData.shortHashes[i] == shortHash && itemPred((&mItems)[i]))
-					return Iterator(&mItems + i + 1);
+				if (mHashData.shortHashes[i] == shortHash)
+				{
+					Item* items = mItems.GetPtr();
+					if (itemPred(items[i]))
+						return Iterator(items + i + 1);
+				}
 			}
 			return Iterator();
 		}
@@ -148,7 +152,7 @@ namespace internal
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
-			Item* newItem = &mItems + maxCount - 1 - count;
+			Item* newItem = mItems.GetPtr() + maxCount - 1 - count;
 			std::forward<ItemCreator>(itemCreator)(newItem);
 			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
 			if (useHashCodePartGetter)
@@ -168,9 +172,10 @@ namespace internal
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			size_t count = pvGetCount();
-			size_t index = UIntMath<>::Dist(&mItems, std::addressof(*iter));
+			Item* items = mItems.GetPtr();
+			size_t index = UIntMath<>::Dist(items, std::addressof(*iter));
 			MOMO_ASSERT(index >= maxCount - count);
-			std::forward<ItemReplacer>(itemReplacer)((&mItems)[maxCount - count], (&mItems)[index]);
+			std::forward<ItemReplacer>(itemReplacer)(items[maxCount - count], items[index]);
 			mHashData.shortHashes[index] = mHashData.shortHashes[maxCount - count];
 			mHashData.shortHashes[maxCount - count] = emptyShortHash;
 			if (useHashCodePartGetter)
@@ -185,7 +190,7 @@ namespace internal
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
-			size_t index = UIntMath<>::Dist(&mItems, std::addressof(*iter));
+			size_t index = UIntMath<>::Dist(mItems.GetPtr(), std::addressof(*iter));
 			uint8_t hashProbe = mHashData.hashProbes[index];
 			bool useFullGetter = (hashProbe == emptyHashProbe ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep

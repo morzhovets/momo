@@ -111,7 +111,7 @@ namespace internal
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)
 		{
 			mData = MemManagerProxy::template AllocateCreate<Data>(memManager, containerTraits);
-			::new(static_cast<void*>(&mData->memManagerBuffer)) MemManager(std::move(memManager));
+			::new(static_cast<void*>(mData->memManagerBuffer.GetPtr())) MemManager(std::move(memManager));
 		}
 
 		SetCrew(SetCrew&& crew) noexcept
@@ -126,8 +126,9 @@ namespace internal
 		{
 			if (!pvIsNull())
 			{
-				MemManager memManager = std::move(GetMemManager());
-				(&mData->memManagerBuffer)->~MemManager();
+				MemManager* memManagerPtr = &GetMemManager();
+				MemManager memManager = std::move(*memManagerPtr);
+				memManagerPtr->~MemManager();
 				mData->~Data();
 				MemManagerProxy::Deallocate(memManager, mData, sizeof(Data));
 			}
@@ -161,13 +162,13 @@ namespace internal
 		const MemManager& GetMemManager() const noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
-			return *&mData->memManagerBuffer;
+			return mData->memManagerBuffer.Get();
 		}
 
 		MemManager& GetMemManager() noexcept
 		{
 			MOMO_ASSERT(!pvIsNull());
-			return *&mData->memManagerBuffer;
+			return mData->memManagerBuffer.Get();
 		}
 
 	private:
@@ -279,7 +280,7 @@ namespace internal
 			: mHasItem(extractedItem.mHasItem)
 		{
 			if (mHasItem)
-				ItemTraits::Relocate(nullptr, *&extractedItem.mItemBuffer, &mItemBuffer);
+				ItemTraits::Relocate(nullptr, extractedItem.mItemBuffer.Get(), mItemBuffer.GetPtr());
 			extractedItem.mHasItem = false;
 		}
 
@@ -300,27 +301,27 @@ namespace internal
 		void Clear() noexcept
 		{
 			if (mHasItem)
-				ItemTraits::Destroy(nullptr, *&mItemBuffer);
+				ItemTraits::Destroy(nullptr, mItemBuffer.Get());
 			mHasItem = false;
 		}
 
 		const Item& GetItem() const
 		{
 			MOMO_CHECK(mHasItem);
-			return *&mItemBuffer;
+			return mItemBuffer.Get();
 		}
 
 		Item& GetItem()
 		{
 			MOMO_CHECK(mHasItem);
-			return *&mItemBuffer;
+			return mItemBuffer.Get();
 		}
 
 		template<typename ItemCreator>
 		void Create(ItemCreator&& itemCreator)
 		{
 			MOMO_CHECK(!mHasItem);
-			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
+			std::forward<ItemCreator>(itemCreator)(mItemBuffer.GetPtr());
 			mHasItem = true;
 		}
 
@@ -328,7 +329,7 @@ namespace internal
 		void Remove(ItemRemover&& itemRemover)
 		{
 			MOMO_CHECK(mHasItem);
-			std::forward<ItemRemover>(itemRemover)(*&mItemBuffer);
+			std::forward<ItemRemover>(itemRemover)(mItemBuffer.Get());
 			mHasItem = false;
 		}
 

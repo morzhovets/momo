@@ -177,14 +177,30 @@ namespace internal
 
 		ObjectBuffer& operator=(const ObjectBuffer&) = delete;
 
-		const Object* operator&() const noexcept
+		template<bool isWithinLifetime = false>
+		const Object* GetPtr() const noexcept
 		{
-			return PtrCaster::FromBytePtr<Object>(static_cast<const void*>(&mBuffer));
+			return PtrCaster::FromBytePtr<Object, isWithinLifetime, count == 1>(
+				static_cast<const void*>(&mBuffer));
 		}
 
-		Object* operator&() noexcept
+		template<bool isWithinLifetime = false>
+		Object* GetPtr() noexcept
 		{
-			return PtrCaster::FromBytePtr<Object>(static_cast<void*>(&mBuffer));
+			return PtrCaster::FromBytePtr<Object, isWithinLifetime, count == 1>(
+				static_cast<void*>(&mBuffer));
+		}
+
+		const Object& Get() const noexcept
+		{
+			MOMO_STATIC_ASSERT(count == 1);
+			return *GetPtr<true>();
+		}
+
+		Object& Get() noexcept
+		{
+			MOMO_STATIC_ASSERT(count == 1);
+			return *GetPtr<true>();
 		}
 
 	private:
@@ -437,9 +453,9 @@ namespace internal
 			if (std::addressof(srcObject) != std::addressof(dstObject))
 			{
 				ObjectBuffer<Object, alignment> objectBuffer;
-				Relocate(memManager, dstObject, &objectBuffer);
+				Relocate(memManager, dstObject, objectBuffer.GetPtr());
 				Relocate(memManager, srcObject, std::addressof(dstObject));
-				Relocate(memManager, *&objectBuffer, std::addressof(srcObject));
+				Relocate(memManager, objectBuffer.Get(), std::addressof(srcObject));
 			}
 		}
 
@@ -539,11 +555,11 @@ namespace internal
 			std::true_type /*isNothrowRelocatable*/, BoolConstant<isNothrowSwappable>) noexcept
 		{
 			ObjectBuffer<Object, alignment> objectBuffer;
-			Relocate(memManager, *begin, &objectBuffer);
+			Relocate(memManager, *begin, objectBuffer.GetPtr());
 			Iterator iter = begin;
 			for (size_t i = 0; i < shift; ++i, (void)++iter)
 				Relocate(memManager, *std::next(iter), std::addressof(*iter));
-			Relocate(memManager, *&objectBuffer, std::addressof(*iter));
+			Relocate(memManager, objectBuffer.Get(), std::addressof(*iter));
 		}
 
 		template<typename Iterator>

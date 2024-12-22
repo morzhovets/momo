@@ -69,7 +69,7 @@ namespace internal
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
-			return IsFull() ? Bounds(&mItemBuffer, 1) : Bounds();
+			return IsFull() ? Bounds(pvGetItemPtr(), 1) : Bounds();
 		}
 
 		template<bool first, typename ItemPredicate>
@@ -78,7 +78,8 @@ namespace internal
 		{
 			if (mHashState != pvGetHashState(hashCode))
 				return nullptr;
-			return itemPred(*&mItemBuffer) ? &mItemBuffer : nullptr;
+			Item* itemPtr = pvGetItemPtr();
+			return itemPred(*itemPtr) ? itemPtr : nullptr;
 		}
 
 		bool IsFull() const noexcept
@@ -102,18 +103,19 @@ namespace internal
 			noexcept(noexcept(std::forward<ItemCreator>(itemCreator)(std::declval<Item*>())))
 		{
 			MOMO_ASSERT(!IsFull());
-			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
+			std::forward<ItemCreator>(itemCreator)(pvGetItemPtr<false>());
 			mHashState = pvGetHashState(hashCode);
-			return &mItemBuffer;
+			return pvGetItemPtr();
 		}
 
 		template<typename ItemReplacer>
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
 			(void)iter;
-			MOMO_ASSERT(iter == &mItemBuffer);
 			MOMO_ASSERT(IsFull());
-			std::forward<ItemReplacer>(itemReplacer)(*&mItemBuffer, *&mItemBuffer);
+			Item* itemPtr = pvGetItemPtr();
+			MOMO_ASSERT(iter == itemPtr);
+			std::forward<ItemReplacer>(itemReplacer)(*itemPtr, *itemPtr);
 			mHashState = HashState{2};
 			return nullptr;
 		}
@@ -123,7 +125,7 @@ namespace internal
 			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
 		{
 			(void)iter;
-			MOMO_ASSERT(iter == &mItemBuffer);
+			MOMO_ASSERT(iter == pvGetItemPtr());
 			if (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();
 			return static_cast<size_t>(mHashState >> 1);
@@ -143,6 +145,12 @@ namespace internal
 		HashState> pvGetHashState(size_t hashCode) noexcept
 		{
 			return (static_cast<HashState>(hashCode) << 1) | 1;
+		}
+
+		template<bool isWithinLifetime = true>
+		Item* pvGetItemPtr() noexcept
+		{
+			return mItemBuffer.template GetPtr<isWithinLifetime>();
 		}
 
 	private:

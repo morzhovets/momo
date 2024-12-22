@@ -160,21 +160,21 @@ namespace internal
 		explicit ArrayItemHandler(MemManager& memManager, ItemCreator&& itemCreator)
 			: mMemManager(memManager)
 		{
-			std::forward<ItemCreator>(itemCreator)(&mItemBuffer);
+			std::forward<ItemCreator>(itemCreator)(mItemBuffer.GetPtr());
 		}
 
 		ArrayItemHandler(const ArrayItemHandler&) = delete;
 
 		~ArrayItemHandler() noexcept
 		{
-			ItemTraits::Destroy(mMemManager, &mItemBuffer, 1);
+			ItemTraits::Destroy(mMemManager, &*this, 1);
 		}
 
 		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
 
 		Item* operator&() noexcept
 		{
-			return &mItemBuffer;
+			return std::addressof(mItemBuffer.Get());
 		}
 
 	private:

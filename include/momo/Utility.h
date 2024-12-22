@@ -295,7 +295,8 @@ namespace internal
 			|| std::is_void<QResObject>::value, QResObject*>
 		pvFromBytePtr(QByte* bytePtr) noexcept
 		{
-			MOMO_STATIC_ASSERT(!isWithinLifetime && !isSingleObject);
+			MOMO_STATIC_ASSERT(!std::is_void<QResObject>::value
+				|| (!isWithinLifetime && !isSingleObject));
 			return static_cast<QResObject*>(bytePtr);
 		}
 
@@ -304,7 +305,7 @@ namespace internal
 			&& !std::is_void<QResObject>::value, QResObject*>
 		pvFromBytePtr(QByte* bytePtr) noexcept
 		{
-			//MOMO_STATIC_ASSERT(isWithinLifetime || !std::is_const<QResObject>::value);
+			MOMO_STATIC_ASSERT(!std::is_const<QResObject>::value || isWithinLifetime);
 			return MOMO_CAST_POINTER(QResObject, bytePtr, isWithinLifetime, isSingleObject);
 		}
 	};

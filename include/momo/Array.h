@@ -405,7 +405,7 @@ private:
 
 		Item* pvActivateInternalItems() noexcept
 		{
-			return &*::new(static_cast<void*>(std::addressof(mInternalItems))) InternalItems();
+			return (::new(static_cast<void*>(&mInternalItems)) InternalItems())->GetPtr();
 		}
 
 		void pvDestroy() noexcept
@@ -423,7 +423,7 @@ private:
 		bool pvIsInternal() const noexcept
 		{
 			return (internalCapacity == 0) ? false
-				: static_cast<void*>(mItems) == std::addressof(mInternalItems);
+				: static_cast<void*>(mItems) == &mInternalItems;
 		}
 
 		bool pvReallocateInplace(size_t capacity, std::true_type /*canReallocateInplace*/)
@@ -1068,17 +1068,18 @@ private:
 		size_t newCount = initCount + 1;
 		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
 		MemManager& memManager = GetMemManager();
-		typename ItemTraits::template Creator<const Item&>(memManager, item)(&itemBuffer);
+		typename ItemTraits::template Creator<const Item&>(memManager, item)(itemBuffer.GetPtr());
 		try
 		{
 			pvGrow(newCount, ArrayGrowCause::add);
 		}
 		catch (...)
 		{
-			ItemTraits::Destroy(memManager, &itemBuffer, 1);
+			ItemTraits::Destroy(memManager, itemBuffer.template GetPtr<true>(), 1);
 			throw;
 		}
-		ItemTraits::Relocate(memManager, &itemBuffer, GetItems() + initCount, 1);
+		ItemTraits::Relocate(memManager, itemBuffer.template GetPtr<true>(),
+			GetItems() + initCount, 1);
 		mData.SetCount(newCount);
 	}
 

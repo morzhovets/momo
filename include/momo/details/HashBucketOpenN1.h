@@ -79,8 +79,12 @@ namespace internal
 			const uint8_t* thisShortHashes = pvGetShortHashes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (thisShortHashes[i] == shortHash && itemPred(*&mItems[i]))
-					return pvMakeIterator(&mItems[i]);
+				if (thisShortHashes[i] == shortHash)
+				{
+					Item* itemPtr = mItems[i].template GetPtr<true>();
+					if (itemPred(*itemPtr))
+						return pvMakeIterator(itemPtr);
+				}
 			}
 			return Iterator();
 		}
@@ -158,7 +162,7 @@ namespace internal
 
 		Item* ptGetItemPtr(size_t index) noexcept
 		{
-			return &mItems[reverse ? maxCount - 1 - index : index];
+			return mItems[reverse ? maxCount - 1 - index : index].GetPtr();
 		}
 
 		static uint8_t ptCalcShortHash(size_t hashCode) noexcept
