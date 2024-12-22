@@ -248,12 +248,12 @@ namespace internal
 			if constexpr (std::is_same_v<std::byte, std::remove_const_t<QResObject>>
 				|| std::is_void_v<QResObject>)
 			{
-				static_assert(!isWithinLifetime && !isSingleObject);
+				static_assert(!std::is_void_v<QResObject> || (!isWithinLifetime && !isSingleObject));
 				return static_cast<QResObject*>(bytePtr);
 			}
 			else
 			{
-				static_assert(isWithinLifetime || !std::is_const_v<QResObject>);
+				static_assert(!std::is_const_v<QResObject> || isWithinLifetime);
 				return MOMO_CAST_POINTER(QResObject, bytePtr, isWithinLifetime, isSingleObject);
 			}
 		}
