@@ -81,9 +81,9 @@ namespace internal
 			{
 				if (thisShortHashes[i] == shortHash)
 				{
-					Item* itemPtr = mItems[i].template GetPtr<true>();
-					if (itemPred(*itemPtr))
-						return pvMakeIterator(itemPtr);
+					Item* items = mItems.GetPtr();
+					if (itemPred(items[i]))
+						return pvMakeIterator(items + i);
 				}
 			}
 			return Iterator();
@@ -162,7 +162,7 @@ namespace internal
 
 		Item* ptGetItemPtr(size_t index) noexcept
 		{
-			return mItems[reverse ? maxCount - 1 - index : index].GetPtr();
+			return mItems.GetPtr() + (reverse ? maxCount - 1 - index : index);
 		}
 
 		static uint8_t ptCalcShortHash(size_t hashCode) noexcept
@@ -240,8 +240,7 @@ namespace internal
 
 	private:
 		uint8_t mData[maxCount + 1];
-		//ObjectBuffer<Item, ItemTraits::alignment, maxCount> mItems;	// gcc perf
-		ObjectBuffer<Item, ItemTraits::alignment> mItems[maxCount];
+		ObjectBuffer<Item, ItemTraits::alignment, maxCount> mItems;
 	};
 }
 
