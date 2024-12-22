@@ -167,14 +167,14 @@ namespace internal
 
 		~ArrayItemHandler() noexcept
 		{
-			ItemTraits::Destroy(mMemManager, &*this, 1);
+			ItemTraits::Destroy(mMemManager, std::addressof(Get()), 1);
 		}
 
 		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
 
-		Item* operator&() noexcept
+		Item& Get() noexcept
 		{
-			return std::addressof(mItemBuffer.Get());
+			return mItemBuffer.Get();
 		}
 
 	private:

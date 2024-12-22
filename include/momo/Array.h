@@ -867,7 +867,7 @@ public:
 		size_t newCount = GetCount() + 1;
 		if (newCount > GetCapacity())
 			pvGrow(newCount, ArrayGrowCause::add);
-		ArrayShifter::InsertNogrow(*this, index, std::move(*&itemHandler));
+		ArrayShifter::InsertNogrow(*this, index, std::move(itemHandler.Get()));
 	}
 
 	template<typename... ItemArgs>
@@ -906,7 +906,7 @@ public:
 				typename ItemTraits::template Creator<const Item&>(memManager, item));
 			if (grow)
 				pvGrow(newCount, ArrayGrowCause::add);
-			ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
+			ArrayShifter::InsertNogrow(*this, index, count, itemHandler.Get());
 		}
 		else
 		{

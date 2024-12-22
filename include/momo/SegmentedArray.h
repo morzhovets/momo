@@ -532,7 +532,7 @@ public:
 	{
 		ItemHandler itemHandler(GetMemManager(), std::forward<ItemCreator>(itemCreator));
 		Reserve(mCount + 1);
-		ArrayShifter::InsertNogrow(*this, index, std::move(*&itemHandler));
+		ArrayShifter::InsertNogrow(*this, index, std::move(itemHandler.Get()));
 	}
 
 	template<typename... ItemArgs>
@@ -558,7 +558,7 @@ public:
 		ItemHandler itemHandler(memManager,
 			typename ItemTraits::template Creator<const Item&>(memManager, item));
 		Reserve(mCount + count);
-		ArrayShifter::InsertNogrow(*this, index, count, *&itemHandler);
+		ArrayShifter::InsertNogrow(*this, index, count, itemHandler.Get());
 	}
 
 	template<typename ArgIterator, typename ArgSentinel,
