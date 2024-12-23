@@ -20,7 +20,7 @@ jobs:
         - type: 'data_table_static'
           clang_ver: '15'
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout hash-table-shootout
