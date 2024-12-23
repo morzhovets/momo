@@ -181,7 +181,7 @@ namespace internal
 					pvGetMemPoolIndex((mPtrState == stateNull) ? newCount : maxCount);
 				MemPool& newMemPool = params.GetMemPool(newMemPoolIndex);
 				Memory memory(newMemPool);
-				Item* newItems = newMemPool.template GetRealPointer<Item>(memory.GetPointer());
+				Item* newItems = newMemPool.template GetRealPointer<Item>(memory.Get());
 				std::forward<ItemCreator>(itemCreator)(newItems);
 				pvSet(memory.Extract(), newMemPoolIndex, newCount);
 				return newItems;
@@ -202,7 +202,7 @@ namespace internal
 					size_t newMemPoolIndex = pvGetMemPoolIndex(newCount);
 					MemPool& newMemPool = params.GetMemPool(newMemPoolIndex);
 					Memory memory(newMemPool);
-					Item* newItems = newMemPool.template GetRealPointer<Item>(memory.GetPointer());
+					Item* newItems = newMemPool.template GetRealPointer<Item>(memory.Get());
 					ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 						std::forward<ItemCreator>(itemCreator), newItems + count);
 					memPool.Deallocate(ptr);

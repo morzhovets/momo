@@ -202,7 +202,7 @@ namespace internal
 			{
 				size_t memPoolIndex = pvGetFastMemPoolIndex(count);
 				FastMemory memory(params.GetFastMemPool(memPoolIndex));
-				Item* items = pvGetFastItems(memory.GetPointer());
+				Item* items = pvGetFastItems(memory.Get());
 				size_t index = 0;
 				try
 				{
@@ -219,7 +219,7 @@ namespace internal
 			else
 			{
 				ArrayMemory memory(params.GetArrayMemPool());
-				::new(static_cast<void*>(pvGetArrayPtr(memory.GetPointer())))
+				::new(static_cast<void*>(pvGetArrayPtr(memory.Get())))
 					Array(bounds.GetBegin(), bounds.GetEnd(), MemManagerPtr(memManager));
 				pvSet(memory.Extract(), uint8_t{0});
 			}
@@ -266,7 +266,7 @@ namespace internal
 				size_t newCount = 1;
 				size_t newMemPoolIndex = pvGetFastMemPoolIndex(newCount);
 				FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
-				std::forward<ItemCreator>(itemCreator)(pvGetFastItems(memory.GetPointer()));
+				std::forward<ItemCreator>(itemCreator)(pvGetFastItems(memory.Get()));
 				pvSet(memory.Extract(), pvMakeState(newMemPoolIndex, newCount));
 			}
 			else
@@ -284,7 +284,7 @@ namespace internal
 						{
 							size_t newMemPoolIndex = pvGetFastMemPoolIndex(newCount);
 							FastMemory memory(params.GetFastMemPool(newMemPoolIndex));
-							Item* newItems = pvGetFastItems(memory.GetPointer());
+							Item* newItems = pvGetFastItems(memory.Get());
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, std::forward<ItemCreator>(itemCreator), newItems + count);
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
@@ -300,7 +300,7 @@ namespace internal
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
 								count, std::forward<ItemCreator>(itemCreator), newItems + count);
 							array.SetCountCrt(newCount, [] (Item* /*newItem*/) noexcept {});
-							::new(static_cast<void*>(pvGetArrayPtr(memory.GetPointer())))
+							::new(static_cast<void*>(pvGetArrayPtr(memory.Get())))
 								Array(std::move(array));
 							params.GetFastMemPool(memPoolIndex).Deallocate(mPtr);
 							pvSet(memory.Extract(), uint8_t{0});

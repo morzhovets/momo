@@ -49,7 +49,7 @@ namespace internal
 			mPtrState |= uint32_t{state};
 		}
 
-		Item* GetPointer() const noexcept
+		Item* GetPtr() const noexcept
 		{
 			uintptr_t intPtr = uintptr_t{mPtrState & ~uint32_t{maskState}};
 			return PtrCaster::FromUInt<Item>(intPtr);
@@ -87,7 +87,7 @@ namespace internal
 			mPtrState[2] = static_cast<uint16_t>(intPtr >> 32);
 		}
 
-		Item* GetPointer() const noexcept
+		Item* GetPtr() const noexcept
 		{
 			uint64_t intPtr = (uint64_t{mPtrState[2]} << 32) | (uint64_t{mPtrState[1]} << 16)
 				| uint64_t{mPtrState[0] & ~uint16_t{maskState}};
@@ -125,7 +125,7 @@ namespace internal
 			mPtrState[1] = static_cast<uint32_t>(intPtr >> 32);
 		}
 
-		Item* GetPointer() const noexcept
+		Item* GetPtr() const noexcept
 		{
 			uint64_t intPtr = (uint64_t{mPtrState[1]} << 32)
 				| uint64_t{mPtrState[0] & ~uint32_t{maskState}};
@@ -260,14 +260,14 @@ namespace internal
 
 		~BucketLimP4() noexcept
 		{
-			MOMO_ASSERT(mPtrState.GetPointer() == nullptr);
+			MOMO_ASSERT(mPtrState.GetPtr() == nullptr);
 		}
 
 		BucketLimP4& operator=(const BucketLimP4&) = delete;
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
-			return Bounds(mPtrState.GetPointer(), pvGetCount());
+			return Bounds(mPtrState.GetPtr(), pvGetCount());
 		}
 
 		template<bool first, typename ItemPredicate>
@@ -279,7 +279,7 @@ namespace internal
 			{
 				if (mShortHashes[i] == shortHash)
 				{
-					Item* items = mPtrState.GetPointer();
+					Item* items = mPtrState.GetPtr();
 					if (itemPred(items[i]))
 						return items + i;
 				}
@@ -299,7 +299,7 @@ namespace internal
 
 		void Clear(Params& params) noexcept
 		{
-			Item* items = mPtrState.GetPointer();
+			Item* items = mPtrState.GetPtr();
 			if (items != nullptr)
 				pvDeallocate<true>(params, pvGetMemPoolIndex(), items);
 			pvSetEmpty(minMemPoolIndex);
@@ -309,7 +309,7 @@ namespace internal
 		Iterator AddCrt(Params& params, ItemCreator&& itemCreator, size_t hashCode,
 			size_t logBucketCount, size_t probe)
 		{
-			Item* items = mPtrState.GetPointer();
+			Item* items = mPtrState.GetPtr();
 			size_t memPoolIndex = pvGetMemPoolIndex();
 			if (items == nullptr)
 			{
@@ -358,7 +358,7 @@ namespace internal
 		template<typename ItemReplacer>
 		Iterator Remove(Params& params, Iterator iter, ItemReplacer&& itemReplacer)
 		{
-			Item* items = mPtrState.GetPointer();
+			Item* items = mPtrState.GetPtr();
 			MOMO_ASSERT(items != nullptr);
 			size_t count = pvGetCount();
 			size_t memPoolIndex = pvGetMemPoolIndex();
@@ -395,7 +395,7 @@ namespace internal
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
-			Item* items = mPtrState.GetPointer();
+			Item* items = mPtrState.GetPtr();
 			size_t index = UIntMath<>::Dist(items, iter);
 			size_t hashProbe = size_t{mShortHashes[hashCount - 1 - index]};
 			bool useFullGetter = (static_cast<uint8_t>(hashProbe + 1) <= maskEmpty ||
@@ -473,7 +473,7 @@ namespace internal
 		Item* pvAdd0(Params& params, ItemCreator&& itemCreator, size_t hashCode)
 		{
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
-			Item* items = memory.GetPointer();
+			Item* items = memory.Get();
 			std::forward<ItemCreator>(itemCreator)(items);
 			mShortHashes[0] = pvCalcShortHash(hashCode);
 			pvSetPtrState(memory.Extract(), memPoolIndex);
@@ -486,7 +486,7 @@ namespace internal
 			static const size_t newMemPoolIndex = memPoolIndex + 1;
 			size_t count = memPoolIndex;
 			Memory<newMemPoolIndex> memory(params.template GetMemPool<newMemPoolIndex>());
-			Item* newItems = memory.GetPointer();
+			Item* newItems = memory.Get();
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				std::forward<ItemCreator>(itemCreator), newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);

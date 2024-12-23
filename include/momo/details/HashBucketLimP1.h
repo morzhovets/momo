@@ -169,7 +169,7 @@ namespace internal
 				size_t newCount = 1;
 				size_t newMemPoolIndex = pvGetMemPoolIndex();
 				Memory memory(params.GetMemPool(newMemPoolIndex));
-				Item* newItems = memory.GetPointer();
+				Item* newItems = memory.Get();
 				std::forward<ItemCreator>(itemCreator)(newItems);
 				pvSet(memory.Extract(), newMemPoolIndex, newCount);
 				return newItems;
@@ -185,7 +185,7 @@ namespace internal
 					size_t newCount = count + 1;
 					size_t newMemPoolIndex = pvGetMemPoolIndex(newCount);
 					Memory memory(params.GetMemPool(newMemPoolIndex));
-					Item* newItems = memory.GetPointer();
+					Item* newItems = memory.Get();
 					ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 						std::forward<ItemCreator>(itemCreator), newItems + count);
 					params.GetMemPool(memPoolIndex).Deallocate(items);
