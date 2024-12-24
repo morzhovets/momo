@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -192,9 +192,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a5e2ccc56f89abc4b4e463a8f87e6b591"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86c14cb8c8814a07870709b073257353"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_hash_set.html#af08bb6d0876fc4803d08e44702c29fd9">InsertResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set.html#a86c14cb8c8814a07870709b073257353">Insert</a> (<a class="el" href="classmomo_1_1_hash_set.html#a83cd6ea7a404b102d0f968e9029eeae6">ExtractedItem</a> &amp;&amp;extItem)</td></tr>
 <tr class="separator:a86c14cb8c8814a07870709b073257353"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a069e093284232ee9bbc048a8749092ee"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator &gt; </td></tr>
-<tr class="memitem:a069e093284232ee9bbc048a8749092ee"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set.html#a069e093284232ee9bbc048a8749092ee">Insert</a> (ArgIterator begin, ArgIterator end)</td></tr>
-<tr class="separator:a069e093284232ee9bbc048a8749092ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b88b36b40f71341e7d9233f4ad5e06e"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel &gt; </td></tr>
+<tr class="memitem:a1b88b36b40f71341e7d9233f4ad5e06e"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set.html#a1b88b36b40f71341e7d9233f4ad5e06e">Insert</a> (ArgIterator begin, ArgSentinel end)</td></tr>
+<tr class="separator:a1b88b36b40f71341e7d9233f4ad5e06e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accab61621d36cbd5af2608097710d091"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set.html#accab61621d36cbd5af2608097710d091">Insert</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1_hash_set.html#a134f438ae8184c10f31a036dc9de60a7">Item</a> &gt; items)</td></tr>
 <tr class="separator:accab61621d36cbd5af2608097710d091"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40bb2b0bd902e193eda21d094c1cc366"><td class="memTemplParams" colspan="2">template&lt;typename ItemCreator , bool extraCheck = true&gt; </td></tr>
@@ -1403,15 +1403,15 @@ template&lt;typename TKey , typename THashTraits  = HashTraits&lt;TKey&gt;, type
 
 </div>
 </div>
-<a id="a069e093284232ee9bbc048a8749092ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a069e093284232ee9bbc048a8749092ee">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/5]</span></h2>
+<a id="a1b88b36b40f71341e7d9233f4ad5e06e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b88b36b40f71341e7d9233f4ad5e06e">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TKey , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TItemTraits  = HashSetItemTraits&lt;TKey, TMemManager&gt;, typename TSettings  = HashSetSettings&gt; </div>
 <div class="memtemplate">
-template&lt;typename ArgIterator &gt; </div>
+template&lt;typename ArgIterator , typename ArgSentinel &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1425,7 +1425,7 @@ template&lt;typename ArgIterator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramtype">ArgSentinel&#160;</td>
           <td class="paramname"><em>end</em>&#160;</td>
         </tr>
         <tr>

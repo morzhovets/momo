@@ -57,7 +57,7 @@ var classmomo_1_1_tree_map =
     [ "GetUpperBound", "classmomo_1_1_tree_map.html#a79c28706e657083f456c529acfd49131", null ],
     [ "GetUpperBound", "classmomo_1_1_tree_map.html#ac2b1ea804a951eb65a550609df83ff12", null ],
     [ "GetUpperBound", "classmomo_1_1_tree_map.html#af9d00e8b6b53931deb4aace3d4a50a62", null ],
-    [ "Insert", "classmomo_1_1_tree_map.html#a36faca102a36ce486318f15de4509c57", null ],
+    [ "Insert", "classmomo_1_1_tree_map.html#a3261e9c8748374bd27fe50fad34a90ab", null ],
     [ "Insert", "classmomo_1_1_tree_map.html#a14bff9bb4f687c9ccd9cbf0f64aaeab3", null ],
     [ "Insert", "classmomo_1_1_tree_map.html#a9f48627e452080c071df1641f4778e4a", null ],
     [ "Insert", "classmomo_1_1_tree_map.html#a061de3e63816b6311d67e5ae3ea5b91b", null ],

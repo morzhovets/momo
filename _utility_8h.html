@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -120,7 +120,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_sequence_maker_3_010_00_01sequence_8_8_8_01_4.html">momo::internal::SequenceMaker&lt; 0, sequence... &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_void_maker.html">momo::internal::VoidMaker&lt;... &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_is_forward_iterator17.html">momo::internal::IsForwardIterator17&lt; Iterator, Sentinel, typename &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_is_forward_iterator17_3_01_iterator_00_01_iterator_00_01_void_3_01typed7cfdc3d73ce87fa84af7a31a50179d.html">momo::internal::IsForwardIterator17&lt; Iterator, Iterator, Void&lt; typename std::iterator_traits&lt; Iterator &gt;::iterator_category &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">momo::internal::IsInvocable&lt; Func, Result, Args &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,8 +162,10 @@ Macros</h2></td></tr>
 <tr class="separator:a3f7b972f009703f55f5c266ec9f14f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3e568105cafe85417b46d364a5452b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#ad3e568105cafe85417b46d364a5452b9">MOMO_FRIENDS_BEGIN_END</a>(Object,  Iterator)</td></tr>
 <tr class="separator:ad3e568105cafe85417b46d364a5452b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04478e8c251bfd597e779369ff8fd295"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a04478e8c251bfd597e779369ff8fd295">MOMO_STATIC_ASSERT</a>(expr)&#160;&#160;&#160;static_assert((expr), #expr)</td></tr>
-<tr class="separator:a04478e8c251bfd597e779369ff8fd295"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3d713f009e9e9089c568c5f47f2bdf5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#ae3d713f009e9e9089c568c5f47f2bdf5">MOMO_MORE_COMPARISON_OPERATORS</a>(ObjectArg)</td></tr>
+<tr class="separator:ae3d713f009e9e9089c568c5f47f2bdf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7228872edae4aafa07e4d24917c305c6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a7228872edae4aafa07e4d24917c305c6">MOMO_STATIC_ASSERT</a>(...)&#160;&#160;&#160;static_assert((__VA_ARGS__), #__VA_ARGS__)</td></tr>
+<tr class="separator:a7228872edae4aafa07e4d24917c305c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61ba943cf82f91b4594bcc6021b291df"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a61ba943cf82f91b4594bcc6021b291df">MOMO_CHECK</a>(expr)</td></tr>
 <tr class="separator:a61ba943cf82f91b4594bcc6021b291df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a275fbe2372c7324122b63eafa07da721"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a275fbe2372c7324122b63eafa07da721">MOMO_EXTRA_CHECK</a>(expr)&#160;&#160;&#160;	<a class="el" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))</td></tr>
@@ -175,21 +179,21 @@ Macros</h2></td></tr>
 Typedefs</h2></td></tr>
 <tr class="memitem:a832a663a2782dd0674c143d654bd39bf"><td class="memItemLeft" align="right" valign="top">typedef unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a832a663a2782dd0674c143d654bd39bf">momo::internal::Byte</a></td></tr>
 <tr class="separator:a832a663a2782dd0674c143d654bd39bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3af1c05e0a098d112e970dadb0a13a79"><td class="memTemplParams" colspan="2">template&lt;typename Iterator &gt; </td></tr>
-<tr class="memitem:a3af1c05e0a098d112e970dadb0a13a79"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a3af1c05e0a098d112e970dadb0a13a79">momo::internal::IsForwardIterator</a> = std::is_base_of&lt; std::forward_iterator_tag, typename std::iterator_traits&lt; Iterator &gt;::iterator_category &gt;</td></tr>
-<tr class="separator:a3af1c05e0a098d112e970dadb0a13a79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12df18edcafda2c66c5af5276c2661af"><td class="memTemplParams" colspan="2">template&lt;bool value&gt; </td></tr>
 <tr class="memitem:a12df18edcafda2c66c5af5276c2661af"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a12df18edcafda2c66c5af5276c2661af">momo::internal::BoolConstant</a> = std::integral_constant&lt; bool, value &gt;</td></tr>
 <tr class="separator:a12df18edcafda2c66c5af5276c2661af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d76c09010f189220f878e088275214c"><td class="memTemplParams" colspan="2">template&lt;typename... Types&gt; </td></tr>
-<tr class="memitem:a7d76c09010f189220f878e088275214c"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a7d76c09010f189220f878e088275214c">momo::internal::Void</a> = typename VoidMaker&lt; Types... &gt;::Void</td></tr>
-<tr class="separator:a7d76c09010f189220f878e088275214c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a557d72017fa82d715463e5adeec2c6bd"><td class="memTemplParams" colspan="2">template&lt;typename... &gt; </td></tr>
+<tr class="memitem:a557d72017fa82d715463e5adeec2c6bd"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a557d72017fa82d715463e5adeec2c6bd">momo::internal::Void</a> = void</td></tr>
+<tr class="separator:a557d72017fa82d715463e5adeec2c6bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3240c94f5aacdf8b48d58980f85348f0"><td class="memTemplParams" colspan="2">template&lt;bool value, typename Type  = void&gt; </td></tr>
 <tr class="memitem:a3240c94f5aacdf8b48d58980f85348f0"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a> = typename std::enable_if&lt; value, Type &gt;::type</td></tr>
 <tr class="separator:a3240c94f5aacdf8b48d58980f85348f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6457202229264fdd3fba4be31ccb4079"><td class="memTemplParams" colspan="2">template&lt;typename Type &gt; </td></tr>
 <tr class="memitem:a6457202229264fdd3fba4be31ccb4079"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">momo::internal::Identity</a> = EnableIf&lt; true, Type &gt;</td></tr>
 <tr class="separator:a6457202229264fdd3fba4be31ccb4079"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af644b8818bd1c0b95d307c628439e4fa"><td class="memTemplParams" colspan="2">template&lt;typename Object , typename QSrcObject &gt; </td></tr>
+<tr class="memitem:af644b8818bd1c0b95d307c628439e4fa"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#af644b8818bd1c0b95d307c628439e4fa">momo::internal::ConstLike</a> = typename std::conditional&lt; std::is_const&lt; QSrcObject &gt;::value, const Object, Object &gt;::type</td></tr>
+<tr class="separator:af644b8818bd1c0b95d307c628439e4fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -244,7 +248,7 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Args&gt; \</div>
 <div class="line">    explicit Object##Proxy(Args&amp;&amp;... args) \</div>
-<div class="line">        noexcept((std::is_nothrow_constructible&lt;Object, Args&amp;&amp;...&gt;::value)) \</div>
+<div class="line">        noexcept(std::is_nothrow_constructible&lt;Object, Args&amp;&amp;...&gt;::value) \</div>
 <div class="line">        : Object(std::forward&lt;Args&gt;(args)...) \</div>
 <div class="line">    { \</div>
 <div class="line">    }</div>
@@ -287,7 +291,7 @@ Enumerations</h2></td></tr>
 <div class="line">        noexcept(noexcept((std::forward&lt;ObjectArg&gt;(<span class="keywordtype">object</span>).*&amp;Object##Proxy::pt##Func) \</div>
 <div class="line">            (std::forward&lt;Args&gt;(args)...))) \</div>
 <div class="line">    { \</div>
-<div class="line">        MOMO_STATIC_ASSERT((std::is_same&lt;Object, <span class="keyword">typename</span> std::decay&lt;ObjectArg&gt;::type&gt;::value)); \</div>
+<div class="line">        MOMO_STATIC_ASSERT(std::is_same&lt;Object, <span class="keyword">typename</span> std::decay&lt;ObjectArg&gt;::type&gt;::value); \</div>
 <div class="line">        return (std::forward&lt;ObjectArg&gt;(<span class="keywordtype">object</span>).*&amp;Object##Proxy::pt##Func) \</div>
 <div class="line">            (std::forward&lt;Args&gt;(args)...); \</div>
 <div class="line">    }</div>
@@ -411,8 +415,42 @@ Enumerations</h2></td></tr>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a04478e8c251bfd597e779369ff8fd295"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a04478e8c251bfd597e779369ff8fd295">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT</h2>
+<a id="ae3d713f009e9e9089c568c5f47f2bdf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3d713f009e9e9089c568c5f47f2bdf5">&#9670;&nbsp;</a></span>MOMO_MORE_COMPARISON_OPERATORS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_MORE_COMPARISON_OPERATORS</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ObjectArg</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator!=(ObjectArg obj1, ObjectArg obj2) noexcept(noexcept(obj1 == obj2)) \</div>
+<div class="line">    { \</div>
+<div class="line">        return !(obj1 == obj2); \</div>
+<div class="line">    } \</div>
+<div class="line">    friend <span class="keywordtype">bool</span> operator&gt;(ObjectArg obj1, ObjectArg obj2) \</div>
+<div class="line">    { \</div>
+<div class="line">        return obj2 &lt; obj1; \</div>
+<div class="line">    } \</div>
+<div class="line">    friend <span class="keywordtype">bool</span> operator&lt;=(ObjectArg obj1, ObjectArg obj2) \</div>
+<div class="line">    { \</div>
+<div class="line">        return !(obj2 &lt; obj1); \</div>
+<div class="line">    } \</div>
+<div class="line">    friend <span class="keywordtype">bool</span> operator&gt;=(ObjectArg obj1, ObjectArg obj2) \</div>
+<div class="line">    { \</div>
+<div class="line">        return obj2 &lt;= obj1; \</div>
+<div class="line">    }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="a7228872edae4aafa07e4d24917c305c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7228872edae4aafa07e4d24917c305c6">&#9670;&nbsp;</a></span>MOMO_STATIC_ASSERT</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -421,8 +459,8 @@ Enumerations</h2></td></tr>
           <td class="memname">#define MOMO_STATIC_ASSERT</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">expr</td><td>)</td>
-          <td>&#160;&#160;&#160;static_assert((expr), #expr)</td>
+          <td class="paramname"><em>...</em></td><td>)</td>
+          <td>&#160;&#160;&#160;static_assert((__VA_ARGS__), #__VA_ARGS__)</td>
         </tr>
       </table>
 </div><div class="memdoc">

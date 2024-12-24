@@ -6,17 +6,17 @@ var dir_f35bdc44c6096817f5baccc572791ca4 =
       [ "map", "classmomo_1_1stdish_1_1map.html", "classmomo_1_1stdish_1_1map" ],
       [ "multimap", "classmomo_1_1stdish_1_1multimap.html", "classmomo_1_1stdish_1_1multimap" ]
     ] ],
-    [ "node_handle.h", "node__handle_8h.html", [
-      [ "set_node_handle", "classmomo_1_1stdish_1_1internal_1_1set__node__handle.html", "classmomo_1_1stdish_1_1internal_1_1set__node__handle" ],
-      [ "map_node_handle", "classmomo_1_1stdish_1_1internal_1_1map__node__handle.html", "classmomo_1_1stdish_1_1internal_1_1map__node__handle" ],
-      [ "insert_return_type", "structmomo_1_1stdish_1_1internal_1_1insert__return__type.html", "structmomo_1_1stdish_1_1internal_1_1insert__return__type" ]
-    ] ],
     [ "pool_allocator.h", "pool__allocator_8h.html", [
       [ "unsynchronized_pool_allocator", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator" ]
     ] ],
     [ "set.h", "set_8h.html", [
       [ "set", "classmomo_1_1stdish_1_1set.html", "classmomo_1_1stdish_1_1set" ],
       [ "multiset", "classmomo_1_1stdish_1_1multiset.html", "classmomo_1_1stdish_1_1multiset" ]
+    ] ],
+    [ "set_map_utility.h", "set__map__utility_8h.html", [
+      [ "set_node_handle", "classmomo_1_1stdish_1_1internal_1_1set__node__handle.html", "classmomo_1_1stdish_1_1internal_1_1set__node__handle" ],
+      [ "map_node_handle", "classmomo_1_1stdish_1_1internal_1_1map__node__handle.html", "classmomo_1_1stdish_1_1internal_1_1map__node__handle" ],
+      [ "insert_return_type", "structmomo_1_1stdish_1_1internal_1_1insert__return__type.html", "structmomo_1_1stdish_1_1internal_1_1insert__return__type" ]
     ] ],
     [ "unordered_map.h", "unordered__map_8h.html", [
       [ "unordered_map", "classmomo_1_1stdish_1_1unordered__map.html", "classmomo_1_1stdish_1_1unordered__map" ],

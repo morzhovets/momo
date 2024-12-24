@@ -6,6 +6,6 @@ var classmomo_1_1internal_1_1_bucket_memory =
     [ "BucketMemory", "classmomo_1_1internal_1_1_bucket_memory.html#a8576c017309b8e04d3d8990555956841", null ],
     [ "~BucketMemory", "classmomo_1_1internal_1_1_bucket_memory.html#a1ed971b44241893372cfcb3d939d1aee", null ],
     [ "Extract", "classmomo_1_1internal_1_1_bucket_memory.html#a99a36011395fe035abe9e82c7ce11d51", null ],
-    [ "GetPointer", "classmomo_1_1internal_1_1_bucket_memory.html#a4e2aa8d4b3e5d56020b793515000ce72", null ],
+    [ "Get", "classmomo_1_1internal_1_1_bucket_memory.html#ab423cbbca5974a31bfb71068204d2027", null ],
     [ "operator=", "classmomo_1_1internal_1_1_bucket_memory.html#a8f4dadc4149d2e8b982ef8e11a39b325", null ]
 ];

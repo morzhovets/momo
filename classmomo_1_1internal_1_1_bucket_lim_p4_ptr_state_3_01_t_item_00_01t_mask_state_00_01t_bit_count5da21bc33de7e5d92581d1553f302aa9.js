@@ -1,7 +1,7 @@
 var classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count5da21bc33de7e5d92581d1553f302aa9 =
 [
     [ "Item", "classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count5da21bc33de7e5d92581d1553f302aa9.html#a0ee4ec5d4ae3c68b0c695e74c8cfa2ce", null ],
-    [ "GetPointer", "classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count5da21bc33de7e5d92581d1553f302aa9.html#a4830a071fe2d5e9390321ef169089162", null ],
+    [ "GetPtr", "classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count5da21bc33de7e5d92581d1553f302aa9.html#a03ca20f46ed678b2770773e7c5e18631", null ],
     [ "GetState", "classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count5da21bc33de7e5d92581d1553f302aa9.html#a604244b4719ae58e7cb087ecd6f06692", null ],
     [ "MOMO_STATIC_ASSERT", "classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count5da21bc33de7e5d92581d1553f302aa9.html#a615f359f89955c398fccfd60ae096a5f", null ],
     [ "Set", "classmomo_1_1internal_1_1_bucket_lim_p4_ptr_state_3_01_t_item_00_01t_mask_state_00_01t_bit_count5da21bc33de7e5d92581d1553f302aa9.html#ae23e9da532ee90ec1679fa648c22e983", null ]

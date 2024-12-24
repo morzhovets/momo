@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -91,6 +91,9 @@ $(document).ready(function(){initNavTree('functions_t.html',''); initResizable()
 <li>ToBuffer()
 : <a class="el" href="classmomo_1_1internal_1_1_mem_copyer.html#a328d01a6a8cbe106415bf5594b89b31d">momo::internal::MemCopyer</a>
 </li>
+<li>ToBytePtr()
+: <a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#aaad6bc8a13d409a6b764601a5a91369f">momo::internal::PtrCaster</a>
+</li>
 <li>ToUInt()
 : <a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">momo::internal::PtrCaster</a>
 </li>
@@ -98,7 +101,7 @@ $(document).ready(function(){initNavTree('functions_t.html',''); initResizable()
 : <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#a5390b4a048b0d645bbbcfcca0fc2d147">momo::internal::TreeDerivedIterator&lt; TBaseIterator, TReference &gt;</a>
 </li>
 <li>TreeMap()
-: <a class="el" href="classmomo_1_1_tree_map.html#aa61657b7df9e967896a663faccdc2904">momo::TreeMap&lt; TKey, TValue, TTreeTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>
+: <a class="el" href="classmomo_1_1_tree_map.html#a7c3720d6efb956b18a731f451d981c22">momo::TreeMap&lt; TKey, TValue, TTreeTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>
 </li>
 <li>TreeMapIterator()
 : <a class="el" href="classmomo_1_1internal_1_1_tree_map_iterator.html#a12da63f864ee17eed8ba2a8cb8a8bccf">momo::internal::TreeMapIterator&lt; TTreeSetIterator, tIsConst &gt;</a>
@@ -114,7 +117,7 @@ $(document).ready(function(){initNavTree('functions_t.html',''); initResizable()
 : <a class="el" href="classmomo_1_1_tree_set.html#afe51068f9bd926139969ead7e4a0642c">momo::TreeSet&lt; TKey, TTreeTraits, TMemManager, TItemTraits, TSettings &gt;</a>
 </li>
 <li>TreeSetConstIterator()
-: <a class="el" href="classmomo_1_1internal_1_1_tree_set_const_iterator.html#acafd84ba1738ad0b6a3ff19bbb3cb100">momo::internal::TreeSetConstIterator&lt; TNode, TSettings &gt;</a>
+: <a class="el" href="classmomo_1_1internal_1_1_tree_set_const_iterator.html#afa07cd3b3b7bf97aaa240b0277f53d4b">momo::internal::TreeSetConstIterator&lt; TNode, TSettings &gt;</a>
 </li>
 <li>TreeSetItemTraits
 : <a class="el" href="classmomo_1_1internal_1_1_tree_set_node_item_traits.html#aee9a958a1039edff9b0519457bf40e69">momo::internal::TreeSetNodeItemTraits&lt; TTreeSetItemTraits &gt;</a>
@@ -135,13 +138,13 @@ $(document).ready(function(){initNavTree('functions_t.html',''); initResizable()
 </li>
 <li>try_emplace()
 : <a class="el" href="classmomo_1_1stdish_1_1map.html#a2f43966d4e5d8f37fe363a8f4a9e7132">momo::stdish::map&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1unordered__map.html#a021642a938d07d63964ea9611f5e0033">momo::stdish::unordered_map&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMap &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1unordered__map.html#a7b148dfdf8851c288c4f414cfcddc682">momo::stdish::unordered_map&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMap &gt;</a>
 </li>
 <li>TryAdd()
 : <a class="el" href="classmomo_1_1_data_table.html#a97802b7c0a0cd3d009cacd5a8b60a4a8">momo::DataTable&lt; TColumnList, TDataTraits &gt;</a>
 </li>
 <li>TryAddRow()
-: <a class="el" href="classmomo_1_1_data_table.html#aca9d0f4fd6fbb0e240f08a3522e685d5">momo::DataTable&lt; TColumnList, TDataTraits &gt;</a>
+: <a class="el" href="classmomo_1_1_data_table.html#aa262f43bbecae3c9bbdd6b5f136cb7a5">momo::DataTable&lt; TColumnList, TDataTraits &gt;</a>
 </li>
 <li>TryInsert()
 : <a class="el" href="classmomo_1_1_data_table.html#a0ed8052b5010da22360e8ca074c810ba">momo::DataTable&lt; TColumnList, TDataTraits &gt;</a>
@@ -150,10 +153,7 @@ $(document).ready(function(){initNavTree('functions_t.html',''); initResizable()
 : <a class="el" href="classmomo_1_1_data_table.html#ac1c7447d463e0bc1791d16c97e9d177d">momo::DataTable&lt; TColumnList, TDataTraits &gt;</a>
 </li>
 <li>TryUpdate()
-: <a class="el" href="classmomo_1_1_data_table.html#ac886db896163e33b1c4b151a05fdbc74">momo::DataTable&lt; TColumnList, TDataTraits &gt;</a>
-</li>
-<li>TryUpdateRow()
-: <a class="el" href="classmomo_1_1_data_table.html#ae2c26e787eeff69e5b08fae590d2da39">momo::DataTable&lt; TColumnList, TDataTraits &gt;</a>
+: <a class="el" href="classmomo_1_1_data_table.html#a181e4f7eea85e3f004b914b386677c2e">momo::DataTable&lt; TColumnList, TDataTraits &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->

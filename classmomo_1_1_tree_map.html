@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -229,9 +229,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a14bff9bb4f687c9ccd9cbf0f64aaeab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a061de3e63816b6311d67e5ae3ea5b91b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_tree_map.html#a887179916683cd2012a39b06cf8cad64">InsertResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#a061de3e63816b6311d67e5ae3ea5b91b">Insert</a> (<a class="el" href="classmomo_1_1_tree_map.html#a715e57b8261da574300dd995093962e7">ExtractedPair</a> &amp;&amp;extPair)</td></tr>
 <tr class="separator:a061de3e63816b6311d67e5ae3ea5b91b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36faca102a36ce486318f15de4509c57"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </td></tr>
-<tr class="memitem:a36faca102a36ce486318f15de4509c57"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#a36faca102a36ce486318f15de4509c57">Insert</a> (ArgIterator begin, ArgIterator end)</td></tr>
-<tr class="separator:a36faca102a36ce486318f15de4509c57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3261e9c8748374bd27fe50fad34a90ab"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </td></tr>
+<tr class="memitem:a3261e9c8748374bd27fe50fad34a90ab"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#a3261e9c8748374bd27fe50fad34a90ab">Insert</a> (ArgIterator begin, ArgSentinel end)</td></tr>
+<tr class="separator:a3261e9c8748374bd27fe50fad34a90ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9d322b4189caab2727c8f989bdb7cee"><td class="memTemplParams" colspan="2">template&lt;typename Pair  = std::pair&lt;Key, Value&gt;&gt; </td></tr>
 <tr class="memitem:ac9d322b4189caab2727c8f989bdb7cee"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#ac9d322b4189caab2727c8f989bdb7cee">Insert</a> (std::initializer_list&lt; Pair &gt; pairs)</td></tr>
 <tr class="separator:ac9d322b4189caab2727c8f989bdb7cee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1972,15 +1972,15 @@ template&lt;typename KeyArg &gt; </div>
 
 </div>
 </div>
-<a id="a36faca102a36ce486318f15de4509c57"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36faca102a36ce486318f15de4509c57">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/7]</span></h2>
+<a id="a3261e9c8748374bd27fe50fad34a90ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3261e9c8748374bd27fe50fad34a90ab">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TKey , typename TValue , typename TTreeTraits  = TreeTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TKeyValueTraits  = TreeMapKeyValueTraits&lt;TKey, TValue, TMemManager&gt;, typename TSettings  = TreeMapSettings&gt; </div>
 <div class="memtemplate">
-template&lt;typename ArgIterator , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </div>
+template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1994,7 +1994,7 @@ template&lt;typename ArgIterator , typename  = decltype(internal::MapPairConvert
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramtype">ArgSentinel&#160;</td>
           <td class="paramname"><em>end</em>&#160;</td>
         </tr>
         <tr>

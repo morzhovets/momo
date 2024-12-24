@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -87,6 +87,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1stdish_1_1unsynchronized_
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">momo::stdish::unsynchronized_pool_allocator&lt; TValue, TBaseAllocator, TMemPoolParams &gt; Class Template Reference</div>  </div>
@@ -148,15 +149,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a77a79e92daf98a0e521942f1b4336661"><td class="memTemplParams" colspan="2">template&lt;class Value &gt; </td></tr>
 <tr class="memitem:a77a79e92daf98a0e521942f1b4336661"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a77a79e92daf98a0e521942f1b4336661">destroy</a> (Value *ptr) noexcept</td></tr>
 <tr class="separator:a77a79e92daf98a0e521942f1b4336661"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d0f47349930c780a00ad7ae5e116b85"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a5d0f47349930c780a00ad7ae5e116b85">operator==</a> (const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a> &amp;alloc) const noexcept</td></tr>
-<tr class="separator:a5d0f47349930c780a00ad7ae5e116b85"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dc25756175721f5be87712577f3bd0d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a8dc25756175721f5be87712577f3bd0d">operator!=</a> (const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a> &amp;alloc) const noexcept</td></tr>
-<tr class="separator:a8dc25756175721f5be87712577f3bd0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a8e0b76b83e4ca29076912822a2ef9b83"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a8e0b76b83e4ca29076912822a2ef9b83">unsynchronized_pool_allocator</a> (const std::shared_ptr&lt; <a class="el" href="classmomo_1_1_mem_pool.html">MemPool</a> &gt; &amp;memPool) noexcept</td></tr>
 <tr class="separator:a8e0b76b83e4ca29076912822a2ef9b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a0ebfe0e1ff2d97884cb35e2eba6027e6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a0ebfe0e1ff2d97884cb35e2eba6027e6">operator==</a> (const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a> &amp;left, const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a> &amp;right) noexcept</td></tr>
+<tr class="separator:a0ebfe0e1ff2d97884cb35e2eba6027e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85d382585a7f77549c9d8f7e37dd95b0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a85d382585a7f77549c9d8f7e37dd95b0">operator!=</a> (const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a> &amp;left, const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a> &amp;right) noexcept</td></tr>
+<tr class="separator:a85d382585a7f77549c9d8f7e37dd95b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename TValue, typename TBaseAllocator = std::allocator&lt;unsigned char&gt;, typename TMemPoolParams = MemPoolParams&lt;&gt;&gt;<br />
@@ -630,34 +634,6 @@ template&lt;class Value &gt; </div>
 
 </div>
 </div>
-<a id="a8dc25756175721f5be87712577f3bd0d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8dc25756175721f5be87712577f3bd0d">&#9670;&nbsp;</a></span>operator!=()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TValue , typename TBaseAllocator  = std::allocator&lt;unsigned char&gt;, typename TMemPoolParams  = MemPoolParams&lt;&gt;&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">momo::stdish::unsynchronized_pool_allocator</a>&lt; TValue, TBaseAllocator, TMemPoolParams &gt;::operator!= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a>&lt; TValue, TBaseAllocator, TMemPoolParams &gt; &amp;&#160;</td>
-          <td class="paramname"><em>alloc</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="ad381523b6f09a35ab259520ab16f825f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad381523b6f09a35ab259520ab16f825f">&#9670;&nbsp;</a></span>operator=()</h2>
 
@@ -675,34 +651,6 @@ template&lt;typename TValue , typename TBaseAllocator  = std::allocator&lt;unsig
           <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a>&lt; TValue, TBaseAllocator, TMemPoolParams &gt; &amp;&#160;</td>
           <td class="paramname"><em>alloc</em></td><td>)</td>
           <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5d0f47349930c780a00ad7ae5e116b85"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d0f47349930c780a00ad7ae5e116b85">&#9670;&nbsp;</a></span>operator==()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TValue , typename TBaseAllocator  = std::allocator&lt;unsigned char&gt;, typename TMemPoolParams  = MemPoolParams&lt;&gt;&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">momo::stdish::unsynchronized_pool_allocator</a>&lt; TValue, TBaseAllocator, TMemPoolParams &gt;::operator== </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a>&lt; TValue, TBaseAllocator, TMemPoolParams &gt; &amp;&#160;</td>
-          <td class="paramname"><em>alloc</em></td><td>)</td>
-          <td> const</td>
         </tr>
       </table>
   </td>
@@ -735,6 +683,83 @@ template&lt;typename TValue , typename TBaseAllocator  = std::allocator&lt;unsig
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Friends And Related Function Documentation</h2>
+<a id="a85d382585a7f77549c9d8f7e37dd95b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85d382585a7f77549c9d8f7e37dd95b0">&#9670;&nbsp;</a></span>operator!=</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TValue , typename TBaseAllocator  = std::allocator&lt;unsigned char&gt;, typename TMemPoolParams  = MemPoolParams&lt;&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator!= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a>&lt; TValue, TBaseAllocator, TMemPoolParams &gt; &amp;&#160;</td>
+          <td class="paramname"><em>left</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a>&lt; TValue, TBaseAllocator, TMemPoolParams &gt; &amp;&#160;</td>
+          <td class="paramname"><em>right</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0ebfe0e1ff2d97884cb35e2eba6027e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ebfe0e1ff2d97884cb35e2eba6027e6">&#9670;&nbsp;</a></span>operator==</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TValue , typename TBaseAllocator  = std::allocator&lt;unsigned char&gt;, typename TMemPoolParams  = MemPoolParams&lt;&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a>&lt; TValue, TBaseAllocator, TMemPoolParams &gt; &amp;&#160;</td>
+          <td class="paramname"><em>left</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html">unsynchronized_pool_allocator</a>&lt; TValue, TBaseAllocator, TMemPoolParams &gt; &amp;&#160;</td>
+          <td class="paramname"><em>right</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

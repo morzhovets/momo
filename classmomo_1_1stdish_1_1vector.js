@@ -59,15 +59,9 @@ var classmomo_1_1stdish_1_1vector =
     [ "insert", "classmomo_1_1stdish_1_1vector.html#a80c8d1fab5dfc0b18f383edcbdb36231", null ],
     [ "insert", "classmomo_1_1stdish_1_1vector.html#ad663933a3b9271096ef3ddeafe9f02e6", null ],
     [ "max_size", "classmomo_1_1stdish_1_1vector.html#a3e0256dcb4d062b2305ad657f4eb84ee", null ],
-    [ "operator!=", "classmomo_1_1stdish_1_1vector.html#ae028e96edb89fa1ae494a06fbc797a4b", null ],
-    [ "operator<", "classmomo_1_1stdish_1_1vector.html#a8a2b6d35d5e8ff14fa471363210f87b7", null ],
-    [ "operator<=", "classmomo_1_1stdish_1_1vector.html#a884e23a45fab0bb1ffcc2b37a8d1e1a5", null ],
     [ "operator=", "classmomo_1_1stdish_1_1vector.html#ad159547166e5294f0d7b5713ffc09044", null ],
     [ "operator=", "classmomo_1_1stdish_1_1vector.html#a74923651de25d390f13f8441ff2e8648", null ],
     [ "operator=", "classmomo_1_1stdish_1_1vector.html#ac204d8f0797a805a24afc1822966b7ce", null ],
-    [ "operator==", "classmomo_1_1stdish_1_1vector.html#a8ef1e4ed70f8086f1ea8bc8cfc5c4b68", null ],
-    [ "operator>", "classmomo_1_1stdish_1_1vector.html#a1511011175c045f4883916b29b54c65b", null ],
-    [ "operator>=", "classmomo_1_1stdish_1_1vector.html#afc082d01ded26f7de0b061ca64966391", null ],
     [ "operator[]", "classmomo_1_1stdish_1_1vector.html#a804c028b3d1bf814be9538adbf9c82f9", null ],
     [ "operator[]", "classmomo_1_1stdish_1_1vector.html#a81b07a7e4297ca7b74e6956f6e1f9dba", null ],
     [ "pop_back", "classmomo_1_1stdish_1_1vector.html#a6d25ee0ee0298ad49eba4fd9a28d6ed3", null ],
@@ -85,5 +79,7 @@ var classmomo_1_1stdish_1_1vector =
     [ "swap", "classmomo_1_1stdish_1_1vector.html#ad614897826c8b27adefe664a3f179533", null ],
     [ "erase", "classmomo_1_1stdish_1_1vector.html#a78473bdf280618b9856a7782d62781b7", null ],
     [ "erase_if", "classmomo_1_1stdish_1_1vector.html#a94dfe159a14ca310c4adcc28c62f5ed3", null ],
+    [ "operator<", "classmomo_1_1stdish_1_1vector.html#aa35c4b1adc5edf68096cd510574f4abb", null ],
+    [ "operator==", "classmomo_1_1stdish_1_1vector.html#a6229bd265d06b79dd30c248254f3d2a9", null ],
     [ "swap", "classmomo_1_1stdish_1_1vector.html#afe6133d2d15d741f75108c59fc242655", null ]
 ];

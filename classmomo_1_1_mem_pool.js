@@ -11,7 +11,7 @@ var classmomo_1_1_mem_pool =
     [ "~MemPool", "classmomo_1_1_mem_pool.html#aea5d00b602a5ee058ea1aed1225ed9d6", null ],
     [ "Allocate", "classmomo_1_1_mem_pool.html#aec64c2fb059a9e91353d369869f4d138", null ],
     [ "CanDeallocateAll", "classmomo_1_1_mem_pool.html#a3f8882847081b367aacbe1381c30e491", null ],
-    [ "Deallocate", "classmomo_1_1_mem_pool.html#aa3385f9b1a2942357168fbe3b8863e5c", null ],
+    [ "Deallocate", "classmomo_1_1_mem_pool.html#afe38730e92687dfb8d1033656194c9c1", null ],
     [ "DeallocateAll", "classmomo_1_1_mem_pool.html#a726364d56e0ce68af3156960aa8757b9", null ],
     [ "DeallocateIf", "classmomo_1_1_mem_pool.html#afbf532d8c4418e21a5b7ee42d068c314", null ],
     [ "GetAllocateCount", "classmomo_1_1_mem_pool.html#a1e6e1115b371963413c4498a712f3907", null ],

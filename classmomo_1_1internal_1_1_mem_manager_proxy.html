@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -114,13 +114,15 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aacbd74e64633db8d726870bf6b2f999f"><td class="memTemplParams" colspan="2">template&lt;typename ResObject , typename... ResObjectArgs&gt; </td></tr>
 <tr class="memitem:aacbd74e64633db8d726870bf6b2f999f"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#aacbd74e64633db8d726870bf6b2f999f">AllocateCreate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, ResObjectArgs &amp;&amp;... resObjectArgs)</td></tr>
 <tr class="separator:aacbd74e64633db8d726870bf6b2f999f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab897511927185dc52af650b4bcf259ed"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#ab897511927185dc52af650b4bcf259ed">Deallocate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, void *ptr, size_t size) noexcept</td></tr>
-<tr class="separator:ab897511927185dc52af650b4bcf259ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a520be3792b1e8ce3ea323126d97aeb73"><td class="memTemplParams" colspan="2">template&lt;typename ResObject  = void&gt; </td></tr>
-<tr class="memitem:a520be3792b1e8ce3ea323126d97aeb73"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a520be3792b1e8ce3ea323126d97aeb73">Reallocate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, void *ptr, size_t size, size_t newSize)</td></tr>
-<tr class="separator:a520be3792b1e8ce3ea323126d97aeb73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae98b8ca32a867f2296a45be153692445"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#ae98b8ca32a867f2296a45be153692445">ReallocateInplace</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, void *ptr, size_t size, size_t newSize) noexcept</td></tr>
-<tr class="separator:ae98b8ca32a867f2296a45be153692445"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a269e42a090b7c3dcc597f3a737db8876"><td class="memTemplParams" colspan="2">template&lt;typename Object &gt; </td></tr>
+<tr class="memitem:a269e42a090b7c3dcc597f3a737db8876"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a269e42a090b7c3dcc597f3a737db8876">Deallocate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, Object *ptr, size_t size) noexcept</td></tr>
+<tr class="separator:a269e42a090b7c3dcc597f3a737db8876"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2056403d695273fe90f339928b48a664"><td class="memTemplParams" colspan="2">template&lt;typename Object &gt; </td></tr>
+<tr class="memitem:a2056403d695273fe90f339928b48a664"><td class="memTemplItemLeft" align="right" valign="top">static Object *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a2056403d695273fe90f339928b48a664">Reallocate</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, Object *ptr, size_t size, size_t newSize)</td></tr>
+<tr class="separator:a2056403d695273fe90f339928b48a664"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a553706d5983ecb446b6b35d5719d2cdd"><td class="memTemplParams" colspan="2">template&lt;typename Object &gt; </td></tr>
+<tr class="memitem:a553706d5983ecb446b6b35d5719d2cdd"><td class="memTemplItemLeft" align="right" valign="top">static Object *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a553706d5983ecb446b6b35d5719d2cdd">ReallocateInplace</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager, Object *ptr, size_t size, size_t newSize) noexcept</td></tr>
+<tr class="separator:a553706d5983ecb446b6b35d5719d2cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaf7518c8df0dedd89b22ffcd06a30da"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#aeaf7518c8df0dedd89b22ffcd06a30da">IsEqual</a> (const <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager1, const <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager2) noexcept</td></tr>
 <tr class="separator:aeaf7518c8df0dedd89b22ffcd06a30da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b48122d680b348c0f6040a93ef68edf"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a4b48122d680b348c0f6040a93ef68edf">Assign</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&amp;srcMemManager, <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;dstMemManager) noexcept</td></tr>
@@ -271,13 +273,15 @@ template&lt;typename TMemManager &gt; </div>
 
 </div>
 </div>
-<a id="ab897511927185dc52af650b4bcf259ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab897511927185dc52af650b4bcf259ed">&#9670;&nbsp;</a></span>Deallocate()</h2>
+<a id="a269e42a090b7c3dcc597f3a737db8876"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a269e42a090b7c3dcc597f3a737db8876">&#9670;&nbsp;</a></span>Deallocate()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TMemManager &gt; </div>
+<div class="memtemplate">
+template&lt;typename Object &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -291,7 +295,7 @@ template&lt;typename TMemManager &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">void *&#160;</td>
+          <td class="paramtype">Object *&#160;</td>
           <td class="paramname"><em>ptr</em>, </td>
         </tr>
         <tr>
@@ -373,21 +377,21 @@ template&lt;typename TMemManager &gt; </div>
 
 </div>
 </div>
-<a id="a520be3792b1e8ce3ea323126d97aeb73"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a520be3792b1e8ce3ea323126d97aeb73">&#9670;&nbsp;</a></span>Reallocate()</h2>
+<a id="a2056403d695273fe90f339928b48a664"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2056403d695273fe90f339928b48a664">&#9670;&nbsp;</a></span>Reallocate()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TMemManager &gt; </div>
 <div class="memtemplate">
-template&lt;typename ResObject  = void&gt; </div>
+template&lt;typename Object &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static ResObject* <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html">momo::internal::MemManagerProxy</a>&lt; TMemManager &gt;::Reallocate </td>
+          <td class="memname">static Object* <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html">momo::internal::MemManagerProxy</a>&lt; TMemManager &gt;::Reallocate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
@@ -395,7 +399,7 @@ template&lt;typename ResObject  = void&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">void *&#160;</td>
+          <td class="paramtype">Object *&#160;</td>
           <td class="paramname"><em>ptr</em>, </td>
         </tr>
         <tr>
@@ -425,19 +429,21 @@ template&lt;typename ResObject  = void&gt; </div>
 
 </div>
 </div>
-<a id="ae98b8ca32a867f2296a45be153692445"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae98b8ca32a867f2296a45be153692445">&#9670;&nbsp;</a></span>ReallocateInplace()</h2>
+<a id="a553706d5983ecb446b6b35d5719d2cdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a553706d5983ecb446b6b35d5719d2cdd">&#9670;&nbsp;</a></span>ReallocateInplace()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TMemManager &gt; </div>
+<div class="memtemplate">
+template&lt;typename Object &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static bool <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html">momo::internal::MemManagerProxy</a>&lt; TMemManager &gt;::ReallocateInplace </td>
+          <td class="memname">static Object* <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html">momo::internal::MemManagerProxy</a>&lt; TMemManager &gt;::ReallocateInplace </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&#160;</td>
           <td class="paramname"><em>memManager</em>, </td>
@@ -445,7 +451,7 @@ template&lt;typename TMemManager &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">void *&#160;</td>
+          <td class="paramtype">Object *&#160;</td>
           <td class="paramname"><em>ptr</em>, </td>
         </tr>
         <tr>

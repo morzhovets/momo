@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -120,9 +120,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa6a19a925cceb53b352841ac89848a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5905057614b8a70b4b24e9bab3a901f3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a5905057614b8a70b4b24e9bab3a901f3">SegmentedArray</a> (size_t count, const <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a> &amp;item, <a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a> memManager=<a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a>())</td></tr>
 <tr class="separator:a5905057614b8a70b4b24e9bab3a901f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc7afa9fdf4ccd20be1a15663aa3d00a"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;ArgIterator&gt;::iterator_category&gt; </td></tr>
-<tr class="memitem:abc7afa9fdf4ccd20be1a15663aa3d00a"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#abc7afa9fdf4ccd20be1a15663aa3d00a">SegmentedArray</a> (ArgIterator begin, ArgIterator end, <a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a> memManager=<a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a>())</td></tr>
-<tr class="separator:abc7afa9fdf4ccd20be1a15663aa3d00a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a346037cbafc7c3795d4097b697d56eab"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(*std::declval&lt;ArgIterator&gt;())&gt; </td></tr>
+<tr class="memitem:a346037cbafc7c3795d4097b697d56eab"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a346037cbafc7c3795d4097b697d56eab">SegmentedArray</a> (ArgIterator begin, ArgSentinel end, <a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a> memManager=<a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a>())</td></tr>
+<tr class="separator:a346037cbafc7c3795d4097b697d56eab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5684660435f8751f48a604a0721da81"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#ac5684660435f8751f48a604a0721da81">SegmentedArray</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a> &gt; items)</td></tr>
 <tr class="separator:ac5684660435f8751f48a604a0721da81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a832ef4690aad0cefe8285599ac95e8c0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a832ef4690aad0cefe8285599ac95e8c0">SegmentedArray</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a> &gt; items, <a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a> memManager)</td></tr>
@@ -157,9 +157,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2f87ab2f2080f9c66252e782054e3c83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc267c42cb8d23b6ef9115a1de70046c"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#acc267c42cb8d23b6ef9115a1de70046c">GetCount</a> () const noexcept</td></tr>
 <tr class="separator:acc267c42cb8d23b6ef9115a1de70046c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac30f4aff017da240e9f1a4262ffcdb74"><td class="memTemplParams" colspan="2">template&lt;typename MultiItemCreator &gt; </td></tr>
-<tr class="memitem:ac30f4aff017da240e9f1a4262ffcdb74"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#ac30f4aff017da240e9f1a4262ffcdb74">SetCountCrt</a> (size_t count, const MultiItemCreator &amp;multiItemCreator)</td></tr>
-<tr class="separator:ac30f4aff017da240e9f1a4262ffcdb74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefda631dfeeb46d304079d7380ee259d"><td class="memTemplParams" colspan="2">template&lt;typename ItemMultiCreator &gt; </td></tr>
+<tr class="memitem:aefda631dfeeb46d304079d7380ee259d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#aefda631dfeeb46d304079d7380ee259d">SetCountCrt</a> (size_t count, const ItemMultiCreator &amp;itemMultiCreator)</td></tr>
+<tr class="separator:aefda631dfeeb46d304079d7380ee259d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7015fce11bb75487e992e26e15b1906c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a7015fce11bb75487e992e26e15b1906c">SetCount</a> (size_t count)</td></tr>
 <tr class="separator:a7015fce11bb75487e992e26e15b1906c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a446d5b2d1baebc4e69cfbfe044f55e42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a446d5b2d1baebc4e69cfbfe044f55e42">SetCount</a> (size_t count, const <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a> &amp;item)</td></tr>
@@ -216,9 +216,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a085aef832dee995014f876c520ccfc6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa50c0abb589cc745018773438a0e37ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#aa50c0abb589cc745018773438a0e37ed">Insert</a> (size_t index, size_t count, const <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a> &amp;item)</td></tr>
 <tr class="separator:aa50c0abb589cc745018773438a0e37ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28603704ea050c7a329fe43bd330937b"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;ArgIterator&gt;::iterator_category&gt; </td></tr>
-<tr class="memitem:a28603704ea050c7a329fe43bd330937b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a28603704ea050c7a329fe43bd330937b">Insert</a> (size_t index, ArgIterator begin, ArgIterator end)</td></tr>
-<tr class="separator:a28603704ea050c7a329fe43bd330937b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20290364ad0cfd5aae13cb3dd06dff5c"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(*std::declval&lt;ArgIterator&gt;())&gt; </td></tr>
+<tr class="memitem:a20290364ad0cfd5aae13cb3dd06dff5c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a20290364ad0cfd5aae13cb3dd06dff5c">Insert</a> (size_t index, ArgIterator begin, ArgSentinel end)</td></tr>
+<tr class="separator:a20290364ad0cfd5aae13cb3dd06dff5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94163cb42a4380c2403e91542ad4388c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a94163cb42a4380c2403e91542ad4388c">Insert</a> (size_t index, std::initializer_list&lt; <a class="el" href="classmomo_1_1_segmented_array.html#aa70829d425866e2b74b37d36199e0ff1">Item</a> &gt; items)</td></tr>
 <tr class="separator:a94163cb42a4380c2403e91542ad4388c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8b0f087105f653219014e4e11b8e9cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#ad8b0f087105f653219014e4e11b8e9cb">RemoveBack</a> (size_t count=1)</td></tr>
@@ -239,9 +239,9 @@ Public Member Functions</h2></td></tr>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a619492a21aad641035dfd715bc8f27de"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1_segmented_array.html">SegmentedArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a619492a21aad641035dfd715bc8f27de">CreateCap</a> (size_t capacity, <a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a> memManager=<a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a>())</td></tr>
 <tr class="separator:a619492a21aad641035dfd715bc8f27de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf0111eee8cafbb8e3b5030e8d2919fd"><td class="memTemplParams" colspan="2">template&lt;typename MultiItemCreator &gt; </td></tr>
-<tr class="memitem:adf0111eee8cafbb8e3b5030e8d2919fd"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1_segmented_array.html">SegmentedArray</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#adf0111eee8cafbb8e3b5030e8d2919fd">CreateCrt</a> (size_t count, const MultiItemCreator &amp;multiItemCreator, <a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a> memManager=<a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a>())</td></tr>
-<tr class="separator:adf0111eee8cafbb8e3b5030e8d2919fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29102e0bce789a57884df1da3af5b289"><td class="memTemplParams" colspan="2">template&lt;typename ItemMultiCreator &gt; </td></tr>
+<tr class="memitem:a29102e0bce789a57884df1da3af5b289"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1_segmented_array.html">SegmentedArray</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array.html#a29102e0bce789a57884df1da3af5b289">CreateCrt</a> (size_t count, const ItemMultiCreator &amp;itemMultiCreator, <a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a> memManager=<a class="el" href="classmomo_1_1_segmented_array.html#a4cff9c161bcfb6dfb942347da4e68fa8">MemManager</a>())</td></tr>
+<tr class="separator:a29102e0bce789a57884df1da3af5b289"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename TItem, typename TMemManager = MemManagerDefault, typename TItemTraits = SegmentedArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings = SegmentedArraySettings&lt;&gt;&gt;<br />
@@ -486,15 +486,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="abc7afa9fdf4ccd20be1a15663aa3d00a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc7afa9fdf4ccd20be1a15663aa3d00a">&#9670;&nbsp;</a></span>SegmentedArray() <span class="overload">[5/11]</span></h2>
+<a id="a346037cbafc7c3795d4097b697d56eab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a346037cbafc7c3795d4097b697d56eab">&#9670;&nbsp;</a></span>SegmentedArray() <span class="overload">[5/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = SegmentedArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = SegmentedArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;ArgIterator&gt;::iterator_category&gt; </div>
+template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(*std::declval&lt;ArgIterator&gt;())&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -508,7 +508,7 @@ template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramtype">ArgSentinel&#160;</td>
           <td class="paramname"><em>end</em>, </td>
         </tr>
         <tr>
@@ -1096,15 +1096,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="adf0111eee8cafbb8e3b5030e8d2919fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf0111eee8cafbb8e3b5030e8d2919fd">&#9670;&nbsp;</a></span>CreateCrt()</h2>
+<a id="a29102e0bce789a57884df1da3af5b289"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29102e0bce789a57884df1da3af5b289">&#9670;&nbsp;</a></span>CreateCrt()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = SegmentedArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = SegmentedArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename MultiItemCreator &gt; </div>
+template&lt;typename ItemMultiCreator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1118,8 +1118,8 @@ template&lt;typename MultiItemCreator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const MultiItemCreator &amp;&#160;</td>
-          <td class="paramname"><em>multiItemCreator</em>, </td>
+          <td class="paramtype">const ItemMultiCreator &amp;&#160;</td>
+          <td class="paramname"><em>itemMultiCreator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1412,15 +1412,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="a28603704ea050c7a329fe43bd330937b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28603704ea050c7a329fe43bd330937b">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/5]</span></h2>
+<a id="a20290364ad0cfd5aae13cb3dd06dff5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20290364ad0cfd5aae13cb3dd06dff5c">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = SegmentedArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = SegmentedArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;ArgIterator&gt;::iterator_category&gt; </div>
+template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(*std::declval&lt;ArgIterator&gt;())&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1440,7 +1440,7 @@ template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramtype">ArgSentinel&#160;</td>
           <td class="paramname"><em>end</em>&#160;</td>
         </tr>
         <tr>
@@ -2065,15 +2065,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="ac30f4aff017da240e9f1a4262ffcdb74"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac30f4aff017da240e9f1a4262ffcdb74">&#9670;&nbsp;</a></span>SetCountCrt()</h2>
+<a id="aefda631dfeeb46d304079d7380ee259d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefda631dfeeb46d304079d7380ee259d">&#9670;&nbsp;</a></span>SetCountCrt()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = SegmentedArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = SegmentedArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename MultiItemCreator &gt; </div>
+template&lt;typename ItemMultiCreator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2087,8 +2087,8 @@ template&lt;typename MultiItemCreator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const MultiItemCreator &amp;&#160;</td>
-          <td class="paramname"><em>multiItemCreator</em>&#160;</td>
+          <td class="paramtype">const ItemMultiCreator &amp;&#160;</td>
+          <td class="paramname"><em>itemMultiCreator</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

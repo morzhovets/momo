@@ -2,6 +2,8 @@ var _user_settings_8h =
 [
     [ "MOMO_ALIGNED_STORAGE", "_user_settings_8h.html#acf1fab8fc3baa0bb4ed7152f34a6ce76", null ],
     [ "MOMO_ASSERT", "_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f", null ],
+    [ "MOMO_CAST_POINTER", "_user_settings_8h.html#a094f676cd5f422d80f3be631dc2add3f", null ],
+    [ "MOMO_CAST_POINTER", "_user_settings_8h.html#a094f676cd5f422d80f3be631dc2add3f", null ],
     [ "MOMO_CHECK_EXCEPTION", "_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846", null ],
     [ "MOMO_CHECK_ITERATOR_VERSION", "_user_settings_8h.html#a4bde5f20e4a900321ff77b25d9cfebb4", null ],
     [ "MOMO_DEFAULT_CHECK_MODE", "_user_settings_8h.html#a61ea4e5dbf67f107ce2a9701a8bcf53a", null ],

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -262,12 +262,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac886db896163e33b1c4b151a05fdbc74"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
 <tr class="memitem:ac886db896163e33b1c4b151a05fdbc74"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#ac886db896163e33b1c4b151a05fdbc74">TryUpdate</a> (<a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a> rowRef, const <a class="el" href="classmomo_1_1_data_table.html#a2f514f81cfbbb8acdf7c0025c71f5459">Column</a>&lt; Item &gt; &amp;column, const <a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">internal::Identity</a>&lt; Item &gt; &amp;newItem)</td></tr>
 <tr class="separator:ac886db896163e33b1c4b151a05fdbc74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0efd83cef703d69b5bfba8224863a7f"><td class="memTemplParams" colspan="2">template&lt;typename RowIterator &gt; </td></tr>
-<tr class="memitem:aa0efd83cef703d69b5bfba8224863a7f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#aa0efd83cef703d69b5bfba8224863a7f">Assign</a> (RowIterator begin, RowIterator end)</td></tr>
-<tr class="separator:aa0efd83cef703d69b5bfba8224863a7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9da80a658c9535136a93c26fa9604af4"><td class="memTemplParams" colspan="2">template&lt;typename RowIterator &gt; </td></tr>
-<tr class="memitem:a9da80a658c9535136a93c26fa9604af4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a9da80a658c9535136a93c26fa9604af4">Remove</a> (RowIterator begin, RowIterator end)</td></tr>
-<tr class="separator:a9da80a658c9535136a93c26fa9604af4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dbd226a483ee7db0dc64751ad842488"><td class="memTemplParams" colspan="2">template&lt;typename RowIterator , typename RowSentinel &gt; </td></tr>
+<tr class="memitem:a8dbd226a483ee7db0dc64751ad842488"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a8dbd226a483ee7db0dc64751ad842488">Assign</a> (RowIterator begin, RowSentinel end)</td></tr>
+<tr class="separator:a8dbd226a483ee7db0dc64751ad842488"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a202a1cab10a63173c1c7745c9b2ca83e"><td class="memTemplParams" colspan="2">template&lt;typename RowIterator , typename RowSentinel &gt; </td></tr>
+<tr class="memitem:a202a1cab10a63173c1c7745c9b2ca83e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a202a1cab10a63173c1c7745c9b2ca83e">Remove</a> (RowIterator begin, RowSentinel end)</td></tr>
+<tr class="separator:a202a1cab10a63173c1c7745c9b2ca83e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae1d95b9a466a3d7a06554f0a56662a1"><td class="memTemplParams" colspan="2">template&lt;typename RowFilter &gt; </td></tr>
 <tr class="memitem:aae1d95b9a466a3d7a06554f0a56662a1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const RowFilter &amp;, bool, <a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a> &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#aae1d95b9a466a3d7a06554f0a56662a1">Remove</a> (const RowFilter &amp;rowFilter)</td></tr>
 <tr class="separator:aae1d95b9a466a3d7a06554f0a56662a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -368,56 +368,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad1d6bd4bbfa1453ff4688df4df9967db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa46f430567acbe0287d93aa9b37837db"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#aa46f430567acbe0287d93aa9b37837db">MakeMutableReference</a> (<a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a> rowRef)</td></tr>
 <tr class="separator:aa46f430567acbe0287d93aa9b37837db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3acf304a3a598558598e9a3ed9aa81c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#ac3acf304a3a598558598e9a3ed9aa81c">AddRow</a> (<a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;row)</td></tr>
-<tr class="separator:ac3acf304a3a598558598e9a3ed9aa81c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca9d0f4fd6fbb0e240f08a3522e685d5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#aca9d0f4fd6fbb0e240f08a3522e685d5">TryAddRow</a> (<a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;row)</td></tr>
-<tr class="separator:aca9d0f4fd6fbb0e240f08a3522e685d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d7acea76bbb5483344db65fe03b8701"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a7d7acea76bbb5483344db65fe03b8701">InsertRow</a> (size_t rowNumber, <a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;row)</td></tr>
-<tr class="separator:a7d7acea76bbb5483344db65fe03b8701"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd970696d8a6247e3219290496698947"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#acd970696d8a6247e3219290496698947">TryInsertRow</a> (size_t rowNumber, <a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;row)</td></tr>
-<tr class="separator:acd970696d8a6247e3219290496698947"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a235952c449c7540c88237ec085349de7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a235952c449c7540c88237ec085349de7">UpdateRow</a> (size_t rowNumber, <a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;row)</td></tr>
-<tr class="separator:a235952c449c7540c88237ec085349de7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a641f97ce9f1577fc223aa4a6ba55cbb7"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:a641f97ce9f1577fc223aa4a6ba55cbb7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a641f97ce9f1577fc223aa4a6ba55cbb7">UpdateRow</a> (<a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a> rowRef, const <a class="el" href="classmomo_1_1_data_table.html#a2f514f81cfbbb8acdf7c0025c71f5459">Column</a>&lt; Item &gt; &amp;column, <a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">internal::Identity</a>&lt; Item &gt; &amp;&amp;newItem)</td></tr>
-<tr class="separator:a641f97ce9f1577fc223aa4a6ba55cbb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa16dffb37bf9ae8d9ed25a870eff2c05"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:aa16dffb37bf9ae8d9ed25a870eff2c05"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#aa16dffb37bf9ae8d9ed25a870eff2c05">UpdateRow</a> (<a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a> rowRef, const <a class="el" href="classmomo_1_1_data_table.html#a2f514f81cfbbb8acdf7c0025c71f5459">Column</a>&lt; Item &gt; &amp;column, const <a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">internal::Identity</a>&lt; Item &gt; &amp;newItem)</td></tr>
-<tr class="separator:aa16dffb37bf9ae8d9ed25a870eff2c05"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d36a5885bfe4ac3457b4c001459302b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a2d36a5885bfe4ac3457b4c001459302b">TryUpdateRow</a> (size_t rowNumber, <a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;row)</td></tr>
-<tr class="separator:a2d36a5885bfe4ac3457b4c001459302b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2c26e787eeff69e5b08fae590d2da39"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:ae2c26e787eeff69e5b08fae590d2da39"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#ae2c26e787eeff69e5b08fae590d2da39">TryUpdateRow</a> (<a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a> rowRef, const <a class="el" href="classmomo_1_1_data_table.html#a2f514f81cfbbb8acdf7c0025c71f5459">Column</a>&lt; Item &gt; &amp;column, <a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">internal::Identity</a>&lt; Item &gt; &amp;&amp;newItem)</td></tr>
-<tr class="separator:ae2c26e787eeff69e5b08fae590d2da39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af09e96cc90a963666771a8ff4a0be428"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
-<tr class="memitem:af09e96cc90a963666771a8ff4a0be428"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#af09e96cc90a963666771a8ff4a0be428">TryUpdateRow</a> (<a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a> rowRef, const <a class="el" href="classmomo_1_1_data_table.html#a2f514f81cfbbb8acdf7c0025c71f5459">Column</a>&lt; Item &gt; &amp;column, const <a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">internal::Identity</a>&lt; Item &gt; &amp;newItem)</td></tr>
-<tr class="separator:af09e96cc90a963666771a8ff4a0be428"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3ece75676a0b9a419cf5729042c5024"><td class="memTemplParams" colspan="2">template&lt;typename RowIterator &gt; </td></tr>
-<tr class="memitem:aa3ece75676a0b9a419cf5729042c5024"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#aa3ece75676a0b9a419cf5729042c5024">AssignRows</a> (RowIterator begin, RowIterator end)</td></tr>
-<tr class="separator:aa3ece75676a0b9a419cf5729042c5024"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4eee75a233751e31d4b57f37cd5045a9"><td class="memTemplParams" colspan="2">template&lt;typename RowIterator &gt; </td></tr>
-<tr class="memitem:a4eee75a233751e31d4b57f37cd5045a9"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a4eee75a233751e31d4b57f37cd5045a9">RemoveRows</a> (RowIterator begin, RowIterator end)</td></tr>
-<tr class="separator:a4eee75a233751e31d4b57f37cd5045a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa05ced2b1c385c32d80b7c0b5168a085"><td class="memTemplParams" colspan="2">template&lt;typename RowFilter &gt; </td></tr>
-<tr class="memitem:aa05ced2b1c385c32d80b7c0b5168a085"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#aa05ced2b1c385c32d80b7c0b5168a085">RemoveRows</a> (const RowFilter &amp;rowFilter)</td></tr>
-<tr class="separator:aa05ced2b1c385c32d80b7c0b5168a085"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c5399c883f5df4074c99c757f2fad37"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a5c5399c883f5df4074c99c757f2fad37">RemoveRow</a> (<a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a> rowRef)</td></tr>
-<tr class="separator:a5c5399c883f5df4074c99c757f2fad37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d955604bd13ef82700f90f9632986c0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a3d955604bd13ef82700f90f9632986c0">RemoveRow</a> (size_t rowNumber, bool keepRowOrder=true)</td></tr>
-<tr class="separator:a3d955604bd13ef82700f90f9632986c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a779f6bf30eb3adb5a79864c4f19a6143"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a779f6bf30eb3adb5a79864c4f19a6143">ExtractRow</a> (<a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a> rowRef)</td></tr>
-<tr class="separator:a779f6bf30eb3adb5a79864c4f19a6143"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5ccaae2d0ae64997ec0a76131e1e464"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#ac5ccaae2d0ae64997ec0a76131e1e464">ExtractRow</a> (size_t rowNumber, bool keepRowOrder=true)</td></tr>
-<tr class="separator:ac5ccaae2d0ae64997ec0a76131e1e464"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c6bda1db1e553e833afef3f0016acb3"><td class="memTemplParams" colspan="2">template&lt;typename... Items&gt; </td></tr>
-<tr class="memitem:a6c6bda1db1e553e833afef3f0016acb3"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;(sizeof...(Items) &gt; 1), <a class="el" href="classmomo_1_1_data_table.html#a4b35c5685ff26fd878d84c002675bb60">ConstSelection</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#a6c6bda1db1e553e833afef3f0016acb3">Select</a> (<a class="el" href="classmomo_1_1_data_table.html#ab4a3c10a71eb348ddeca3d49f4683a9c">Equality</a>&lt; Items &gt;... equals) const</td></tr>
-<tr class="separator:a6c6bda1db1e553e833afef3f0016acb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abec1dd005ac47bc2bf571df1e2d23e54"><td class="memTemplParams" colspan="2">template&lt;typename... Items&gt; </td></tr>
-<tr class="memitem:abec1dd005ac47bc2bf571df1e2d23e54"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;(sizeof...(Items) &gt; 1), <a class="el" href="classmomo_1_1_data_table.html#a796b6d042198d8017f03e4d88ff4993f">Selection</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#abec1dd005ac47bc2bf571df1e2d23e54">Select</a> (<a class="el" href="classmomo_1_1_data_table.html#ab4a3c10a71eb348ddeca3d49f4683a9c">Equality</a>&lt; Items &gt;... equals)</td></tr>
-<tr class="separator:abec1dd005ac47bc2bf571df1e2d23e54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab00d843a3c09c33e6e0b14e4163593a5"><td class="memTemplParams" colspan="2">template&lt;typename... Items&gt; </td></tr>
-<tr class="memitem:ab00d843a3c09c33e6e0b14e4163593a5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;(sizeof...(Items) &gt; 1), size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_table.html#ab00d843a3c09c33e6e0b14e4163593a5">SelectCount</a> (<a class="el" href="classmomo_1_1_data_table.html#ab4a3c10a71eb348ddeca3d49f4683a9c">Equality</a>&lt; Items &gt;... equals) const</td></tr>
-<tr class="separator:ab00d843a3c09c33e6e0b14e4163593a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename TColumnList = DataColumnList&lt;&gt;, typename TDataTraits = DataTraits&gt;<br />
@@ -1108,7 +1058,7 @@ template&lt;typename Item , typename... Items&gt; </div>
 </div>
 </div>
 <a id="ac3349e418a64b77e4f8d1347d89e8686"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3349e418a64b77e4f8d1347d89e8686">&#9670;&nbsp;</a></span>AddRow() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3349e418a64b77e4f8d1347d89e8686">&#9670;&nbsp;</a></span>AddRow()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1136,34 +1086,6 @@ template&lt;typename Item , typename ItemArg , typename... Items, typename... It
           <td></td>
           <td>)</td>
           <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac3acf304a3a598558598e9a3ed9aa81c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3acf304a3a598558598e9a3ed9aa81c">&#9670;&nbsp;</a></span>AddRow() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::AddRow </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>row</em></td><td>)</td>
-          <td></td>
         </tr>
       </table>
   </td>
@@ -1215,15 +1137,15 @@ template&lt;typename Item , typename... Items&gt; </div>
 
 </div>
 </div>
-<a id="aa0efd83cef703d69b5bfba8224863a7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa0efd83cef703d69b5bfba8224863a7f">&#9670;&nbsp;</a></span>Assign()</h2>
+<a id="a8dbd226a483ee7db0dc64751ad842488"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8dbd226a483ee7db0dc64751ad842488">&#9670;&nbsp;</a></span>Assign()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
 <div class="memtemplate">
-template&lt;typename RowIterator &gt; </div>
+template&lt;typename RowIterator , typename RowSentinel &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1237,47 +1159,7 @@ template&lt;typename RowIterator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RowIterator&#160;</td>
-          <td class="paramname"><em>end</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa3ece75676a0b9a419cf5729042c5024"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3ece75676a0b9a419cf5729042c5024">&#9670;&nbsp;</a></span>AssignRows()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename RowIterator &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> void <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::AssignRows </td>
-          <td>(</td>
-          <td class="paramtype">RowIterator&#160;</td>
-          <td class="paramname"><em>begin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">RowIterator&#160;</td>
+          <td class="paramtype">RowSentinel&#160;</td>
           <td class="paramname"><em>end</em>&#160;</td>
         </tr>
         <tr>
@@ -1393,72 +1275,6 @@ template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::Extract </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>rowNumber</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>keepRowOrder</em> = <code>true</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a779f6bf30eb3adb5a79864c4f19a6143"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a779f6bf30eb3adb5a79864c4f19a6143">&#9670;&nbsp;</a></span>ExtractRow() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::ExtractRow </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a>&#160;</td>
-          <td class="paramname"><em>rowRef</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac5ccaae2d0ae64997ec0a76131e1e464"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5ccaae2d0ae64997ec0a76131e1e464">&#9670;&nbsp;</a></span>ExtractRow() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::ExtractRow </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>rowNumber</em>, </td>
@@ -2269,7 +2085,7 @@ template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits
 </div>
 </div>
 <a id="a26db477b4bcbe9c84a8770a99a553c86"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26db477b4bcbe9c84a8770a99a553c86">&#9670;&nbsp;</a></span>InsertRow() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a26db477b4bcbe9c84a8770a99a553c86">&#9670;&nbsp;</a></span>InsertRow()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2298,44 +2114,6 @@ template&lt;typename Item , typename ItemArg , typename... Items, typename... It
           <td></td>
           <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#a62d5a1ea743f7d95484dc07c5b036472">Assignment</a>&lt; Items, ItemArgs &gt;...&#160;</td>
           <td class="paramname"><em>assigns</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a7d7acea76bbb5483344db65fe03b8701"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d7acea76bbb5483344db65fe03b8701">&#9670;&nbsp;</a></span>InsertRow() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::InsertRow </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>rowNumber</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>row</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2924,15 +2702,15 @@ template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits
 
 </div>
 </div>
-<a id="a9da80a658c9535136a93c26fa9604af4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9da80a658c9535136a93c26fa9604af4">&#9670;&nbsp;</a></span>Remove() <span class="overload">[3/4]</span></h2>
+<a id="a202a1cab10a63173c1c7745c9b2ca83e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a202a1cab10a63173c1c7745c9b2ca83e">&#9670;&nbsp;</a></span>Remove() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
 <div class="memtemplate">
-template&lt;typename RowIterator &gt; </div>
+template&lt;typename RowIterator , typename RowSentinel &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2946,7 +2724,7 @@ template&lt;typename RowIterator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">RowIterator&#160;</td>
+          <td class="paramtype">RowSentinel&#160;</td>
           <td class="paramname"><em>end</em>&#160;</td>
         </tr>
         <tr>
@@ -3029,142 +2807,6 @@ template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits
 
 </div>
 </div>
-<a id="a5c5399c883f5df4074c99c757f2fad37"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c5399c883f5df4074c99c757f2fad37">&#9670;&nbsp;</a></span>RemoveRow() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> void <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::RemoveRow </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a>&#160;</td>
-          <td class="paramname"><em>rowRef</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3d955604bd13ef82700f90f9632986c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d955604bd13ef82700f90f9632986c0">&#9670;&nbsp;</a></span>RemoveRow() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> void <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::RemoveRow </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>rowNumber</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>keepRowOrder</em> = <code>true</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa05ced2b1c385c32d80b7c0b5168a085"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa05ced2b1c385c32d80b7c0b5168a085">&#9670;&nbsp;</a></span>RemoveRows() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename RowFilter &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> size_t <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::RemoveRows </td>
-          <td>(</td>
-          <td class="paramtype">const RowFilter &amp;&#160;</td>
-          <td class="paramname"><em>rowFilter</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a4eee75a233751e31d4b57f37cd5045a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4eee75a233751e31d4b57f37cd5045a9">&#9670;&nbsp;</a></span>RemoveRows() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename RowIterator &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> void <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::RemoveRows </td>
-          <td>(</td>
-          <td class="paramtype">RowIterator&#160;</td>
-          <td class="paramname"><em>begin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">RowIterator&#160;</td>
-          <td class="paramname"><em>end</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a1f6157915391c7e6e52d58fc54a5cbc5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1f6157915391c7e6e52d58fc54a5cbc5">&#9670;&nbsp;</a></span>RemoveUniqueHashIndexes()</h2>
 
@@ -3221,7 +2863,7 @@ template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits
 </div>
 </div>
 <a id="a6f16a5775e917db43c97f4f740874495"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6f16a5775e917db43c97f4f740874495">&#9670;&nbsp;</a></span>Select() <span class="overload">[1/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f16a5775e917db43c97f4f740874495">&#9670;&nbsp;</a></span>Select() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3267,7 +2909,7 @@ template&lt;typename RowFilter , typename Item , typename... Items&gt; </div>
 </div>
 </div>
 <a id="a8553989d38148226021956c13fb0ec0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8553989d38148226021956c13fb0ec0e">&#9670;&nbsp;</a></span>Select() <span class="overload">[2/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8553989d38148226021956c13fb0ec0e">&#9670;&nbsp;</a></span>Select() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3313,7 +2955,7 @@ template&lt;typename RowFilter , typename Item , typename... Items&gt; </div>
 </div>
 </div>
 <a id="a26f49dc0b654191faef33ad0eb0176a4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26f49dc0b654191faef33ad0eb0176a4">&#9670;&nbsp;</a></span>Select() <span class="overload">[3/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a26f49dc0b654191faef33ad0eb0176a4">&#9670;&nbsp;</a></span>Select() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3343,7 +2985,7 @@ template&lt;typename RowFilter  = EmptyRowFilter&gt; </div>
 </div>
 </div>
 <a id="a3687da6a9bbf3f97612b62fb87350972"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3687da6a9bbf3f97612b62fb87350972">&#9670;&nbsp;</a></span>Select() <span class="overload">[4/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a3687da6a9bbf3f97612b62fb87350972">&#9670;&nbsp;</a></span>Select() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3373,7 +3015,7 @@ template&lt;typename RowFilter  = EmptyRowFilter&gt; </div>
 </div>
 </div>
 <a id="adbfb43dff35f167194d3ea198d9d8728"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adbfb43dff35f167194d3ea198d9d8728">&#9670;&nbsp;</a></span>Select() <span class="overload">[5/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#adbfb43dff35f167194d3ea198d9d8728">&#9670;&nbsp;</a></span>Select() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3413,7 +3055,7 @@ template&lt;typename RowFilter  = EmptyRowFilter, typename... Items&gt; </div>
 </div>
 </div>
 <a id="a733a3669709b660f30751b0bc2e93ca2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a733a3669709b660f30751b0bc2e93ca2">&#9670;&nbsp;</a></span>Select() <span class="overload">[6/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a733a3669709b660f30751b0bc2e93ca2">&#9670;&nbsp;</a></span>Select() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3452,68 +3094,8 @@ template&lt;typename RowFilter  = EmptyRowFilter, typename... Items&gt; </div>
 
 </div>
 </div>
-<a id="abec1dd005ac47bc2bf571df1e2d23e54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abec1dd005ac47bc2bf571df1e2d23e54">&#9670;&nbsp;</a></span>Select() <span class="overload">[7/8]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename... Items&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;(sizeof...(Items) &gt; 1), <a class="el" href="classmomo_1_1_data_table.html#a796b6d042198d8017f03e4d88ff4993f">Selection</a>&gt; <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::Select </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#ab4a3c10a71eb348ddeca3d49f4683a9c">Equality</a>&lt; Items &gt;...&#160;</td>
-          <td class="paramname"><em>equals</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a6c6bda1db1e553e833afef3f0016acb3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c6bda1db1e553e833afef3f0016acb3">&#9670;&nbsp;</a></span>Select() <span class="overload">[8/8]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename... Items&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;(sizeof...(Items) &gt; 1), <a class="el" href="classmomo_1_1_data_table.html#a4b35c5685ff26fd878d84c002675bb60">ConstSelection</a>&gt; <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::Select </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#ab4a3c10a71eb348ddeca3d49f4683a9c">Equality</a>&lt; Items &gt;...&#160;</td>
-          <td class="paramname"><em>equals</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a9503d3010f4eb103864301ec8b62a1a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9503d3010f4eb103864301ec8b62a1a5">&#9670;&nbsp;</a></span>SelectCount() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a9503d3010f4eb103864301ec8b62a1a5">&#9670;&nbsp;</a></span>SelectCount() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3559,7 +3141,7 @@ template&lt;typename RowFilter , typename Item , typename... Items&gt; </div>
 </div>
 </div>
 <a id="a6290b777a0950ab713a55489dcdfb4e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6290b777a0950ab713a55489dcdfb4e4">&#9670;&nbsp;</a></span>SelectCount() <span class="overload">[2/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6290b777a0950ab713a55489dcdfb4e4">&#9670;&nbsp;</a></span>SelectCount() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3589,7 +3171,7 @@ template&lt;typename RowFilter  = EmptyRowFilter&gt; </div>
 </div>
 </div>
 <a id="af6b1352c28ffa076b8e050fb79b4b3e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af6b1352c28ffa076b8e050fb79b4b3e2">&#9670;&nbsp;</a></span>SelectCount() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af6b1352c28ffa076b8e050fb79b4b3e2">&#9670;&nbsp;</a></span>SelectCount() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3617,36 +3199,6 @@ template&lt;typename RowFilter  = EmptyRowFilter, typename... Items&gt; </div>
           <td></td>
           <td>)</td>
           <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ab00d843a3c09c33e6e0b14e4163593a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab00d843a3c09c33e6e0b14e4163593a5">&#9670;&nbsp;</a></span>SelectCount() <span class="overload">[4/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename... Items&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;(sizeof...(Items) &gt; 1), size_t&gt; <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::SelectCount </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#ab4a3c10a71eb348ddeca3d49f4683a9c">Equality</a>&lt; Items &gt;...&#160;</td>
-          <td class="paramname"><em>equals</em></td><td>)</td>
-          <td> const</td>
         </tr>
       </table>
   </td>
@@ -3769,7 +3321,7 @@ template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits
 </div>
 </div>
 <a id="aa262f43bbecae3c9bbdd6b5f136cb7a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa262f43bbecae3c9bbdd6b5f136cb7a5">&#9670;&nbsp;</a></span>TryAddRow() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa262f43bbecae3c9bbdd6b5f136cb7a5">&#9670;&nbsp;</a></span>TryAddRow()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3797,34 +3349,6 @@ template&lt;typename Item , typename ItemArg , typename... Items, typename... It
           <td></td>
           <td>)</td>
           <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aca9d0f4fd6fbb0e240f08a3522e685d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca9d0f4fd6fbb0e240f08a3522e685d5">&#9670;&nbsp;</a></span>TryAddRow() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::TryAddRow </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>row</em></td><td>)</td>
-          <td></td>
         </tr>
       </table>
   </td>
@@ -3875,7 +3399,7 @@ template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits
 </div>
 </div>
 <a id="ac1c7447d463e0bc1791d16c97e9d177d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac1c7447d463e0bc1791d16c97e9d177d">&#9670;&nbsp;</a></span>TryInsertRow() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1c7447d463e0bc1791d16c97e9d177d">&#9670;&nbsp;</a></span>TryInsertRow()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3904,44 +3428,6 @@ template&lt;typename Item , typename ItemArg , typename... Items, typename... It
           <td></td>
           <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#a62d5a1ea743f7d95484dc07c5b036472">Assignment</a>&lt; Items, ItemArgs &gt;...&#160;</td>
           <td class="paramname"><em>assigns</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="acd970696d8a6247e3219290496698947"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd970696d8a6247e3219290496698947">&#9670;&nbsp;</a></span>TryInsertRow() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::TryInsertRow </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>rowNumber</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>row</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -4088,136 +3574,6 @@ template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits
 
 </div>
 </div>
-<a id="af09e96cc90a963666771a8ff4a0be428"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af09e96cc90a963666771a8ff4a0be428">&#9670;&nbsp;</a></span>TryUpdateRow() <span class="overload">[1/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename Item &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::TryUpdateRow </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a>&#160;</td>
-          <td class="paramname"><em>rowRef</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_table.html#a2f514f81cfbbb8acdf7c0025c71f5459">Column</a>&lt; Item &gt; &amp;&#160;</td>
-          <td class="paramname"><em>column</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">internal::Identity</a>&lt; Item &gt; &amp;&#160;</td>
-          <td class="paramname"><em>newItem</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae2c26e787eeff69e5b08fae590d2da39"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2c26e787eeff69e5b08fae590d2da39">&#9670;&nbsp;</a></span>TryUpdateRow() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename Item &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::TryUpdateRow </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a>&#160;</td>
-          <td class="paramname"><em>rowRef</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_table.html#a2f514f81cfbbb8acdf7c0025c71f5459">Column</a>&lt; Item &gt; &amp;&#160;</td>
-          <td class="paramname"><em>column</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">internal::Identity</a>&lt; Item &gt; &amp;&amp;&#160;</td>
-          <td class="paramname"><em>newItem</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a2d36a5885bfe4ac3457b4c001459302b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d36a5885bfe4ac3457b4c001459302b">&#9670;&nbsp;</a></span>TryUpdateRow() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table_1_1_try_result.html">TryResult</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::TryUpdateRow </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>rowNumber</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>row</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a1f61fcaf9fc272adbd580d73cba45750"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1f61fcaf9fc272adbd580d73cba45750">&#9670;&nbsp;</a></span>Update() <span class="overload">[1/3]</span></h2>
 
@@ -4323,136 +3679,6 @@ template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::Update </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>rowNumber</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#accee05ca9aec8f3b20a77f07b3c6b269">Row</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>row</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa16dffb37bf9ae8d9ed25a870eff2c05"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa16dffb37bf9ae8d9ed25a870eff2c05">&#9670;&nbsp;</a></span>UpdateRow() <span class="overload">[1/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename Item &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::UpdateRow </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a>&#160;</td>
-          <td class="paramname"><em>rowRef</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_table.html#a2f514f81cfbbb8acdf7c0025c71f5459">Column</a>&lt; Item &gt; &amp;&#160;</td>
-          <td class="paramname"><em>column</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">internal::Identity</a>&lt; Item &gt; &amp;&#160;</td>
-          <td class="paramname"><em>newItem</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a641f97ce9f1577fc223aa4a6ba55cbb7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a641f97ce9f1577fc223aa4a6ba55cbb7">&#9670;&nbsp;</a></span>UpdateRow() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<div class="memtemplate">
-template&lt;typename Item &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::UpdateRow </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1_data_table.html#abf5c362011dac418cae8613523f8845b">ConstRowReference</a>&#160;</td>
-          <td class="paramname"><em>rowRef</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_data_table.html#a2f514f81cfbbb8acdf7c0025c71f5459">Column</a>&lt; Item &gt; &amp;&#160;</td>
-          <td class="paramname"><em>column</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespacemomo_1_1internal.html#a6457202229264fdd3fba4be31ccb4079">internal::Identity</a>&lt; Item &gt; &amp;&amp;&#160;</td>
-          <td class="paramname"><em>newItem</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a235952c449c7540c88237ec085349de7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a235952c449c7540c88237ec085349de7">&#9670;&nbsp;</a></span>UpdateRow() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TColumnList  = DataColumnList&lt;&gt;, typename TDataTraits  = DataTraits&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a> <a class="el" href="classmomo_1_1_data_table.html#a2c9585003dd664dcb4c9dcb21091c50b">RowReference</a> <a class="el" href="classmomo_1_1_data_table.html">momo::DataTable</a>&lt; TColumnList, TDataTraits &gt;::UpdateRow </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>rowNumber</em>, </td>

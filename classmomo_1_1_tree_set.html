@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -196,9 +196,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a05f849bd7d010ce98f1950266d7ce150"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf82cd6f8b16570e3abcd1af9a88c8ed"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_tree_set.html#a3802d1e19582abcef76969cb44b9a553">InsertResult</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_set.html#adf82cd6f8b16570e3abcd1af9a88c8ed">Insert</a> (<a class="el" href="classmomo_1_1_tree_set.html#aecf861e4e0854d8a3de0b1d700848e9f">ExtractedItem</a> &amp;&amp;extItem)</td></tr>
 <tr class="separator:adf82cd6f8b16570e3abcd1af9a88c8ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6046d6456d552bb0d4efd49290a8c52"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator &gt; </td></tr>
-<tr class="memitem:ad6046d6456d552bb0d4efd49290a8c52"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_set.html#ad6046d6456d552bb0d4efd49290a8c52">Insert</a> (ArgIterator begin, ArgIterator end)</td></tr>
-<tr class="separator:ad6046d6456d552bb0d4efd49290a8c52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add95ea60a0c931abf3406fcfc99dafd3"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel &gt; </td></tr>
+<tr class="memitem:add95ea60a0c931abf3406fcfc99dafd3"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_set.html#add95ea60a0c931abf3406fcfc99dafd3">Insert</a> (ArgIterator begin, ArgSentinel end)</td></tr>
+<tr class="separator:add95ea60a0c931abf3406fcfc99dafd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbadc9cbe3e791388775ff51d6e07a93"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_set.html#afbadc9cbe3e791388775ff51d6e07a93">Insert</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1_tree_set.html#a924cc33870eb84f639f60a9628085ddd">Item</a> &gt; items)</td></tr>
 <tr class="separator:afbadc9cbe3e791388775ff51d6e07a93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b98c9b4c501aa70f8c46f9ec0c55691"><td class="memTemplParams" colspan="2">template&lt;typename ItemCreator , bool extraCheck = true&gt; </td></tr>
@@ -1409,15 +1409,15 @@ template&lt;typename KeyArg &gt; </div>
 
 </div>
 </div>
-<a id="ad6046d6456d552bb0d4efd49290a8c52"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad6046d6456d552bb0d4efd49290a8c52">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/5]</span></h2>
+<a id="add95ea60a0c931abf3406fcfc99dafd3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add95ea60a0c931abf3406fcfc99dafd3">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TKey , typename TTreeTraits  = TreeTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TItemTraits  = TreeSetItemTraits&lt;TKey, TMemManager&gt;, typename TSettings  = TreeSetSettings&gt; </div>
 <div class="memtemplate">
-template&lt;typename ArgIterator &gt; </div>
+template&lt;typename ArgIterator , typename ArgSentinel &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1431,7 +1431,7 @@ template&lt;typename ArgIterator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramtype">ArgSentinel&#160;</td>
           <td class="paramname"><em>end</em>&#160;</td>
         </tr>
         <tr>

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -96,7 +96,7 @@ Deviations from the standard</h4>
 <ul>
 <li>Container items must be movable (preferably without exceptions) or copyable, similar to items of <code>std::vector</code>.</li>
 <li>All iterators and references to items will become invalid after each addition or removal of the item and should not be used.</li>
-<li>In <code>map</code> and <code>unordered_map</code> type <code>reference</code> is a pair of references (same as in <a href="https://en.cppreference.com/w/cpp/container/flat_map">std::flat_map</a>), so <code>for (auto&amp; p : map)</code> is illegal, but <code>for (auto p : map)</code> or <code>for (const auto&amp; p : map)</code> or <code>for (auto&amp;&amp; p : map)</code> is allowed.</li>
+<li>In <code>map</code> and <code>unordered_map</code> type <code>reference</code> is a pair of references (same as in <code>std::flat_map</code>), so <code>for (auto&amp; p : map)</code> is illegal, but <code>for (auto p : map)</code> or <code>for (const auto&amp; p : map)</code> or <code>for (auto&amp;&amp; p : map)</code> is allowed.</li>
 </ul>
 <h4><a class="anchor" id="autotoc_md2"></a>
 The main ideas</h4>
@@ -127,7 +127,7 @@ DataTable</h4>
 Supported compilers</h4>
 <ul>
 <li>MS Visual C++ (19.0+, Visual Studio 2015+)</li>
-<li>GCC (4.9+)</li>
+<li>GCC (5+)</li>
 <li>Clang (3.6+)</li>
 <li>Apple Clang (8.1+, Xcode 8.3+)</li>
 <li>Intel C++ </li>

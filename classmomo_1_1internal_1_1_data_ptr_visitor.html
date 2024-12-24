@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::DataPtrVisitor&lt; TRefVisitor, TVoid &gt; Class Template Reference</title>
+<title>momo: momo::internal::DataPtrVisitor&lt; TRefVisitor &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -87,7 +87,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_data_ptr_vis
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classmomo_1_1internal_1_1_data_ptr_visitor-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::DataPtrVisitor&lt; TRefVisitor, TVoid &gt; Class Template Reference</div>  </div>
+<div class="title">momo::internal::DataPtrVisitor&lt; TRefVisitor &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -95,52 +95,34 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_data_ptr_vis
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a9676256f1bb1f96d109f7df0810d97cc"><td class="memItemLeft" align="right" valign="top">typedef TRefVisitor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a></td></tr>
-<tr class="separator:a9676256f1bb1f96d109f7df0810d97cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a800dc3e2335d7c39a1c6f9343bc2b17a"><td class="memItemLeft" align="right" valign="top">typedef TVoid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a800dc3e2335d7c39a1c6f9343bc2b17a">Void</a></td></tr>
-<tr class="separator:a800dc3e2335d7c39a1c6f9343bc2b17a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b73b21fa2074e9cb873d4928cfe62dd"><td class="memItemLeft" align="right" valign="top">typedef TRefVisitor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a></td></tr>
+<tr class="separator:a7b73b21fa2074e9cb873d4928cfe62dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa7c3982b26b88dd9de3bcd20ef6c8bb2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#aa7c3982b26b88dd9de3bcd20ef6c8bb2">DataPtrVisitor</a> (const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a> &amp;refVisitor) noexcept</td></tr>
-<tr class="separator:aa7c3982b26b88dd9de3bcd20ef6c8bb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7874611aff70244dfca8e8e53659491"><td class="memTemplParams" colspan="2">template&lt;typename ColumnInfo &gt; </td></tr>
-<tr class="memitem:ad7874611aff70244dfca8e8e53659491"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#ad7874611aff70244dfca8e8e53659491">operator()</a> (<a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a800dc3e2335d7c39a1c6f9343bc2b17a">Void</a> *, const ColumnInfo &amp;) const</td></tr>
-<tr class="separator:ad7874611aff70244dfca8e8e53659491"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea186b6ce75066f24ace07e15d624fc1"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename ColumnInfo &gt; </td></tr>
-<tr class="memitem:aea186b6ce75066f24ace07e15d624fc1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a> &amp;, void, Item &amp;, const ColumnInfo &amp; &gt;::value &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#aea186b6ce75066f24ace07e15d624fc1">operator()</a> (Item *item, const ColumnInfo &amp;columnInfo) const</td></tr>
-<tr class="separator:aea186b6ce75066f24ace07e15d624fc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14317af90c163f1ea478ff59139dfcd4"><td class="memTemplParams" colspan="2">template&lt;typename Item , typename ColumnInfo &gt; </td></tr>
-<tr class="memitem:a14317af90c163f1ea478ff59139dfcd4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a> &amp;, void, Item &amp; &gt;::value &amp;&amp;!<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a> &amp;, void, Item &amp;, const ColumnInfo &amp; &gt;::value &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a14317af90c163f1ea478ff59139dfcd4">operator()</a> (Item *item, const ColumnInfo &amp;) const</td></tr>
-<tr class="separator:a14317af90c163f1ea478ff59139dfcd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af77cacc4b8b4754fe4bebb8fcf5ccee2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#af77cacc4b8b4754fe4bebb8fcf5ccee2">DataPtrVisitor</a> (const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a> &amp;refVisitor) noexcept</td></tr>
+<tr class="separator:af77cacc4b8b4754fe4bebb8fcf5ccee2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae94f19161712f66ff509ca0636667e40"><td class="memTemplParams" colspan="2">template&lt;typename ColumnInfo &gt; </td></tr>
+<tr class="memitem:ae94f19161712f66ff509ca0636667e40"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#ae94f19161712f66ff509ca0636667e40">operator()</a> (const void *, const ColumnInfo &amp;) const</td></tr>
+<tr class="separator:ae94f19161712f66ff509ca0636667e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd42a2eb56b5c06111944e9eb46b9aff"><td class="memTemplParams" colspan="2">template&lt;typename QItem , typename ColumnInfo &gt; </td></tr>
+<tr class="memitem:abd42a2eb56b5c06111944e9eb46b9aff"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a> &amp;, void, QItem &amp;, const ColumnInfo &amp; &gt;::value &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#abd42a2eb56b5c06111944e9eb46b9aff">operator()</a> (QItem *item, const ColumnInfo &amp;columnInfo) const</td></tr>
+<tr class="separator:abd42a2eb56b5c06111944e9eb46b9aff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4531ace5dafed5a1cc146261246ef493"><td class="memTemplParams" colspan="2">template&lt;typename QItem , typename ColumnInfo &gt; </td></tr>
+<tr class="memitem:a4531ace5dafed5a1cc146261246ef493"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a> &amp;, void, QItem &amp; &gt;::value &amp;&amp;!<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt; const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a> &amp;, void, QItem &amp;, const ColumnInfo &amp; &gt;::value &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a4531ace5dafed5a1cc146261246ef493">operator()</a> (QItem *item, const ColumnInfo &amp;) const</td></tr>
+<tr class="separator:a4531ace5dafed5a1cc146261246ef493"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a9676256f1bb1f96d109f7df0810d97cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9676256f1bb1f96d109f7df0810d97cc">&#9670;&nbsp;</a></span>RefVisitor</h2>
+<a id="a7b73b21fa2074e9cb873d4928cfe62dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b73b21fa2074e9cb873d4928cfe62dd">&#9670;&nbsp;</a></span>RefVisitor</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRefVisitor , typename TVoid &gt; </div>
+template&lt;typename TRefVisitor &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TRefVisitor <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor, TVoid &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a800dc3e2335d7c39a1c6f9343bc2b17a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a800dc3e2335d7c39a1c6f9343bc2b17a">&#9670;&nbsp;</a></span>Void</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TRefVisitor , typename TVoid &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef TVoid <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor, TVoid &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a800dc3e2335d7c39a1c6f9343bc2b17a">Void</a></td>
+          <td class="memname">typedef TRefVisitor <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -148,21 +130,21 @@ template&lt;typename TRefVisitor , typename TVoid &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aa7c3982b26b88dd9de3bcd20ef6c8bb2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7c3982b26b88dd9de3bcd20ef6c8bb2">&#9670;&nbsp;</a></span>DataPtrVisitor()</h2>
+<a id="af77cacc4b8b4754fe4bebb8fcf5ccee2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af77cacc4b8b4754fe4bebb8fcf5ccee2">&#9670;&nbsp;</a></span>DataPtrVisitor()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRefVisitor , typename TVoid &gt; </div>
+template&lt;typename TRefVisitor &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor, TVoid &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">DataPtrVisitor</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor &gt;::<a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">DataPtrVisitor</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a> &amp;&#160;</td>
           <td class="paramname"><em>refVisitor</em></td><td>)</td>
           <td></td>
         </tr>
@@ -177,93 +159,13 @@ template&lt;typename TRefVisitor , typename TVoid &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a14317af90c163f1ea478ff59139dfcd4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14317af90c163f1ea478ff59139dfcd4">&#9670;&nbsp;</a></span>operator()() <span class="overload">[1/3]</span></h2>
+<a id="ae94f19161712f66ff509ca0636667e40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae94f19161712f66ff509ca0636667e40">&#9670;&nbsp;</a></span>operator()() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TRefVisitor , typename TVoid &gt; </div>
-<div class="memtemplate">
-template&lt;typename Item , typename ColumnInfo &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a>&amp;, void, Item&amp;&gt;::value &amp;&amp; !<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a>&amp;, void, Item&amp;, const ColumnInfo&amp;&gt;::value&gt; <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor, TVoid &gt;::operator() </td>
-          <td>(</td>
-          <td class="paramtype">Item *&#160;</td>
-          <td class="paramname"><em>item</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const ColumnInfo &amp;&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aea186b6ce75066f24ace07e15d624fc1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea186b6ce75066f24ace07e15d624fc1">&#9670;&nbsp;</a></span>operator()() <span class="overload">[2/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TRefVisitor , typename TVoid &gt; </div>
-<div class="memtemplate">
-template&lt;typename Item , typename ColumnInfo &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a9676256f1bb1f96d109f7df0810d97cc">RefVisitor</a>&amp;, void, Item&amp;, const ColumnInfo&amp;&gt;::value&gt; <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor, TVoid &gt;::operator() </td>
-          <td>(</td>
-          <td class="paramtype">Item *&#160;</td>
-          <td class="paramname"><em>item</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const ColumnInfo &amp;&#160;</td>
-          <td class="paramname"><em>columnInfo</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ad7874611aff70244dfca8e8e53659491"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad7874611aff70244dfca8e8e53659491">&#9670;&nbsp;</a></span>operator()() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TRefVisitor , typename TVoid &gt; </div>
+template&lt;typename TRefVisitor &gt; </div>
 <div class="memtemplate">
 template&lt;typename ColumnInfo &gt; </div>
 <table class="mlabels">
@@ -271,9 +173,9 @@ template&lt;typename ColumnInfo &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor, TVoid &gt;::operator() </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor &gt;::operator() </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a800dc3e2335d7c39a1c6f9343bc2b17a">Void</a> *&#160;</td>
+          <td class="paramtype">const void *&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -281,6 +183,86 @@ template&lt;typename ColumnInfo &gt; </div>
           <td></td>
           <td class="paramtype">const ColumnInfo &amp;&#160;</td>
           <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4531ace5dafed5a1cc146261246ef493"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4531ace5dafed5a1cc146261246ef493">&#9670;&nbsp;</a></span>operator()() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TRefVisitor &gt; </div>
+<div class="memtemplate">
+template&lt;typename QItem , typename ColumnInfo &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a>&amp;, void, QItem&amp;&gt;::value &amp;&amp; !<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a>&amp;, void, QItem&amp;, const ColumnInfo&amp;&gt;::value&gt; <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor &gt;::operator() </td>
+          <td>(</td>
+          <td class="paramtype">QItem *&#160;</td>
+          <td class="paramname"><em>item</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ColumnInfo &amp;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abd42a2eb56b5c06111944e9eb46b9aff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd42a2eb56b5c06111944e9eb46b9aff">&#9670;&nbsp;</a></span>operator()() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TRefVisitor &gt; </div>
+<div class="memtemplate">
+template&lt;typename QItem , typename ColumnInfo &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">EnableIf</a>&lt;<a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">IsInvocable</a>&lt;const <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html#a7b73b21fa2074e9cb873d4928cfe62dd">RefVisitor</a>&amp;, void, QItem&amp;, const ColumnInfo&amp;&gt;::value&gt; <a class="el" href="classmomo_1_1internal_1_1_data_ptr_visitor.html">momo::internal::DataPtrVisitor</a>&lt; TRefVisitor &gt;::operator() </td>
+          <td>(</td>
+          <td class="paramtype">QItem *&#160;</td>
+          <td class="paramname"><em>item</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ColumnInfo &amp;&#160;</td>
+          <td class="paramname"><em>columnInfo</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

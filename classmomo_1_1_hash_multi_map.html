@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -167,6 +167,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a97f03f28a0b5474d85591af9ddda873c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6dd31d51fe88109204359b3a73f147b0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a6dd31d51fe88109204359b3a73f147b0">GetValueCount</a> () const noexcept</td></tr>
 <tr class="separator:a6dd31d51fe88109204359b3a73f147b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12e812afe67dd7ba9bc8e8ef484a85a0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a12e812afe67dd7ba9bc8e8ef484a85a0">GetCount</a> () const noexcept</td></tr>
+<tr class="separator:a12e812afe67dd7ba9bc8e8ef484a85a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8f0ef30324c39706b312642a247ddae"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#af8f0ef30324c39706b312642a247ddae">IsEmpty</a> () const noexcept</td></tr>
+<tr class="separator:af8f0ef30324c39706b312642a247ddae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78be90663a2e6ea1f090a81e5f95796b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a78be90663a2e6ea1f090a81e5f95796b">Clear</a> () noexcept</td></tr>
 <tr class="separator:a78be90663a2e6ea1f090a81e5f95796b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b46d66f626b1f5da8f399d961a29489"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_hash_multi_map.html#a68f9264000a765a00ca270298afa1f51">ConstKeyBounds</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a7b46d66f626b1f5da8f399d961a29489">GetKeyBounds</a> () const noexcept</td></tr>
@@ -220,9 +224,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2a01ee012b02e2ec4acc5bddce32af3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ffaf3ec6bf7ee511d315d58f6544252"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1_hash_multi_map.html#a5fb88241da75e7d8f32773b7610bda19">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a9ffaf3ec6bf7ee511d315d58f6544252">Add</a> (<a class="el" href="classmomo_1_1_hash_multi_map.html#a111ff6d8fb884c8ec53f0276deaee627">ConstKeyIterator</a> keyIter, const <a class="el" href="classmomo_1_1_hash_multi_map.html#afc55ee93add3d62a6fcc9f9a18fbcf09">Value</a> &amp;value)</td></tr>
 <tr class="separator:a9ffaf3ec6bf7ee511d315d58f6544252"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbb785f472b187f55387564ff92ad804"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </td></tr>
-<tr class="memitem:afbb785f472b187f55387564ff92ad804"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#afbb785f472b187f55387564ff92ad804">Add</a> (ArgIterator begin, ArgIterator end)</td></tr>
-<tr class="separator:afbb785f472b187f55387564ff92ad804"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a562dbc0fc86c3dd66c2d85c75b97401e"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </td></tr>
+<tr class="memitem:a562dbc0fc86c3dd66c2d85c75b97401e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a562dbc0fc86c3dd66c2d85c75b97401e">Add</a> (ArgIterator begin, ArgSentinel end)</td></tr>
+<tr class="separator:a562dbc0fc86c3dd66c2d85c75b97401e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bf5bee53f748da1888feedb071a9aa6"><td class="memTemplParams" colspan="2">template&lt;typename Pair  = std::pair&lt;Key, Value&gt;&gt; </td></tr>
 <tr class="memitem:a7bf5bee53f748da1888feedb071a9aa6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a7bf5bee53f748da1888feedb071a9aa6">Add</a> (std::initializer_list&lt; Pair &gt; pairs)</td></tr>
 <tr class="separator:a7bf5bee53f748da1888feedb071a9aa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -728,15 +732,15 @@ template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="afbb785f472b187f55387564ff92ad804"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afbb785f472b187f55387564ff92ad804">&#9670;&nbsp;</a></span>Add() <span class="overload">[1/8]</span></h2>
+<a id="a562dbc0fc86c3dd66c2d85c75b97401e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a562dbc0fc86c3dd66c2d85c75b97401e">&#9670;&nbsp;</a></span>Add() <span class="overload">[1/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TKeyValueTraits  = HashMultiMapKeyValueTraits&lt;TKey, TValue, TMemManager&gt;, typename TSettings  = HashMultiMapSettings&gt; </div>
 <div class="memtemplate">
-template&lt;typename ArgIterator , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </div>
+template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -750,7 +754,7 @@ template&lt;typename ArgIterator , typename  = decltype(internal::MapPairConvert
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramtype">ArgSentinel&#160;</td>
           <td class="paramname"><em>end</em>&#160;</td>
         </tr>
         <tr>
@@ -1637,6 +1641,33 @@ template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits
 
 </div>
 </div>
+<a id="a12e812afe67dd7ba9bc8e8ef484a85a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12e812afe67dd7ba9bc8e8ef484a85a0">&#9670;&nbsp;</a></span>GetCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TKeyValueTraits  = HashMultiMapKeyValueTraits&lt;TKey, TValue, TMemManager&gt;, typename TSettings  = HashMultiMapSettings&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_hash_multi_map.html">momo::HashMultiMap</a>&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;::GetCount </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a14c1a51d0e66a8fc181dcf6ba4edfa91"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a14c1a51d0e66a8fc181dcf6ba4edfa91">&#9670;&nbsp;</a></span>GetEnd() <span class="overload">[1/2]</span></h2>
 
@@ -1930,6 +1961,33 @@ template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af8f0ef30324c39706b312642a247ddae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8f0ef30324c39706b312642a247ddae">&#9670;&nbsp;</a></span>IsEmpty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TKeyValueTraits  = HashMultiMapKeyValueTraits&lt;TKey, TValue, TMemManager&gt;, typename TSettings  = HashMultiMapSettings&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classmomo_1_1_hash_multi_map.html">momo::HashMultiMap</a>&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;::IsEmpty </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

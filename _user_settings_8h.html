@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -96,7 +96,7 @@ $(document).ready(function(){initNavTree('_user_settings_8h.html',''); initResiz
 Macros</h2></td></tr>
 <tr class="memitem:a8a0b7396666b890c3b5e9e10d0501d49"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a8a0b7396666b890c3b5e9e10d0501d49">MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX</a>(Object)&#160;&#160;&#160;(!std::is_copy_constructible&lt;Object&gt;::value)</td></tr>
 <tr class="separator:a8a0b7396666b890c3b5e9e10d0501d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f77c6dbf14fa9924c88eb948377b3ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a3f77c6dbf14fa9924c88eb948377b3ff">MOMO_IS_TRIVIALLY_RELOCATABLE</a>(Object)&#160;&#160;&#160;(std::is_trivial&lt;Object&gt;::value)</td></tr>
+<tr class="memitem:a3f77c6dbf14fa9924c88eb948377b3ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a3f77c6dbf14fa9924c88eb948377b3ff">MOMO_IS_TRIVIALLY_RELOCATABLE</a>(Object)&#160;&#160;&#160;(std::is_trivially_copyable&lt;Object&gt;::value)</td></tr>
 <tr class="separator:a3f77c6dbf14fa9924c88eb948377b3ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a757e42f30737b8af90bdf0e1b35159de"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a757e42f30737b8af90bdf0e1b35159de">MOMO_MAX_ALIGNMENT</a>&#160;&#160;&#160;alignof(std::max_align_t)</td></tr>
 <tr class="separator:a757e42f30737b8af90bdf0e1b35159de"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,6 +138,10 @@ Macros</h2></td></tr>
 <tr class="separator:a21cff6113294cd25e6ca42966fdc465f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8bcba5a2dae5b1ce92b79f769aad846"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846">MOMO_CHECK_EXCEPTION</a>(expr)&#160;&#160;&#160;	do { if (!(expr)) throw std::invalid_argument(#expr); } while (false)</td></tr>
 <tr class="separator:af8bcba5a2dae5b1ce92b79f769aad846"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a094f676cd5f422d80f3be631dc2add3f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a094f676cd5f422d80f3be631dc2add3f">MOMO_CAST_POINTER</a>(ResObject,  ptr,  isWithinLifetime,  isSingleObject)&#160;&#160;&#160;	((isWithinLifetime) ? std::launder(reinterpret_cast&lt;ResObject*&gt;(ptr)) : reinterpret_cast&lt;ResObject*&gt;(ptr))</td></tr>
+<tr class="separator:a094f676cd5f422d80f3be631dc2add3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a094f676cd5f422d80f3be631dc2add3f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a094f676cd5f422d80f3be631dc2add3f">MOMO_CAST_POINTER</a>(ResObject,  ptr,  isWithinLifetime,  isSingleObject)&#160;&#160;&#160;reinterpret_cast&lt;ResObject*&gt;(ptr)</td></tr>
+<tr class="separator:a094f676cd5f422d80f3be631dc2add3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac91901db38c236c1614113e4759195ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#ac91901db38c236c1614113e4759195ff">MOMO_NODISCARD</a></td></tr>
 <tr class="separator:ac91901db38c236c1614113e4759195ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae71c71f676413ffa3458f586599188b1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a></td></tr>
@@ -184,6 +188,86 @@ Macros</h2></td></tr>
           <td class="paramtype">&#160;</td>
           <td class="paramname">expr</td><td>)</td>
           <td>&#160;&#160;&#160;assert(expr)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a094f676cd5f422d80f3be631dc2add3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a094f676cd5f422d80f3be631dc2add3f">&#9670;&nbsp;</a></span>MOMO_CAST_POINTER <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_CAST_POINTER</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ResObject, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">isWithinLifetime, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">isSingleObject&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;	((isWithinLifetime) ? std::launder(reinterpret_cast&lt;ResObject*&gt;(ptr)) : reinterpret_cast&lt;ResObject*&gt;(ptr))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a094f676cd5f422d80f3be631dc2add3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a094f676cd5f422d80f3be631dc2add3f">&#9670;&nbsp;</a></span>MOMO_CAST_POINTER <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_CAST_POINTER</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ResObject, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">isWithinLifetime, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">isSingleObject&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;reinterpret_cast&lt;ResObject*&gt;(ptr)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -441,7 +525,7 @@ Macros</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">Object</td><td>)</td>
-          <td>&#160;&#160;&#160;(std::is_trivial&lt;Object&gt;::value)</td>
+          <td>&#160;&#160;&#160;(std::is_trivially_copyable&lt;Object&gt;::value)</td>
         </tr>
       </table>
 </div><div class="memdoc">

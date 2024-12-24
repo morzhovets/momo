@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -121,9 +121,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a979717dce3aba6006a24a17342c50d55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a517a75e6261596f4a476747063c5ede0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a517a75e6261596f4a476747063c5ede0">Array</a> (size_t count, const <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &amp;item, <a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a> memManager=<a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a>())</td></tr>
 <tr class="separator:a517a75e6261596f4a476747063c5ede0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab95aa0692585507b5a0032831b3433fe"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;ArgIterator&gt;::iterator_category&gt; </td></tr>
-<tr class="memitem:ab95aa0692585507b5a0032831b3433fe"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#ab95aa0692585507b5a0032831b3433fe">Array</a> (ArgIterator begin, ArgIterator end, <a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a> memManager=<a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a>())</td></tr>
-<tr class="separator:ab95aa0692585507b5a0032831b3433fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48c80838dbc476e05158aba0ac24f987"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(*std::declval&lt;ArgIterator&gt;())&gt; </td></tr>
+<tr class="memitem:a48c80838dbc476e05158aba0ac24f987"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a48c80838dbc476e05158aba0ac24f987">Array</a> (ArgIterator begin, ArgSentinel end, <a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a> memManager=<a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a>())</td></tr>
+<tr class="separator:a48c80838dbc476e05158aba0ac24f987"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb17847355afd2d4aca4839ddaef86f1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#afb17847355afd2d4aca4839ddaef86f1">Array</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &gt; items)</td></tr>
 <tr class="separator:afb17847355afd2d4aca4839ddaef86f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3a26860cce473b455074302b64f4927"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#af3a26860cce473b455074302b64f4927">Array</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &gt; items, <a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a> memManager)</td></tr>
@@ -162,9 +162,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6ccd1cd750c8e1e362316013e71e98cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa60f27842b796c329921179e9ff43f2d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#aa60f27842b796c329921179e9ff43f2d">GetCount</a> () const noexcept</td></tr>
 <tr class="separator:aa60f27842b796c329921179e9ff43f2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad40b37d58c99e40efbe88146c385a4f2"><td class="memTemplParams" colspan="2">template&lt;typename MultiItemCreator &gt; </td></tr>
-<tr class="memitem:ad40b37d58c99e40efbe88146c385a4f2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#ad40b37d58c99e40efbe88146c385a4f2">SetCountCrt</a> (size_t count, const MultiItemCreator &amp;multiItemCreator)</td></tr>
-<tr class="separator:ad40b37d58c99e40efbe88146c385a4f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf0585cfe01ca81f8dfda508a19cca45"><td class="memTemplParams" colspan="2">template&lt;typename ItemMultiCreator &gt; </td></tr>
+<tr class="memitem:adf0585cfe01ca81f8dfda508a19cca45"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#adf0585cfe01ca81f8dfda508a19cca45">SetCountCrt</a> (size_t count, const ItemMultiCreator &amp;itemMultiCreator)</td></tr>
+<tr class="separator:adf0585cfe01ca81f8dfda508a19cca45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f85787195b25b91ca38a39b9582a7f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a3f85787195b25b91ca38a39b9582a7f2">SetCount</a> (size_t count)</td></tr>
 <tr class="separator:a3f85787195b25b91ca38a39b9582a7f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58516ef8045ddc0864b0ff7771e89133"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a58516ef8045ddc0864b0ff7771e89133">SetCount</a> (size_t count, const <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &amp;item)</td></tr>
@@ -221,9 +221,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0a4e9ad716a8ea54bd83fb6479617cc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0262bc01000c087fd6b2c17c859b47a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#ab0262bc01000c087fd6b2c17c859b47a">Insert</a> (size_t index, size_t count, const <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &amp;item)</td></tr>
 <tr class="separator:ab0262bc01000c087fd6b2c17c859b47a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a98810a5bd63477f78cb47f16a95ffa"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;ArgIterator&gt;::iterator_category&gt; </td></tr>
-<tr class="memitem:a0a98810a5bd63477f78cb47f16a95ffa"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a0a98810a5bd63477f78cb47f16a95ffa">Insert</a> (size_t index, ArgIterator begin, ArgIterator end)</td></tr>
-<tr class="separator:a0a98810a5bd63477f78cb47f16a95ffa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b0b300ac13c5f3356da2e93e3487fa3"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(*std::declval&lt;ArgIterator&gt;())&gt; </td></tr>
+<tr class="memitem:a2b0b300ac13c5f3356da2e93e3487fa3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a2b0b300ac13c5f3356da2e93e3487fa3">Insert</a> (size_t index, ArgIterator begin, ArgSentinel end)</td></tr>
+<tr class="separator:a2b0b300ac13c5f3356da2e93e3487fa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41df80d81334599e697e7fc6a0c62501"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a41df80d81334599e697e7fc6a0c62501">Insert</a> (size_t index, std::initializer_list&lt; <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &gt; items)</td></tr>
 <tr class="separator:a41df80d81334599e697e7fc6a0c62501"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada0a752db1f9c6a928a251f7979cf432"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#ada0a752db1f9c6a928a251f7979cf432">RemoveBack</a> (size_t count=1)</td></tr>
@@ -244,9 +244,9 @@ Public Member Functions</h2></td></tr>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a96d03fdafd44307a1a35675b54b77be9"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1_array.html">Array</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a96d03fdafd44307a1a35675b54b77be9">CreateCap</a> (size_t capacity, <a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a> memManager=<a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a>())</td></tr>
 <tr class="separator:a96d03fdafd44307a1a35675b54b77be9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28b98433da6e79f99f63a5b4aadfd9a9"><td class="memTemplParams" colspan="2">template&lt;typename MultiItemCreator &gt; </td></tr>
-<tr class="memitem:a28b98433da6e79f99f63a5b4aadfd9a9"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1_array.html">Array</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a28b98433da6e79f99f63a5b4aadfd9a9">CreateCrt</a> (size_t count, const MultiItemCreator &amp;multiItemCreator, <a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a> memManager=<a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a>())</td></tr>
-<tr class="separator:a28b98433da6e79f99f63a5b4aadfd9a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4a18d3f2445e23ffdbc92ba59646e7a"><td class="memTemplParams" colspan="2">template&lt;typename ItemMultiCreator &gt; </td></tr>
+<tr class="memitem:aa4a18d3f2445e23ffdbc92ba59646e7a"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1_array.html">Array</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#aa4a18d3f2445e23ffdbc92ba59646e7a">CreateCrt</a> (size_t count, const ItemMultiCreator &amp;itemMultiCreator, <a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a> memManager=<a class="el" href="classmomo_1_1_array.html#a9534e3805d4b39609781f9d73ad7f9ca">MemManager</a>())</td></tr>
+<tr class="separator:aa4a18d3f2445e23ffdbc92ba59646e7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -495,15 +495,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="ab95aa0692585507b5a0032831b3433fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab95aa0692585507b5a0032831b3433fe">&#9670;&nbsp;</a></span>Array() <span class="overload">[5/11]</span></h2>
+<a id="a48c80838dbc476e05158aba0ac24f987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48c80838dbc476e05158aba0ac24f987">&#9670;&nbsp;</a></span>Array() <span class="overload">[5/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;ArgIterator&gt;::iterator_category&gt; </div>
+template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(*std::declval&lt;ArgIterator&gt;())&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -517,7 +517,7 @@ template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramtype">ArgSentinel&#160;</td>
           <td class="paramname"><em>end</em>, </td>
         </tr>
         <tr>
@@ -1105,15 +1105,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="a28b98433da6e79f99f63a5b4aadfd9a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28b98433da6e79f99f63a5b4aadfd9a9">&#9670;&nbsp;</a></span>CreateCrt()</h2>
+<a id="aa4a18d3f2445e23ffdbc92ba59646e7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4a18d3f2445e23ffdbc92ba59646e7a">&#9670;&nbsp;</a></span>CreateCrt()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename MultiItemCreator &gt; </div>
+template&lt;typename ItemMultiCreator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1127,8 +1127,8 @@ template&lt;typename MultiItemCreator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const MultiItemCreator &amp;&#160;</td>
-          <td class="paramname"><em>multiItemCreator</em>, </td>
+          <td class="paramtype">const ItemMultiCreator &amp;&#160;</td>
+          <td class="paramname"><em>itemMultiCreator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1475,15 +1475,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="a0a98810a5bd63477f78cb47f16a95ffa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a98810a5bd63477f78cb47f16a95ffa">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/5]</span></h2>
+<a id="a2b0b300ac13c5f3356da2e93e3487fa3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b0b300ac13c5f3356da2e93e3487fa3">&#9670;&nbsp;</a></span>Insert() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;ArgIterator&gt;::iterator_category&gt; </div>
+template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(*std::declval&lt;ArgIterator&gt;())&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1503,7 +1503,7 @@ template&lt;typename ArgIterator , typename  = typename std::iterator_traits&lt;
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramtype">ArgSentinel&#160;</td>
           <td class="paramname"><em>end</em>&#160;</td>
         </tr>
         <tr>
@@ -2128,15 +2128,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="ad40b37d58c99e40efbe88146c385a4f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad40b37d58c99e40efbe88146c385a4f2">&#9670;&nbsp;</a></span>SetCountCrt()</h2>
+<a id="adf0585cfe01ca81f8dfda508a19cca45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf0585cfe01ca81f8dfda508a19cca45">&#9670;&nbsp;</a></span>SetCountCrt()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename MultiItemCreator &gt; </div>
+template&lt;typename ItemMultiCreator &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -2150,8 +2150,8 @@ template&lt;typename MultiItemCreator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const MultiItemCreator &amp;&#160;</td>
-          <td class="paramname"><em>multiItemCreator</em>&#160;</td>
+          <td class="paramtype">const ItemMultiCreator &amp;&#160;</td>
+          <td class="paramname"><em>itemMultiCreator</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

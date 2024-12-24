@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -151,8 +151,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aec64c2fb059a9e91353d369869f4d138"><td class="memTemplParams" colspan="2">template&lt;typename ResObject  = void&gt; </td></tr>
 <tr class="memitem:aec64c2fb059a9e91353d369869f4d138"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="_user_settings_8h.html#ac91901db38c236c1614113e4759195ff">MOMO_NODISCARD</a> ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool.html#aec64c2fb059a9e91353d369869f4d138">Allocate</a> ()</td></tr>
 <tr class="separator:aec64c2fb059a9e91353d369869f4d138"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3385f9b1a2942357168fbe3b8863e5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool.html#aa3385f9b1a2942357168fbe3b8863e5c">Deallocate</a> (void *block) noexcept</td></tr>
-<tr class="separator:aa3385f9b1a2942357168fbe3b8863e5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe38730e92687dfb8d1033656194c9c1"><td class="memTemplParams" colspan="2">template&lt;typename Object &gt; </td></tr>
+<tr class="memitem:afe38730e92687dfb8d1033656194c9c1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool.html#afe38730e92687dfb8d1033656194c9c1">Deallocate</a> (Object *ptr) noexcept</td></tr>
+<tr class="separator:afe38730e92687dfb8d1033656194c9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e6e1115b371963413c4498a712f3907"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool.html#a1e6e1115b371963413c4498a712f3907">GetAllocateCount</a> () const noexcept</td></tr>
 <tr class="separator:a1e6e1115b371963413c4498a712f3907"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f8882847081b367aacbe1381c30e491"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_mem_pool.html#a3f8882847081b367aacbe1381c30e491">CanDeallocateAll</a> () const noexcept</td></tr>
@@ -448,13 +449,15 @@ template&lt;typename TParams  = MemPoolParams&lt;&gt;, typename TMemManager  = M
 
 </div>
 </div>
-<a id="aa3385f9b1a2942357168fbe3b8863e5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3385f9b1a2942357168fbe3b8863e5c">&#9670;&nbsp;</a></span>Deallocate()</h2>
+<a id="afe38730e92687dfb8d1033656194c9c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe38730e92687dfb8d1033656194c9c1">&#9670;&nbsp;</a></span>Deallocate()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TParams  = MemPoolParams&lt;&gt;, typename TMemManager  = MemManagerDefault, typename TSettings  = MemPoolSettings&gt; </div>
+<div class="memtemplate">
+template&lt;typename Object &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -462,8 +465,8 @@ template&lt;typename TParams  = MemPoolParams&lt;&gt;, typename TMemManager  = M
         <tr>
           <td class="memname">void <a class="el" href="classmomo_1_1_mem_pool.html">momo::MemPool</a>&lt; TParams, TMemManager, TSettings &gt;::Deallocate </td>
           <td>(</td>
-          <td class="paramtype">void *&#160;</td>
-          <td class="paramname"><em>block</em></td><td>)</td>
+          <td class="paramtype">Object *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
           <td></td>
         </tr>
       </table>

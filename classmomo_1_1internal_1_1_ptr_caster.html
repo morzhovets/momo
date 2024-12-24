@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.9</span>
+   &#160;<span id="projectnumber">3.10</span>
    </div>
   </td>
  </tr>
@@ -97,21 +97,52 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ad6de9d89802d2d68dc09fe1c7e966ab5"><td class="memTemplParams" colspan="2">template&lt;typename Object &gt; </td></tr>
 <tr class="memitem:ad6de9d89802d2d68dc09fe1c7e966ab5"><td class="memTemplItemLeft" align="right" valign="top">static uintptr_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">ToUInt</a> (Object *ptr) noexcept</td></tr>
 <tr class="separator:ad6de9d89802d2d68dc09fe1c7e966ab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aead6e7bc342364da657e7fba9ebf8888"><td class="memTemplParams" colspan="2">template&lt;typename ResObject  = void&gt; </td></tr>
+<tr class="memitem:aead6e7bc342364da657e7fba9ebf8888"><td class="memTemplParams" colspan="2">template&lt;typename ResObject &gt; </td></tr>
 <tr class="memitem:aead6e7bc342364da657e7fba9ebf8888"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#aead6e7bc342364da657e7fba9ebf8888">FromUInt</a> (uintptr_t intPtr) noexcept</td></tr>
 <tr class="separator:aead6e7bc342364da657e7fba9ebf8888"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3805bcb0af35f5420dffbb477e120a0"><td class="memTemplParams" colspan="2">template&lt;typename ResObject , typename Object , typename Offset &gt; </td></tr>
-<tr class="memitem:ab3805bcb0af35f5420dffbb477e120a0"><td class="memTemplItemLeft" align="right" valign="top">static ResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#ab3805bcb0af35f5420dffbb477e120a0">Shift</a> (Object *ptr, Offset byteOffset) noexcept</td></tr>
-<tr class="separator:ab3805bcb0af35f5420dffbb477e120a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaad6bc8a13d409a6b764601a5a91369f"><td class="memTemplParams" colspan="2">template&lt;typename QObject , typename QByte  = ConstLike&lt;Byte, QObject&gt;&gt; </td></tr>
+<tr class="memitem:aaad6bc8a13d409a6b764601a5a91369f"><td class="memTemplItemLeft" align="right" valign="top">static QByte *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#aaad6bc8a13d409a6b764601a5a91369f">ToBytePtr</a> (QObject *ptr) noexcept</td></tr>
+<tr class="separator:aaad6bc8a13d409a6b764601a5a91369f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3d4eeb8d29aefeebb5b239f38a35f2c"><td class="memTemplParams" colspan="2">template&lt;typename ResObject , bool isWithinLifetime = false, bool isSingleObject = false, typename QByte , typename QResObject  = ConstLike&lt;ResObject, QByte&gt;&gt; </td></tr>
+<tr class="memitem:ac3d4eeb8d29aefeebb5b239f38a35f2c"><td class="memTemplItemLeft" align="right" valign="top">static QResObject *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html#ac3d4eeb8d29aefeebb5b239f38a35f2c">FromBytePtr</a> (QByte *bytePtr) noexcept</td></tr>
+<tr class="separator:ac3d4eeb8d29aefeebb5b239f38a35f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac3d4eeb8d29aefeebb5b239f38a35f2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3d4eeb8d29aefeebb5b239f38a35f2c">&#9670;&nbsp;</a></span>FromBytePtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ResObject , bool isWithinLifetime = false, bool isSingleObject = false, typename QByte , typename QResObject  = ConstLike&lt;ResObject, QByte&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static QResObject* momo::internal::PtrCaster::FromBytePtr </td>
+          <td>(</td>
+          <td class="paramtype">QByte *&#160;</td>
+          <td class="paramname"><em>bytePtr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aead6e7bc342364da657e7fba9ebf8888"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aead6e7bc342364da657e7fba9ebf8888">&#9670;&nbsp;</a></span>FromUInt()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename ResObject  = void&gt; </div>
+template&lt;typename ResObject &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -133,33 +164,23 @@ template&lt;typename ResObject  = void&gt; </div>
 
 </div>
 </div>
-<a id="ab3805bcb0af35f5420dffbb477e120a0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3805bcb0af35f5420dffbb477e120a0">&#9670;&nbsp;</a></span>Shift()</h2>
+<a id="aaad6bc8a13d409a6b764601a5a91369f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaad6bc8a13d409a6b764601a5a91369f">&#9670;&nbsp;</a></span>ToBytePtr()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename ResObject , typename Object , typename Offset &gt; </div>
+template&lt;typename QObject , typename QByte  = ConstLike&lt;Byte, QObject&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static ResObject* momo::internal::PtrCaster::Shift </td>
+          <td class="memname">static QByte* momo::internal::PtrCaster::ToBytePtr </td>
           <td>(</td>
-          <td class="paramtype">Object *&#160;</td>
-          <td class="paramname"><em>ptr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">QObject *&#160;</td>
+          <td class="paramname"><em>ptr</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">Offset&#160;</td>
-          <td class="paramname"><em>byteOffset</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>

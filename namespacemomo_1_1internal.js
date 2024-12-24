@@ -83,6 +83,8 @@ var namespacemomo_1_1internal =
     [ "HashTraitsStdIsValidKeyArg", "structmomo_1_1internal_1_1_hash_traits_std_is_valid_key_arg.html", null ],
     [ "HashTraitsStdIsValidKeyArg< HashFunc, EqualFunc, Void< typename HashFunc::is_transparent, typename EqualFunc::is_transparent > >", "structmomo_1_1internal_1_1_hash_traits_std_is_valid_key_arg_3_01_hash_func_00_01_equal_func_00_06d264e125392c497827e58543068dbf9.html", null ],
     [ "InsertResult", "structmomo_1_1internal_1_1_insert_result.html", "structmomo_1_1internal_1_1_insert_result" ],
+    [ "IsForwardIterator17", "structmomo_1_1internal_1_1_is_forward_iterator17.html", null ],
+    [ "IsForwardIterator17< Iterator, Iterator, Void< typename std::iterator_traits< Iterator >::iterator_category > >", "structmomo_1_1internal_1_1_is_forward_iterator17_3_01_iterator_00_01_iterator_00_01_void_3_01typed7cfdc3d73ce87fa84af7a31a50179d.html", null ],
     [ "IsInvocable", "structmomo_1_1internal_1_1_is_invocable.html", null ],
     [ "IsInvocable< Func, decltype(std::declval< Func >()(std::declval< Args >()...)), Args... >", "structmomo_1_1internal_1_1_is_invocable_3_01_func_00_01decltype_07std_1_1declval_3_01_func_01_4_4dee7d4d3f501e4396ea6107729c7324.html", null ],
     [ "IsMapArgIteratorStd", "structmomo_1_1internal_1_1_is_map_arg_iterator_std.html", null ],
@@ -154,6 +156,5 @@ var namespacemomo_1_1internal =
     [ "UIntSelector< size, EnableIf<(4< size &&size<=8)> >", "structmomo_1_1internal_1_1_u_int_selector_3_01size_00_01_enable_if_3_074_3_01size_01_6_6size_3_0a8_08_4_01_4.html", "structmomo_1_1internal_1_1_u_int_selector_3_01size_00_01_enable_if_3_074_3_01size_01_6_6size_3_0a8_08_4_01_4" ],
     [ "VersionKeeper", "classmomo_1_1internal_1_1_version_keeper.html", null ],
     [ "VersionKeeper< TSettings, false >", "classmomo_1_1internal_1_1_version_keeper_3_01_t_settings_00_01false_01_4.html", "classmomo_1_1internal_1_1_version_keeper_3_01_t_settings_00_01false_01_4" ],
-    [ "VersionKeeper< TSettings, true >", "classmomo_1_1internal_1_1_version_keeper_3_01_t_settings_00_01true_01_4.html", "classmomo_1_1internal_1_1_version_keeper_3_01_t_settings_00_01true_01_4" ],
-    [ "VoidMaker", "structmomo_1_1internal_1_1_void_maker.html", "structmomo_1_1internal_1_1_void_maker" ]
+    [ "VersionKeeper< TSettings, true >", "classmomo_1_1internal_1_1_version_keeper_3_01_t_settings_00_01true_01_4.html", "classmomo_1_1internal_1_1_version_keeper_3_01_t_settings_00_01true_01_4" ]
 ];

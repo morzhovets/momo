@@ -20,8 +20,8 @@ var classmomo_1_1stdish_1_1unsynchronized__pool__allocator =
     [ "destroy", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a77a79e92daf98a0e521942f1b4336661", null ],
     [ "get_base_allocator", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#abdca96a16f8ebe0f90a5420f1c8a7e37", null ],
     [ "operator unsynchronized_pool_allocator< Value, base_allocator_type, mem_pool_params >", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a3f828f5631ac52ff83c57eee8e286f5f", null ],
-    [ "operator!=", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a8dc25756175721f5be87712577f3bd0d", null ],
     [ "operator=", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#ad381523b6f09a35ab259520ab16f825f", null ],
-    [ "operator==", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a5d0f47349930c780a00ad7ae5e116b85", null ],
-    [ "select_on_container_copy_construction", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a4a9cc26263bf5da304e041caf0dcfb02", null ]
+    [ "select_on_container_copy_construction", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a4a9cc26263bf5da304e041caf0dcfb02", null ],
+    [ "operator!=", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a85d382585a7f77549c9d8f7e37dd95b0", null ],
+    [ "operator==", "classmomo_1_1stdish_1_1unsynchronized__pool__allocator.html#a0ebfe0e1ff2d97884cb35e2eba6027e6", null ]
 ];
