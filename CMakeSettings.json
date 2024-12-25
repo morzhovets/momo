@@ -73,42 +73,6 @@
       "buildCommandArgs": "-v"
     },
     {
-      "name": "x64-cpp20-Debug",
-      "generator": "Ninja",
-      "inheritEnvironments": [ "msvc_x64" ],
-      "configurationType": "Debug",
-      "buildRoot": "${projectDir}\\build\\${name}",
-      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
-      "buildCommandArgs": "-v"
-    },
-    {
-      "name": "x64-cpp20-Release",
-      "generator": "Ninja",
-      "inheritEnvironments": [ "msvc_x64" ],
-      "configurationType": "RelWithDebInfo",
-      "buildRoot": "${projectDir}\\build\\${name}",
-      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
-      "buildCommandArgs": "-v"
-    },
-    {
-      "name": "x64-2019-Debug",
-      "generator": "Visual Studio 16",
-      "inheritEnvironments": [],
-      "configurationType": "Debug",
-      "buildRoot": "${projectDir}\\build\\${name}",
-      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
-      "buildCommandArgs": ""
-    },
-    {
-      "name": "x64-2019-Release",
-      "generator": "Visual Studio 16",
-      "inheritEnvironments": [],
-      "configurationType": "RelWithDebInfo",
-      "buildRoot": "${projectDir}\\build\\${name}",
-      "cmakeCommandArgs": "-DMOMO_TEST=ON -DCMAKE_CXX_STANDARD=20",
-      "buildCommandArgs": ""
-    },
-    {
       "name": "x64-2022-Debug",
       "generator": "Visual Studio 17",
       "inheritEnvironments": [],

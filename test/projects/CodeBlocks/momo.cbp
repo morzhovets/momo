@@ -6,14 +6,14 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug GCC C++20">
-				<Option output="bin/Debug GCC C++20/momo" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug GCC C++20/" />
+			<Target title="Debug GCC C++23">
+				<Option output="bin/Debug GCC C++23/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug GCC C++23/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-pedantic" />
-					<Add option="-std=c++20" />
+					<Add option="-std=c++23" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-g" />
@@ -23,15 +23,15 @@
 					<Add option="-msse2" />
 				</Compiler>
 			</Target>
-			<Target title="Release GCC C++20">
-				<Option output="bin/Release GCC C++20/momo" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release GCC C++20/" />
+			<Target title="Release GCC C++23">
+				<Option output="bin/Release GCC C++23/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release GCC C++23/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-pedantic" />
-					<Add option="-std=c++20" />
+					<Add option="-std=c++23" />
 					<Add option="-Wextra" />
 					<Add option="-Wall" />
 					<Add option="-Wold-style-cast" />
@@ -44,16 +44,16 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
-			<Target title="Debug Clang C++20">
-				<Option output="bin/Debug Clang C++20/momo" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug Clang C++20/" />
+			<Target title="Debug Clang C++23">
+				<Option output="bin/Debug Clang C++23/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug Clang C++23/" />
 				<Option type="1" />
 				<Option compiler="clang" />
 				<Compiler>
 					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-Wextra" />
-					<Add option="-std=c++20" />
+					<Add option="-std=c++23" />
 					<Add option="-g" />
 					<Add option="-Wold-style-cast" />
 					<Add option="-Wsign-conversion" />
@@ -61,9 +61,9 @@
 					<Add option="-msse2" />
 				</Compiler>
 			</Target>
-			<Target title="Release Clang C++20">
-				<Option output="bin/Release Clang C++20/momo" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release Clang C++20/" />
+			<Target title="Release Clang C++23">
+				<Option output="bin/Release Clang C++23/momo" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release Clang C++23/" />
 				<Option type="1" />
 				<Option compiler="clang" />
 				<Compiler>
@@ -71,7 +71,7 @@
 					<Add option="-pedantic" />
 					<Add option="-Wall" />
 					<Add option="-Wextra" />
-					<Add option="-std=c++20" />
+					<Add option="-std=c++23" />
 					<Add option="-Wold-style-cast" />
 					<Add option="-Wsign-conversion" />
 					<Add option="-Wno-unused-local-typedefs" />

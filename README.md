@@ -2,7 +2,7 @@
 [![GCC](https://github.com/morzhovets/momo/actions/workflows/gcc.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/gcc.yml?query=branch%3Amaster)
 [![Clang](https://github.com/morzhovets/momo/actions/workflows/clang.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/clang.yml?query=branch%3Amaster)
 
-This is an experimental branch that requires a compiler with C++20 support.
+This is an experimental branch that requires a compiler with C++23 support.
 [Here](https://github.com/morzhovets/momo/tree/branch_cpp11) is a stable branch requiring only C++11.
 
 #### momo (Memory Optimization is the Main Objective)
@@ -70,8 +70,8 @@ Some examples are [here](https://github.com/morzhovets/momo/blob/master/test/sou
 
 #### Supported compilers
 
-- MS Visual C++ (19.29+, Visual Studio 2019 16.10+) with /std:c++20
+- MS Visual C++ (19.42+, Visual Studio 2022 17.12+) with /std:c++latest
 
-- GCC (10+) with -std=c++20
+- GCC (14+) with -std=c++23
 
-- Clang (12+) with -std=c++20
+- Clang (18+) with -std=c++23
