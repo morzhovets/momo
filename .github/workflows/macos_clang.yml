@@ -8,6 +8,12 @@ jobs:
       matrix:
         include:
 
+        - clang_ver: '18'
+          build_type: 'Release'
+          flags: '-std=c++23 -Werror -msse2'
+          path_prefix: '/usr/local'
+          macos_ver: '13'
+
         - clang_ver: '19'
           build_type: 'Release'
           flags: '-std=c++23 -Werror -msse2'
@@ -15,12 +21,6 @@ jobs:
           macos_ver: '13'
 
         # macOS-14-arm64
-        - clang_ver: '17'
-          build_type: 'Release'
-          flags: '-std=c++23 -Werror'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '14'
-
         - clang_ver: '18'
           build_type: 'Release'
           flags: '-std=c++23 -Werror'
