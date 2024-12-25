@@ -275,6 +275,55 @@ namespace internal
 			return remCount;
 		}
 	};
+
+	template<typename TContainer>
+	class BackAddIterator
+	{
+	public:
+		typedef TContainer Container;
+		typedef typename Container::Item Item;
+
+	public:
+		explicit BackAddIterator(Container& cont) noexcept
+			: container(&cont)
+		{
+		}
+
+		template<typename Iterator>
+		Iterator& operator=(this Iterator& iter, Item&& item)
+		{
+			iter.container->AddBack(std::move(item));
+			return iter;
+		}
+
+		template<typename Iterator>
+		Iterator& operator=(this Iterator& iter, const Item& item)
+		{
+			iter.container->AddBack(item);
+			return iter;
+		}
+
+		template<typename Iterator>
+		Iterator& operator*(this Iterator& iter) noexcept
+		{
+			return iter;
+		}
+
+		template<typename Iterator>
+		Iterator& operator++(this Iterator& iter) noexcept
+		{
+			return iter;
+		}
+
+		template<typename Iterator>
+		Iterator operator++(this Iterator& iter, int) noexcept
+		{
+			return iter;
+		}
+
+	protected:
+		Container* container;
+	};
 }
 
 } // namespace momo
@@ -294,5 +343,15 @@ namespace std
 		: public momo::internal::IteratorTraitsStd<momo::internal::ArrayIndexIterator<A, I>,
 			random_access_iterator_tag, contiguous_iterator_tag>
 	{
+	};
+
+	template<typename C>
+	struct iterator_traits<momo::internal::BackAddIterator<C>>
+	{
+		typedef std::output_iterator_tag iterator_category;
+		typedef ptrdiff_t difference_type;
+		typedef void pointer;
+		typedef void reference;
+		typedef void value_type;
 	};
 } // namespace std

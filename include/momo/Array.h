@@ -1112,3 +1112,18 @@ namespace internal
 }
 
 } // namespace momo
+
+namespace std
+{
+	template<typename... Params>
+	class back_insert_iterator<momo::Array<Params...>>
+		: public momo::internal::BackAddIterator<momo::Array<Params...>>
+	{
+	public:
+		typedef momo::Array<Params...> container_type;
+
+	public:
+		using momo::internal::BackAddIterator<container_type>::BackAddIterator;
+		using momo::internal::BackAddIterator<container_type>::operator=;
+	};
+} // namespace std

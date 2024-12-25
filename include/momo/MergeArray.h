@@ -833,3 +833,18 @@ private:
 };
 
 } // namespace momo
+
+namespace std
+{
+	template<typename... Params>
+	class back_insert_iterator<momo::MergeArray<Params...>>
+		: public momo::internal::BackAddIterator<momo::MergeArray<Params...>>
+	{
+	public:
+		typedef momo::MergeArray<Params...> container_type;
+
+	public:
+		using momo::internal::BackAddIterator<container_type>::BackAddIterator;
+		using momo::internal::BackAddIterator<container_type>::operator=;
+	};
+} // namespace std

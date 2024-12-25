@@ -788,3 +788,18 @@ using SegmentedArraySqrt = SegmentedArray<TItem, TMemManager, TItemTraits,
 	SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt>>;
 
 } // namespace momo
+
+namespace std
+{
+	template<typename... Params>
+	class back_insert_iterator<momo::SegmentedArray<Params...>>
+		: public momo::internal::BackAddIterator<momo::SegmentedArray<Params...>>
+	{
+	public:
+		typedef momo::SegmentedArray<Params...> container_type;
+
+	public:
+		using momo::internal::BackAddIterator<container_type>::BackAddIterator;
+		using momo::internal::BackAddIterator<container_type>::operator=;
+	};
+} // namespace std
