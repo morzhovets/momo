@@ -344,14 +344,4 @@ namespace std
 			random_access_iterator_tag, contiguous_iterator_tag>
 	{
 	};
-
-	template<typename C>
-	struct iterator_traits<momo::internal::BackAddIterator<C>>
-	{
-		typedef std::output_iterator_tag iterator_category;
-		typedef ptrdiff_t difference_type;
-		typedef void pointer;
-		typedef void reference;
-		typedef void value_type;
-	};
 } // namespace std

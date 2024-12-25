@@ -1121,6 +1121,11 @@ namespace std
 	{
 	public:
 		typedef momo::Array<Params...> container_type;
+		typedef std::output_iterator_tag iterator_category;
+		typedef ptrdiff_t difference_type;
+		typedef void pointer;
+		typedef void reference;
+		typedef void value_type;
 
 	public:
 		using momo::internal::BackAddIterator<container_type>::BackAddIterator;
