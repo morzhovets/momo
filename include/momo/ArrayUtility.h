@@ -277,19 +277,28 @@ namespace internal
 	};
 
 	template<typename TContainer>
-	class BackAddIterator
+	class BackInsertIteratorStd
 	{
-	public:
+	private:
 		typedef TContainer Container;
 		typedef typename Container::Item Item;
 
 	public:
-		explicit BackAddIterator(Container& cont) noexcept
+		typedef Container container_type;
+		typedef std::output_iterator_tag iterator_category;
+		typedef ptrdiff_t difference_type;
+		typedef void pointer;
+		typedef void reference;
+		typedef void value_type;
+
+	public:
+		explicit BackInsertIteratorStd(Container& cont) noexcept
 			: container(&cont)
 		{
 		}
 
 		template<typename Iterator>
+		requires (!std::is_const_v<Iterator>)
 		Iterator& operator=(this Iterator& iter, Item&& item)
 		{
 			iter.container->AddBack(std::move(item));
@@ -297,6 +306,7 @@ namespace internal
 		}
 
 		template<typename Iterator>
+		requires (!std::is_const_v<Iterator>)
 		Iterator& operator=(this Iterator& iter, const Item& item)
 		{
 			iter.container->AddBack(item);
@@ -304,18 +314,21 @@ namespace internal
 		}
 
 		template<typename Iterator>
+		requires (!std::is_const_v<Iterator>)
 		Iterator& operator*(this Iterator& iter) noexcept
 		{
 			return iter;
 		}
 
 		template<typename Iterator>
+		requires (!std::is_const_v<Iterator>)
 		Iterator& operator++(this Iterator& iter) noexcept
 		{
 			return iter;
 		}
 
 		template<typename Iterator>
+		requires (!std::is_const_v<Iterator>)
 		Iterator operator++(this Iterator& iter, int) noexcept
 		{
 			return iter;
