@@ -21,36 +21,36 @@ namespace momo
 
 namespace internal
 {
-	template<typename TArray, typename TItem>
+	template<typename TQArray, typename TItem>
 	class ArrayIndexIterator;
 
-	template<typename Array, typename Item,
-		typename = Item*>
+	template<typename QArray, typename QItem,
+		typename = QItem*>
 	struct ArrayIndexIteratorTraitsStd
-		: public IteratorTraitsStd<ArrayIndexIterator<Array, Item>, std::random_access_iterator_tag>
+		: public IteratorTraitsStd<ArrayIndexIterator<QArray, QItem>, std::random_access_iterator_tag>
 	{
 	};
 
-	template<typename Array, typename Item>
-	struct ArrayIndexIteratorTraitsStd<Array, Item, decltype(std::declval<Array&>().GetItems())>
-		: public std::iterator_traits<Item*>
+	template<typename QArray, typename QItem>
+	struct ArrayIndexIteratorTraitsStd<QArray, QItem, decltype(std::declval<QArray&>().GetItems())>
+		: public std::iterator_traits<QItem*>
 	{
 	};
 
-	template<typename TArray, typename TItem>
+	template<typename TQArray, typename TQItem>
 	class ArrayIndexIterator
 	{
 	protected:
-		typedef TItem Item;
-		typedef TArray Array;
+		typedef TQItem QItem;
+		typedef TQArray QArray;
 
-		typedef typename Array::Settings Settings;
+		typedef typename QArray::Settings Settings;
 
 	public:
-		typedef Item& Reference;
-		typedef Item* Pointer;
+		typedef QItem& Reference;
+		typedef QItem* Pointer;
 
-		typedef ArrayIndexIterator<const Array, const Item> ConstIterator;
+		typedef ArrayIndexIterator<const QArray, const QItem> ConstIterator;
 
 	private:
 		struct ConstIteratorProxy : public ConstIterator
@@ -87,8 +87,8 @@ namespace internal
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mArray != nullptr);
-			return pvGetPointer(std::is_base_of<std::iterator_traits<Item*>,
-				ArrayIndexIteratorTraitsStd<Array, Item>>());
+			return pvGetPointer(std::is_base_of<std::iterator_traits<QItem*>,
+				ArrayIndexIteratorTraitsStd<QArray, QItem>>());
 		}
 
 		friend bool operator==(ArrayIndexIterator iter1, ArrayIndexIterator iter2) noexcept
@@ -113,13 +113,13 @@ namespace internal
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIndexIterator)
 
 	protected:
-		explicit ArrayIndexIterator(Array* array, size_t index) noexcept
+		explicit ArrayIndexIterator(QArray* array, size_t index) noexcept
 			: mArray(array),
 			mIndex(index)
 		{
 		}
 
-		Array* ptGetArray() const noexcept
+		QArray* ptGetArray() const noexcept
 		{
 			return mArray;
 		}
@@ -141,7 +141,7 @@ namespace internal
 		}
 
 	private:
-		Array* mArray;
+		QArray* mArray;
 		size_t mIndex;
 	};
 

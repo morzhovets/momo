@@ -247,16 +247,16 @@ namespace internal
 		typedef typename Iterator::ConstIterator ConstIterator;
 	};
 
-	template<typename Object>
-	struct ConstIteratorSelector<Object*>
+	template<typename QObject>
+	struct ConstIteratorSelector<QObject*>
 	{
-		typedef const Object* ConstIterator;
+		typedef const QObject* ConstIterator;
 	};
 
-	template<typename Object>
-	struct ConstIteratorSelector<std::reverse_iterator<Object*>>
+	template<typename QObject>
+	struct ConstIteratorSelector<std::reverse_iterator<QObject*>>
 	{
-		typedef std::reverse_iterator<const Object*> ConstIterator;
+		typedef std::reverse_iterator<const QObject*> ConstIterator;
 	};
 
 	template<typename TReference>
