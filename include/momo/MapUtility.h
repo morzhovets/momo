@@ -62,12 +62,12 @@ namespace internal
 	public:
 		typedef typename KeyValuePair::Key Key;
 		typedef std::conditional_t<isConst, const typename KeyValuePair::Value,
-			typename KeyValuePair::Value> Value;
+			typename KeyValuePair::Value> QValue;
 
 		typedef MapReference<SetReference, true> ConstReference;
 
 	public:
-		explicit MapReference(const Key& key, Value& value) noexcept
+		explicit MapReference(const Key& key, QValue& value) noexcept
 			: key(key),
 			value(value)
 		{
@@ -87,27 +87,27 @@ namespace internal
 
 	public:
 		const Key& key;
-		Value& value;
+		QValue& value;
 	};
 
 	template<typename TMapReference>
 	class MapReferenceStd
-		: public std::pair<const typename TMapReference::Key&, typename TMapReference::Value&>
+		: public std::pair<const typename TMapReference::Key&, typename TMapReference::QValue&>
 	{
 	protected:
 		typedef TMapReference MapReference;
 
 	public:
 		typedef typename MapReference::Key Key;
-		typedef typename MapReference::Value Value;
+		typedef typename MapReference::QValue QValue;
 
 		typedef MapReferenceStd<typename MapReference::ConstReference> ConstReference;
 
 	private:
-		typedef std::pair<const Key&, Value&> RefPair;
+		typedef std::pair<const Key&, QValue&> RefPair;
 
 	public:
-		explicit MapReferenceStd(const Key& key, Value& value) noexcept
+		explicit MapReferenceStd(const Key& key, QValue& value) noexcept
 			: RefPair(key, value)
 		{
 		}

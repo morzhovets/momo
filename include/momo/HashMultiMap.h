@@ -151,17 +151,17 @@ namespace internal
 		size_t mCount;
 	};
 
-	template<typename TKey, typename TValue>
+	template<typename TKey, typename TQValue>
 	class HashMultiMapReference
 	{
 	public:
 		typedef TKey Key;
-		typedef TValue Value;
+		typedef TQValue QValue;
 
-		typedef HashMultiMapReference<Key, const Value> ConstReference;
+		typedef HashMultiMapReference<Key, const QValue> ConstReference;
 
 	public:
-		explicit HashMultiMapReference(const Key& key, Value& value) noexcept
+		explicit HashMultiMapReference(const Key& key, QValue& value) noexcept
 			: key(key),
 			value(value)
 		{
@@ -174,7 +174,7 @@ namespace internal
 
 	public:
 		const Key& key;
-		Value& value;
+		QValue& value;
 	};
 
 	template<typename TKeyIterator, typename TSettings>
