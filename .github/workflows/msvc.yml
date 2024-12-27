@@ -28,6 +28,12 @@ jobs:
           win_ver: '2022'
 
         - toolset: '14.4'
+          arch: 'x64'
+          build_type: 'Debug'
+          flags: '/std:c++latest /WX /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
+          win_ver: '2022'
+
+        - toolset: '14.4'
           arch: 'x86'
           build_type: 'Release'
           flags: '/std:c++latest /WX /wd4702'
@@ -44,6 +50,12 @@ jobs:
 #          arch: 'x86'
 #          build_type: 'Debug'
 #          flags: '/std:c++latest /WX'
+#          win_ver: '2022'
+
+#        - toolset: '14.4'
+#          arch: 'x86'
+#          build_type: 'Debug'
+#          flags: '/std:c++latest /WX /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
 #          win_ver: '2022'
 
     runs-on: windows-${{ matrix.win_ver }}
