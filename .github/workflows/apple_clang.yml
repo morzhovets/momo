@@ -33,6 +33,14 @@ jobs:
           build_type: 'Release'
           flags: '-std=c++20 -Werror -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
+        - macos_ver: '15'
+          build_type: 'Debug'
+          flags: '-std=c++20 -Werror'
+
+        - macos_ver: '15'
+          build_type: 'Debug'
+          flags: '-std=c++20 -Werror -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+
         # -DTEST_LIBCXX_NEW
 
     runs-on: macos-${{ matrix.macos_ver }}

@@ -17,6 +17,10 @@ jobs:
           build_type: 'Release'
           flags: '/std:c++latest /WX -msse2 /DTEST_LIBCXX_NEW'
 
+        - win_ver: '2022'
+          build_type: 'Debug'
+          flags: '/std:c++latest -msse2 /DTEST_LIBCXX_NEW'
+
     runs-on: windows-${{ matrix.win_ver }}
 
     steps:
