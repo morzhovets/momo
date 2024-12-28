@@ -172,17 +172,12 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
-	typedef internal::ArrayBase<Item, MemManager, ItemTraits, Settings> BaseArray;
-
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
 
 	typedef Array<Item*, MemManager, ArrayItemTraits<Item*, MemManager>,
 		SegmentsSettings> Segments;
-
-	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
-	typedef internal::ArrayShifter<SegmentedArray> ArrayShifter;
 
 	struct ConstIteratorProxy : public ConstIterator
 	{
@@ -501,48 +496,21 @@ public:
 		AddBackVar(item);
 	}
 
-	template<internal::conceptObjectCreator<Item> ItemCreator>
-	void InsertCrt(size_t index, ItemCreator itemCreator)
-	{
-		pvInsert(index, FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
-	}
+	//template<internal::conceptObjectCreator<Item> ItemCreator>
+	//void InsertCrt(size_t index, ItemCreator itemCreator)
 
 	//template<typename... ItemArgs>
 	//void InsertVar(size_t index, ItemArgs&&... itemArgs)
 
-	using BaseArray::Insert;
-
 	//void Insert(size_t index, Item&& item)
 	//void Insert(size_t index, const Item& item)
 
-	void Insert(size_t index, size_t count, const Item& item)
-	{
-		typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
-		MemManager& memManager = GetMemManager();
-		ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
-		Reserve(mCount + count);
-		ArrayShifter::InsertNogrow(*this, index, count, itemHandler.Get());
-	}
+	//void Insert(size_t index, size_t count, const Item& item)
 
-	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
-	void Insert(size_t index, ArgIterator begin, ArgSentinel end)
-	{
-		if constexpr (internal::conceptForwardIterator<ArgIterator>)
-		{
-			size_t count = internal::UIntMath<>::Dist(begin, end);
-			Reserve(mCount + count);
-			ArrayShifter::InsertNogrow(*this, index, begin, count);
-		}
-		else
-		{
-			ArrayShifter::Insert(*this, index, std::move(begin), std::move(end));
-		}
-	}
+	//template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
+	//void Insert(size_t index, ArgIterator begin, ArgSentinel end)
 
-	void Insert(size_t index, std::initializer_list<Item> items)
-	{
-		Insert(index, items.begin(), items.end());
-	}
+	//void Insert(size_t index, std::initializer_list<Item> items)
 
 	void RemoveBack(size_t count = 1)
 	{
@@ -648,14 +616,6 @@ private:
 			mSegments.AddBackNogrow(segment);
 		}
 		++mCount;
-	}
-
-	template<internal::conceptObjectCreator<Item> ItemCreator>
-	void pvInsert(size_t index, FastMovableFunctor<ItemCreator> itemCreator)
-	{
-		ItemHandler itemHandler(GetMemManager(), std::move(itemCreator));
-		Reserve(mCount + 1);
-		ArrayShifter::InsertNogrow(*this, index, std::move(itemHandler.Get()));
 	}
 
 	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>

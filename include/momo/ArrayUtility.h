@@ -157,88 +157,6 @@ namespace internal
 		MemManager* mMemManager;
 	};
 
-	template<typename TItem, typename TMemManager, typename TItemTraits, typename TSettings>
-	class ArrayBase
-	{
-	public:
-		typedef TItem Item;
-		typedef TMemManager MemManager;
-		typedef TItemTraits ItemTraits;
-		typedef TSettings Settings;
-
-	public:
-		template<conceptMutableThisArg ArrayArg, typename... ItemArgs>
-		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
-		void InsertVar(this ArrayArg&& array, size_t index, ItemArgs&&... itemArgs)
-		{
-			array.InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(
-				array.GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
-		}
-
-		template<conceptMutableThisArg ArrayArg>
-		void Insert(this ArrayArg&& array, size_t index, Item&& item)
-		{
-			array.InsertVar(index, std::move(item));
-		}
-
-		template<conceptMutableThisArg ArrayArg>
-		void Insert(this ArrayArg&& array, size_t index, const Item& item)
-		{
-			array.InsertVar(index, item);
-		}
-
-		template<conceptMutableThisArg ArrayArg>
-		void Remove(this ArrayArg&& array, size_t index, size_t count = 1)
-		{
-			size_t initCount = array.GetCount();
-			MOMO_CHECK(index + count <= initCount);
-			MemManager& memManager = array.GetMemManager();
-			for (size_t i = index + count; i < initCount; ++i)
-				ItemTraits::Assign(memManager, std::move(array[i]), array[i - count]);
-			array.RemoveBack(count);
-		}
-
-		template<conceptMutableThisArg ArrayArg, conceptObjectPredicate<Item> ItemFilter>
-		size_t Remove(this ArrayArg&& array, ItemFilter itemFilter)
-		{
-			size_t initCount = array.GetCount();
-			size_t newCount = 0;
-			while (newCount < initCount && !itemFilter(std::as_const(array[newCount])))
-				++newCount;
-			MemManager& memManager = array.GetMemManager();
-			for (size_t i = newCount + 1; i < initCount; ++i)
-			{
-				if (itemFilter(std::as_const(array[i])))
-					continue;
-				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
-				++newCount;
-			}
-			size_t remCount = initCount - newCount;
-			array.RemoveBack(remCount);
-			return remCount;
-		}
-
-		template<typename Array, typename ItemArg,
-			conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
-		bool Contains(this const Array& array, const ItemArg& itemArg,
-			EqualFunc equalFunc = EqualFunc())
-		{
-			FastCopyableFunctor<EqualFunc> fastEqualFunc(equalFunc);
-			auto itemPred = [&itemArg, fastEqualFunc] (const Item& item)
-				{ return fastEqualFunc(item, itemArg); };
-			return std::any_of(array.GetBegin(), array.GetEnd(), FastCopyableFunctor(itemPred));
-		}
-
-		template<typename Array,
-			conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-		bool IsEqual(this const Array& array1, const std::type_identity_t<Array>& array2,
-			EqualFunc equalFunc = EqualFunc())
-		{
-			return std::equal(array1.GetBegin(), array1.GetEnd(), array2.GetBegin(), array2.GetEnd(),
-				FastCopyableFunctor<EqualFunc>(equalFunc));
-		}
-	};
-
 	template<typename TArray>
 	class ArrayShifter
 	{
@@ -326,6 +244,144 @@ namespace internal
 		static void InsertNogrow(Array& array, size_t index, Item&& item)
 		{
 			InsertNogrow(array, index, std::make_move_iterator(std::addressof(item)), 1);
+		}
+	};
+
+	template<typename TItem, typename TMemManager, typename TItemTraits, typename TSettings>
+	class ArrayBase
+	{
+	public:
+		typedef TItem Item;
+		typedef TMemManager MemManager;
+		typedef TItemTraits ItemTraits;
+		typedef TSettings Settings;
+
+	private:
+		typedef ArrayItemHandler<ItemTraits> ItemHandler;
+
+	public:
+		template<conceptMutableThisArg ArrayArg, conceptObjectCreator<Item> ItemCreator>
+		void InsertCrt(this ArrayArg&& array, size_t index, ItemCreator itemCreator)
+		{
+			pvInsert(array, index,
+				FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
+		}
+
+		template<conceptMutableThisArg ArrayArg, typename... ItemArgs>
+		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
+		void InsertVar(this ArrayArg&& array, size_t index, ItemArgs&&... itemArgs)
+		{
+			array.InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(
+				array.GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
+		}
+
+		template<conceptMutableThisArg ArrayArg>
+		void Insert(this ArrayArg&& array, size_t index, Item&& item)
+		{
+			array.InsertVar(index, std::move(item));
+		}
+
+		template<conceptMutableThisArg ArrayArg>
+		void Insert(this ArrayArg&& array, size_t index, const Item& item)
+		{
+			array.InsertVar(index, item);
+		}
+
+		template<conceptMutableThisArg ArrayArg>
+		void Insert(this ArrayArg&& array, size_t index, size_t count, const Item& item)
+		{
+			typedef ArrayShifter<std::decay_t<ArrayArg>> ArrayShifter;
+			typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
+			MemManager& memManager = array.GetMemManager();
+			ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
+			array.Reserve(array.GetCount() + count);
+			ArrayShifter::InsertNogrow(array, index, count, itemHandler.Get());
+		}
+
+		template<conceptMutableThisArg ArrayArg,
+			std::input_iterator ArgIterator, conceptSentinel<ArgIterator> ArgSentinel>
+		void Insert(this ArrayArg&& array, size_t index, ArgIterator begin, ArgSentinel end)
+		{
+			typedef ArrayShifter<std::decay_t<ArrayArg>> ArrayShifter;
+			if constexpr (conceptForwardIterator<ArgIterator>)
+			{
+				size_t count = UIntMath<>::Dist(begin, end);
+				array.Reserve(array.GetCount() + count);
+				ArrayShifter::InsertNogrow(array, index, begin, count);
+			}
+			else
+			{
+				ArrayShifter::Insert(array, index, std::move(begin), std::move(end));
+			}
+		}
+
+		template<conceptMutableThisArg ArrayArg>
+		void Insert(this ArrayArg&& array, size_t index, std::initializer_list<Item> items)
+		{
+			array.Insert(index, items.begin(), items.end());
+		}
+
+		template<conceptMutableThisArg ArrayArg>
+		void Remove(this ArrayArg&& array, size_t index, size_t count = 1)
+		{
+			size_t initCount = array.GetCount();
+			MOMO_CHECK(index + count <= initCount);
+			MemManager& memManager = array.GetMemManager();
+			for (size_t i = index + count; i < initCount; ++i)
+				ItemTraits::Assign(memManager, std::move(array[i]), array[i - count]);
+			array.RemoveBack(count);
+		}
+
+		template<conceptMutableThisArg ArrayArg, conceptObjectPredicate<Item> ItemFilter>
+		size_t Remove(this ArrayArg&& array, ItemFilter itemFilter)
+		{
+			size_t initCount = array.GetCount();
+			size_t newCount = 0;
+			while (newCount < initCount && !itemFilter(std::as_const(array[newCount])))
+				++newCount;
+			MemManager& memManager = array.GetMemManager();
+			for (size_t i = newCount + 1; i < initCount; ++i)
+			{
+				if (itemFilter(std::as_const(array[i])))
+					continue;
+				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
+				++newCount;
+			}
+			size_t remCount = initCount - newCount;
+			array.RemoveBack(remCount);
+			return remCount;
+		}
+
+		template<typename Array, typename ItemArg,
+			conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
+		bool Contains(this const Array& array, const ItemArg& itemArg,
+			EqualFunc equalFunc = EqualFunc())
+		{
+			FastCopyableFunctor<EqualFunc> fastEqualFunc(equalFunc);
+			auto itemPred = [&itemArg, fastEqualFunc] (const Item& item)
+				{ return fastEqualFunc(item, itemArg); };
+			return std::any_of(array.GetBegin(), array.GetEnd(), FastCopyableFunctor(itemPred));
+		}
+
+		template<typename Array,
+			conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
+		bool IsEqual(this const Array& array1, const std::type_identity_t<Array>& array2,
+			EqualFunc equalFunc = EqualFunc())
+		{
+			return std::equal(array1.GetBegin(), array1.GetEnd(), array2.GetBegin(), array2.GetEnd(),
+				FastCopyableFunctor<EqualFunc>(equalFunc));
+		}
+
+	protected:
+		explicit ArrayBase() noexcept = default;
+
+	private:
+		template<typename Array, internal::conceptObjectCreator<Item> ItemCreator>
+		static void pvInsert(Array& array, size_t index, FastMovableFunctor<ItemCreator> itemCreator)
+		{
+			ItemHandler itemHandler(array.GetMemManager(), std::move(itemCreator));
+			array.Reserve(array.GetCount() + 1);
+			ArrayShifter<Array>::InsertNogrow(array, index, std::move(itemHandler.Get()));
 		}
 	};
 

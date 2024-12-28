@@ -880,7 +880,7 @@ public:
 
 	void Insert(size_t index, std::initializer_list<Item> items)
 	{
-		Insert(index, items.begin(), items.end());
+		BaseArray::Insert(index, items);
 	}
 
 	void RemoveBack(size_t count = 1)
