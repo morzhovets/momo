@@ -14,6 +14,7 @@
 
 #include "ObjectManager.h"
 #include "IteratorUtility.h"
+#include "KeyUtility.h"
 
 namespace momo
 {
@@ -156,6 +157,88 @@ namespace internal
 		MemManager* mMemManager;
 	};
 
+	template<typename TItem, typename TMemManager, typename TItemTraits, typename TSettings>
+	class ArrayBase
+	{
+	public:
+		typedef TItem Item;
+		typedef TMemManager MemManager;
+		typedef TItemTraits ItemTraits;
+		typedef TSettings Settings;
+
+	public:
+		template<conceptMutableThisArg ArrayArg, typename... ItemArgs>
+		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
+		void InsertVar(this ArrayArg&& array, size_t index, ItemArgs&&... itemArgs)
+		{
+			array.InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(
+				array.GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
+		}
+
+		template<conceptMutableThisArg ArrayArg>
+		void Insert(this ArrayArg&& array, size_t index, Item&& item)
+		{
+			array.InsertVar(index, std::move(item));
+		}
+
+		template<conceptMutableThisArg ArrayArg>
+		void Insert(this ArrayArg&& array, size_t index, const Item& item)
+		{
+			array.InsertVar(index, item);
+		}
+
+		template<conceptMutableThisArg ArrayArg>
+		void Remove(this ArrayArg&& array, size_t index, size_t count = 1)
+		{
+			size_t initCount = array.GetCount();
+			MOMO_CHECK(index + count <= initCount);
+			MemManager& memManager = array.GetMemManager();
+			for (size_t i = index + count; i < initCount; ++i)
+				ItemTraits::Assign(memManager, std::move(array[i]), array[i - count]);
+			array.RemoveBack(count);
+		}
+
+		template<conceptMutableThisArg ArrayArg, conceptObjectPredicate<Item> ItemFilter>
+		size_t Remove(this ArrayArg&& array, ItemFilter itemFilter)
+		{
+			size_t initCount = array.GetCount();
+			size_t newCount = 0;
+			while (newCount < initCount && !itemFilter(std::as_const(array[newCount])))
+				++newCount;
+			MemManager& memManager = array.GetMemManager();
+			for (size_t i = newCount + 1; i < initCount; ++i)
+			{
+				if (itemFilter(std::as_const(array[i])))
+					continue;
+				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
+				++newCount;
+			}
+			size_t remCount = initCount - newCount;
+			array.RemoveBack(remCount);
+			return remCount;
+		}
+
+		template<typename Array, typename ItemArg,
+			conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
+		bool Contains(this const Array& array, const ItemArg& itemArg,
+			EqualFunc equalFunc = EqualFunc())
+		{
+			FastCopyableFunctor<EqualFunc> fastEqualFunc(equalFunc);
+			auto itemPred = [&itemArg, fastEqualFunc] (const Item& item)
+				{ return fastEqualFunc(item, itemArg); };
+			return std::any_of(array.GetBegin(), array.GetEnd(), FastCopyableFunctor(itemPred));
+		}
+
+		template<typename Array,
+			conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
+		bool IsEqual(this const Array& array1, const std::type_identity_t<Array>& array2,
+			EqualFunc equalFunc = EqualFunc())
+		{
+			return std::equal(array1.GetBegin(), array1.GetEnd(), array2.GetBegin(), array2.GetEnd(),
+				FastCopyableFunctor<EqualFunc>(equalFunc));
+		}
+	};
+
 	template<typename TArray>
 	class ArrayShifter
 	{
@@ -243,36 +326,6 @@ namespace internal
 		static void InsertNogrow(Array& array, size_t index, Item&& item)
 		{
 			InsertNogrow(array, index, std::make_move_iterator(std::addressof(item)), 1);
-		}
-
-		static void Remove(Array& array, size_t index, size_t count)
-		{
-			size_t initCount = array.GetCount();
-			MOMO_CHECK(index + count <= initCount);
-			MemManager& memManager = array.GetMemManager();
-			for (size_t i = index + count; i < initCount; ++i)
-				ItemTraits::Assign(memManager, std::move(array[i]), array[i - count]);
-			array.RemoveBack(count);
-		}
-
-		template<conceptObjectPredicate<Item> ItemFilter>
-		static size_t Remove(Array& array, FastCopyableFunctor<ItemFilter> itemFilter)
-		{
-			size_t initCount = array.GetCount();
-			size_t newCount = 0;
-			while (newCount < initCount && !itemFilter(std::as_const(array[newCount])))
-				++newCount;
-			MemManager& memManager = array.GetMemManager();
-			for (size_t i = newCount + 1; i < initCount; ++i)
-			{
-				if (itemFilter(std::as_const(array[i])))
-					continue;
-				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
-				++newCount;
-			}
-			size_t remCount = initCount - newCount;
-			array.RemoveBack(remCount);
-			return remCount;
 		}
 	};
 

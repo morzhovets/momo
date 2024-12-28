@@ -20,7 +20,6 @@
 #pragma once
 
 #include "ArrayUtility.h"
-#include "KeyUtility.h"
 
 namespace momo
 {
@@ -190,6 +189,7 @@ template<conceptObject TItem,
 	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = ArraySettings<>>
 class Array
+	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>
 {
 public:
 	typedef TItem Item;
@@ -200,6 +200,8 @@ public:
 	static const size_t internalCapacity = Settings::internalCapacity;
 
 private:
+	typedef internal::ArrayBase<Item, MemManager, ItemTraits, Settings> BaseArray;
+
 	class Data : private MemManager
 	{
 	private:
@@ -818,13 +820,8 @@ public:
 		pvInsert(index, FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 	}
 
-	template<typename... ItemArgs>
-	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
-	void InsertVar(size_t index, ItemArgs&&... itemArgs)
-	{
-		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
-			std::forward<ItemArgs>(itemArgs)...));
-	}
+	//template<typename... ItemArgs>
+	//void InsertVar(size_t index, ItemArgs&&... itemArgs)
 
 	void Insert(size_t index, Item&& item)
 	{
@@ -832,7 +829,7 @@ public:
 		size_t grow = (initCount + 1 > GetCapacity());
 		size_t itemIndex = pvIndexOf(std::as_const(item));
 		if (grow || (index <= itemIndex && itemIndex < initCount))
-			InsertVar(index, std::move(item));
+			BaseArray::InsertVar(index, std::move(item));
 		else
 			ArrayShifter::InsertNogrow(*this, index, std::move(item));
 	}
@@ -892,33 +889,17 @@ public:
 		pvRemoveBack(count);
 	}
 
-	void Remove(size_t index, size_t count = 1)
-	{
-		ArrayShifter::Remove(*this, index, count);
-	}
+	//void Remove(size_t index, size_t count = 1)
 
-	template<internal::conceptObjectPredicate<Item> ItemFilter>
-	size_t Remove(ItemFilter itemFilter)
-	{
-		return ArrayShifter::Remove(*this, FastCopyableFunctor<ItemFilter>(itemFilter));
-	}
+	//template<internal::conceptObjectPredicate<Item> ItemFilter>
+	//size_t Remove(ItemFilter itemFilter)
 
-	template<typename ItemArg,
-		internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
-	bool Contains(const ItemArg& itemArg, EqualFunc equalFunc = EqualFunc()) const
-	{
-		FastCopyableFunctor<EqualFunc> fastEqualFunc(equalFunc);
-		auto itemPred = [&itemArg, fastEqualFunc] (const Item& item)
-			{ return fastEqualFunc(item, itemArg); };
-		return std::any_of(GetBegin(), GetEnd(), FastCopyableFunctor(itemPred));
-	}
+	//template<typename ItemArg,
+	//	internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
+	//bool Contains(const ItemArg& itemArg, EqualFunc equalFunc = EqualFunc()) const
 
-	template<internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-	bool IsEqual(const Array& array, EqualFunc equalFunc = EqualFunc()) const
-	{
-		return std::equal(GetBegin(), GetEnd(), array.GetBegin(), array.GetEnd(),
-			FastCopyableFunctor<EqualFunc>(equalFunc));
-	}
+	//template<internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
+	//bool IsEqual(const Array& array, EqualFunc equalFunc = EqualFunc()) const
 
 private:
 	explicit Array(Data&& data) noexcept

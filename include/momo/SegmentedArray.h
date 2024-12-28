@@ -160,6 +160,7 @@ template<conceptObject TItem,
 	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = SegmentedArraySettings<>>
 class SegmentedArray
+	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>
 {
 public:
 	typedef TItem Item;
@@ -171,6 +172,8 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
+	typedef internal::ArrayBase<Item, MemManager, ItemTraits, Settings> BaseArray;
+
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
@@ -504,23 +507,13 @@ public:
 		pvInsert(index, FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 	}
 
-	template<typename... ItemArgs>
-	//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
-	void InsertVar(size_t index, ItemArgs&&... itemArgs)
-	{
-		InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(GetMemManager(),
-			std::forward<ItemArgs>(itemArgs)...));
-	}
+	//template<typename... ItemArgs>
+	//void InsertVar(size_t index, ItemArgs&&... itemArgs)
 
-	void Insert(size_t index, Item&& item)
-	{
-		InsertVar(index, std::move(item));
-	}
+	using BaseArray::Insert;
 
-	void Insert(size_t index, const Item& item)
-	{
-		InsertVar(index, item);
-	}
+	//void Insert(size_t index, Item&& item)
+	//void Insert(size_t index, const Item& item)
 
 	void Insert(size_t index, size_t count, const Item& item)
 	{
@@ -557,16 +550,10 @@ public:
 		pvDecCount(mCount - count);
 	}
 
-	void Remove(size_t index, size_t count = 1)
-	{
-		ArrayShifter::Remove(*this, index, count);
-	}
+	//void Remove(size_t index, size_t count = 1)
 
-	template<internal::conceptObjectPredicate<Item> ItemFilter>
-	size_t Remove(ItemFilter itemFilter)
-	{
-		return ArrayShifter::Remove(*this, FastCopyableFunctor<ItemFilter>(itemFilter));
-	}
+	//template<internal::conceptObjectPredicate<Item> ItemFilter>
+	//size_t Remove(ItemFilter itemFilter)
 
 	size_t GetSegmentCount() const noexcept
 	{
@@ -583,22 +570,12 @@ public:
 		return pvGetSegmentItems(segIndex);
 	}
 
-	template<typename ItemArg,
-		internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
-	bool Contains(const ItemArg& itemArg, EqualFunc equalFunc = EqualFunc()) const
-	{
-		FastCopyableFunctor<EqualFunc> fastEqualFunc(equalFunc);
-		auto itemPred = [&itemArg, fastEqualFunc] (const Item& item)
-			{ return fastEqualFunc(item, itemArg); };
-		return std::any_of(GetBegin(), GetEnd(), FastCopyableFunctor(itemPred));
-	}
+	//template<typename ItemArg,
+	//	internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
+	//bool Contains(const ItemArg& itemArg, EqualFunc equalFunc = EqualFunc()) const
 
-	template<internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-	bool IsEqual(const SegmentedArray& array, EqualFunc equalFunc = EqualFunc()) const
-	{
-		return std::equal(GetBegin(), GetEnd(), array.GetBegin(), array.GetEnd(),
-			FastCopyableFunctor<EqualFunc>(equalFunc));
-	}
+	//template<internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
+	//bool IsEqual(const SegmentedArray& array, EqualFunc equalFunc = EqualFunc()) const
 
 private:
 	Item* pvAllocateSegment(size_t segIndex)
