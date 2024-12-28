@@ -16,9 +16,10 @@ jobs:
           build_type: 'Release'
           flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
 
+        # -DTEST_LIBCXX_NEW: Fatal error: .obj: file too big
         - arch: 'x64'
           build_type: 'Debug'
-          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-std=c++23 -Wa,-mbig-obj -msse2'
 
 #        - arch: 'x86'
 #          build_type: 'Release'
@@ -38,11 +39,11 @@ jobs:
 #
 #        - arch: 'x86'
 #          build_type: 'Debug'
-#          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
+#          flags: '-std=c++23 -Wa,-mbig-obj -msse2'
 #
 #        - arch: 'x86'
 #          build_type: 'Debug'
-#          flags: '-std=c++23 -Wa,-mbig-obj -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+#          flags: '-std=c++23 -Wa,-mbig-obj -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
     runs-on: windows-2022
 
