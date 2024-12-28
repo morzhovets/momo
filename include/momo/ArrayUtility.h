@@ -297,39 +297,39 @@ namespace internal
 		{
 		}
 
-		template<typename Iterator>
-		requires (!std::is_const_v<Iterator>)
-		Iterator& operator=(this Iterator& iter, Item&& item)
+		template<conceptMutableThisArg IteratorArg,
+			typename Iterator = std::decay_t<IteratorArg>>
+		Iterator& operator=(this IteratorArg&& iter, Item&& item)
 		{
-			iter.container->AddBack(std::move(item));
-			return iter;
+			static_cast<BackInsertIteratorStd&>(iter).container->AddBack(std::move(item));
+			return static_cast<Iterator&>(iter);
 		}
 
-		template<typename Iterator>
-		requires (!std::is_const_v<Iterator>)
-		Iterator& operator=(this Iterator& iter, const Item& item)
+		template<conceptMutableThisArg IteratorArg,
+			typename Iterator = std::decay_t<IteratorArg>>
+		Iterator& operator=(this IteratorArg&& iter, const Item& item)
 		{
-			iter.container->AddBack(item);
-			return iter;
+			static_cast<BackInsertIteratorStd&>(iter).container->AddBack(item);
+			return static_cast<Iterator&>(iter);
 		}
 
-		template<typename Iterator>
-		requires (!std::is_const_v<Iterator>)
-		Iterator& operator*(this Iterator& iter) noexcept
+		template<conceptMutableThisArg IteratorArg,
+			typename Iterator = std::decay_t<IteratorArg>>
+		Iterator& operator*(this IteratorArg&& iter) noexcept
 		{
-			return iter;
+			return static_cast<Iterator&>(iter);
 		}
 
-		template<typename Iterator>
-		requires (!std::is_const_v<Iterator>)
-		Iterator& operator++(this Iterator& iter) noexcept
+		template<conceptMutableThisArg IteratorArg,
+			typename Iterator = std::decay_t<IteratorArg>>
+		Iterator& operator++(this IteratorArg&& iter) noexcept
 		{
-			return iter;
+			return static_cast<Iterator&>(iter);
 		}
 
-		template<typename Iterator>
-		requires (!std::is_const_v<Iterator>)
-		Iterator operator++(this Iterator& iter, int) noexcept
+		template<conceptMutableThisArg IteratorArg,
+			typename Iterator = std::decay_t<IteratorArg>>
+		Iterator operator++(this IteratorArg&& iter, int) noexcept
 		{
 			return iter;
 		}

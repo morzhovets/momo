@@ -158,6 +158,9 @@ namespace internal
 	template<typename Predicate, typename... Args>
 	concept conceptPredicate = conceptConstFunctor<Predicate, bool, Args...>;
 
+	template<typename ThisArg>
+	concept conceptMutableThisArg = !std::is_const_v<std::remove_reference_t<ThisArg>>;
+
 	template<typename Object, typename QSrcObject>
 	using ConstLike = std::conditional_t<std::is_const_v<QSrcObject>, const Object, Object>;
 
