@@ -474,7 +474,7 @@ private:
 	};
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
-	typedef internal::ArrayShifter<Array> ArrayShifter;
+	typedef internal::ArrayInserter<Array> ArrayInserter;
 	typedef typename internal::ArrayIteratorSelector<Array> IteratorSelector;
 
 	typedef internal::UIntMath<> SMath;
@@ -831,7 +831,7 @@ public:
 		if (grow || (index <= itemIndex && itemIndex < initCount))
 			BaseArray::InsertVar(index, std::move(item));
 		else
-			ArrayShifter::InsertNogrow(*this, index, std::move(item));
+			ArrayInserter::InsertNogrow(*this, index, std::move(item));
 	}
 
 	void Insert(size_t index, const Item& item)
@@ -852,11 +852,11 @@ public:
 			ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
 			if (grow)
 				pvGrow(newCount, ArrayGrowCause::add);
-			ArrayShifter::InsertNogrow(*this, index, count, itemHandler.Get());
+			ArrayInserter::InsertNogrow(*this, index, count, itemHandler.Get());
 		}
 		else
 		{
-			ArrayShifter::InsertNogrow(*this, index, count, item);
+			ArrayInserter::InsertNogrow(*this, index, count, item);
 		}
 	}
 
@@ -870,11 +870,11 @@ public:
 			size_t newCount = GetCount() + count;
 			if (newCount > GetCapacity())
 				pvGrow(newCount, ArrayGrowCause::add);
-			ArrayShifter::InsertNogrow(*this, index, begin, count);
+			ArrayInserter::InsertNogrow(*this, index, begin, count);
 		}
 		else
 		{
-			ArrayShifter::Insert(*this, index, std::move(begin), std::move(end));
+			BaseArray::Insert(index, std::move(begin), std::move(end));
 		}
 	}
 
@@ -1038,7 +1038,7 @@ private:
 		size_t newCount = GetCount() + 1;
 		if (newCount > GetCapacity())
 			pvGrow(newCount, ArrayGrowCause::add);
-		ArrayShifter::InsertNogrow(*this, index, std::move(itemHandler.Get()));
+		ArrayInserter::InsertNogrow(*this, index, std::move(itemHandler.Get()));
 	}
 
 	void pvRemoveBack(size_t count) noexcept

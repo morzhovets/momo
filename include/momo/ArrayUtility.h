@@ -158,7 +158,7 @@ namespace internal
 	};
 
 	template<typename TArray>
-	class ArrayShifter
+	class ArrayInserter
 	{
 	public:
 		typedef TArray Array;
@@ -194,17 +194,6 @@ namespace internal
 					ItemTraits::Assign(memManager, item, arrayItem);
 				}
 			}
-		}
-
-		template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
-		static void Insert(Array& array, size_t index, ArgIterator begin, ArgSentinel end)
-		{
-			typedef typename ItemTraits::template Creator<
-				std::iter_reference_t<ArgIterator>> IterCreator;
-			MemManager& memManager = array.GetMemManager();
-			size_t count = 0;
-			for (ArgIterator iter = std::move(begin); iter != end; (void)++iter, ++count)
-				array.InsertCrt(index + count, IterCreator(memManager, *iter));
 		}
 
 		template<internal::conceptForwardIterator ArgIterator>
@@ -259,6 +248,9 @@ namespace internal
 	private:
 		typedef ArrayItemHandler<ItemTraits> ItemHandler;
 
+		template<typename ArrayArg>
+		using ArrayInserter = internal::ArrayInserter<std::decay_t<ArrayArg>>;
+
 	public:
 		template<conceptMutableThisArg ArrayArg, conceptObjectCreator<Item> ItemCreator>
 		void InsertCrt(this ArrayArg&& array, size_t index, ItemCreator itemCreator)
@@ -290,28 +282,31 @@ namespace internal
 		template<conceptMutableThisArg ArrayArg>
 		void Insert(this ArrayArg&& array, size_t index, size_t count, const Item& item)
 		{
-			typedef ArrayShifter<std::decay_t<ArrayArg>> ArrayShifter;
 			typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
 			MemManager& memManager = array.GetMemManager();
 			ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
 			array.Reserve(array.GetCount() + count);
-			ArrayShifter::InsertNogrow(array, index, count, itemHandler.Get());
+			ArrayInserter<ArrayArg>::InsertNogrow(array, index, count, itemHandler.Get());
 		}
 
 		template<conceptMutableThisArg ArrayArg,
 			std::input_iterator ArgIterator, conceptSentinel<ArgIterator> ArgSentinel>
 		void Insert(this ArrayArg&& array, size_t index, ArgIterator begin, ArgSentinel end)
 		{
-			typedef ArrayShifter<std::decay_t<ArrayArg>> ArrayShifter;
 			if constexpr (conceptForwardIterator<ArgIterator>)
 			{
 				size_t count = UIntMath<>::Dist(begin, end);
 				array.Reserve(array.GetCount() + count);
-				ArrayShifter::InsertNogrow(array, index, begin, count);
+				ArrayInserter<ArrayArg>::InsertNogrow(array, index, begin, count);
 			}
 			else
 			{
-				ArrayShifter::Insert(array, index, std::move(begin), std::move(end));
+				typedef typename ItemTraits::template Creator<
+					std::iter_reference_t<ArgIterator>> IterCreator;
+				MemManager& memManager = array.GetMemManager();
+				size_t count = 0;
+				for (ArgIterator iter = std::move(begin); iter != end; (void)++iter, ++count)
+					array.InsertCrt(index + count, IterCreator(memManager, *iter));
 			}
 		}
 
@@ -381,7 +376,7 @@ namespace internal
 		{
 			ItemHandler itemHandler(array.GetMemManager(), std::move(itemCreator));
 			array.Reserve(array.GetCount() + 1);
-			ArrayShifter<Array>::InsertNogrow(array, index, std::move(itemHandler.Get()));
+			ArrayInserter<Array>::InsertNogrow(array, index, std::move(itemHandler.Get()));
 		}
 	};
 
