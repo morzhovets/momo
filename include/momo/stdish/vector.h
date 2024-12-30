@@ -488,7 +488,7 @@ public:
 	}
 
 	auto operator<=>(const vector& right) const
-		requires requires { this->mArray.Compare(right.mArray); }
+		requires requires (const Array& array) { array.Compare(array); }
 	{
 		return mArray.Compare(right.mArray);
 	}
