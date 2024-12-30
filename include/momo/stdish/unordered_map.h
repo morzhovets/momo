@@ -1077,24 +1077,24 @@ template<typename Iterator, typename HashFunc, typename EqualFunc, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_map(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, EqualFunc, Allocator>; \
-template<typename CKey, typename Mapped, \
-	typename Key = std::remove_const_t<CKey>> \
-unordered_map(std::initializer_list<std::pair<CKey, Mapped>>) \
+template<typename QKey, typename Mapped, \
+	typename Key = std::remove_const_t<QKey>> \
+unordered_map(std::initializer_list<std::pair<QKey, Mapped>>) \
 	-> unordered_map<Key, Mapped>; \
-template<typename CKey, typename Mapped, \
-	typename Key = std::remove_const_t<CKey>, \
+template<typename QKey, typename Mapped, \
+	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(std::initializer_list<std::pair<CKey, Mapped>>, size_t, Allocator = Allocator()) \
+unordered_map(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename CKey, typename Mapped, typename HashFunc, \
-	typename Key = std::remove_const_t<CKey>, \
+template<typename QKey, typename Mapped, typename HashFunc, \
+	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(std::initializer_list<std::pair<CKey, Mapped>>, size_t, HashFunc, Allocator = Allocator()) \
+unordered_map(std::initializer_list<std::pair<QKey, Mapped>>, size_t, HashFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
-template<typename CKey, typename Mapped, typename HashFunc, typename EqualFunc, \
-	typename Key = std::remove_const_t<CKey>, \
+template<typename QKey, typename Mapped, typename HashFunc, typename EqualFunc, \
+	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(std::initializer_list<std::pair<CKey, Mapped>>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
+unordered_map(std::initializer_list<std::pair<QKey, Mapped>>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, HashFunc, EqualFunc, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_map) \

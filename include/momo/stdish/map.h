@@ -1093,15 +1093,15 @@ template<typename Iterator, typename LessFunc, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 map(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>; \
-template<typename CKey, typename Mapped, \
-	typename Key = std::remove_const_t<CKey>, \
+template<typename QKey, typename Mapped, \
+	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-map(std::initializer_list<std::pair<CKey, Mapped>>, Allocator = Allocator()) \
+map(std::initializer_list<std::pair<QKey, Mapped>>, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
-template<typename CKey, typename Mapped, typename LessFunc, \
-	typename Key = std::remove_const_t<CKey>, \
+template<typename QKey, typename Mapped, typename LessFunc, \
+	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-map(std::initializer_list<std::pair<CKey, Mapped>>, LessFunc, Allocator = Allocator()) \
+map(std::initializer_list<std::pair<QKey, Mapped>>, LessFunc, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessFunc, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map) \
