@@ -365,7 +365,7 @@ namespace internal
 		}
 
 		template<typename Array,
-			typename Comparer = TieComparer<Item>>
+			typename Comparer = TieComparer<typename Array::Item>>
 		auto Compare(this const Array& array1, const std::type_identity_t<Array>& array2,
 			Comparer comp = Comparer())
 		{
