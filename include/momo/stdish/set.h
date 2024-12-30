@@ -589,12 +589,10 @@ public:
 	}
 
 	auto operator<=>(const set& right) const
-		requires requires (const_reference ref) { std::tie(ref) <=> std::tie(ref); }
+		requires requires { typename momo::internal::TieComparer<value_type>; }
 	{
-		auto comp = [] (const value_type& value1, const value_type& value2)
-			{ return std::tie(value1) <=> std::tie(value2); };
 		return std::lexicographical_compare_three_way(begin(), end(),
-			right.begin(), right.end(), comp);
+			right.begin(), right.end(), momo::internal::TieComparer<value_type>());
 	}
 
 private:

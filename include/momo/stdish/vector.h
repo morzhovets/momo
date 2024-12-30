@@ -488,12 +488,9 @@ public:
 	}
 
 	auto operator<=>(const vector& right) const
-		requires requires (const_reference ref) { std::tie(ref) <=> std::tie(ref); }
+		requires requires { this->mArray.Compare(right.mArray); }
 	{
-		auto comp = [] (const value_type& value1, const value_type& value2)
-			{ return std::tie(value1) <=> std::tie(value2); };
-		return std::lexicographical_compare_three_way(begin(), end(),
-			right.begin(), right.end(), comp);
+		return mArray.Compare(right.mArray);
 	}
 
 private:

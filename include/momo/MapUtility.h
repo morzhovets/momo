@@ -125,7 +125,7 @@ namespace internal
 
 		template<typename Pair2>
 		friend auto operator<=>(const MapReferenceStd& ref1, const Pair2& pair2)
-			requires requires { std::tie(ref1.first, ref1.second) <=> std::tie(pair2.first, pair2.second); }
+			requires (std::three_way_comparable<std::tuple<const Key&, const QValue&>>)
 		{
 			return std::tie(ref1.first, ref1.second) <=> std::tie(pair2.first, pair2.second);
 		}

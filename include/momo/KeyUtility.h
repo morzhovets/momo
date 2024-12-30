@@ -87,6 +87,11 @@ struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 
 namespace internal
 {
+	template<typename Key>
+	requires (std::three_way_comparable<std::tuple<const Key&>>)
+	using TieComparer = decltype([] (const Key& key1, const Key& key2)
+		{ return std::tie(key1) <=> std::tie(key2); });
+
 	class StrHasher
 	{
 	private:
