@@ -83,10 +83,7 @@ namespace internal
 		}
 
 		friend bool operator==(DataRawUniqueHashIterator iter1,
-			DataRawUniqueHashIterator iter2) noexcept
-		{
-			return iter1.mRaw == iter2.mRaw && iter1.mRawIndex == iter2.mRawIndex;
-		}
+			DataRawUniqueHashIterator iter2) noexcept = default;
 
 		friend auto operator<=>(DataRawUniqueHashIterator iter1, DataRawUniqueHashIterator iter2)
 		{

@@ -94,10 +94,7 @@ namespace internal
 			return Pointer(ReferenceProxy(*mMergeSetPosition));
 		}
 
-		friend bool operator==(MergeMapPosition pos1, MergeMapPosition pos2) noexcept
-		{
-			return pos1.mMergeSetPosition == pos2.mMergeSetPosition;
-		}
+		friend bool operator==(MergeMapPosition pos1, MergeMapPosition pos2) noexcept = default;
 
 		MOMO_MORE_POSITION_OPERATORS(MergeMapPosition)
 

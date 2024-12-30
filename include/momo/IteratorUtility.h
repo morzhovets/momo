@@ -376,10 +376,7 @@ namespace internal
 		}
 
 		friend bool operator==(DerivedBidirectionalIterator iter1,
-			DerivedBidirectionalIterator iter2) noexcept
-		{
-			return iter1.mBaseIterator == iter2.mBaseIterator;
-		}
+			DerivedBidirectionalIterator iter2) noexcept = default;
 
 		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(DerivedBidirectionalIterator)
 
@@ -446,10 +443,8 @@ namespace internal
 			return Pointer(ReferenceProxy(*mBaseIterator));
 		}
 
-		friend bool operator==(DerivedForwardIterator iter1, DerivedForwardIterator iter2) noexcept
-		{
-			return iter1.mBaseIterator == iter2.mBaseIterator;
-		}
+		friend bool operator==(DerivedForwardIterator iter1,
+			DerivedForwardIterator iter2) noexcept = default;
 
 		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(DerivedForwardIterator)
 
