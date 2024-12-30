@@ -121,22 +121,22 @@ typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpenDefault;
 
 template<typename TKey,
 	typename THashBucket = HashBucketDefault,
-	typename TKeyArgBase = TKey>
+	typename TBaseKeyArg = TKey>
 class HashTraits
 {
 public:
 	typedef TKey Key;
 	typedef THashBucket HashBucket;
-	typedef TKeyArgBase KeyArgBase;
+	typedef TBaseKeyArg BaseKeyArg;
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
+	static const bool isFastNothrowHashable = IsFastNothrowHashable<BaseKeyArg>::value;
 
 	template<typename ItemTraits>
 	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = typename std::conditional<std::is_same<KeyArgBase, Key>::value,
-		std::false_type, std::is_convertible<const KeyArg&, const KeyArgBase&>>::type;	//?
+	using IsValidKeyArg = typename std::conditional<std::is_same<BaseKeyArg, Key>::value,
+		std::false_type, std::is_convertible<const KeyArg&, const BaseKeyArg&>>::type;	//?
 
 public:
 	explicit HashTraits() noexcept
@@ -161,13 +161,13 @@ public:
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
 	{
-		return HashCoder<KeyArgBase>()(static_cast<const KeyArgBase&>(key));
+		return HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key));
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		return static_cast<const KeyArgBase&>(key1) == static_cast<const KeyArgBase&>(key2);
+		return static_cast<const BaseKeyArg&>(key1) == static_cast<const BaseKeyArg&>(key2);
 	}
 };
 
