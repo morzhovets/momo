@@ -72,22 +72,22 @@
 	}
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
-# define MOMO_MORE_COMPARISON_OPERATORS(ObjectArg)
+# define MOMO_MORE_COMPARISON_OPERATORS(RObject)
 #else
-# define MOMO_MORE_COMPARISON_OPERATORS(ObjectArg) \
-	friend bool operator!=(ObjectArg obj1, ObjectArg obj2) noexcept(noexcept(obj1 == obj2)) \
+# define MOMO_MORE_COMPARISON_OPERATORS(RObject) \
+	friend bool operator!=(RObject obj1, RObject obj2) noexcept(noexcept(obj1 == obj2)) \
 	{ \
 		return !(obj1 == obj2); \
 	} \
-	friend bool operator>(ObjectArg obj1, ObjectArg obj2) \
+	friend bool operator>(RObject obj1, RObject obj2) \
 	{ \
 		return obj2 < obj1; \
 	} \
-	friend bool operator<=(ObjectArg obj1, ObjectArg obj2) \
+	friend bool operator<=(RObject obj1, RObject obj2) \
 	{ \
 		return !(obj2 < obj1); \
 	} \
-	friend bool operator>=(ObjectArg obj1, ObjectArg obj2) \
+	friend bool operator>=(RObject obj1, RObject obj2) \
 	{ \
 		return obj2 <= obj1; \
 	}
@@ -112,15 +112,15 @@
 	{ \
 	}
 
-// Result = decltype((std::declval<ObjectArg&&>().*&Object##Proxy::pt##Func)(std::declval<Args&&>()...))	// gcc
+// Result = decltype((std::declval<RObject&&>().*&Object##Proxy::pt##Func)(std::declval<Args&&>()...))	// gcc
 #define MOMO_DECLARE_PROXY_FUNCTION(Object, Func, Result) \
-	template<typename ObjectArg, typename... Args> \
-	static Result Func(ObjectArg&& object, Args&&... args) \
-		noexcept(noexcept((std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
+	template<typename RObject, typename... Args> \
+	static Result Func(RObject&& object, Args&&... args) \
+		noexcept(noexcept((std::forward<RObject>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		MOMO_STATIC_ASSERT(std::is_same<Object, typename std::decay<ObjectArg>::type>::value); \
-		return (std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
+		MOMO_STATIC_ASSERT(std::is_same<Object, typename std::decay<RObject>::type>::value); \
+		return (std::forward<RObject>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
 
