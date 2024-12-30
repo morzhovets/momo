@@ -11,7 +11,7 @@
   namespace momo:
     class HashBucketDefault
     class HashBucketOpenDefault
-    struct HashTraitsKeyArgBaseSelector
+    struct HashTraitsBaseKeyArgSelector
     concept conceptHashTraits
     class HashTraits
     class HashTraitsOpen
@@ -47,18 +47,18 @@ typedef MOMO_DEFAULT_HASH_BUCKET HashBucketDefault;
 typedef MOMO_DEFAULT_HASH_BUCKET_OPEN HashBucketOpenDefault;
 
 template<typename Key>
-struct HashTraitsKeyArgBaseSelector
+struct HashTraitsBaseKeyArgSelector
 {
-	typedef Key KeyArgBase;
+	typedef Key BaseKeyArg;
 };
 
 #ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
 template<typename Key>
 requires std::is_convertible_v<const Key&,
 	const std::basic_string_view<typename Key::value_type, typename Key::traits_type>&>
-struct HashTraitsKeyArgBaseSelector<Key>
+struct HashTraitsBaseKeyArgSelector<Key>
 {
-	typedef std::basic_string_view<typename Key::value_type, typename Key::traits_type> KeyArgBase;
+	typedef std::basic_string_view<typename Key::value_type, typename Key::traits_type> BaseKeyArg;
 };
 #endif
 
@@ -78,23 +78,23 @@ concept conceptHashTraits =
 
 template<conceptObject TKey,
 	typename THashBucket = HashBucketDefault,
-	typename TKeyArgBase = typename HashTraitsKeyArgBaseSelector<TKey>::KeyArgBase>
-requires std::is_convertible_v<const TKey&, const TKeyArgBase&>
+	typename TBaseKeyArg = typename HashTraitsBaseKeyArgSelector<TKey>::BaseKeyArg>
+requires std::is_convertible_v<const TKey&, const TBaseKeyArg&>
 class HashTraits
 {
 public:
 	typedef TKey Key;
 	typedef THashBucket HashBucket;
-	typedef TKeyArgBase KeyArgBase;
+	typedef TBaseKeyArg BaseKeyArg;
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<KeyArgBase>::value;
+	static const bool isFastNothrowHashable = IsFastNothrowHashable<BaseKeyArg>::value;
 
 	template<typename ItemTraits>
 	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = std::conditional_t<std::is_same_v<KeyArgBase, Key>,
-		std::false_type, std::is_convertible<const KeyArg&, const KeyArgBase&>>;	//?
+	using IsValidKeyArg = std::conditional_t<std::is_same_v<BaseKeyArg, Key>,
+		std::false_type, std::is_convertible<const KeyArg&, const BaseKeyArg&>>;	//?
 
 public:
 	explicit HashTraits() noexcept = default;
@@ -116,18 +116,18 @@ public:
 
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
-		requires requires { { HashCoder<KeyArgBase>()(static_cast<const KeyArgBase&>(key)) }
+		requires requires { { HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key)) }
 			-> std::convertible_to<size_t>; }
 	{
-		return HashCoder<KeyArgBase>()(static_cast<const KeyArgBase&>(key));
+		return HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key));
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	static bool IsEqual(const KeyArg1& key1, const KeyArg2& key2)
-		requires requires { { static_cast<const KeyArgBase&>(key1) == static_cast<const KeyArgBase&>(key2) }
+		requires requires { { static_cast<const BaseKeyArg&>(key1) == static_cast<const BaseKeyArg&>(key2) }
 			-> std::convertible_to<bool>; }
 	{
-		return static_cast<const KeyArgBase&>(key1) == static_cast<const KeyArgBase&>(key2);
+		return static_cast<const BaseKeyArg&>(key1) == static_cast<const BaseKeyArg&>(key2);
 	}
 };
 
