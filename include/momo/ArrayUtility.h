@@ -248,56 +248,56 @@ namespace internal
 	private:
 		typedef ArrayItemHandler<ItemTraits> ItemHandler;
 
-		template<typename ArrayArg>
-		using ArrayInserter = internal::ArrayInserter<std::decay_t<ArrayArg>>;
+		template<typename RArray>
+		using ArrayInserter = internal::ArrayInserter<std::decay_t<RArray>>;
 
 	public:
-		template<conceptMutableThisArg ArrayArg, conceptObjectCreator<Item> ItemCreator>
-		void InsertCrt(this ArrayArg&& array, size_t index, ItemCreator itemCreator)
+		template<conceptMutableThis RArray, conceptObjectCreator<Item> ItemCreator>
+		void InsertCrt(this RArray&& array, size_t index, ItemCreator itemCreator)
 		{
 			pvInsert(array, index,
 				FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
 		}
 
-		template<conceptMutableThisArg ArrayArg, typename... ItemArgs>
+		template<conceptMutableThis RArray, typename... ItemArgs>
 		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
-		void InsertVar(this ArrayArg&& array, size_t index, ItemArgs&&... itemArgs)
+		void InsertVar(this RArray&& array, size_t index, ItemArgs&&... itemArgs)
 		{
 			array.InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(
 				array.GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 		}
 
-		template<conceptMutableThisArg ArrayArg>
-		void Insert(this ArrayArg&& array, size_t index, Item&& item)
+		template<conceptMutableThis RArray>
+		void Insert(this RArray&& array, size_t index, Item&& item)
 		{
 			array.InsertVar(index, std::move(item));
 		}
 
-		template<conceptMutableThisArg ArrayArg>
-		void Insert(this ArrayArg&& array, size_t index, const Item& item)
+		template<conceptMutableThis RArray>
+		void Insert(this RArray&& array, size_t index, const Item& item)
 		{
 			array.InsertVar(index, item);
 		}
 
-		template<conceptMutableThisArg ArrayArg>
-		void Insert(this ArrayArg&& array, size_t index, size_t count, const Item& item)
+		template<conceptMutableThis RArray>
+		void Insert(this RArray&& array, size_t index, size_t count, const Item& item)
 		{
 			typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
 			MemManager& memManager = array.GetMemManager();
 			ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
 			array.Reserve(array.GetCount() + count);
-			ArrayInserter<ArrayArg>::InsertNogrow(array, index, count, itemHandler.Get());
+			ArrayInserter<RArray>::InsertNogrow(array, index, count, itemHandler.Get());
 		}
 
-		template<conceptMutableThisArg ArrayArg,
+		template<conceptMutableThis RArray,
 			std::input_iterator ArgIterator, conceptSentinel<ArgIterator> ArgSentinel>
-		void Insert(this ArrayArg&& array, size_t index, ArgIterator begin, ArgSentinel end)
+		void Insert(this RArray&& array, size_t index, ArgIterator begin, ArgSentinel end)
 		{
 			if constexpr (conceptForwardIterator<ArgIterator>)
 			{
 				size_t count = UIntMath<>::Dist(begin, end);
 				array.Reserve(array.GetCount() + count);
-				ArrayInserter<ArrayArg>::InsertNogrow(array, index, begin, count);
+				ArrayInserter<RArray>::InsertNogrow(array, index, begin, count);
 			}
 			else
 			{
@@ -310,14 +310,14 @@ namespace internal
 			}
 		}
 
-		template<conceptMutableThisArg ArrayArg>
-		void Insert(this ArrayArg&& array, size_t index, std::initializer_list<Item> items)
+		template<conceptMutableThis RArray>
+		void Insert(this RArray&& array, size_t index, std::initializer_list<Item> items)
 		{
 			array.Insert(index, items.begin(), items.end());
 		}
 
-		template<conceptMutableThisArg ArrayArg>
-		void Remove(this ArrayArg&& array, size_t index, size_t count = 1)
+		template<conceptMutableThis RArray>
+		void Remove(this RArray&& array, size_t index, size_t count = 1)
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index + count <= initCount);
@@ -327,8 +327,8 @@ namespace internal
 			array.RemoveBack(count);
 		}
 
-		template<conceptMutableThisArg ArrayArg, conceptObjectPredicate<Item> ItemFilter>
-		size_t Remove(this ArrayArg&& array, ItemFilter itemFilter)
+		template<conceptMutableThis RArray, conceptObjectPredicate<Item> ItemFilter>
+		size_t Remove(this RArray&& array, ItemFilter itemFilter)
 		{
 			size_t initCount = array.GetCount();
 			size_t newCount = 0;
@@ -401,39 +401,39 @@ namespace internal
 		{
 		}
 
-		template<conceptMutableThisArg IteratorArg,
-			typename Iterator = std::decay_t<IteratorArg>>
-		Iterator& operator=(this IteratorArg&& iter, Item&& item)
+		template<conceptMutableThis RIterator,
+			typename Iterator = std::decay_t<RIterator>>
+		Iterator& operator=(this RIterator&& iter, Item&& item)
 		{
 			static_cast<BackInsertIteratorStd&>(iter).container->AddBack(std::move(item));
 			return static_cast<Iterator&>(iter);
 		}
 
-		template<conceptMutableThisArg IteratorArg,
-			typename Iterator = std::decay_t<IteratorArg>>
-		Iterator& operator=(this IteratorArg&& iter, const Item& item)
+		template<conceptMutableThis RIterator,
+			typename Iterator = std::decay_t<RIterator>>
+		Iterator& operator=(this RIterator&& iter, const Item& item)
 		{
 			static_cast<BackInsertIteratorStd&>(iter).container->AddBack(item);
 			return static_cast<Iterator&>(iter);
 		}
 
-		template<conceptMutableThisArg IteratorArg,
-			typename Iterator = std::decay_t<IteratorArg>>
-		Iterator& operator*(this IteratorArg&& iter) noexcept
+		template<conceptMutableThis RIterator,
+			typename Iterator = std::decay_t<RIterator>>
+		Iterator& operator*(this RIterator&& iter) noexcept
 		{
 			return static_cast<Iterator&>(iter);
 		}
 
-		template<conceptMutableThisArg IteratorArg,
-			typename Iterator = std::decay_t<IteratorArg>>
-		Iterator& operator++(this IteratorArg&& iter) noexcept
+		template<conceptMutableThis RIterator,
+			typename Iterator = std::decay_t<RIterator>>
+		Iterator& operator++(this RIterator&& iter) noexcept
 		{
 			return static_cast<Iterator&>(iter);
 		}
 
-		template<conceptMutableThisArg IteratorArg,
-			typename Iterator = std::decay_t<IteratorArg>>
-		Iterator operator++(this IteratorArg&& iter, int) noexcept
+		template<conceptMutableThis RIterator,
+			typename Iterator = std::decay_t<RIterator>>
+		Iterator operator++(this RIterator&& iter, int) noexcept
 		{
 			return iter;
 		}

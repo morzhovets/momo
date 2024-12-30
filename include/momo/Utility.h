@@ -90,13 +90,13 @@
 	}
 
 #define MOMO_DECLARE_PROXY_FUNCTION(Object, Func) \
-	template<typename ObjectArg, typename... Args> \
-	static decltype(auto) Func(ObjectArg&& object, Args&&... args) \
-		noexcept(noexcept((std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
+	template<typename RObject, typename... Args> \
+	static decltype(auto) Func(RObject&& object, Args&&... args) \
+		noexcept(noexcept((std::forward<RObject>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		static_assert(std::is_same_v<Object, std::decay_t<ObjectArg>>); \
-		return (std::forward<ObjectArg>(object).*&Object##Proxy::pt##Func) \
+		static_assert(std::is_same_v<Object, std::decay_t<RObject>>); \
+		return (std::forward<RObject>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
 
@@ -158,8 +158,8 @@ namespace internal
 	template<typename Predicate, typename... Args>
 	concept conceptPredicate = conceptConstFunctor<Predicate, bool, Args...>;
 
-	template<typename ThisArg>
-	concept conceptMutableThisArg = !std::is_const_v<std::remove_reference_t<ThisArg>>;
+	template<typename RObject>
+	concept conceptMutableThis = !std::is_const_v<std::remove_reference_t<RObject>>;
 
 	template<typename Object, typename QSrcObject>
 	using ConstLike = std::conditional_t<std::is_const_v<QSrcObject>, const Object, Object>;
