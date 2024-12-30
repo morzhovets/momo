@@ -837,31 +837,31 @@ template<typename TKey, typename TMapped,
 class map : public internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap>
 {
 private:
-	typedef internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap> BaseMap;
+	typedef internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap> MapBase;
 	typedef TTreeMap TreeMap;
 
 public:
-	using typename BaseMap::key_type;
-	using typename BaseMap::mapped_type;
-	using typename BaseMap::size_type;
-	using typename BaseMap::value_type;
-	using typename BaseMap::const_reference;
-	using typename BaseMap::const_iterator;
-	using typename BaseMap::iterator;
+	using typename MapBase::key_type;
+	using typename MapBase::mapped_type;
+	using typename MapBase::size_type;
+	using typename MapBase::value_type;
+	using typename MapBase::const_reference;
+	using typename MapBase::const_iterator;
+	using typename MapBase::iterator;
 
 private:
-	struct IteratorProxy : public BaseMap::iterator
+	struct IteratorProxy : public MapBase::iterator
 	{
 		typedef iterator Iterator;
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 	};
 
 public:
-	using BaseMap::BaseMap;
+	using MapBase::MapBase;
 
 	map& operator=(std::initializer_list<value_type> values)
 	{
-		BaseMap::ptAssign(values);
+		MapBase::ptAssign(values);
 		return *this;
 	}
 
@@ -872,26 +872,26 @@ public:
 
 	typename TreeMap::ValueReferenceRKey operator[](key_type&& key)
 	{
-		return BaseMap::get_nested_container()[std::move(key)];
+		return MapBase::get_nested_container()[std::move(key)];
 	}
 
 	typename TreeMap::ValueReferenceCKey operator[](const key_type& key)
 	{
-		return BaseMap::get_nested_container()[key];
+		return MapBase::get_nested_container()[key];
 	}
 
 	const mapped_type& at(const key_type& key) const
 	{
-		const_iterator iter = BaseMap::find(key);
-		if (iter == BaseMap::end())
+		const_iterator iter = MapBase::find(key);
+		if (iter == MapBase::end())
 			throw std::out_of_range("invalid map key");
 		return iter->second;
 	}
 
 	mapped_type& at(const key_type& key)
 	{
-		iterator iter = BaseMap::find(key);
-		if (iter == BaseMap::end())
+		iterator iter = MapBase::find(key);
+		if (iter == MapBase::end())
 			throw std::out_of_range("invalid map key");
 		return iter->second;
 	}
@@ -899,28 +899,28 @@ public:
 	template<typename... MappedArgs>
 	std::pair<iterator, bool> try_emplace(key_type&& key, MappedArgs&&... mappedArgs)
 	{
-		return BaseMap::ptEmplace(nullptr, std::forward_as_tuple(std::move(key)),
+		return MapBase::ptEmplace(nullptr, std::forward_as_tuple(std::move(key)),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
 	}
 
 	template<typename... MappedArgs>
 	iterator try_emplace(const_iterator hint, key_type&& key, MappedArgs&&... mappedArgs)
 	{
-		return BaseMap::ptEmplace(hint, std::forward_as_tuple(std::move(key)),
+		return MapBase::ptEmplace(hint, std::forward_as_tuple(std::move(key)),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
 	}
 
 	template<typename... MappedArgs>
 	std::pair<iterator, bool> try_emplace(const key_type& key, MappedArgs&&... mappedArgs)
 	{
-		return BaseMap::ptEmplace(nullptr, std::forward_as_tuple(key),
+		return MapBase::ptEmplace(nullptr, std::forward_as_tuple(key),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
 	}
 
 	template<typename... MappedArgs>
 	iterator try_emplace(const_iterator hint, const key_type& key, MappedArgs&&... mappedArgs)
 	{
-		return BaseMap::ptEmplace(hint, std::forward_as_tuple(key),
+		return MapBase::ptEmplace(hint, std::forward_as_tuple(key),
 			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
 	}
 
@@ -961,7 +961,7 @@ private:
 	template<typename RKey, typename MappedArg>
 	std::pair<iterator, bool> pvInsertOrAssign(RKey&& key, MappedArg&& mappedArg)
 	{
-		typename TreeMap::InsertResult res = BaseMap::get_nested_container().InsertOrAssign(
+		typename TreeMap::InsertResult res = MapBase::get_nested_container().InsertOrAssign(
 			std::forward<RKey>(key), std::forward<MappedArg>(mappedArg));
 		return { IteratorProxy(res.position), res.inserted };
 	}
@@ -969,12 +969,12 @@ private:
 	template<typename RKey, typename MappedArg>
 	iterator pvInsertOrAssign(const_iterator hint, RKey&& key, MappedArg&& mappedArg)
 	{
-		std::pair<iterator, bool> res = BaseMap::ptEmplace(hint,
+		std::pair<iterator, bool> res = MapBase::ptEmplace(hint,
 			std::forward_as_tuple(std::forward<RKey>(key)),
 			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
 		if (!res.second)
 		{
-			TreeMap::KeyValueTraits::AssignValue(BaseMap::get_nested_container().GetMemManager(),
+			TreeMap::KeyValueTraits::AssignValue(MapBase::get_nested_container().GetMemManager(),
 				std::forward<MappedArg>(mappedArg), res.first->second);
 		}
 		return res.first;
@@ -997,26 +997,26 @@ template<typename TKey, typename TMapped,
 class multimap : public internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap>
 {
 private:
-	typedef internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap> BaseMap;
+	typedef internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap> MapBase;
 
 public:
-	using typename BaseMap::key_type;
-	using typename BaseMap::mapped_type;
-	using typename BaseMap::size_type;
-	using typename BaseMap::value_type;
-	using typename BaseMap::iterator;
-	using typename BaseMap::const_iterator;
-	using typename BaseMap::const_reference;
-	using typename BaseMap::node_type;
+	using typename MapBase::key_type;
+	using typename MapBase::mapped_type;
+	using typename MapBase::size_type;
+	using typename MapBase::value_type;
+	using typename MapBase::iterator;
+	using typename MapBase::const_iterator;
+	using typename MapBase::const_reference;
+	using typename MapBase::node_type;
 
 	typedef iterator insert_return_type;
 
 public:
-	using BaseMap::BaseMap;
+	using MapBase::MapBase;
 
 	multimap& operator=(std::initializer_list<value_type> values)
 	{
-		BaseMap::ptAssign(values);
+		MapBase::ptAssign(values);
 		return *this;
 	}
 
@@ -1025,47 +1025,47 @@ public:
 		left.swap(right);
 	}
 
-	//using BaseMap::insert;	// vs clang
+	//using MapBase::insert;	// vs clang
 
 	template<typename ValueArg = std::pair<key_type, mapped_type>>
 	requires std::is_constructible_v<value_type, ValueArg&&>
 	iterator insert(ValueArg&& valueArg)
 	{
-		return BaseMap::insert(std::forward<ValueArg>(valueArg)).first;
+		return MapBase::insert(std::forward<ValueArg>(valueArg)).first;
 	}
 
 	template<typename ValueArg = std::pair<key_type, mapped_type>>
 	requires std::is_constructible_v<value_type, ValueArg&&>
 	iterator insert(const_iterator hint, ValueArg&& valueArg)
 	{
-		return BaseMap::insert(hint, std::forward<ValueArg>(valueArg));
+		return MapBase::insert(hint, std::forward<ValueArg>(valueArg));
 	}
 
 	iterator insert(node_type&& node)
 	{
-		return BaseMap::insert(std::move(node)).position;
+		return MapBase::insert(std::move(node)).position;
 	}
 
 	iterator insert(const_iterator hint, node_type&& node)
 	{
-		return BaseMap::insert(hint, std::move(node));
+		return MapBase::insert(hint, std::move(node));
 	}
 
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	void insert(Iterator first, Iterator last)
 	{
-		BaseMap::insert(first, last);
+		MapBase::insert(first, last);
 	}
 
 	void insert(std::initializer_list<value_type> values)
 	{
-		BaseMap::insert(values);
+		MapBase::insert(values);
 	}
 
 	template<typename... ValueArgs>
 	iterator emplace(ValueArgs&&... valueArgs)
 	{
-		return BaseMap::emplace(std::forward<ValueArgs>(valueArgs)...).first;
+		return MapBase::emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
 	template<momo::internal::conceptPredicate<const_reference> ValueFilter>

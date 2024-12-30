@@ -371,10 +371,10 @@ namespace internal
 		class ValueCreator : public ValueManager::template Creator<ValueArg>
 		{
 		private:
-			typedef typename ValueManager::template Creator<ValueArg> BaseCreator;
+			typedef typename ValueManager::template Creator<ValueArg> CreatorBase;
 
 		public:
-			using BaseCreator::BaseCreator;
+			using CreatorBase::CreatorBase;
 		};
 
 	public:

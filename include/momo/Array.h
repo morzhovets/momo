@@ -200,7 +200,7 @@ public:
 	static const size_t internalCapacity = Settings::internalCapacity;
 
 private:
-	typedef internal::ArrayBase<Item, MemManager, ItemTraits, Settings> BaseArray;
+	typedef internal::ArrayBase<Item, MemManager, ItemTraits, Settings> ArrayBase;
 
 	class Data : private MemManager
 	{
@@ -829,7 +829,7 @@ public:
 		size_t grow = (initCount + 1 > GetCapacity());
 		size_t itemIndex = pvIndexOf(std::as_const(item));
 		if (grow || (index <= itemIndex && itemIndex < initCount))
-			BaseArray::InsertVar(index, std::move(item));
+			ArrayBase::InsertVar(index, std::move(item));
 		else
 			ArrayInserter::InsertNogrow(*this, index, std::move(item));
 	}
@@ -874,13 +874,13 @@ public:
 		}
 		else
 		{
-			BaseArray::Insert(index, std::move(begin), std::move(end));
+			ArrayBase::Insert(index, std::move(begin), std::move(end));
 		}
 	}
 
 	void Insert(size_t index, std::initializer_list<Item> items)
 	{
-		BaseArray::Insert(index, items);
+		ArrayBase::Insert(index, items);
 	}
 
 	void RemoveBack(size_t count = 1)
