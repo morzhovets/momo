@@ -116,9 +116,9 @@
 # endif
 #endif
 
-#if defined(__GNUC__) || defined(__clang__)
-# define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
-#endif
+//#if defined(__GNUC__) || defined(__clang__)
+//# define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
+//#endif
 
 // `nullptr`, converted to the type `uintptr_t`
 #define MOMO_NULL_UINTPTR reinterpret_cast<uintptr_t>(static_cast<void*>(nullptr))
