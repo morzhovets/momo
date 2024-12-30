@@ -370,10 +370,10 @@ namespace internal
 			MOMO_STATIC_ASSERT(std::is_same<ValueArg, Value>::value);
 
 		private:
-			typedef typename ValueManager::template Creator<ValueArg> BaseCreator;
+			typedef typename ValueManager::template Creator<ValueArg> CreatorBase;
 
 		public:
-			using BaseCreator::BaseCreator;
+			using CreatorBase::CreatorBase;
 		};
 
 	public:
