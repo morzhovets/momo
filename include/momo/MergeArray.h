@@ -775,13 +775,14 @@ namespace std
 {
 	template<typename... Params>
 	class back_insert_iterator<momo::MergeArray<Params...>>
-		: public momo::internal::BackInsertIteratorStd<momo::MergeArray<Params...>>
+		: public momo::internal::BackInsertIteratorStdBase<momo::MergeArray<Params...>>
 	{
 	private:
-		typedef momo::internal::BackInsertIteratorStd<momo::MergeArray<Params...>> BackInsertIteratorStd;
+		typedef momo::internal::BackInsertIteratorStdBase<momo::MergeArray<Params...>>
+			BackInsertIteratorStdBase;
 
 	public:
-		using BackInsertIteratorStd::BackInsertIteratorStd;
-		using BackInsertIteratorStd::operator=;
+		using BackInsertIteratorStdBase::BackInsertIteratorStdBase;
+		using BackInsertIteratorStdBase::operator=;
 	};
 } // namespace std

@@ -387,11 +387,13 @@ namespace internal
 	};
 
 	template<typename TContainer>
-	class BackInsertIteratorStd
+	class BackInsertIteratorStdBase
 	{
 	private:
 		typedef TContainer Container;
 		typedef typename Container::Item Item;
+
+		typedef std::back_insert_iterator<Container> BackInsertIteratorStd;
 
 	public:
 		typedef Container container_type;
@@ -402,46 +404,37 @@ namespace internal
 		typedef void value_type;
 
 	public:
-		explicit BackInsertIteratorStd(Container& cont) noexcept
+		explicit BackInsertIteratorStdBase(Container& cont) noexcept
 			: container(&cont)
 		{
 		}
 
-		template<conceptMutableThis RIterator,
-			typename Iterator = std::decay_t<RIterator>>
-		Iterator& operator=(this RIterator&& iter, Item&& item)
+		BackInsertIteratorStd& operator=(Item&& item)
 		{
-			static_cast<BackInsertIteratorStd&>(iter).container->AddBack(std::move(item));
-			return static_cast<Iterator&>(iter);
+			container->AddBack(std::move(item));
+			return **this;
 		}
 
-		template<conceptMutableThis RIterator,
-			typename Iterator = std::decay_t<RIterator>>
-		Iterator& operator=(this RIterator&& iter, const Item& item)
+		BackInsertIteratorStd& operator=(const Item& item)
 		{
-			static_cast<BackInsertIteratorStd&>(iter).container->AddBack(item);
-			return static_cast<Iterator&>(iter);
+			container->AddBack(item);
+			return **this;
 		}
 
-		template<conceptMutableThis RIterator,
-			typename Iterator = std::decay_t<RIterator>>
-		Iterator& operator*(this RIterator&& iter) noexcept
+		BackInsertIteratorStd& operator*() noexcept
 		{
-			return static_cast<Iterator&>(iter);
+			static_assert(std::is_base_of_v<BackInsertIteratorStdBase, BackInsertIteratorStd>);
+			return *static_cast<BackInsertIteratorStd*>(this);
 		}
 
-		template<conceptMutableThis RIterator,
-			typename Iterator = std::decay_t<RIterator>>
-		Iterator& operator++(this RIterator&& iter) noexcept
+		BackInsertIteratorStd& operator++() noexcept
 		{
-			return static_cast<Iterator&>(iter);
+			return **this;
 		}
 
-		template<conceptMutableThis RIterator,
-			typename Iterator = std::decay_t<RIterator>>
-		Iterator operator++(this RIterator&& iter, int) noexcept
+		BackInsertIteratorStd operator++(int) noexcept
 		{
-			return iter;
+			return **this;
 		}
 
 	protected:
