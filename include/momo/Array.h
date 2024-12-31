@@ -1159,4 +1159,19 @@ namespace internal
 
 } // namespace momo
 
+namespace std
+{
+	template<typename... Params>
+	class back_insert_iterator<momo::Array<Params...>>
+		: public momo::internal::BackInsertIteratorStd<momo::Array<Params...>>
+	{
+	private:
+		typedef momo::internal::BackInsertIteratorStd<momo::Array<Params...>> BackInsertIteratorStd;
+
+	public:
+		using BackInsertIteratorStd::BackInsertIteratorStd;
+		using BackInsertIteratorStd::operator=;
+	};
+} // namespace std
+
 #endif // MOMO_INCLUDE_GUARD_ARRAY

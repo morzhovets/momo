@@ -209,8 +209,9 @@ public:
 		Array ar;
 		static const size_t count = 20000;
 
-		for (size_t i = 0; i < count; ++i)
-			ar.AddBack(Item(i));
+		std::fill_n(std::back_inserter(ar), 1, Item(0));
+		std::generate_n(std::back_inserter(ar), count - 1,
+			[&ar] () { return Item(ar.GetCount()); });
 
 		ar.Reserve(count * 3);
 		ar.Shrink();

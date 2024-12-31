@@ -300,6 +300,60 @@ namespace internal
 			return remCount;
 		}
 	};
+
+	template<typename TContainer>
+	class BackInsertIteratorStd
+	{
+	private:
+		typedef TContainer Container;
+		typedef typename Container::Item Item;
+
+		typedef std::back_insert_iterator<Container> Iterator;
+
+	public:
+		typedef Container container_type;
+		typedef std::output_iterator_tag iterator_category;
+		typedef ptrdiff_t difference_type;
+		typedef void pointer;
+		typedef void reference;
+		typedef void value_type;
+
+	public:
+		explicit BackInsertIteratorStd(Container& cont) noexcept
+			: container(&cont)
+		{
+		}
+
+		Iterator& operator=(Item&& item)
+		{
+			container->AddBack(std::move(item));
+			return **this;
+		}
+
+		Iterator& operator=(const Item& item)
+		{
+			container->AddBack(item);
+			return **this;
+		}
+
+		Iterator& operator*() noexcept
+		{
+			return *static_cast<Iterator*>(this);
+		}
+
+		Iterator& operator++() noexcept
+		{
+			return **this;
+		}
+
+		Iterator operator++(int) noexcept
+		{
+			return **this;
+		}
+
+	protected:
+		Container* container;
+	};
 }
 
 } // namespace momo
