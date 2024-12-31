@@ -256,7 +256,6 @@ namespace internal
 			}
 			else
 			{
-				static_assert(!std::is_const_v<QResObject> || isWithinLifetime);
 				return MOMO_CAST_POINTER(QResObject, bytePtr, isWithinLifetime, isSingleObject);
 			}
 		}

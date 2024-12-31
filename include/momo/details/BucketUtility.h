@@ -109,10 +109,11 @@ namespace internal
 		{
 		}
 
-		template<conceptConstFunctor<size_t> HashCodeFullGetter, typename Iterator>	//?
-		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
-			Iterator /*iter*/, size_t /*bucketIndex*/, size_t /*logBucketCount*/,
-			size_t /*newLogBucketCount*/)
+		template<typename Bucket, conceptConstFunctor<size_t> HashCodeFullGetter>
+		size_t GetHashCodePart(this const Bucket&,
+			FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
+			typename Bucket::Iterator /*iter*/, size_t /*bucketIndex*/,
+			size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
 		{
 			return hashCodeFullGetter();
 		}

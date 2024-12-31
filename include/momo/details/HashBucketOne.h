@@ -123,9 +123,9 @@ namespace internal
 		template<conceptConstFunctor<size_t> HashCodeFullGetter>
 		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
 			[[maybe_unused]] Iterator iter, size_t /*bucketIndex*/, size_t /*logBucketCount*/,
-			size_t /*newLogBucketCount*/)
+			size_t /*newLogBucketCount*/) const
 		{
-			MOMO_ASSERT(iter == pvGetItemPtr());
+			MOMO_ASSERT(iter == mItemBuffer.GetPtr());
 			if (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();
 			return static_cast<size_t>(mHashState >> 1);

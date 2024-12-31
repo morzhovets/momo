@@ -151,7 +151,7 @@ namespace internal
 
 		template<conceptConstFunctor<size_t> HashCodeFullGetter>
 		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
-			Iterator iter, size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount)
+			Iterator iter, size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount) const
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();

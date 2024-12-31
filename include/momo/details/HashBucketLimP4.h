@@ -379,12 +379,11 @@ namespace internal
 
 		template<conceptConstFunctor<size_t> HashCodeFullGetter>
 		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
-			Iterator iter, size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount)
+			Iterator iter, size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount) const
 		{
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
-			Item* items = mPtrState.GetPtr();
-			size_t index = UIntMath<>::Dist(items, iter);
+			size_t index = UIntMath<>::Dist(mPtrState.GetPtr(), iter);
 			size_t hashProbe = size_t{mShortHashes[hashCount - 1 - index]};
 			bool useFullGetter = (static_cast<uint8_t>(hashProbe + 1) <= maskEmpty ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
