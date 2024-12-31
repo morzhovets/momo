@@ -752,14 +752,15 @@ namespace std
 {
 	template<typename... Params>
 	class back_insert_iterator<momo::SegmentedArray<Params...>>
-		: public momo::internal::BackInsertIteratorStd<momo::SegmentedArray<Params...>>
+		: public momo::internal::BackInsertIteratorStdBase<momo::SegmentedArray<Params...>>
 	{
 	private:
-		typedef momo::internal::BackInsertIteratorStd<momo::SegmentedArray<Params...>> BackInsertIteratorStd;
+		typedef momo::internal::BackInsertIteratorStdBase<momo::SegmentedArray<Params...>>
+			BackInsertIteratorStdBase;
 
 	public:
-		using BackInsertIteratorStd::BackInsertIteratorStd;
-		using BackInsertIteratorStd::operator=;
+		using BackInsertIteratorStdBase::BackInsertIteratorStdBase;
+		using BackInsertIteratorStdBase::operator=;
 	};
 } // namespace std
 

@@ -302,13 +302,13 @@ namespace internal
 	};
 
 	template<typename TContainer>
-	class BackInsertIteratorStd
+	class BackInsertIteratorStdBase
 	{
 	private:
 		typedef TContainer Container;
 		typedef typename Container::Item Item;
 
-		typedef std::back_insert_iterator<Container> Iterator;
+		typedef std::back_insert_iterator<Container> BackInsertIteratorStd;
 
 	public:
 		typedef Container container_type;
@@ -319,34 +319,36 @@ namespace internal
 		typedef void value_type;
 
 	public:
-		explicit BackInsertIteratorStd(Container& cont) noexcept
+		explicit BackInsertIteratorStdBase(Container& cont) noexcept
 			: container(&cont)
 		{
 		}
 
-		Iterator& operator=(Item&& item)
+		BackInsertIteratorStd& operator=(Item&& item)
 		{
 			container->AddBack(std::move(item));
 			return **this;
 		}
 
-		Iterator& operator=(const Item& item)
+		BackInsertIteratorStd& operator=(const Item& item)
 		{
 			container->AddBack(item);
 			return **this;
 		}
 
-		Iterator& operator*() noexcept
+		BackInsertIteratorStd& operator*() noexcept
 		{
-			return *static_cast<Iterator*>(this);
+			MOMO_STATIC_ASSERT(std::is_base_of<BackInsertIteratorStdBase,
+				BackInsertIteratorStd>::value);
+			return *static_cast<BackInsertIteratorStd*>(this);
 		}
 
-		Iterator& operator++() noexcept
+		BackInsertIteratorStd& operator++() noexcept
 		{
 			return **this;
 		}
 
-		Iterator operator++(int) noexcept
+		BackInsertIteratorStd operator++(int) noexcept
 		{
 			return **this;
 		}
