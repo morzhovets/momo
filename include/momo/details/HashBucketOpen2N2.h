@@ -52,23 +52,21 @@ namespace internal
 		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt ShortCode;
 
 		template<bool hasCodeProbes = useHashCodePartGetter>
-		struct CodeData;
+		struct CodeData
+		{
+			ShortCode shortCodes[maxCount];
+			uint8_t codeProbes[maxCount];
+		};
 
-		template<>
-		struct CodeData<false>
+		template<bool hasCodeProbes>
+		requires (!hasCodeProbes)
+		struct CodeData<hasCodeProbes>
 		{
 			union
 			{
 				ShortCode shortCodes[maxCount];
 				uint8_t codeProbes[maxCount];
 			};
-		};
-
-		template<>
-		struct CodeData<true>
-		{
-			ShortCode shortCodes[maxCount];
-			uint8_t codeProbes[maxCount];
 		};
 
 		static const size_t hashCodeShift = sizeof(size_t) * 8 - sizeof(ShortCode) * 8 + 1;
