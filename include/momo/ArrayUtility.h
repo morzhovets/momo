@@ -365,12 +365,13 @@ namespace internal
 		}
 
 		template<typename Array,
-			typename Comparer = TieComparer<typename Array::Item>>
+			typename ItemThreeComparer = TieThreeComparer<typename Array::Item>>
 		auto Compare(this const Array& array1, const std::type_identity_t<Array>& array2,
-			Comparer comp = Comparer())
+			ItemThreeComparer itemThreeComp = ItemThreeComparer())
 		{
-			return std::lexicographical_compare_three_way(array1.GetBegin(), array1.GetEnd(),
-				array2.GetBegin(), array2.GetEnd(), FastCopyableFunctor<Comparer>(comp));
+			return std::lexicographical_compare_three_way(
+				array1.GetBegin(), array1.GetEnd(), array2.GetBegin(), array2.GetEnd(),
+				FastCopyableFunctor<ItemThreeComparer>(itemThreeComp));
 		}
 
 	protected:

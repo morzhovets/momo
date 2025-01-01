@@ -389,12 +389,12 @@ private:
 		FastCopyableFunctor<EqualFunc> equalFunc)
 	{
 		MOMO_ASSERT(count > 0);
-		auto iterComparer = [begin, equalFunc] (Iterator iter)
+		auto iterThreeComp = [begin, equalFunc] (Iterator iter)
 		{
 			return equalFunc(*begin, *iter)
 				? std::strong_ordering::less : std::strong_ordering::greater;
 		};
-		return pvExponentialSearch(begin + 1, count - 1, FastCopyableFunctor(iterComparer)).iterator;
+		return pvExponentialSearch(begin + 1, count - 1, FastCopyableFunctor(iterThreeComp)).iterator;
 	}
 
 	template<internal::conceptRandomIterator17 Iterator,
@@ -402,7 +402,7 @@ private:
 	static FindResult<Iterator> pvFindHashCode(Iterator begin, size_t count,
 		HashCode argHashCode, FastCopyableFunctor<IterHashFunc> iterHashFunc)
 	{
-		auto iterComparer = [argHashCode, iterHashFunc] (Iterator iter)
+		auto iterThreeComp = [argHashCode, iterHashFunc] (Iterator iter)
 			{ return iterHashFunc(iter) <=> argHashCode; };
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
@@ -417,7 +417,7 @@ private:
 				if (step == 0)
 				{
 					return pvExponentialSearch(SMath::Next(begin, leftIndex),
-						rightIndex - leftIndex, FastCopyableFunctor(iterComparer));
+						rightIndex - leftIndex, FastCopyableFunctor(iterThreeComp));
 				}
 				middleIndex += pvMultShift(argHashCode - middleHashCode, count);
 				if (middleIndex >= rightIndex)
@@ -429,10 +429,10 @@ private:
 				if (step == 0)
 				{
 					typedef std::reverse_iterator<Iterator> ReverseIterator;
-					auto revIterComparer = [argHashCode, iterHashFunc] (ReverseIterator iter)
+					auto revIterThreeComp = [argHashCode, iterHashFunc] (ReverseIterator iter)
 						{ return argHashCode <=> iterHashFunc(iter); };
 					auto res = pvExponentialSearch(ReverseIterator(SMath::Next(begin, rightIndex)),
-						rightIndex - leftIndex, FastCopyableFunctor(revIterComparer));
+						rightIndex - leftIndex, FastCopyableFunctor(revIterThreeComp));
 					return { res.iterator.base() - (res.found ? 1 : 0), res.found };
 				}
 				size_t diff = pvMultShift(middleHashCode - argHashCode, count);
@@ -447,38 +447,38 @@ private:
 			--step;
 		}
 		return pvBinarySearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex,
-			FastCopyableFunctor(iterComparer));
+			FastCopyableFunctor(iterThreeComp));
 	}
 
 	template<internal::conceptRandomIterator17 Iterator,
-		internal::conceptConstFunctor<std::strong_ordering, Iterator> IterComparer>
+		internal::conceptConstFunctor<std::strong_ordering, Iterator> IterThreeComparer>
 	static FindResult<Iterator> pvExponentialSearch(Iterator begin, size_t count,
-		FastCopyableFunctor<IterComparer> iterComparer)
+		FastCopyableFunctor<IterThreeComparer> iterThreeComp)
 	{
 		size_t leftIndex = 0;
 		for (size_t i = 0; i < count; i = i * 2 + 2)
 		{
-			std::strong_ordering cmp = iterComparer(SMath::Next(begin, i));
+			std::strong_ordering cmp = iterThreeComp(SMath::Next(begin, i));
 			if (cmp > 0)
-				return pvBinarySearch(SMath::Next(begin, leftIndex), i - leftIndex, iterComparer);
+				return pvBinarySearch(SMath::Next(begin, leftIndex), i - leftIndex, iterThreeComp);
 			else if (cmp == 0)
 				return { SMath::Next(begin, i), true };
 			leftIndex = i + 1;
 		}
-		return pvBinarySearch(SMath::Next(begin, leftIndex), count - leftIndex, iterComparer);
+		return pvBinarySearch(SMath::Next(begin, leftIndex), count - leftIndex, iterThreeComp);
 	}
 
 	template<internal::conceptRandomIterator17 Iterator,
-		internal::conceptConstFunctor<std::strong_ordering, Iterator> IterComparer>
+		internal::conceptConstFunctor<std::strong_ordering, Iterator> IterThreeComparer>
 	static FindResult<Iterator> pvBinarySearch(Iterator begin, size_t count,
-		FastCopyableFunctor<IterComparer> iterComparer)
+		FastCopyableFunctor<IterThreeComparer> iterThreeComp)
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
 		while (leftIndex < rightIndex)
 		{
 			size_t middleIndex = (leftIndex + rightIndex) / 2;
-			std::strong_ordering cmp = iterComparer(SMath::Next(begin, middleIndex));
+			std::strong_ordering cmp = iterThreeComp(SMath::Next(begin, middleIndex));
 			if (cmp < 0)
 				leftIndex = middleIndex + 1;
 			else if (cmp > 0)
