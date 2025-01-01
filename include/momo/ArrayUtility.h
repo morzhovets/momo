@@ -193,7 +193,7 @@ namespace internal
 			}
 		}
 
-		template<internal::conceptForwardIterator ArgIterator>
+		template<std::forward_iterator ArgIterator>
 		static void InsertNogrow(Array& array, size_t index, ArgIterator begin, size_t count)
 		{
 			size_t initCount = array.GetCount();
@@ -290,7 +290,7 @@ namespace internal
 			std::input_iterator ArgIterator, conceptSentinel<ArgIterator> ArgSentinel>
 		void Insert(this RArray&& array, size_t index, ArgIterator begin, ArgSentinel end)
 		{
-			if constexpr (conceptForwardIterator<ArgIterator>)
+			if constexpr (std::forward_iterator<ArgIterator>)
 			{
 				size_t count = UIntMath<>::Dist(begin, end);
 				array.Reserve(array.GetCount() + count);

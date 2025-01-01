@@ -178,13 +178,13 @@ public:
 	{
 		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
 		MemManager& thisMemManager = GetMemManager();
-		if constexpr (internal::conceptForwardIterator<ArgIterator>)
+		if constexpr (std::forward_iterator<ArgIterator>)
 			pvInitCapacity(internal::UIntMath<>::Dist(begin, end));
 		try
 		{
 			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 			{
-				if constexpr (internal::conceptForwardIterator<ArgIterator>)
+				if constexpr (std::forward_iterator<ArgIterator>)
 					pvAddBackNogrow(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 				else
 					pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
