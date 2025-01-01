@@ -701,17 +701,17 @@ namespace internal
 			return *this;
 		}
 
-		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessFunc>
-		DataSelection&& Sort(RowLessFunc rowLessFunc) &&
+		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessComparer>
+		DataSelection&& Sort(RowLessComparer rowLessComp) &&
 		{
-			pvSort(FastCopyableFunctor<RowLessFunc>(rowLessFunc));
+			pvSort(FastCopyableFunctor<RowLessComparer>(rowLessComp));
 			return std::move(*this);
 		}
 
-		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessFunc>
-		DataSelection& Sort(RowLessFunc rowLessFunc) &
+		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessComparer>
+		DataSelection& Sort(RowLessComparer rowLessComp) &
 		{
-			pvSort(FastCopyableFunctor<RowLessFunc>(rowLessFunc));
+			pvSort(FastCopyableFunctor<RowLessComparer>(rowLessComp));
 			return *this;
 		}
 
@@ -782,10 +782,10 @@ namespace internal
 		{
 			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
-			auto rawLessFunc = [&offsets] (Raw* raw1, Raw* raw2)
+			auto rawLessComp = [&offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsLess<Items...>(offsets.data(), raw1, raw2); };
 			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(),
-				FastCopyableFunctor(rawLessFunc), GetMemManager());
+				FastCopyableFunctor(rawLessComp), GetMemManager());
 		}
 
 		template<typename Item, typename... Items>
@@ -802,15 +802,15 @@ namespace internal
 				return false;
 		}
 
-		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessFunc>
-		void pvSort(FastCopyableFunctor<RowLessFunc> rowLessFunc)
+		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessComparer>
+		void pvSort(FastCopyableFunctor<RowLessComparer> rowLessComp)
 		{
-			auto rawLessFunc = [this, rowLessFunc] (Raw* raw1, Raw* raw2)
+			auto rawLessComp = [this, rowLessComp] (Raw* raw1, Raw* raw2)
 			{
-				return rowLessFunc(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2));
+				return rowLessComp(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2));
 			};
 			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(),
-				FastCopyableFunctor(rawLessFunc), GetMemManager());
+				FastCopyableFunctor(rawLessComp), GetMemManager());
 		}
 
 		template<typename... Items>
@@ -818,14 +818,14 @@ namespace internal
 		{
 			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
-			auto hashFunc = [&offsets] (Raw* raw)
+			auto rawHasher = [&offsets] (Raw* raw)
 			{
 				size_t hashCode = 0;
 				const size_t* offsetPtr = offsets.data();
 				(pvAccumulateHashCode<Items>(hashCode, raw, *offsetPtr++), ...);
 				return hashCode;
 			};
-			auto equalFunc = [&offsets] (Raw* raw1, Raw* raw2)
+			auto rawEqualComparer = [&offsets] (Raw* raw1, Raw* raw2)
 			{
 				const size_t* offsetPtr = offsets.data();
 				return (pvIsEqual<Items>(raw1, raw2, *offsetPtr++) && ...);
@@ -838,13 +838,13 @@ namespace internal
 			}
 			catch (const std::bad_alloc&)
 			{
-				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), hashFunc, equalFunc);
+				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawHasher, rawEqualComparer);
 				return;
 			}
 			for (Raw* raw : mRaws)
-				hashCodes.AddBackNogrow(hashFunc(raw));
+				hashCodes.AddBackNogrow(rawHasher(raw));
 			HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
-				hashCodes.GetBegin(), equalFunc);
+				hashCodes.GetBegin(), rawEqualComparer);
 		}
 
 		template<typename Item>

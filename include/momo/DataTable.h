@@ -61,11 +61,11 @@ public:
 		return std::compare_weak_order_fallback(item1, item2);
 	}
 
-	template<typename Iterator, typename LessFunc, typename MemManager>
-	static void Sort(Iterator begin, size_t count, FastCopyableFunctor<LessFunc> lessFunc,
+	template<typename Iterator, typename LessComparer, typename MemManager>
+	static void Sort(Iterator begin, size_t count, FastCopyableFunctor<LessComparer> lessComp,
 		MemManager& /*memManager*/)
 	{
-		std::sort(begin, internal::UIntMath<>::Next(begin, count), lessFunc);	//?
+		std::sort(begin, internal::UIntMath<>::Next(begin, count), lessComp);	//?
 	}
 };
 

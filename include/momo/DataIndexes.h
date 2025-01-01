@@ -316,10 +316,10 @@ namespace internal
 			const Item* item;
 		};
 
-		typedef size_t (*HashFunc)(Raw*, const size_t*);
-		typedef bool (*EqualFunc)(Raw*, Raw*, const size_t*);
-		typedef size_t (*HashMixedFunc)(const MixedRaw<>&, const size_t*);
-		typedef bool (*EqualMixedFunc)(const MixedRaw<>&, Raw*, const size_t*);
+		typedef size_t (*RawHasher)(Raw*, const size_t*);
+		typedef bool (*RawEqualComparer)(Raw*, Raw*, const size_t*);
+		typedef size_t (*MixedRawHasher)(const MixedRaw<>&, const size_t*);
+		typedef bool (*MixedRawEqualComparer)(const MixedRaw<>&, Raw*, const size_t*);
 
 		class HashTraits : public momo::HashTraits<Raw*, typename DataTraits::HashBucket>
 		{
@@ -342,75 +342,75 @@ namespace internal
 			static const bool isFastNothrowHashable = false;
 
 		public:
-			explicit HashTraits(HashFunc hashFunc, EqualFunc equalFunc,
-				HashMixedFunc hashMixedFunc, EqualMixedFunc equalMixedFunc,
+			explicit HashTraits(RawHasher rawHasher, RawEqualComparer rawEqualComp,
+				MixedRawHasher mixedRawHasher, MixedRawEqualComparer mixedRawEqualComp,
 				Offsets&& offsets) noexcept
-				: mHashFunc(hashFunc),
-				mEqualFunc(equalFunc),
-				mHashMixedFunc(hashMixedFunc),
-				mEqualMixedFunc(equalMixedFunc),
+				: mRawHasher(rawHasher),
+				mRawEqualComparer(rawEqualComp),
+				mMixedRawHasher(mixedRawHasher),
+				mMixedRawEqualComparer(mixedRawEqualComp),
 				mOffsets(std::move(offsets))
 			{
 			}
 
 			explicit HashTraits(const HashTraits& hashTraits, MemManagerPtr&& memManagerPtr)
-				: mHashFunc(hashTraits.mHashFunc),
-				mEqualFunc(hashTraits.mEqualFunc),
-				mHashMixedFunc(hashTraits.mHashMixedFunc),
-				mEqualMixedFunc(hashTraits.mEqualMixedFunc),
+				: mRawHasher(hashTraits.mRawHasher),
+				mRawEqualComparer(hashTraits.mRawEqualComparer),
+				mMixedRawHasher(hashTraits.mMixedRawHasher),
+				mMixedRawEqualComparer(hashTraits.mMixedRawEqualComparer),
 				mOffsets(hashTraits.mOffsets, std::move(memManagerPtr))
 			{
 			}
 
 			size_t GetHashCode(Raw* key) const
 			{
-				return mHashFunc(key, mOffsets.GetItems());
+				return mRawHasher(key, mOffsets.GetItems());
 			}
 
 			template<typename... Items>
 			size_t GetHashCode(const OffsetItemTuple<Items...>& key) const
 			{
 				size_t hashCode = 0;
-				auto tupleFunc = [&hashCode] (const auto&... pairs)
+				auto tupleHasher = [&hashCode] (const auto&... pairs)
 					{ (DataTraits::AccumulateHashCode(hashCode, pairs.second, pairs.first), ...); };
-				std::apply(tupleFunc, key);
+				std::apply(tupleHasher, key);
 				return hashCode;
 			}
 
 			template<typename Item>
 			size_t GetHashCode(const MixedRaw<Item>& key) const
 			{
-				return mHashMixedFunc({ key.raw, key.offset, key.item }, mOffsets.GetItems());
+				return mMixedRawHasher({ key.raw, key.offset, key.item }, mOffsets.GetItems());
 			}
 
 			bool IsEqual(Raw* key1, Raw* key2) const
 			{
-				return mEqualFunc(key1, key2, mOffsets.GetItems());
+				return mRawEqualComparer(key1, key2, mOffsets.GetItems());
 			}
 
 			template<typename... Items>
 			bool IsEqual(const OffsetItemTuple<Items...>& key1, Raw* key2) const
 			{
-				auto tupleFunc = [key2] (const auto&... pairs)
+				auto tupleEqualComp = [key2] (const auto&... pairs)
 				{
 					return (DataTraits::IsEqual(pairs.second,
 						ColumnList::template GetByOffset<const Items>(key2, pairs.first)) && ...);
 				};
-				return std::apply(tupleFunc, key1);
+				return std::apply(tupleEqualComp, key1);
 			}
 
 			template<typename Item>
 			bool IsEqual(const MixedRaw<Item>& key1, Raw* key2) const
 			{
-				return mEqualMixedFunc({ key1.raw, key1.offset, key1.item }, key2,
+				return mMixedRawEqualComparer({ key1.raw, key1.offset, key1.item }, key2,
 					mOffsets.GetItems());
 			}
 
 		private:
-			HashFunc mHashFunc;
-			EqualFunc mEqualFunc;
-			HashMixedFunc mHashMixedFunc;
-			EqualMixedFunc mEqualMixedFunc;
+			RawHasher mRawHasher;
+			RawEqualComparer mRawEqualComparer;
+			MixedRawHasher mMixedRawHasher;
+			MixedRawEqualComparer mMixedRawEqualComparer;
 			Offsets mOffsets;
 		};
 
@@ -1273,32 +1273,32 @@ namespace internal
 			Index index = pvGetHashIndex(hashes, sortedOffsets);
 			if (index != Index::empty)
 				return index;
-			auto hashFunc = [] (Raw* key, const size_t* offsets)
+			auto rawHasher = [] (Raw* key, const size_t* offsets)
 			{
 				size_t hashCode = 0;
 				const size_t* offsetPtr = offsets;
 				(pvAccumulateHashCode<Items>(hashCode, key, *offsetPtr++), ...);
 				return hashCode;
 			};
-			auto equalFunc = [] (Raw* key1, Raw* key2, const size_t* offsets)
+			auto rawEqualComp = [] (Raw* key1, Raw* key2, const size_t* offsets)
 			{
 				const size_t* offsetPtr = offsets;
 				return (pvIsEqual<Items>(key1, key2, *offsetPtr++) && ...);
 			};
-			auto hashMixedFunc = [] (const MixedRaw<>& key, const size_t* offsets)
+			auto mixedRawHasher = [] (const MixedRaw<>& key, const size_t* offsets)
 			{
 				size_t hashCode = 0;
 				const size_t* offsetPtr = offsets;
 				(pvAccumulateHashCode<Items>(hashCode, key, *offsetPtr++), ...);
 				return hashCode;
 			};
-			auto equalMixedFunc = [] (const MixedRaw<>& key1, Raw* key2, const size_t* offsets)
+			auto mixedRawEqualComp = [] (const MixedRaw<>& key1, Raw* key2, const size_t* offsets)
 			{
 				const size_t* offsetPtr = offsets;
 				return (pvIsEqual<Items>(key1, key2, *offsetPtr++) && ...);
 			};
 			const MemManagerPtr& memManagerPtr = hashes.GetMemManager();
-			HashTraits hashTraits(hashFunc, equalFunc, hashMixedFunc, equalMixedFunc,
+			HashTraits hashTraits(rawHasher, rawEqualComp, mixedRawHasher, mixedRawEqualComp,
 				Offsets(offsets.begin(), offsets.end(), MemManagerPtr(memManagerPtr)));
 			Hash hash(std::move(hashTraits),
 				Offsets(sortedOffsets.begin(), sortedOffsets.end(), MemManagerPtr(memManagerPtr)));
