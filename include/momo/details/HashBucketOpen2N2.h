@@ -49,27 +49,27 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		template<size_t count, bool useHashCodePartGetter>
-		struct HashData;
+		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt ShortCode;
 
-		template<size_t count>
-		struct HashData<count, false>
+		template<bool hasCodeProbes = useHashCodePartGetter>
+		struct CodeData;
+
+		template<>
+		struct CodeData<false>
 		{
 			union
 			{
-				uint16_t shortCodes[count];
-				uint8_t codeProbes[count];
+				ShortCode shortCodes[maxCount];
+				uint8_t codeProbes[maxCount];
 			};
 		};
 
-		template<size_t count>
-		struct HashData<count, true>
+		template<>
+		struct CodeData<true>
 		{
-			uint8_t shortCodes[count];
-			uint8_t codeProbes[count];
+			ShortCode shortCodes[maxCount];
+			uint8_t codeProbes[maxCount];
 		};
-
-		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt ShortCode;
 
 		static const size_t hashCodeShift = sizeof(size_t) * 8 - sizeof(ShortCode) * 8 + 1;
 		static const ShortCode emptyShortCode = ShortCode{1} << (sizeof(ShortCode) * 8 - 1);
@@ -104,7 +104,7 @@ namespace internal
 
 		bool IsFull() const noexcept
 		{
-			return mHashData.shortCodes[0] < emptyShortCode;
+			return mCodeData.shortCodes[0] < emptyShortCode;
 		}
 
 		bool WasFull() const noexcept
@@ -156,7 +156,7 @@ namespace internal
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
 			size_t index = UIntMath<>::Dist(mItems.GetPtr(), std::to_address(iter));
-			uint8_t codeProbe = mHashData.codeProbes[index];
+			uint8_t codeProbe = mCodeData.codeProbes[index];
 			bool useFullGetter = (codeProbe == emptyCodeProbe ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
 				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
@@ -169,7 +169,7 @@ namespace internal
 			size_t bucketCount = size_t{1} << logBucketCount;
 			return ((bucketIndex - probe2) & (bucketCount - 1))
 				| ((size_t{codeProbe} >> probeShift) << logBucketCount)
-				| (size_t{mHashData.shortCodes[index]} << hashCodeShift);
+				| (size_t{mCodeData.shortCodes[index]} << hashCodeShift);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -181,7 +181,7 @@ namespace internal
 	private:
 		void pvSetEmpty() noexcept
 		{
-			std::fill_n(mHashData.shortCodes, maxCount, ShortCode{emptyShortCode});
+			std::fill_n(mCodeData.shortCodes, maxCount, ShortCode{emptyShortCode});
 			mState[0] = uint8_t{0};
 			mState[1] = uint8_t{0};
 		}
@@ -193,7 +193,7 @@ namespace internal
 			ShortCode shortCode = pvCalcShortCode(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mHashData.shortCodes[i] == shortCode)
+				if (mCodeData.shortCodes[i] == shortCode)
 				{
 					Item* items = mItems.GetPtr();
 					if (itemPred(std::as_const(items[i]))) [[likely]]
@@ -211,10 +211,10 @@ namespace internal
 			MOMO_ASSERT(count < maxCount);
 			Item* newItem = mItems.GetPtr() + maxCount - 1 - count;
 			std::move(itemCreator)(newItem);
-			mHashData.shortCodes[maxCount - 1 - count] = pvCalcShortCode(hashCode);
+			mCodeData.shortCodes[maxCount - 1 - count] = pvCalcShortCode(hashCode);
 			if constexpr (useHashCodePartGetter)
 			{
-				uint8_t& codeProbe = mHashData.codeProbes[maxCount - 1 - count];
+				uint8_t& codeProbe = mCodeData.codeProbes[maxCount - 1 - count];
 				size_t probeShift = pvGetProbeShift(logBucketCount);
 				if (probe < (size_t{1} << probeShift))
 					codeProbe = static_cast<uint8_t>(((hashCode >> logBucketCount) << probeShift) | probe);
@@ -233,10 +233,10 @@ namespace internal
 			size_t index = UIntMath<>::Dist(items, std::to_address(iter));
 			MOMO_ASSERT(index >= maxCount - count);
 			std::move(itemReplacer)(items[maxCount - count], items[index]);
-			mHashData.shortCodes[index] = mHashData.shortCodes[maxCount - count];
-			mHashData.shortCodes[maxCount - count] = emptyShortCode;
+			mCodeData.shortCodes[index] = mCodeData.shortCodes[maxCount - count];
+			mCodeData.shortCodes[maxCount - count] = emptyShortCode;
 			if constexpr (useHashCodePartGetter)
-				mHashData.codeProbes[index] = mHashData.codeProbes[maxCount - count];
+				mCodeData.codeProbes[index] = mCodeData.codeProbes[maxCount - count];
 			--mState[1];
 			return iter;
 		}
@@ -277,7 +277,7 @@ namespace internal
 
 	private:
 		uint8_t mState[2];
-		HashData<maxCount, useHashCodePartGetter> mHashData;
+		CodeData<> mCodeData;
 		ObjectBuffer<Item, ItemTraits::alignment, maxCount> mItems;
 	};
 }
