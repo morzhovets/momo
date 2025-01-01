@@ -830,11 +830,11 @@ namespace internal
 				const size_t* offsetPtr = offsets.data();
 				return (pvIsEqual<Items>(raw1, raw2, *offsetPtr++) && ...);
 			};
-			Array<size_t, MemManagerPtr<MemManager>> hashes(
+			Array<size_t, MemManagerPtr<MemManager>> hashCodes(
 				(MemManagerPtr<MemManager>(GetMemManager())));
 			try
 			{
-				hashes.Reserve(mRaws.GetCount());
+				hashCodes.Reserve(mRaws.GetCount());
 			}
 			catch (const std::bad_alloc&)
 			{
@@ -842,9 +842,9 @@ namespace internal
 				return;
 			}
 			for (Raw* raw : mRaws)
-				hashes.AddBackNogrow(hashFunc(raw));
+				hashCodes.AddBackNogrow(hashFunc(raw));
 			HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
-				hashes.GetBegin(), equalFunc);
+				hashCodes.GetBegin(), equalFunc);
 		}
 
 		template<typename Item>
