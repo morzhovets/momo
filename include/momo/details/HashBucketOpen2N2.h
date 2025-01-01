@@ -57,23 +57,23 @@ namespace internal
 		{
 			union
 			{
-				uint16_t shortHashes[count];
-				uint8_t hashProbes[count];
+				uint16_t shortCodes[count];
+				uint8_t codeProbes[count];
 			};
 		};
 
 		template<size_t count>
 		struct HashData<count, true>
 		{
-			uint8_t shortHashes[count];
-			uint8_t hashProbes[count];
+			uint8_t shortCodes[count];
+			uint8_t codeProbes[count];
 		};
 
-		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt ShortHash;
+		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt ShortCode;
 
-		static const size_t hashCodeShift = sizeof(size_t) * 8 - sizeof(ShortHash) * 8 + 1;
-		static const ShortHash emptyShortHash = ShortHash{1} << (sizeof(ShortHash) * 8 - 1);
-		static const uint8_t emptyHashProbe = 255;
+		static const size_t hashCodeShift = sizeof(size_t) * 8 - sizeof(ShortCode) * 8 + 1;
+		static const ShortCode emptyShortCode = ShortCode{1} << (sizeof(ShortCode) * 8 - 1);
+		static const uint8_t emptyCodeProbe = 255;
 
 		static const size_t logBucketCountStep = 8;
 		static const size_t logBucketCountAddend = 6;
@@ -104,7 +104,7 @@ namespace internal
 
 		bool IsFull() const noexcept
 		{
-			return mHashData.shortHashes[0] < emptyShortHash;
+			return mHashData.shortCodes[0] < emptyShortCode;
 		}
 
 		bool WasFull() const noexcept
@@ -156,20 +156,20 @@ namespace internal
 			if (!useHashCodePartGetter)
 				return hashCodeFullGetter();
 			size_t index = UIntMath<>::Dist(mItems.GetPtr(), std::to_address(iter));
-			uint8_t hashProbe = mHashData.hashProbes[index];
-			bool useFullGetter = (hashProbe == emptyHashProbe ||
+			uint8_t codeProbe = mHashData.codeProbes[index];
+			bool useFullGetter = (codeProbe == emptyCodeProbe ||
 				(logBucketCount + logBucketCountAddend) / logBucketCountStep
 				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
 			if (useFullGetter)
 				return hashCodeFullGetter();
 			size_t probeShift = pvGetProbeShift(logBucketCount);
 			MOMO_ASSERT(probeShift > 0);
-			size_t probe = size_t{hashProbe} & ((size_t{1} << probeShift) - 1);
+			size_t probe = size_t{codeProbe} & ((size_t{1} << probeShift) - 1);
 			size_t probe2 = (probe % 2 == 0) ? (probe / 2) * (probe + 1) : probe * ((probe + 1) / 2);
 			size_t bucketCount = size_t{1} << logBucketCount;
 			return ((bucketIndex - probe2) & (bucketCount - 1))
-				| ((size_t{hashProbe} >> probeShift) << logBucketCount)
-				| (size_t{mHashData.shortHashes[index]} << hashCodeShift);
+				| ((size_t{codeProbe} >> probeShift) << logBucketCount)
+				| (size_t{mHashData.shortCodes[index]} << hashCodeShift);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -181,7 +181,7 @@ namespace internal
 	private:
 		void pvSetEmpty() noexcept
 		{
-			std::fill_n(mHashData.shortHashes, maxCount, ShortHash{emptyShortHash});
+			std::fill_n(mHashData.shortCodes, maxCount, ShortCode{emptyShortCode});
 			mState[0] = uint8_t{0};
 			mState[1] = uint8_t{0};
 		}
@@ -190,10 +190,10 @@ namespace internal
 		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<ItemPredicate> itemPred,
 			size_t hashCode)
 		{
-			ShortHash shortHash = pvCalcShortHash(hashCode);
+			ShortCode shortCode = pvCalcShortCode(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mHashData.shortHashes[i] == shortHash)
+				if (mHashData.shortCodes[i] == shortCode)
 				{
 					Item* items = mItems.GetPtr();
 					if (itemPred(std::as_const(items[i]))) [[likely]]
@@ -211,15 +211,15 @@ namespace internal
 			MOMO_ASSERT(count < maxCount);
 			Item* newItem = mItems.GetPtr() + maxCount - 1 - count;
 			std::move(itemCreator)(newItem);
-			mHashData.shortHashes[maxCount - 1 - count] = pvCalcShortHash(hashCode);
+			mHashData.shortCodes[maxCount - 1 - count] = pvCalcShortCode(hashCode);
 			if constexpr (useHashCodePartGetter)
 			{
-				uint8_t& hashProbe = mHashData.hashProbes[maxCount - 1 - count];
+				uint8_t& codeProbe = mHashData.codeProbes[maxCount - 1 - count];
 				size_t probeShift = pvGetProbeShift(logBucketCount);
 				if (probe < (size_t{1} << probeShift))
-					hashProbe = static_cast<uint8_t>(((hashCode >> logBucketCount) << probeShift) | probe);
+					codeProbe = static_cast<uint8_t>(((hashCode >> logBucketCount) << probeShift) | probe);
 				else
-					hashProbe = emptyHashProbe;
+					codeProbe = emptyCodeProbe;
 			}
 			++mState[1];
 			return Iterator(newItem + 1);
@@ -233,17 +233,17 @@ namespace internal
 			size_t index = UIntMath<>::Dist(items, std::to_address(iter));
 			MOMO_ASSERT(index >= maxCount - count);
 			std::move(itemReplacer)(items[maxCount - count], items[index]);
-			mHashData.shortHashes[index] = mHashData.shortHashes[maxCount - count];
-			mHashData.shortHashes[maxCount - count] = emptyShortHash;
+			mHashData.shortCodes[index] = mHashData.shortCodes[maxCount - count];
+			mHashData.shortCodes[maxCount - count] = emptyShortCode;
 			if constexpr (useHashCodePartGetter)
-				mHashData.hashProbes[index] = mHashData.hashProbes[maxCount - count];
+				mHashData.codeProbes[index] = mHashData.codeProbes[maxCount - count];
 			--mState[1];
 			return iter;
 		}
 
-		static ShortHash pvCalcShortHash(size_t hashCode) noexcept
+		static ShortCode pvCalcShortCode(size_t hashCode) noexcept
 		{
-			return static_cast<ShortHash>(hashCode >> hashCodeShift);
+			return static_cast<ShortCode>(hashCode >> hashCodeShift);
 		}
 
 		static size_t pvGetProbeShift(size_t logBucketCount) noexcept
