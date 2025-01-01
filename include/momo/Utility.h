@@ -389,8 +389,7 @@ public:
 
 	template<typename... Args>
 	decltype(auto) operator()(Args&&... args) &&
-		noexcept(std::is_nothrow_invocable_v<BaseFunctor&&, Args&&...>)
-		//noexcept(noexcept(std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...)))	// gcc 11
+		noexcept(noexcept(std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...)))
 	{
 		return std::forward<BaseFunctor>(mBaseFunctor)(std::forward<Args>(args)...);
 	}
@@ -426,8 +425,7 @@ public:
 
 	template<typename... Args>
 	decltype(auto) operator()(Args&&... args) const
-		noexcept(std::is_nothrow_invocable_v<const BaseFunctor&, Args&&...>)
-		//noexcept(noexcept(mBaseFunctor(std::forward<Args>(args)...)))	// gcc 11
+		noexcept(noexcept(mBaseFunctor(std::forward<Args>(args)...)))
 	{
 		return mBaseFunctor(std::forward<Args>(args)...);
 	}
