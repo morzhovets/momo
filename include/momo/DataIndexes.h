@@ -309,7 +309,7 @@ namespace internal
 		typedef NestedArrayIntCap<4, size_t, MemManagerPtr> Offsets;
 
 		template<typename Item = void>
-		struct HashMixedKey
+		struct MixedRaw
 		{
 			Raw* raw;
 			size_t offset;
@@ -318,8 +318,8 @@ namespace internal
 
 		typedef size_t (*HashFunc)(Raw*, const size_t*);
 		typedef bool (*EqualFunc)(Raw*, Raw*, const size_t*);
-		typedef size_t (*HashMixedFunc)(const HashMixedKey<>&, const size_t*);
-		typedef bool (*EqualMixedFunc)(const HashMixedKey<>&, Raw*, const size_t*);
+		typedef size_t (*HashMixedFunc)(const MixedRaw<>&, const size_t*);
+		typedef bool (*EqualMixedFunc)(const MixedRaw<>&, Raw*, const size_t*);
 
 		class HashTraits : public momo::HashTraits<Raw*, typename DataTraits::HashBucket>
 		{
@@ -335,7 +335,7 @@ namespace internal
 			};
 
 			template<typename Item>
-			struct IsValidKeyArg<HashMixedKey<Item>> : public std::true_type
+			struct IsValidKeyArg<MixedRaw<Item>> : public std::true_type
 			{
 			};
 
@@ -378,7 +378,7 @@ namespace internal
 			}
 
 			template<typename Item>
-			size_t GetHashCode(const HashMixedKey<Item>& key) const
+			size_t GetHashCode(const MixedRaw<Item>& key) const
 			{
 				return mHashMixedFunc({ key.raw, key.offset, key.item }, mOffsets.GetItems());
 			}
@@ -400,7 +400,7 @@ namespace internal
 			}
 
 			template<typename Item>
-			bool IsEqual(const HashMixedKey<Item>& key1, Raw* key2) const
+			bool IsEqual(const MixedRaw<Item>& key1, Raw* key2) const
 			{
 				return mEqualMixedFunc({ key1.raw, key1.offset, key1.item }, key2,
 					mOffsets.GetItems());
@@ -489,14 +489,14 @@ namespace internal
 			}
 
 			template<typename Item>
-			Raw* Add(const HashMixedKey<Item>& hashMixedKey)
+			Raw* Add(const MixedRaw<Item>& mixedRaw)
 			{
 				MOMO_ASSERT(!mPositionAdd);
-				Position pos = mHashSet.Find(hashMixedKey);
+				Position pos = mHashSet.Find(mixedRaw);
 				if (!!pos)
 					return *pos;
-				mPositionAdd = mHashSet.Add(pos, hashMixedKey.raw);
-				return hashMixedKey.raw;
+				mPositionAdd = mHashSet.Add(pos, mixedRaw.raw);
+				return mixedRaw.raw;
 			}
 
 			void RejectAdd() noexcept
@@ -644,19 +644,19 @@ namespace internal
 			}
 
 			template<typename Item>
-			void Add(const HashMixedKey<Item>& hashMixedKey)
+			void Add(const MixedRaw<Item>& mixedRaw)
 			{
 				MOMO_ASSERT(!mKeyIteratorAdd);
-				KeyIterator keyIter = mHashMultiMap.Find(hashMixedKey);
+				KeyIterator keyIter = mHashMultiMap.Find(mixedRaw);
 				if (!!keyIter)
 				{
-					pvAdd(keyIter, hashMixedKey.raw);
+					pvAdd(keyIter, mixedRaw.raw);
 					mKeyIteratorAdd = keyIter;
 				}
 				else
 				{
-					auto keyCreator = [&hashMixedKey] (Raw** newRaw) noexcept
-						{ *newRaw = hashMixedKey.raw; };
+					auto keyCreator = [&mixedRaw] (Raw** newRaw) noexcept
+						{ *newRaw = mixedRaw.raw; };
 					mKeyIteratorAdd = mHashMultiMap.AddKeyCrt(keyIter, keyCreator);
 				}
 			}
@@ -1107,14 +1107,14 @@ namespace internal
 					multiHash.RejectRemove();
 				}
 			};
-			HashMixedKey<Item> hashMixedKey{ raw, offset, std::addressof(item) };
+			MixedRaw<Item> mixedRaw{ raw, offset, std::addressof(item) };
 			try
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
 					if (!pvContainsOffset(uniqueHash, offset))
 						continue;
-					Raw* resRaw = uniqueHash.Add(hashMixedKey);
+					Raw* resRaw = uniqueHash.Add(mixedRaw);
 					if (resRaw != raw)
 					{
 						rejector();
@@ -1126,7 +1126,7 @@ namespace internal
 				{
 					if (!pvContainsOffset(multiHash, offset))
 						continue;
-					multiHash.Add(hashMixedKey);
+					multiHash.Add(mixedRaw);
 					multiHash.PrepareRemove(raw);
 				}
 				std::move(itemAssigner)(raw, offset);
@@ -1285,14 +1285,14 @@ namespace internal
 				const size_t* offsetPtr = offsets;
 				return (pvIsEqual<Items>(key1, key2, *offsetPtr++) && ...);
 			};
-			auto hashMixedFunc = [] (const HashMixedKey<>& key, const size_t* offsets)
+			auto hashMixedFunc = [] (const MixedRaw<>& key, const size_t* offsets)
 			{
 				size_t hashCode = 0;
 				const size_t* offsetPtr = offsets;
 				(pvAccumulateHashCode<Items>(hashCode, key, *offsetPtr++), ...);
 				return hashCode;
 			};
-			auto equalMixedFunc = [] (const HashMixedKey<>& key1, Raw* key2, const size_t* offsets)
+			auto equalMixedFunc = [] (const MixedRaw<>& key1, Raw* key2, const size_t* offsets)
 			{
 				const size_t* offsetPtr = offsets;
 				return (pvIsEqual<Items>(key1, key2, *offsetPtr++) && ...);
@@ -1344,7 +1344,7 @@ namespace internal
 		}
 
 		template<typename Item>
-		static void pvAccumulateHashCode(size_t& hashCode, const HashMixedKey<>& key, size_t offset)
+		static void pvAccumulateHashCode(size_t& hashCode, const MixedRaw<>& key, size_t offset)
 		{
 			const Item& item = (offset != key.offset)
 				? ColumnList::template GetByOffset<const Item>(key.raw, offset)
@@ -1361,7 +1361,7 @@ namespace internal
 		}
 
 		template<typename Item>
-		static bool pvIsEqual(const HashMixedKey<>& key1, Raw* key2, size_t offset)
+		static bool pvIsEqual(const MixedRaw<>& key1, Raw* key2, size_t offset)
 		{
 			const Item& item1 = (offset != key1.offset)
 				? ColumnList::template GetByOffset<const Item>(key1.raw, offset)
