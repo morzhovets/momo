@@ -184,12 +184,12 @@
 
 <Type Name="momo::internal::BucketLimP4&lt;*&gt;">
     <DisplayString Condition="*(uintptr_t*)&amp;mPtrState &lt; 4">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; useHashCodePartGetter">{{ Count={(4 - (mShortHashes[0] >> 7) - (mShortHashes[1] >> 7) - (mShortHashes[2] >> 7) - (mShortHashes[3] >> 7))} FirstItem={*(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)} }}</DisplayString>
-    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; !useHashCodePartGetter">{{ Count={(4 - (mShortHashes[0] >> 7) - (mShortHashes[1] >> 7) - (mShortHashes[2] >> 7) - (mShortHashes[3] >> 7))} FirstItem={**(Item**)&amp;mPtrState} }}</DisplayString>
+    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; useHashCodePartGetter">{{ Count={(4 - (mShortCodes[0] >> 7) - (mShortCodes[1] >> 7) - (mShortCodes[2] >> 7) - (mShortCodes[3] >> 7))} FirstItem={*(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)} }}</DisplayString>
+    <DisplayString Condition="*(uintptr_t*)&amp;mPtrState >= 4 &amp;&amp; !useHashCodePartGetter">{{ Count={(4 - (mShortCodes[0] >> 7) - (mShortCodes[1] >> 7) - (mShortCodes[2] >> 7) - (mShortCodes[3] >> 7))} FirstItem={**(Item**)&amp;mPtrState} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">4 - (mShortHashes[0] >> 7) - (mShortHashes[1] >> 7) - (mShortHashes[2] >> 7) - (mShortHashes[3] >> 7)</Item>
+        <Item Name="[Count]">4 - (mShortCodes[0] >> 7) - (mShortCodes[1] >> 7) - (mShortCodes[2] >> 7) - (mShortCodes[3] >> 7)</Item>
         <ArrayItems>
-            <Size>4 - (mShortHashes[0] >> 7) - (mShortHashes[1] >> 7) - (mShortHashes[2] >> 7) - (mShortHashes[3] >> 7)</Size>
+            <Size>4 - (mShortCodes[0] >> 7) - (mShortCodes[1] >> 7) - (mShortCodes[2] >> 7) - (mShortCodes[3] >> 7)</Size>
             <ValuePointer Condition="useHashCodePartGetter">(Item*)(*(uintptr_t*)&amp;mPtrState / 4 * 4)</ValuePointer>
             <ValuePointer Condition="!useHashCodePartGetter">*(Item**)&amp;mPtrState</ValuePointer>
         </ArrayItems>
