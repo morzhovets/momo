@@ -209,12 +209,12 @@
 </Type>
 
 <Type Name="momo::internal::BucketOpen8&lt;*&gt;">
-    <DisplayString Condition="mData[maxCount - 1] == emptyShortHash">{{ Count=0 }}</DisplayString>
-    <DisplayString Condition="mData[maxCount - 1] != emptyShortHash">{{ Count={(mData[maxCount - 1] >= emptyShortHash) ? (size_t)(mData[maxCount - 1] - emptyShortHash) : maxCount} FirstItem={*(Item*)&amp;mItems} }}</DisplayString>
+    <DisplayString Condition="mData[maxCount - 1] == emptyShortCode">{{ Count=0 }}</DisplayString>
+    <DisplayString Condition="mData[maxCount - 1] != emptyShortCode">{{ Count={(mData[maxCount - 1] >= emptyShortCode) ? (size_t)(mData[maxCount - 1] - emptyShortCode) : maxCount} FirstItem={*(Item*)&amp;mItems} }}</DisplayString>
     <Expand>
-        <Item Name="[Count]">(mData[maxCount - 1] >= emptyShortHash) ? (size_t)(mData[maxCount - 1] - emptyShortHash) : maxCount</Item>
+        <Item Name="[Count]">(mData[maxCount - 1] >= emptyShortCode) ? (size_t)(mData[maxCount - 1] - emptyShortCode) : maxCount</Item>
         <ArrayItems>
-            <Size>(mData[maxCount - 1] >= emptyShortHash) ? (size_t)(mData[maxCount - 1] - emptyShortHash) : maxCount</Size>
+            <Size>(mData[maxCount - 1] >= emptyShortCode) ? (size_t)(mData[maxCount - 1] - emptyShortCode) : maxCount</Size>
             <ValuePointer>(Item*)&amp;mItems</ValuePointer>
         </ArrayItems>
     </Expand>

@@ -49,7 +49,7 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const uint8_t emptyShortHash = 248;
+		static const uint8_t emptyShortCode = 248;
 		static const uint8_t infProbeExp = 255;
 
 	public:
@@ -78,7 +78,7 @@ namespace internal
 
 		bool IsFull() const noexcept
 		{
-			return pvGetState() < emptyShortHash;
+			return pvGetState() < emptyShortCode;
 		}
 
 		bool WasFull() const noexcept
@@ -135,16 +135,16 @@ namespace internal
 			return mItems.GetPtr() + (reverse ? maxCount - 1 - index : index);
 		}
 
-		static uint8_t ptCalcShortHash(size_t hashCode) noexcept
+		static uint8_t ptCalcShortCode(size_t hashCode) noexcept
 		{
 			uint32_t hashCode24 = static_cast<uint32_t>(hashCode >> (sizeof(size_t) * 8 - 24));
-			return static_cast<uint8_t>((hashCode24 * uint32_t{emptyShortHash}) >> 24);
+			return static_cast<uint8_t>((hashCode24 * uint32_t{emptyShortCode}) >> 24);
 		}
 
 	private:
 		void pvSetEmpty() noexcept
 		{
-			std::fill_n(pvGetShortHashes(), maxCount, uint8_t{emptyShortHash});
+			std::fill_n(pvGetShortCodes(), maxCount, uint8_t{emptyShortCode});
 			pvGetMaxProbeExp() = uint8_t{0};
 		}
 
@@ -152,11 +152,11 @@ namespace internal
 		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<ItemPredicate> itemPred,
 			size_t hashCode)
 		{
-			uint8_t shortHash = ptCalcShortHash(hashCode);
-			const uint8_t* thisShortHashes = pvGetShortHashes();
+			uint8_t shortCode = ptCalcShortCode(hashCode);
+			const uint8_t* thisShortCodes = pvGetShortCodes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (thisShortHashes[i] == shortHash)
+				if (thisShortCodes[i] == shortCode)
 				{
 					Item* items = mItems.GetPtr();
 					if (itemPred(std::as_const(items[i]))) [[likely]]
@@ -173,7 +173,7 @@ namespace internal
 			MOMO_ASSERT(count < maxCount);
 			Item* newItem = ptGetItemPtr(count);
 			std::move(itemCreator)(newItem);
-			pvGetShortHash(count) = ptCalcShortHash(hashCode);
+			pvGetShortCode(count) = ptCalcShortCode(hashCode);
 			if (count + 1 < maxCount)
 				++pvGetState();
 			return pvMakeIterator(newItem);
@@ -186,12 +186,12 @@ namespace internal
 			size_t index = internal::UIntMath<>::Dist(pvMakeIterator(ptGetItemPtr(0)), iter);
 			MOMO_ASSERT(index < count);
 			std::move(itemReplacer)(*ptGetItemPtr(count - 1), *ptGetItemPtr(index));
-			pvGetShortHash(index) = pvGetShortHash(count - 1);
-			pvGetShortHash(count - 1) = emptyShortHash;
+			pvGetShortCode(index) = pvGetShortCode(count - 1);
+			pvGetShortCode(count - 1) = emptyShortCode;
 			if (count < maxCount)
 				--pvGetState();
 			else
-				pvGetState() = emptyShortHash + static_cast<uint8_t>(maxCount) - 1;
+				pvGetState() = emptyShortCode + static_cast<uint8_t>(maxCount) - 1;
 			return iter;
 		}
 
@@ -215,12 +215,12 @@ namespace internal
 			return mData[maxCount];
 		}
 
-		uint8_t& pvGetShortHash(size_t index) noexcept
+		uint8_t& pvGetShortCode(size_t index) noexcept
 		{
 			return mData[reverse ? maxCount - 1 - index : index];
 		}
 
-		uint8_t* pvGetShortHashes() noexcept
+		uint8_t* pvGetShortCodes() noexcept
 		{
 			return mData;
 		}
@@ -233,7 +233,7 @@ namespace internal
 		size_t pvGetCount() const noexcept
 		{
 			uint8_t state = pvGetState();
-			return (state >= emptyShortHash) ? size_t{state} - size_t{emptyShortHash} : maxCount;
+			return (state >= emptyShortCode) ? size_t{state} - size_t{emptyShortCode} : maxCount;
 		}
 
 		static size_t pvGetMaxProbe(uint8_t maxProbeExp) noexcept

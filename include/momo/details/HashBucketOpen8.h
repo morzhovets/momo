@@ -74,12 +74,12 @@ namespace internal
 			if constexpr (first)
 				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
 #endif
-			uint8_t shortHash = BucketOpenN1::ptCalcShortHash(hashCode);
+			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
 #ifdef MOMO_USE_SSE2
-			__m128i shortHashes = _mm_set1_epi8(static_cast<char>(shortHash));
-			__m128i thisShortHashes = _mm_set_epi64x(int64_t{0},
+			__m128i shortCodes = _mm_set1_epi8(static_cast<char>(shortCode));
+			__m128i thisShortCodes = _mm_set_epi64x(int64_t{0},
 				MemCopyer::FromBuffer<int64_t>(BucketOpenN1::ptGetData()));
-			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortHashes, thisShortHashes));
+			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortCodes, thisShortCodes));
 			mask &= (1 << maxCount) - 1;
 			for (; mask != 0; mask &= mask - 1)
 			{
@@ -89,9 +89,9 @@ namespace internal
 					return itemPtr;
 			}
 #else
-			uint64_t thisShortHashes = MemCopyer::FromBuffer<uint64_t>(BucketOpenN1::ptGetData());
-			uint64_t xorHashes = (shortHash * 0x0101010101010101ull) ^ thisShortHashes;
-			uint64_t mask = (xorHashes - 0x0101010101010101ull) & ~xorHashes & 0x0080808080808080ull;
+			uint64_t thisShortCodes = MemCopyer::FromBuffer<uint64_t>(BucketOpenN1::ptGetData());
+			uint64_t xorCodes = (shortCode * 0x0101010101010101ull) ^ thisShortCodes;
+			uint64_t mask = (xorCodes - 0x0101010101010101ull) & ~xorCodes & 0x0080808080808080ull;
 			for (; mask != 0; mask &= mask - 1)
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> 3;
