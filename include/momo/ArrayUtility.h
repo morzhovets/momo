@@ -233,7 +233,8 @@ namespace internal
 		}
 	};
 
-	template<typename TItem, typename TMemManager, typename TItemTraits, typename TSettings>
+	template<conceptObject TItem, conceptMemManager TMemManager,
+		typename TItemTraits, typename TSettings>
 	class ArrayBase
 	{
 	public:
@@ -249,6 +250,52 @@ namespace internal
 		using ArrayInserter = internal::ArrayInserter<std::decay_t<RArray>>;
 
 	public:
+		//template<conceptMutableThis RArray, conceptObjectCreator<Item> ItemCreator>
+		//void AddBackNogrowCrt(this RArray&& array, ItemCreator itemCreator)
+
+		template<conceptMutableThis RArray, typename... ItemArgs>
+		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
+		void AddBackNogrowVar(this RArray&& array, ItemArgs&&... itemArgs)
+		{
+			array.AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(
+				array.GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
+		}
+
+		template<conceptMutableThis RArray>
+		void AddBackNogrow(this RArray&& array, Item&& item)
+		{
+			array.AddBackNogrowVar(std::move(item));
+		}
+
+		template<conceptMutableThis RArray>
+		void AddBackNogrow(this RArray&& array, const Item& item)
+		{
+			array.AddBackNogrowVar(item);
+		}
+
+		//template<conceptMutableThis RArray, conceptObjectCreator<Item> ItemCreator>
+		//void AddBackCrt(this RArray&& array, ItemCreator itemCreator)
+
+		template<conceptMutableThis RArray, typename... ItemArgs>
+		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
+		void AddBackVar(this RArray&& array, ItemArgs&&... itemArgs)
+		{
+			array.AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(
+				array.GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
+		}
+
+		template<conceptMutableThis RArray>
+		void AddBack(this RArray&& array, Item&& item)
+		{
+			array.AddBackVar(std::move(item));
+		}
+
+		template<conceptMutableThis RArray>
+		void AddBack(this RArray&& array, const Item& item)
+		{
+			array.AddBackVar(item);
+		}
+
 		template<conceptMutableThis RArray, conceptObjectCreator<Item> ItemCreator>
 		void InsertCrt(this RArray&& array, size_t index, ItemCreator itemCreator)
 		{
