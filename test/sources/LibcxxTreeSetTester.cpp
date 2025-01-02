@@ -32,10 +32,10 @@ namespace std
 	using namespace ::std;
 
 	template<typename TKey,
-		typename TLessFunc = std::less<TKey>,
+		typename TLessComparer = std::less<TKey>,
 		typename TAllocator = std::allocator<TKey>>
-	using set = momo::stdish::set<TKey, TLessFunc, TAllocator,
-		momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessFunc, false,
+	using set = momo::stdish::set<TKey, TLessComparer, TAllocator,
+		momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessComparer, false,
 			momo::TreeNode<32, 4, momo::MemPoolParams<1>, true>>,
 			momo::MemManagerStd<TAllocator>,
 			momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,

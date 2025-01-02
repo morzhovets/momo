@@ -34,10 +34,10 @@ namespace std
 	using namespace ::std;
 
 	template<typename TKey, typename TMapped,
-		typename TLessFunc = std::less<TKey>,
+		typename TLessComparer = std::less<TKey>,
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-	using map = momo::stdish::map<TKey, TMapped, TLessFunc, TAllocator,
-		momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, false,
+	using map = momo::stdish::map<TKey, TMapped, TLessComparer, TAllocator,
+		momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessComparer, false,
 			momo::TreeNode<>>,
 			momo::MemManagerStd<TAllocator>,
 			momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, false>,

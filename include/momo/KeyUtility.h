@@ -29,8 +29,8 @@ namespace internal
 	concept conceptEqualFunc = conceptPredicate<EqualFunc, const Key&, const KeyArg&> &&
 		(conceptPredicate<EqualFunc, const Key&, const KeyArgs&> && ...);
 
-	template<typename LessFunc, typename Key>
-	concept conceptLessFunc = conceptPredicate<LessFunc, const Key&, const Key&>;
+	template<typename LessComparer, typename Key>
+	concept conceptLessComparer = conceptPredicate<LessComparer, const Key&, const Key&>;
 
 	template<typename HashFunc, typename Key>
 	concept conceptHashFunc = conceptConstFunctor<HashFunc, size_t, const Key&>;
@@ -39,9 +39,9 @@ namespace internal
 	concept conceptCopyableEqualFunc = conceptEqualFunc<EqualFunc, Key> &&
 		std::copy_constructible<EqualFunc>;
 
-	template<typename LessFunc, typename Key>
-	concept conceptCopyableLessFunc = conceptLessFunc<LessFunc, Key> &&
-		std::copy_constructible<LessFunc>;
+	template<typename LessComparer, typename Key>
+	concept conceptCopyableLessComparer = conceptLessComparer<LessComparer, Key> &&
+		std::copy_constructible<LessComparer>;
 
 	template<typename HashFunc, typename Key>
 	concept conceptCopyableHashFunc = conceptHashFunc<HashFunc, Key> &&

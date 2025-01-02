@@ -234,9 +234,9 @@ namespace internal
 					itemPtrCodes[count - 2 * initialItemCount + i] = { srcItems2 + i,
 						mergeTraits.GetHashCode(MergeSetItemTraits::GetKey(srcItems2[i])) };
 				}
-				auto lessFunc = [] (ItemPtrCode itemPtrCode1, ItemPtrCode itemPtrCode2) noexcept
+				auto lessComp = [] (ItemPtrCode itemPtrCode1, ItemPtrCode itemPtrCode2) noexcept
 					{ return itemPtrCode1.hashCode < itemPtrCode2.hashCode; };
-				pvSortPtrs(&itemPtrCodes[count - 2 * initialItemCount], lessFunc);
+				pvSortPtrs(&itemPtrCodes[count - 2 * initialItemCount], lessComp);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
 					Item* srcItems = pvNextAddr(srcBegin, count - 2 * index);
@@ -272,12 +272,12 @@ namespace internal
 					itemPtrs[count - initialItemCount + i] = srcItems1 + i;
 					itemPtrs[count - 2 * initialItemCount + i] = srcItems2 + i;
 				}
-				auto lessFunc = [&mergeTraits] (Item* itemPtr1, Item* itemPtr2)
+				auto lessComp = [&mergeTraits] (Item* itemPtr1, Item* itemPtr2)
 				{
 					return mergeTraits.IsLess(MergeSetItemTraits::GetKey(*itemPtr1),
 						MergeSetItemTraits::GetKey(*itemPtr2));
 				};
-				pvSortPtrs(&itemPtrs[count - 2 * initialItemCount], lessFunc);
+				pvSortPtrs(&itemPtrs[count - 2 * initialItemCount], lessComp);
 				for (size_t index = 2 * initialItemCount; index < count; index *= 2)
 				{
 					Item* srcItems = pvNextAddr(srcBegin, count - 2 * index);
@@ -323,8 +323,8 @@ namespace internal
 			}
 		}
 		
-		template<typename ItemPtr, typename LessFunc>
-		static void pvSortPtrs(ItemPtr* itemPtrs, const LessFunc& lessFunc)
+		template<typename ItemPtr, typename LessComparer>
+		static void pvSortPtrs(ItemPtr* itemPtrs, const LessComparer& lessComp)
 		{
 			for (size_t i = 1; i < 2 * initialItemCount; ++i)
 			{
@@ -332,7 +332,7 @@ namespace internal
 				size_t j = i;
 				for (; j > 0; --j)
 				{
-					if (!lessFunc(itemPtr, itemPtrs[j - 1]))
+					if (!lessComp(itemPtr, itemPtrs[j - 1]))
 						break;
 					itemPtrs[j] = itemPtrs[j - 1];
 				}
@@ -787,10 +787,10 @@ private:
 					}
 					else
 					{
-						auto lessFunc = [&mergeTraits] (const Item& item1, const Key& key2)
+						auto lessComp = [&mergeTraits] (const Item& item1, const Key& key2)
 							{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
 						const Item* itemPtr = std::lower_bound(segItems,
-							segItems + segItemCount - 1, key, FastCopyableFunctor(lessFunc));
+							segItems + segItemCount - 1, key, FastCopyableFunctor(lessComp));
 						if (itemPred(*itemPtr))
 							return pvMakePosition(*itemPtr);
 					}

@@ -27,12 +27,12 @@
 
 //using momo::stdish::multimap;
 template<typename TKey, typename TMapped,
-	typename TLessFunc = std::less<TKey>,
+	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using multimap = momo::stdish::multimap<TKey, TMapped, TLessFunc, TAllocator,
-	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessFunc, true>,
+using multimap = momo::stdish::multimap<TKey, TMapped, TLessComparer, TAllocator,
+	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessComparer, true>,
 		momo::MemManagerStd<TAllocator>,
-		typename std::map<TKey, TMapped, TLessFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
+		typename std::map<TKey, TMapped, TLessComparer, TAllocator>::nested_container_type::KeyValueTraits>>;
 
 template <class Map>
 bool map_equal(const Map& map, Map other)

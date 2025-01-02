@@ -85,34 +85,34 @@ public:
 };
 
 template<conceptObject TKey,
-	internal::conceptCopyableLessFunc<TKey> TLessFunc = std::less<TKey>,
+	internal::conceptCopyableLessComparer<TKey> TLessComparer = std::less<TKey>,
 	bool tMultiKey = false,
 	typename TTreeNode = TreeNodeDefault>
 class TreeTraitsStd
 {
 public:
 	typedef TKey Key;
-	typedef TLessFunc LessFunc;
+	typedef TLessComparer LessComparer;
 	typedef TTreeNode TreeNode;
 
 	static const bool multiKey = tMultiKey;
 
 	static const bool useLinearSearch = IsFastComparable<Key>::value
-		&& (std::is_same_v<LessFunc, std::less<Key>> || std::is_same_v<LessFunc, std::less<>>);
+		&& (std::is_same_v<LessComparer, std::less<Key>> || std::is_same_v<LessComparer, std::less<>>);
 
 	template<typename ItemTraits>
 	using Node = typename TreeNode::template Node<ItemTraits>;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = std::bool_constant<internal::conceptTransparent<LessFunc>>;
+	using IsValidKeyArg = std::bool_constant<internal::conceptTransparent<LessComparer>>;
 
 private:
-	static const bool staticIsLess = std::is_empty_v<LessFunc> &&
-		std::is_trivially_default_constructible_v<LessFunc>;
+	static const bool staticIsLess = std::is_empty_v<LessComparer> &&
+		std::is_trivially_default_constructible_v<LessComparer>;
 
 public:
-	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
-		: mLessFunc(lessFunc)
+	explicit TreeTraitsStd(const LessComparer& lessComp = LessComparer())
+		: mLessComparer(lessComp)
 	{
 	}
 
@@ -125,23 +125,23 @@ public:
 	static bool IsLess(const KeyArg1& key1, const KeyArg2& key2)
 		requires (staticIsLess)
 	{
-		return LessFunc()(key1, key2);
+		return LessComparer()(key1, key2);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 		requires (!staticIsLess)
 	{
-		return mLessFunc(key1, key2);
+		return mLessComparer(key1, key2);
 	}
 
-	const LessFunc& GetLessFunc() const noexcept
+	const LessComparer& GetLessComparer() const noexcept
 	{
-		return mLessFunc;
+		return mLessComparer;
 	}
 
 private:
-	[[no_unique_address]] LessFunc mLessFunc;
+	[[no_unique_address]] LessComparer mLessComparer;
 };
 
 } // namespace momo
