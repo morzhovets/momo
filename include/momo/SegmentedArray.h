@@ -539,11 +539,11 @@ public:
 	}
 
 	//template<typename ItemArg,
-	//	internal::conceptEqualFunc<Item, ItemArg> EqualFunc = std::equal_to<>>
-	//bool Contains(const ItemArg& itemArg, EqualFunc equalFunc = EqualFunc()) const
+	//	internal::conceptEqualComparer<Item, ItemArg> ItemEqualComparer = std::equal_to<>>
+	//bool Contains(const ItemArg& itemArg, ItemEqualComparer equalFunc = ItemEqualComparer()) const
 
-	//template<internal::conceptEqualFunc<Item> EqualFunc = std::equal_to<Item>>
-	//bool IsEqual(const SegmentedArray& array, EqualFunc equalFunc = EqualFunc()) const
+	//template<internal::conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
+	//bool IsEqual(const SegmentedArray& array, ItemEqualComparer equalFunc = ItemEqualComparer()) const
 
 private:
 	Item* pvAllocateSegment(size_t segIndex)

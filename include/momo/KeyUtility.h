@@ -24,10 +24,10 @@ namespace momo
 
 namespace internal
 {
-	template<typename EqualFunc, typename Key,
+	template<typename EqualComparer, typename Key,
 		typename KeyArg = Key, typename... KeyArgs>
-	concept conceptEqualFunc = conceptPredicate<EqualFunc, const Key&, const KeyArg&> &&
-		(conceptPredicate<EqualFunc, const Key&, const KeyArgs&> && ...);
+	concept conceptEqualComparer = conceptPredicate<EqualComparer, const Key&, const KeyArg&> &&
+		(conceptPredicate<EqualComparer, const Key&, const KeyArgs&> && ...);
 
 	template<typename LessComparer, typename Key>
 	concept conceptLessComparer = conceptPredicate<LessComparer, const Key&, const Key&>;
@@ -35,9 +35,9 @@ namespace internal
 	template<typename Hasher, typename Key>
 	concept conceptHasher = conceptConstFunctor<Hasher, size_t, const Key&>;
 
-	template<typename EqualFunc, typename Key>
-	concept conceptCopyableEqualFunc = conceptEqualFunc<EqualFunc, Key> &&
-		std::copy_constructible<EqualFunc>;
+	template<typename EqualComparer, typename Key>
+	concept conceptCopyableEqualComparer = conceptEqualComparer<EqualComparer, Key> &&
+		std::copy_constructible<EqualComparer>;
 
 	template<typename LessComparer, typename Key>
 	concept conceptCopyableLessComparer = conceptLessComparer<LessComparer, Key> &&

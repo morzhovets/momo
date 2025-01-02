@@ -50,9 +50,9 @@ namespace momo::stdish
 
 template<typename TKey, typename TMapped,
 	typename THasher = HashCoder<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
-	typename THashMap = HashMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualFunc>,
+	typename THashMap = HashMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualComparer>,
 		MemManagerStd<TAllocator>>>
 class unordered_map
 {
@@ -67,7 +67,7 @@ public:
 	typedef TKey key_type;
 	typedef TMapped mapped_type;
 	typedef THasher hasher;
-	typedef TEqualFunc key_equal;
+	typedef TEqualComparer key_equal;
 	typedef TAllocator allocator_type;
 
 	typedef HashMap nested_container_type;
@@ -385,7 +385,7 @@ public:
 
 	key_equal key_eq() const
 	{
-		return mHashMap.GetHashTraits().GetEqualFunc();
+		return mHashMap.GetHashTraits().GetEqualComparer();
 	}
 
 	allocator_type get_allocator() const noexcept
@@ -1007,15 +1007,15 @@ private:
 
 template<typename TKey, typename TMapped,
 	typename THasher = HashCoder<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class unordered_map_open : public unordered_map<TKey, TMapped, THasher, TEqualFunc, TAllocator,
-	HashMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualFunc, HashBucketOpenDefault>,
+class unordered_map_open : public unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
+	HashMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>>
 {
 private:
-	typedef unordered_map<TKey, TMapped, THasher, TEqualFunc, TAllocator,
-		momo::HashMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualFunc, HashBucketOpenDefault>,
+	typedef unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
+		momo::HashMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>> UnorderedMap;
 
 public:
@@ -1070,13 +1070,13 @@ template<typename Iterator, typename Hasher, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_map(Iterator, Iterator, size_t, Hasher, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, Hasher, std::equal_to<Key>, Allocator>; \
-template<typename Iterator, typename Hasher, typename EqualFunc, \
+template<typename Iterator, typename Hasher, typename EqualComparer, \
 	typename Value = std::iter_value_t<Iterator>, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(Iterator, Iterator, size_t, Hasher, EqualFunc, Allocator = Allocator()) \
-	-> unordered_map<Key, Mapped, Hasher, EqualFunc, Allocator>; \
+unordered_map(Iterator, Iterator, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
+	-> unordered_map<Key, Mapped, Hasher, EqualComparer, Allocator>; \
 template<typename QKey, typename Mapped, \
 	typename Key = std::remove_const_t<QKey>> \
 unordered_map(std::initializer_list<std::pair<QKey, Mapped>>) \
@@ -1091,11 +1091,11 @@ template<typename QKey, typename Mapped, typename Hasher, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_map(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, Hasher, std::equal_to<Key>, Allocator>; \
-template<typename QKey, typename Mapped, typename Hasher, typename EqualFunc, \
+template<typename QKey, typename Mapped, typename Hasher, typename EqualComparer, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, EqualFunc, Allocator = Allocator()) \
-	-> unordered_map<Key, Mapped, Hasher, EqualFunc, Allocator>;
+unordered_map(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
+	-> unordered_map<Key, Mapped, Hasher, EqualComparer, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_map) \
 template<std::ranges::input_range Range, \
@@ -1118,13 +1118,13 @@ template<std::ranges::input_range Range, typename Hasher, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_map(std::from_range_t, Range&&, size_t, Hasher, Allocator = Allocator()) \
 	-> unordered_map<Key, Mapped, Hasher, std::equal_to<Key>, Allocator>; \
-template<std::ranges::input_range Range, typename Hasher, typename EqualFunc, \
+template<std::ranges::input_range Range, typename Hasher, typename EqualComparer, \
 	typename Value = std::ranges::range_value_t<Range>, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_map(std::from_range_t, Range&&, size_t, Hasher, EqualFunc, Allocator = Allocator()) \
-	-> unordered_map<Key, Mapped, Hasher, EqualFunc, Allocator>;
+unordered_map(std::from_range_t, Range&&, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
+	-> unordered_map<Key, Mapped, Hasher, EqualComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map_open)

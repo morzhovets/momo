@@ -47,10 +47,10 @@ namespace std
 
 	template<typename TKey, typename TMapped,
 		typename THasher = std::hash<TKey>,
-		typename TEqualFunc = std::equal_to<TKey>,
+		typename TEqualComparer = std::equal_to<TKey>,
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-	using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqualFunc, TAllocator,
-		momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THasher, TEqualFunc>,
+	using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
+		momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THasher, TEqualComparer>,
 			momo::MemManagerStd<TAllocator>,
 			momo::HashMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
 			LibcxxHashMapSettings>>;
