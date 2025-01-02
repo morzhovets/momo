@@ -51,10 +51,10 @@ namespace momo::stdish
 */
 
 template<typename TKey, typename TMapped,
-	typename THashFunc = HashCoder<TKey>,
+	typename THasher = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
-	typename THashMultiMap = HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc>,
+	typename THashMultiMap = HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualFunc>,
 		MemManagerStd<TAllocator>>>
 class unordered_multimap
 {
@@ -66,7 +66,7 @@ private:
 public:
 	typedef TKey key_type;
 	typedef TMapped mapped_type;
-	typedef THashFunc hasher;
+	typedef THasher hasher;
 	typedef TEqualFunc key_equal;
 	typedef TAllocator allocator_type;
 
@@ -349,7 +349,7 @@ public:
 
 	hasher hash_function() const
 	{
-		return mHashMultiMap.GetHashTraits().GetHashFunc();
+		return mHashMultiMap.GetHashTraits().GetHasher();
 	}
 
 	key_equal key_eq() const
@@ -747,16 +747,16 @@ private:
 */
 
 template<typename TKey, typename TMapped,
-	typename THashFunc = HashCoder<TKey>,
+	typename THasher = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class unordered_multimap_open : public unordered_multimap<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-	HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
+class unordered_multimap_open : public unordered_multimap<TKey, TMapped, THasher, TEqualFunc, TAllocator,
+	HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>>
 {
 private:
-	typedef unordered_multimap<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-		momo::HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
+	typedef unordered_multimap<TKey, TMapped, THasher, TEqualFunc, TAllocator,
+		momo::HashMultiMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>> UnorderedMultiMap;
 
 public:
@@ -804,20 +804,20 @@ template<typename Iterator, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_multimap(Iterator, Iterator, size_t, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename Iterator, typename HashFunc, \
+template<typename Iterator, typename Hasher, \
 	typename Value = std::iter_value_t<Iterator>, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
-	-> unordered_multimap<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
-template<typename Iterator, typename HashFunc, typename EqualFunc, \
+unordered_multimap(Iterator, Iterator, size_t, Hasher, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, Hasher, std::equal_to<Key>, Allocator>; \
+template<typename Iterator, typename Hasher, typename EqualFunc, \
 	typename Value = std::iter_value_t<Iterator>, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
-	-> unordered_multimap<Key, Mapped, HashFunc, EqualFunc, Allocator>; \
+unordered_multimap(Iterator, Iterator, size_t, Hasher, EqualFunc, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, Hasher, EqualFunc, Allocator>; \
 template<typename QKey, typename Mapped, \
 	typename Key = std::remove_const_t<QKey>> \
 unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>) \
@@ -827,16 +827,16 @@ template<typename QKey, typename Mapped, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename QKey, typename Mapped, typename HashFunc, \
+template<typename QKey, typename Mapped, typename Hasher, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, HashFunc, Allocator = Allocator()) \
-	-> unordered_multimap<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
-template<typename QKey, typename Mapped, typename HashFunc, typename EqualFunc, \
+unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, Hasher, std::equal_to<Key>, Allocator>; \
+template<typename QKey, typename Mapped, typename Hasher, typename EqualFunc, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
-	-> unordered_multimap<Key, Mapped, HashFunc, EqualFunc, Allocator>;
+unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, EqualFunc, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, Hasher, EqualFunc, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_multimap) \
 template<std::ranges::input_range Range, \
@@ -852,20 +852,20 @@ template<std::ranges::input_range Range, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_multimap(std::from_range_t, Range&&, size_t, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<std::ranges::input_range Range, typename HashFunc, \
+template<std::ranges::input_range Range, typename Hasher, \
 	typename Value = std::ranges::range_value_t<Range>, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(std::from_range_t, Range&&, size_t, HashFunc, Allocator = Allocator()) \
-	-> unordered_multimap<Key, Mapped, HashFunc, std::equal_to<Key>, Allocator>; \
-template<std::ranges::input_range Range, typename HashFunc, typename EqualFunc, \
+unordered_multimap(std::from_range_t, Range&&, size_t, Hasher, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, Hasher, std::equal_to<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename Hasher, typename EqualFunc, \
 	typename Value = std::ranges::range_value_t<Range>, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>> \
-unordered_multimap(std::from_range_t, Range&&, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
-	-> unordered_multimap<Key, Mapped, HashFunc, EqualFunc, Allocator>;
+unordered_multimap(std::from_range_t, Range&&, size_t, Hasher, EqualFunc, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, Hasher, EqualFunc, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap_open)

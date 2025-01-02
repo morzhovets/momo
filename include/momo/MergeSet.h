@@ -770,7 +770,7 @@ private:
 					size_t segItemCount = initialItemCount << (segIndex - 1);
 					if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
 					{
-						auto hashFunc = [&mergeTraits] (const Item& item)
+						auto hasher = [&mergeTraits] (const Item& item)
 							{ return mergeTraits.GetHashCode(ItemTraits::GetKey(item)); };
 						auto equalFunc = [&mergeTraits] (const Item& item1, const auto& item2)
 						{
@@ -781,7 +781,7 @@ private:
 								return mergeTraits.IsEqual(key1, ItemTraits::GetKey(item2));
 						};
 						auto findRes = HashSorter::Find(segItems, segItemCount, key,
-							hashCode, hashFunc, equalFunc);
+							hashCode, hasher, equalFunc);
 						if (findRes.found)
 							return pvMakePosition(*findRes.iterator);
 					}

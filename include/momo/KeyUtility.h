@@ -32,8 +32,8 @@ namespace internal
 	template<typename LessComparer, typename Key>
 	concept conceptLessComparer = conceptPredicate<LessComparer, const Key&, const Key&>;
 
-	template<typename HashFunc, typename Key>
-	concept conceptHashFunc = conceptConstFunctor<HashFunc, size_t, const Key&>;
+	template<typename Hasher, typename Key>
+	concept conceptHasher = conceptConstFunctor<Hasher, size_t, const Key&>;
 
 	template<typename EqualFunc, typename Key>
 	concept conceptCopyableEqualFunc = conceptEqualFunc<EqualFunc, Key> &&
@@ -43,9 +43,9 @@ namespace internal
 	concept conceptCopyableLessComparer = conceptLessComparer<LessComparer, Key> &&
 		std::copy_constructible<LessComparer>;
 
-	template<typename HashFunc, typename Key>
-	concept conceptCopyableHashFunc = conceptHashFunc<HashFunc, Key> &&
-		std::copy_constructible<HashFunc>;
+	template<typename Hasher, typename Key>
+	concept conceptCopyableHasher = conceptHasher<Hasher, Key> &&
+		std::copy_constructible<Hasher>;
 
 	template<typename Predicate>
 	concept conceptTransparent = requires { typename Predicate::is_transparent; };
