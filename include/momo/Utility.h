@@ -305,7 +305,6 @@ namespace internal
 			&& !std::is_void<QResObject>::value, QResObject*>
 		pvFromBytePtr(QByte* bytePtr) noexcept
 		{
-			MOMO_STATIC_ASSERT(!std::is_const<QResObject>::value || isWithinLifetime);
 			return MOMO_CAST_POINTER(QResObject, bytePtr, isWithinLifetime, isSingleObject);
 		}
 	};
