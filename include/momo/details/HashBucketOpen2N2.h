@@ -58,14 +58,14 @@ namespace internal
 			uint8_t codeProbes[maxCount];
 		};
 
-		template<bool hasCodeProbes>
+		template<bool hasCodeProbes>	// gcc
 		requires (!hasCodeProbes)
 		struct CodeData<hasCodeProbes>
 		{
 			union
 			{
 				ShortCode shortCodes[maxCount];
-				uint8_t codeProbes[maxCount];
+				uint8_t codeProbes[maxCount];	//?
 			};
 		};
 

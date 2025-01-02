@@ -46,20 +46,18 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 	private:
-		template<size_t capacity, bool hasIndexes>
-		struct Counter;
-
-		template<size_t capacity>
-		struct Counter<capacity, false>
+		template<size_t indexCount = isContinuous ? 0 : maxCapacity>
+		struct Counter
 		{
 			uint8_t count;
+			uint8_t indexes[indexCount];
 		};
 
-		template<size_t capacity>
-		struct Counter<capacity, true>
+		template<size_t indexCount>	// gcc
+		requires (indexCount == 0)
+		struct Counter<indexCount>
 		{
 			uint8_t count;
-			uint8_t indexes[capacity];
 		};
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
@@ -332,7 +330,7 @@ namespace internal
 		//Node*[maxCapacity + 1] // for internal nodes
 		Node* mParent;
 		uint8_t mMemPoolIndex;
-		Counter<maxCapacity, !isContinuous> mCounter;
+		Counter<> mCounter;
 		//Item[]
 	};
 }
