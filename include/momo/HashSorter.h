@@ -87,10 +87,10 @@ private:
 
 	template<internal::conceptRandomIterator17 Iterator,
 		internal::conceptRandomIterator17 HashIterator>
-	class IterPrehashFunc
+	class IterPrehasher
 	{
 	public:
-		explicit IterPrehashFunc(Iterator begin, HashIterator hashBegin) noexcept
+		explicit IterPrehasher(Iterator begin, HashIterator hashBegin) noexcept
 			: mBegin(begin),
 			mHashBegin(hashBegin)
 		{
@@ -143,7 +143,7 @@ public:
 			std::swap(hashBegin[iter1 - begin], hashBegin[iter2 - begin]);
 		};
 		pvSort(begin, count,
-			FastCopyableFunctor(IterPrehashFunc<Iterator, HashIterator>(begin, hashBegin)),
+			FastCopyableFunctor(IterPrehasher<Iterator, HashIterator>(begin, hashBegin)),
 			FastCopyableFunctor<EqualComparer>(equalComp), FastCopyableFunctor(iterHashSwapper));
 	}
 
@@ -168,7 +168,7 @@ public:
 		EqualComparer equalComp = EqualComparer())
 	{
 		return pvIsSorted(begin, count,
-			FastCopyableFunctor(IterPrehashFunc<Iterator, HashIterator>(begin, hashBegin)),
+			FastCopyableFunctor(IterPrehasher<Iterator, HashIterator>(begin, hashBegin)),
 			FastCopyableFunctor<EqualComparer>(equalComp));
 	}
 
@@ -194,7 +194,7 @@ public:
 		HashCode argHashCode, HashIterator hashBegin, EqualComparer equalComp = EqualComparer())
 	{
 		return pvFind(begin, count, itemArg, argHashCode,
-			FastCopyableFunctor(IterPrehashFunc<Iterator, HashIterator>(begin, hashBegin)),
+			FastCopyableFunctor(IterPrehasher<Iterator, HashIterator>(begin, hashBegin)),
 			FastCopyableFunctor<EqualComparer>(equalComp));
 	}
 
@@ -220,7 +220,7 @@ public:
 		HashCode argHashCode, HashIterator hashBegin, EqualComparer equalComp = EqualComparer())
 	{
 		return pvGetBounds(begin, count, itemArg, argHashCode,
-			FastCopyableFunctor(IterPrehashFunc<Iterator, HashIterator>(begin, hashBegin)),
+			FastCopyableFunctor(IterPrehasher<Iterator, HashIterator>(begin, hashBegin)),
 			FastCopyableFunctor<EqualComparer>(equalComp));
 	}
 
