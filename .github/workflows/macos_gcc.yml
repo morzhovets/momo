@@ -10,13 +10,13 @@ jobs:
 
         - gcc_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++23 -Werror -msse2'
+          flags: '-std=c++26 -Werror -msse2'
           path_prefix: '/usr/local'
           macos_ver: '13'
 
         - gcc_ver: '14'
           build_type: 'Debug'
-          flags: '-std=c++23 -Werror -msse2'
+          flags: '-std=c++26 -Werror -msse2'
           path_prefix: '/usr/local'
           macos_ver: '13'
 
@@ -29,19 +29,25 @@ jobs:
 
         - gcc_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++23 -Werror -Wno-psabi -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-std=c++26 -Werror -Wno-psabi'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - gcc_ver: '14'
+          build_type: 'Release'
+          flags: '-std=c++26 -Werror -Wno-psabi -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
         - gcc_ver: '14'
           build_type: 'Debug'
-          flags: '-std=c++23 -Werror -Wno-psabi'
+          flags: '-std=c++26 -Werror -Wno-psabi'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
         - gcc_ver: '14'
           build_type: 'Debug'
-          flags: '-std=c++23 -Werror -Wno-psabi -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-std=c++26 -Werror -Wno-psabi -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
