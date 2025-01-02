@@ -65,22 +65,22 @@ jobs:
 
         - gcc_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++23 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
           ubuntu_ver: '24.04'
 
         - gcc_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-std=c++26 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '24.04'
 
         - gcc_ver: '14'
           build_type: 'Debug'
-          flags: '-std=c++23 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
           ubuntu_ver: '24.04'
 
         - gcc_ver: '14'
           build_type: 'Debug'
-          flags: '-std=c++23 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-std=c++26 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '24.04'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}

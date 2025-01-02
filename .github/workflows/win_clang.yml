@@ -10,23 +10,23 @@ jobs:
 
         # x64
         - build_type: 'Release'
-          flags: '-std=c++23 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
 
         - build_type: 'Debug'
-          flags: '-std=c++23 -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-std=c++26 -msse2 -DTEST_LIBCXX_NEW'
 
         # x86
         - build_type: 'Release'
-          flags: '-m32 -std=c++23 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-m32 -std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
 
         - build_type: 'Release'
-          flags: '-m32 -std=c++23 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-m32 -std=c++26 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
         - build_type: 'Debug'
-          flags: '-m32 -std=c++23 -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-m32 -std=c++26 -msse2 -DTEST_LIBCXX_NEW'
 
         - build_type: 'Debug'
-          flags: '-m32 -std=c++23 -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          flags: '-m32 -std=c++26 -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
     runs-on: windows-2022
 
