@@ -128,7 +128,7 @@ public:
 			momo::MemManagerDefault, momo::TreeMapKeyValueTraits<std::string, std::string,
 			momo::MemManagerDefault, useValuePtr>> TreeMap;
 
-		auto equalFunc = [] (auto ref1, auto ref2)
+		auto equalComp = [] (auto ref1, auto ref2)
 			{ return ref1.key == ref2.key && ref1.value == ref2.value; };
 
 		std::string s1 = "s1";
@@ -186,7 +186,7 @@ public:
 		ep.Clear();
 
 		map.Insert(map2.GetBegin(), std::next(map2.GetBegin()));
-		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), equalFunc));
+		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), equalComp));
 
 		map.Clear();
 		assert(map.IsEmpty());
@@ -195,7 +195,7 @@ public:
 		map.Add(map.GetUpperBound("s2"), s2, "s2");
 		map.Add(map.GetLowerBound(s3), "s3", s3);
 		map.Add(map.GetUpperBound(s4), "s4", "s4");
-		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), equalFunc));
+		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), equalComp));
 	}
 
 	static void TestTemplAll()

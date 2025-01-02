@@ -772,7 +772,7 @@ private:
 					{
 						auto hasher = [&mergeTraits] (const Item& item)
 							{ return mergeTraits.GetHashCode(ItemTraits::GetKey(item)); };
-						auto equalFunc = [&mergeTraits] (const Item& item1, const auto& item2)
+						auto equalComp = [&mergeTraits] (const Item& item1, const auto& item2)
 						{
 							const Key& key1 = ItemTraits::GetKey(item1);
 							if constexpr (std::is_same_v<decltype(item2), const Key&>)
@@ -781,7 +781,7 @@ private:
 								return mergeTraits.IsEqual(key1, ItemTraits::GetKey(item2));
 						};
 						auto findRes = HashSorter::Find(segItems, segItemCount, key,
-							hashCode, hasher, equalFunc);
+							hashCode, hasher, equalComp);
 						if (findRes.found)
 							return pvMakePosition(*findRes.iterator);
 					}

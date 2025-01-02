@@ -122,9 +122,9 @@ public:
 	{
 	}
 
-	unordered_set(size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc,
+	unordered_set(size_type bucketCount, const hasher& hashFunc, const key_equal& equalComp,
 		const allocator_type& alloc = allocator_type())
-		: mHashSet(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
+		: mHashSet(HashTraits(bucketCount, hashFunc, equalComp), MemManager(alloc))
 	{
 	}
 
@@ -152,8 +152,8 @@ public:
 
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	unordered_set(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
-		: unordered_set(bucketCount, hashFunc, equalFunc, alloc)
+		const key_equal& equalComp, const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, hashFunc, equalComp, alloc)
 	{
 		insert(first, last);
 	}
@@ -176,9 +176,9 @@ public:
 	}
 
 	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc,
+		const hasher& hashFunc, const key_equal& equalComp,
 		const allocator_type& alloc = allocator_type())
-		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
+		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalComp), MemManager(alloc))
 	{
 	}
 
@@ -211,8 +211,8 @@ public:
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	unordered_set(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
-		: unordered_set(bucketCount, hashFunc, equalFunc, alloc)
+		const key_equal& equalComp, const allocator_type& alloc = allocator_type())
+		: unordered_set(bucketCount, hashFunc, equalComp, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}

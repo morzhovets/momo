@@ -347,21 +347,21 @@ namespace internal
 		template<typename Array, typename ItemArg,
 			conceptEqualComparer<Item, ItemArg> ItemEqualComparer = std::equal_to<>>
 		bool Contains(this const Array& array, const ItemArg& itemArg,
-			ItemEqualComparer equalFunc = ItemEqualComparer())
+			ItemEqualComparer itemEqualComp = ItemEqualComparer())
 		{
-			FastCopyableFunctor<ItemEqualComparer> fastEqualFunc(equalFunc);
-			auto itemPred = [&itemArg, fastEqualFunc] (const Item& item)
-				{ return fastEqualFunc(item, itemArg); };
+			FastCopyableFunctor<ItemEqualComparer> fastItemEqualComp(itemEqualComp);
+			auto itemPred = [&itemArg, fastItemEqualComp] (const Item& item)
+				{ return fastItemEqualComp(item, itemArg); };
 			return std::any_of(array.GetBegin(), array.GetEnd(), FastCopyableFunctor(itemPred));
 		}
 
 		template<typename Array,
 			conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
 		bool IsEqual(this const Array& array1, const std::type_identity_t<Array>& array2,
-			ItemEqualComparer equalFunc = ItemEqualComparer())
+			ItemEqualComparer itemEqualComp = ItemEqualComparer())
 		{
 			return std::equal(array1.GetBegin(), array1.GetEnd(), array2.GetBegin(), array2.GetEnd(),
-				FastCopyableFunctor<ItemEqualComparer>(equalFunc));
+				FastCopyableFunctor<ItemEqualComparer>(itemEqualComp));
 		}
 
 		template<typename Array,

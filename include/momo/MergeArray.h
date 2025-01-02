@@ -556,10 +556,10 @@ public:
 
 	//template<typename ItemArg,
 	//	internal::conceptEqualComparer<Item, ItemArg> ItemEqualComparer = std::equal_to<>>
-	//bool Contains(const ItemArg& itemArg, ItemEqualComparer equalFunc = ItemEqualComparer()) const
+	//bool Contains(const ItemArg& itemArg, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 	//template<internal::conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
-	//bool IsEqual(const MergeArray& array, ItemEqualComparer equalFunc = ItemEqualComparer()) const
+	//bool IsEqual(const MergeArray& array, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 private:
 	static size_t pvGetSegmentItemCount(size_t segIndex) noexcept

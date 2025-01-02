@@ -155,9 +155,9 @@ public:
 	{
 	}
 
-	unordered_map(size_type bucketCount, const hasher& hashFunc, const key_equal& equalFunc,
+	unordered_map(size_type bucketCount, const hasher& hashFunc, const key_equal& equalComp,
 		const allocator_type& alloc = allocator_type())
-		: mHashMap(HashTraits(bucketCount, hashFunc, equalFunc), MemManager(alloc))
+		: mHashMap(HashTraits(bucketCount, hashFunc, equalComp), MemManager(alloc))
 	{
 	}
 
@@ -185,8 +185,8 @@ public:
 
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
 	unordered_map(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
-		: unordered_map(bucketCount, hashFunc, equalFunc, alloc)
+		const key_equal& equalComp, const allocator_type& alloc = allocator_type())
+		: unordered_map(bucketCount, hashFunc, equalComp, alloc)
 	{
 		insert(first, last);
 	}
@@ -209,9 +209,9 @@ public:
 	}
 
 	unordered_map(std::initializer_list<value_type> values, size_type bucketCount,
-		const hasher& hashFunc, const key_equal& equalFunc,
+		const hasher& hashFunc, const key_equal& equalComp,
 		const allocator_type& alloc = allocator_type())
-		: unordered_map(values.begin(), values.end(), bucketCount, hashFunc, equalFunc, alloc)
+		: unordered_map(values.begin(), values.end(), bucketCount, hashFunc, equalComp, alloc)
 	{
 	}
 
@@ -244,8 +244,8 @@ public:
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	unordered_map(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalFunc, const allocator_type& alloc = allocator_type())
-		: unordered_map(bucketCount, hashFunc, equalFunc, alloc)
+		const key_equal& equalComp, const allocator_type& alloc = allocator_type())
+		: unordered_map(bucketCount, hashFunc, equalComp, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}

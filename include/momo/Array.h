@@ -896,10 +896,10 @@ public:
 
 	//template<typename ItemArg,
 	//	internal::conceptEqualComparer<Item, ItemArg> ItemEqualComparer = std::equal_to<>>
-	//bool Contains(const ItemArg& itemArg, ItemEqualComparer equalFunc = ItemEqualComparer()) const
+	//bool Contains(const ItemArg& itemArg, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 	//template<internal::conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
-	//bool IsEqual(const Array& array, ItemEqualComparer equalFunc = ItemEqualComparer()) const
+	//bool IsEqual(const Array& array, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 private:
 	explicit Array(Data&& data) noexcept

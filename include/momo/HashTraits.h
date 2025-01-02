@@ -163,9 +163,9 @@ private:
 public:
 	explicit HashTraitsStd(size_t startBucketCount = size_t{1} << HashBucket::logStartBucketCount,
 		const Hasher& hasher = Hasher(),
-		const EqualComparer& equalFunc = EqualComparer())
+		const EqualComparer& equalComp = EqualComparer())
 		: mHasher(hasher),
-		mEqualComparer(equalFunc),
+		mEqualComparer(equalComp),
 		mMaxLoadFactor(0.0)
 	{
 		startBucketCount = std::minmax(startBucketCount, size_t{8}).second;

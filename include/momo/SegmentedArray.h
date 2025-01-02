@@ -540,10 +540,10 @@ public:
 
 	//template<typename ItemArg,
 	//	internal::conceptEqualComparer<Item, ItemArg> ItemEqualComparer = std::equal_to<>>
-	//bool Contains(const ItemArg& itemArg, ItemEqualComparer equalFunc = ItemEqualComparer()) const
+	//bool Contains(const ItemArg& itemArg, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 	//template<internal::conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
-	//bool IsEqual(const SegmentedArray& array, ItemEqualComparer equalFunc = ItemEqualComparer()) const
+	//bool IsEqual(const SegmentedArray& array, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 private:
 	Item* pvAllocateSegment(size_t segIndex)
