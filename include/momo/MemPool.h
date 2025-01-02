@@ -1051,8 +1051,8 @@ namespace internal
 		{
 			MOMO_ASSERT(block != nullPtr);
 			std::byte* buffer = mBuffers[block / blockCount];
-			void* realPtr = buffer + (size_t{block} % blockCount) * mBlockSize;
-			return static_cast<ResObject*>(realPtr);
+			std::byte* bytePtr = buffer + (size_t{block} % blockCount) * mBlockSize;
+			return PtrCaster::FromBytePtr<ResObject>(bytePtr);
 		}
 
 		[[nodiscard]] uint32_t Allocate()
