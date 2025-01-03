@@ -76,7 +76,8 @@ public:
 
 template<conceptDataColumnList TColumnList = DataColumnList<>,
 	conceptDataTraits TDataTraits = DataTraits>
-class DataTable : public internal::Rangeable
+class DataTable
+	: public internal::Rangeable, public internal::Swappable
 {
 public:
 	typedef TColumnList ColumnList;
@@ -433,8 +434,6 @@ public:
 	{
 		return pvMakeIterator(GetCount());
 	}
-
-	MOMO_FRIEND_SWAP(DataTable)
 
 	const ColumnList& GetColumnList() const noexcept
 	{

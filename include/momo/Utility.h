@@ -42,13 +42,6 @@
 #include <bit>
 #include <ranges>	//?
 
-#define MOMO_FRIEND_SWAP(Object) \
-	friend void swap(Object& object1, Object& object2) \
-		noexcept(noexcept(object1.Swap(object2))) \
-	{ \
-		object1.Swap(object2); \
-	}
-
 #define MOMO_CHECK(expr) \
 	do { \
 		MOMO_ASSERT(Settings::checkMode != CheckMode::assertion || (expr)); \
@@ -324,6 +317,17 @@ namespace internal
 		static const size_t maxSize = SIZE_MAX;
 
 		static const uint32_t max32 = UINT32_MAX;
+	};
+
+	class Swappable
+	{
+	public:
+		template<std::derived_from<Swappable> Object>
+		friend void swap(Object& object1, Object& object2)
+			noexcept(noexcept(object1.Swap(object2)))
+		{
+			object1.Swap(object2);
+		}
 	};
 
 	class Rangeable

@@ -339,8 +339,6 @@ public:
 		return IteratorProxy(this, mCount);
 	}
 
-	MOMO_FRIEND_SWAP(SegmentedArray)
-
 	const MemManager& GetMemManager() const noexcept
 	{
 		return mSegments.GetMemManager();

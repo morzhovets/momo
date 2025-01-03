@@ -461,7 +461,8 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	conceptSetItemTraits<TKey, TMemManager> TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = MergeSetSettings>
-class MergeSet : public internal::Rangeable
+class MergeSet
+	: public internal::Rangeable, public internal::Swappable
 {
 public:
 	typedef TKey Key;
@@ -603,8 +604,6 @@ public:
 	{
 		return Iterator();
 	}
-
-	MOMO_FRIEND_SWAP(MergeSet)
 
 	const MergeTraits& GetMergeTraits() const noexcept
 	{

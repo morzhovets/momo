@@ -305,8 +305,6 @@ public:
 		return pvMakeIterator(mCount);
 	}
 
-	MOMO_FRIEND_SWAP(MergeArray)
-
 	const MemManager& GetMemManager() const noexcept
 	{
 		return mSegments.GetMemManager();

@@ -60,7 +60,7 @@ namespace internal
 	};
 
 	template<typename TColumnList, typename TRawMemPool>
-	class DataRow
+	class DataRow : public Swappable
 	{
 	protected:
 		typedef TRawMemPool RawMemPool;
@@ -106,8 +106,6 @@ namespace internal
 			std::swap(mRaw, row.mRaw);
 			std::swap(mRawMemPool, row.mRawMemPool);
 		}
-
-		MOMO_FRIEND_SWAP(DataRow)
 
 		const ColumnList& GetColumnList() const noexcept
 		{

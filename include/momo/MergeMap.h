@@ -161,7 +161,8 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
 		= MergeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = MergeMapSettings>
-class MergeMap : public internal::Rangeable
+class MergeMap
+	: public internal::Rangeable, public internal::Swappable
 {
 public:
 	typedef TKey Key;
@@ -303,8 +304,6 @@ public:
 	{
 		return Iterator();
 	}
-
-	MOMO_FRIEND_SWAP(MergeMap)
 
 	const MergeTraits& GetMergeTraits() const noexcept
 	{

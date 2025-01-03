@@ -449,7 +449,8 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	conceptSetItemTraits<TKey, TMemManager> TItemTraits = HashSetItemTraits<TKey, TMemManager>,
 	typename TSettings = HashSetSettings>
-class HashSet : public internal::Rangeable
+class HashSet
+	: public internal::Rangeable, public internal::Swappable
 {
 public:
 	typedef TKey Key;
@@ -682,8 +683,6 @@ public:
 	{
 		return Iterator();
 	}
-
-	MOMO_FRIEND_SWAP(HashSet)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{

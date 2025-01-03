@@ -193,7 +193,8 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
 		= TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = TreeMapSettings>
-class TreeMap : public internal::Rangeable
+class TreeMap
+	: public internal::Rangeable, public internal::Swappable
 {
 public:
 	typedef TKey Key;
@@ -337,8 +338,6 @@ public:
 	{
 		return IteratorProxy(mTreeSet.GetEnd());
 	}
-
-	MOMO_FRIEND_SWAP(TreeMap)
 
 	const TreeTraits& GetTreeTraits() const noexcept
 	{

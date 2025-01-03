@@ -588,7 +588,8 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptHashMultiMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
 		= HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMultiMapSettings>
-class HashMultiMap : public internal::Rangeable
+class HashMultiMap
+	: public internal::Rangeable, public internal::Swappable
 {
 public:
 	typedef TKey Key;
@@ -861,8 +862,6 @@ public:
 	{
 		return Iterator();
 	}
-
-	MOMO_FRIEND_SWAP(HashMultiMap)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{

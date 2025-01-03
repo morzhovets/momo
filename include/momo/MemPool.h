@@ -288,8 +288,6 @@ public:
 	//	std::swap(mCacheHead, memPool.mCacheHead);
 	//}
 
-	//MOMO_FRIEND_SWAP(MemPool)
-
 	size_t GetBlockSize() const noexcept
 	{
 		return Params::GetBlockSize();

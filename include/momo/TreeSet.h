@@ -251,7 +251,8 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	conceptSetItemTraits<TKey, TMemManager> TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = TreeSetSettings>
-class TreeSet : public internal::Rangeable
+class TreeSet
+	: public internal::Rangeable, public internal::Swappable
 {
 public:
 	typedef TKey Key;
@@ -634,8 +635,6 @@ public:
 			return Iterator();
 		return pvMakeIterator(mRootNode, mRootNode->GetCount(), false);
 	}
-
-	MOMO_FRIEND_SWAP(TreeSet)
 
 	const TreeTraits& GetTreeTraits() const noexcept
 	{
