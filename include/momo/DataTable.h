@@ -76,7 +76,7 @@ public:
 
 template<conceptDataColumnList TColumnList = DataColumnList<>,
 	conceptDataTraits TDataTraits = DataTraits>
-class DataTable
+class DataTable : public internal::Rangeable
 {
 public:
 	typedef TColumnList ColumnList;
@@ -435,7 +435,6 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(DataTable)
-	MOMO_FRIENDS_SIZE_BEGIN_END(DataTable)
 
 	const ColumnList& GetColumnList() const noexcept
 	{

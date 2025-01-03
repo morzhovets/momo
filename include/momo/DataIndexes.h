@@ -99,7 +99,7 @@ namespace internal
 	};
 
 	template<typename TRaw, typename TSettings>
-	class DataRawUniqueHashBounds
+	class DataRawUniqueHashBounds : public Rangeable
 	{
 	public:
 		typedef TRaw Raw;
@@ -126,8 +126,6 @@ namespace internal
 		{
 			return Iterator(mRaw, GetCount());
 		}
-
-		MOMO_FRIENDS_SIZE_BEGIN_END(DataRawUniqueHashBounds)
 
 		size_t GetCount() const noexcept
 		{
@@ -229,7 +227,8 @@ namespace internal
 	};
 
 	template<typename TRawIterator, typename TSettings>
-	class DataRawMultiHashBounds : private VersionKeeper<TSettings>
+	class DataRawMultiHashBounds
+		: private VersionKeeper<TSettings>, public Rangeable
 	{
 	public:
 		typedef TRawIterator RawIterator;
@@ -271,8 +270,6 @@ namespace internal
 		{
 			return Iterator(mRaw0, mRawBegin, mRawCount, *this);
 		}
-
-		MOMO_FRIENDS_SIZE_BEGIN_END(DataRawMultiHashBounds)
 
 		size_t GetCount() const noexcept
 		{

@@ -49,28 +49,6 @@
 		object1.Swap(object2); \
 	}
 
-#define MOMO_FRIENDS_SIZE_BEGIN_END(Object) \
-	friend auto size(const Object& object) noexcept(noexcept(object.GetCount())) \
-	{ \
-		return object.GetCount(); \
-	} \
-	friend auto begin(const Object& object) noexcept(noexcept(object.GetBegin())) \
-	{ \
-		return object.GetBegin(); \
-	} \
-	friend auto end(const Object& object) noexcept(noexcept(object.GetEnd())) \
-	{ \
-		return object.GetEnd(); \
-	} \
-	friend auto begin(Object& object) noexcept(noexcept(object.GetBegin())) \
-	{ \
-		return object.GetBegin(); \
-	} \
-	friend auto end(Object& object) noexcept(noexcept(object.GetEnd())) \
-	{ \
-		return object.GetEnd(); \
-	}
-
 #define MOMO_CHECK(expr) \
 	do { \
 		MOMO_ASSERT(Settings::checkMode != CheckMode::assertion || (expr)); \
@@ -346,6 +324,28 @@ namespace internal
 		static const size_t maxSize = SIZE_MAX;
 
 		static const uint32_t max32 = UINT32_MAX;
+	};
+
+	class Rangeable
+	{
+	public:
+		template<std::derived_from<Rangeable> Object>
+		friend auto size(const Object& object) noexcept(noexcept(object.GetCount()))
+		{
+			return object.GetCount();
+		}
+
+		template<std::derived_from<Rangeable> Object>
+		friend auto begin(Object& object) noexcept(noexcept(object.GetBegin()))
+		{
+			return object.GetBegin();
+		}
+
+		template<std::derived_from<Rangeable> Object>
+		friend auto end(Object& object) noexcept(noexcept(object.GetEnd()))
+		{
+			return object.GetEnd();
+		}
 	};
 }
 

@@ -235,7 +235,7 @@ namespace internal
 
 	template<conceptObject TItem, conceptMemManager TMemManager,
 		typename TItemTraits, typename TSettings>
-	class ArrayBase
+	class ArrayBase : public Rangeable
 	{
 	public:
 		typedef TItem Item;

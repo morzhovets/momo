@@ -122,7 +122,7 @@ namespace internal
 
 	template<typename THashSetBucketBounds,
 		bool tIsConst = false>
-	class HashMapBucketBounds
+	class HashMapBucketBounds : public Rangeable
 	{
 	protected:
 		typedef THashSetBucketBounds HashSetBucketBounds;
@@ -164,8 +164,6 @@ namespace internal
 		{
 			return IteratorProxy(mHashSetBucketBounds.GetEnd());
 		}
-
-		MOMO_FRIENDS_SIZE_BEGIN_END(HashMapBucketBounds)
 
 		size_t GetCount() const noexcept
 		{
@@ -238,7 +236,7 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
 		= HashMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMapSettings>
-class HashMap
+class HashMap : public internal::Rangeable
 {
 public:
 	typedef TKey Key;
@@ -414,7 +412,6 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(HashMap)
-	MOMO_FRIENDS_SIZE_BEGIN_END(HashMap)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{

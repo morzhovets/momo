@@ -340,7 +340,6 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(SegmentedArray)
-	MOMO_FRIENDS_SIZE_BEGIN_END(SegmentedArray)
 
 	const MemManager& GetMemManager() const noexcept
 	{

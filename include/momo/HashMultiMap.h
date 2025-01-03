@@ -28,7 +28,7 @@ namespace momo
 namespace internal
 {
 	template<typename THashMapReference>
-	class HashMultiMapKeyReference
+	class HashMultiMapKeyReference : public Rangeable
 	{
 	protected:
 		typedef THashMapReference HashMapReference;
@@ -66,8 +66,6 @@ namespace internal
 			return mValues.GetEnd();
 		}
 
-		MOMO_FRIENDS_SIZE_BEGIN_END(HashMultiMapKeyReference)
-
 		size_t GetCount() const noexcept
 		{
 			return mValues.GetCount();
@@ -101,7 +99,7 @@ namespace internal
 	};
 
 	template<typename TKeyIterator>
-	class HashMultiMapKeyBounds
+	class HashMultiMapKeyBounds : public Rangeable
 	{
 	protected:
 		typedef TKeyIterator KeyIterator;
@@ -131,8 +129,6 @@ namespace internal
 		{
 			return KeyIterator();
 		}
-
-		MOMO_FRIENDS_SIZE_BEGIN_END(HashMultiMapKeyBounds)
 
 		size_t GetCount() const noexcept	//?
 		{
@@ -592,7 +588,7 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptHashMultiMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
 		= HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMultiMapSettings>
-class HashMultiMap
+class HashMultiMap : public internal::Rangeable
 {
 public:
 	typedef TKey Key;
@@ -867,7 +863,6 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(HashMultiMap)
-	MOMO_FRIENDS_SIZE_BEGIN_END(HashMultiMap)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{

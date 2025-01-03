@@ -29,7 +29,7 @@ namespace internal
 {
 	template<typename TBucket>
 	requires (std::is_trivially_destructible_v<TBucket>)
-	class HashSetBuckets
+	class HashSetBuckets : public Rangeable
 	{
 	public:
 		typedef TBucket Bucket;
@@ -93,8 +93,6 @@ namespace internal
 		{
 			return pvGetBuckets() + GetCount();
 		}
-
-		MOMO_FRIENDS_SIZE_BEGIN_END(HashSetBuckets)
 
 		HashSetBuckets* GetNextBuckets() noexcept
 		{
@@ -451,7 +449,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	conceptSetItemTraits<TKey, TMemManager> TItemTraits = HashSetItemTraits<TKey, TMemManager>,
 	typename TSettings = HashSetSettings>
-class HashSet
+class HashSet : public internal::Rangeable
 {
 public:
 	typedef TKey Key;
@@ -686,7 +684,6 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(HashSet)
-	MOMO_FRIENDS_SIZE_BEGIN_END(HashSet)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{

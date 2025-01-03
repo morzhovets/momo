@@ -728,7 +728,7 @@ template<typename TColumnTraits = DataColumnTraits<>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = DataItemTraits<TMemManager>,
 	typename TSettings = DataSettings<>>
-class DataColumnList
+class DataColumnList : public internal::Rangeable
 {
 public:
 	typedef TColumnTraits ColumnTraits;
@@ -945,8 +945,6 @@ public:
 	{
 		return mColumnRecords.GetEnd();
 	}
-
-	MOMO_FRIENDS_SIZE_BEGIN_END(DataColumnList)
 
 	const MemManager& GetMemManager() const noexcept
 	{

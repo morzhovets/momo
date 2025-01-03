@@ -255,7 +255,7 @@ namespace internal
 	};
 
 	template<conceptRandomIterator17 TIterator>
-	class ArrayBoundsBase
+	class ArrayBoundsBase : public Rangeable
 	{
 	public:
 		typedef TIterator Iterator;
@@ -282,8 +282,6 @@ namespace internal
 		{
 			return UIntMath<>::Next(mBegin, mCount);
 		}
-
-		MOMO_FRIENDS_SIZE_BEGIN_END(ArrayBoundsBase)
 
 		size_t GetCount() const noexcept
 		{

@@ -306,7 +306,6 @@ public:
 	}
 
 	MOMO_FRIEND_SWAP(MergeArray)
-	MOMO_FRIENDS_SIZE_BEGIN_END(MergeArray)
 
 	const MemManager& GetMemManager() const noexcept
 	{

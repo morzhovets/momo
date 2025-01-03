@@ -202,7 +202,8 @@ namespace internal
 	};
 
 	template<typename TRawBounds, typename TRowReference>
-	class DataRowBounds : private VersionKeeper<typename TRowReference::Settings>
+	class DataRowBounds
+		: private VersionKeeper<typename TRowReference::Settings>, public Rangeable
 	{
 	protected:
 		typedef TRawBounds RawBounds;
@@ -250,8 +251,6 @@ namespace internal
 		{
 			return IteratorProxy(mColumnList, mRawBounds.GetEnd(), *this);
 		}
-
-		MOMO_FRIENDS_SIZE_BEGIN_END(DataRowBounds)
 
 		size_t GetCount() const noexcept
 		{
@@ -350,7 +349,7 @@ namespace internal
 	};
 
 	template<typename TRowBounds, typename TItem>
-	class DataConstItemBounds
+	class DataConstItemBounds : public Rangeable
 	{
 	public:
 		typedef TRowBounds RowBounds;
@@ -385,8 +384,6 @@ namespace internal
 			return Iterator(mRowBounds.GetEnd(), mOffset);
 		}
 
-		MOMO_FRIENDS_SIZE_BEGIN_END(DataConstItemBounds)
-
 		size_t GetCount() const noexcept
 		{
 			return mRowBounds.GetCount();
@@ -404,7 +401,8 @@ namespace internal
 	};
 
 	template<typename TRowReference, typename TDataTraits>
-	class DataSelection : private VersionKeeper<typename TRowReference::ColumnList::Settings>
+	class DataSelection
+		: private VersionKeeper<typename TRowReference::ColumnList::Settings>, public Rangeable
 	{
 	public:
 		typedef TRowReference RowReference;
@@ -538,7 +536,6 @@ namespace internal
 		}
 
 		MOMO_FRIEND_SWAP(DataSelection)
-		MOMO_FRIENDS_SIZE_BEGIN_END(DataSelection)
 
 		const ColumnList& GetColumnList() const noexcept
 		{
