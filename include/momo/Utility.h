@@ -20,6 +20,7 @@
 
 #include "UserSettings.h"
 
+#include <version>
 #include <cstddef>
 #include <cstring>
 #include <cstdlib>
