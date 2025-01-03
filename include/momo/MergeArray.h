@@ -442,25 +442,18 @@ public:
 		pvDeallocateSegments();
 	}
 
-	const Item& operator[](size_t index) const
+	//const Item& operator[](size_t index) const
+	//Item& operator[](size_t index)
+	template<typename RArray>
+	internal::ConstLike<Item, RArray>& operator[](this RArray&& array, size_t index)
 	{
-		return pvGetItem(index);
+		auto& thisArray = static_cast<internal::ConstLike<MergeArray, RArray>&>(array);
+		MOMO_CHECK(index < thisArray.GetCount());
+		return *thisArray.pvGetItemPtr(index);
 	}
 
-	Item& operator[](size_t index)
-	{
-		return pvGetItem(index);
-	}
-
-	const Item& GetBackItem(size_t revIndex = 0) const
-	{
-		return pvGetItem(mCount - 1 - revIndex);
-	}
-
-	Item& GetBackItem(size_t revIndex = 0)
-	{
-		return pvGetItem(mCount - 1 - revIndex);
-	}
+	//const Item& GetBackItem(size_t revIndex = 0) const
+	//Item& GetBackItem(size_t revIndex = 0)
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator itemCreator)
@@ -653,12 +646,6 @@ private:
 				throw;
 			}
 		}
-	}
-
-	Item& pvGetItem(size_t index) const
-	{
-		MOMO_CHECK(index < mCount);
-		return *pvGetItemPtr(index);
 	}
 
 	Item* pvGetItemPtr(size_t index) const noexcept

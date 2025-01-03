@@ -701,27 +701,18 @@ public:
 		}
 	}
 
-	const Item& operator[](size_t index) const
+	//const Item& operator[](size_t index) const
+	//Item& operator[](size_t index)
+	template<typename RArray>
+	internal::ConstLike<Item, RArray>& operator[](this RArray&& array, size_t index)
 	{
-		MOMO_CHECK(index < GetCount());
-		return GetItems()[index];
+		auto& thisArray = static_cast<internal::ConstLike<Array, RArray>&>(array);
+		MOMO_CHECK(index < thisArray.GetCount());
+		return thisArray.GetItems()[index];
 	}
 
-	Item& operator[](size_t index)
-	{
-		MOMO_CHECK(index < GetCount());
-		return GetItems()[index];
-	}
-
-	const Item& GetBackItem(size_t revIndex = 0) const
-	{
-		return operator[](GetCount() - 1 - revIndex);
-	}
-
-	Item& GetBackItem(size_t revIndex = 0)
-	{
-		return operator[](GetCount() - 1 - revIndex);
-	}
+	//const Item& GetBackItem(size_t revIndex = 0) const
+	//Item& GetBackItem(size_t revIndex = 0)
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator itemCreator)

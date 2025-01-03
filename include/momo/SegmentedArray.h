@@ -428,25 +428,20 @@ public:
 		}
 	}
 
-	const Item& operator[](size_t index) const
+	//const Item& operator[](size_t index) const
+	//Item& operator[](size_t index)
+	template<typename RArray>
+	internal::ConstLike<Item, RArray>& operator[](this RArray&& array, size_t index)
 	{
-		return pvGetItem(index);
+		auto& thisArray = static_cast<internal::ConstLike<SegmentedArray, RArray>&>(array);
+		MOMO_CHECK(index < thisArray.GetCount());
+		size_t segIndex, segItemIndex;
+		Settings::GetSegmentItemIndexes(index, segIndex, segItemIndex);
+		return thisArray.mSegments[segIndex][segItemIndex];
 	}
 
-	Item& operator[](size_t index)
-	{
-		return pvGetItem(index);
-	}
-
-	const Item& GetBackItem(size_t revIndex = 0) const
-	{
-		return pvGetItem(mCount - 1 - revIndex);
-	}
-
-	Item& GetBackItem(size_t revIndex = 0)
-	{
-		return pvGetItem(mCount - 1 - revIndex);
-	}
+	//const Item& GetBackItem(size_t revIndex = 0) const
+	//Item& GetBackItem(size_t revIndex = 0)
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>
 	void AddBackNogrowCrt(ItemCreator itemCreator)
@@ -545,14 +540,6 @@ private:
 			pvDecCount(count);
 		else if (count > mCount)
 			pvIncCount(count, itemMultiCreator);
-	}
-
-	Item& pvGetItem(size_t index) const
-	{
-		MOMO_CHECK(index < mCount);
-		size_t segIndex, segItemIndex;
-		Settings::GetSegmentItemIndexes(index, segIndex, segItemIndex);
-		return mSegments[segIndex][segItemIndex];
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>

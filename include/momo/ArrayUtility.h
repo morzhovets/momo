@@ -250,6 +250,13 @@ namespace internal
 		using ArrayInserter = internal::ArrayInserter<std::decay_t<RArray>>;
 
 	public:
+		template<typename RArray>
+		ConstLike<Item, std::remove_reference_t<RArray>>& GetBackItem(
+			this RArray&& array, size_t revIndex = 0)
+		{
+			return array[array.GetCount() - 1 - revIndex];
+		}
+
 		//template<conceptMutableThis RArray, conceptObjectCreator<Item> ItemCreator>
 		//void AddBackNogrowCrt(this RArray&& array, ItemCreator itemCreator)
 

@@ -156,8 +156,10 @@ namespace internal
 	template<typename RObject>
 	concept conceptMutableThis = !std::is_const_v<std::remove_reference_t<RObject>>;
 
-	template<typename Object, typename QSrcObject>
-	using ConstLike = std::conditional_t<std::is_const_v<QSrcObject>, const Object, Object>;
+	template<typename Object, typename RSrcObject>
+	requires (!std::is_reference_v<Object>)
+	using ConstLike = std::conditional_t<std::is_const_v<std::remove_reference_t<RSrcObject>>,
+		const Object, Object>;
 
 	template<size_t size>
 	struct UIntSelector;
