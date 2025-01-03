@@ -250,6 +250,38 @@ namespace internal
 		using ArrayInserter = internal::ArrayInserter<std::decay_t<RArray>>;
 
 	public:
+		template<conceptMutableThis RArray>
+		void SetCount(this RArray&& array, size_t count)
+		{
+			typedef typename ItemTraits::template Creator<> ItemCreator;
+			MemManager& memManager = array.GetMemManager();
+			auto itemMultiCreator = [&memManager] (Item* newItem)
+				{ (ItemCreator(memManager))(newItem); };
+			array.SetCountCrt(count, itemMultiCreator);
+		}
+
+		template<conceptMutableThis RArray>
+		void SetCount(this RArray&& array, size_t count, const Item& item)
+		{
+			typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
+			MemManager& memManager = array.GetMemManager();
+			auto itemMultiCreator = [&memManager, &item] (Item* newItem)
+				{ ItemCreator(memManager, item)(newItem); };
+			array.SetCountCrt(count, itemMultiCreator);
+		}
+
+		template<typename Array>
+		bool IsEmpty(this const Array& array) noexcept
+		{
+			return array.GetCount() == 0;
+		}
+
+		template<conceptMutableThis RArray>
+		void Shrink(this RArray&& array) noexcept(noexcept(array.Shrink(size_t{})))
+		{
+			array.Shrink(array.GetCount());
+		}
+
 		template<typename RArray>
 		ConstLike<Item, std::remove_reference_t<RArray>>& GetBackItem(
 			this RArray&& array, size_t revIndex = 0)

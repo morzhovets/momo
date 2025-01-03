@@ -172,6 +172,8 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
+	typedef internal::ArrayBase<Item, MemManager, ItemTraits, Settings> ArrayBase;
+
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
@@ -204,13 +206,13 @@ public:
 	explicit SegmentedArray(size_t count, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		SetCount(count);
+		this->SetCount(count);
 	}
 
 	explicit SegmentedArray(size_t count, const Item& item, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		SetCount(count, item);
+		this->SetCount(count, item);
 	}
 
 	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
@@ -361,28 +363,10 @@ public:
 		pvSetCount(count, FastCopyableFunctor<ItemMultiCreator>(itemMultiCreator));
 	}
 
-	void SetCount(size_t count)
-	{
-		typedef typename ItemTraits::template Creator<> ItemCreator;
-		MemManager& memManager = GetMemManager();
-		auto itemMultiCreator = [&memManager] (Item* newItem)
-			{ (ItemCreator(memManager))(newItem); };
-		pvSetCount(count, FastCopyableFunctor(itemMultiCreator));
-	}
+	//void SetCount(size_t count)
+	//void SetCount(size_t count, const Item& item)
 
-	void SetCount(size_t count, const Item& item)
-	{
-		typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
-		MemManager& memManager = GetMemManager();
-		auto itemMultiCreator = [&memManager, &item] (Item* newItem)
-			{ ItemCreator(memManager, item)(newItem); };
-		pvSetCount(count, FastCopyableFunctor(itemMultiCreator));
-	}
-
-	bool IsEmpty() const noexcept
-	{
-		return mCount == 0;
-	}
+	//bool IsEmpty() const noexcept
 
 	void Clear(bool shrink = false) noexcept
 	{
@@ -406,10 +390,8 @@ public:
 			pvIncCapacity(initCapacity, capacity);
 	}
 
-	void Shrink() noexcept
-	{
-		Shrink(mCount);
-	}
+	//void Shrink() noexcept
+	using ArrayBase::Shrink;
 
 	void Shrink(size_t capacity) noexcept
 	{

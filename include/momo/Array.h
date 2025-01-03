@@ -637,28 +637,10 @@ public:
 		pvSetCount(count, FastCopyableFunctor<ItemMultiCreator>(itemMultiCreator));
 	}
 
-	void SetCount(size_t count)
-	{
-		typedef typename ItemTraits::template Creator<> ItemCreator;
-		MemManager& memManager = GetMemManager();
-		auto itemMultiCreator = [&memManager] (Item* newItem)
-			{ (ItemCreator(memManager))(newItem); };
-		pvSetCount(count, FastCopyableFunctor(itemMultiCreator));
-	}
+	//void SetCount(size_t count)
+	//void SetCount(size_t count, const Item& item)
 
-	void SetCount(size_t count, const Item& item)
-	{
-		typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
-		MemManager& memManager = GetMemManager();
-		auto itemMultiCreator = [&memManager, &item] (Item* newItem)
-			{ ItemCreator(memManager, item)(newItem); };
-		pvSetCount(count, FastCopyableFunctor(itemMultiCreator));
-	}
-
-	bool IsEmpty() const noexcept
-	{
-		return GetCount() == 0;
-	}
+	//bool IsEmpty() const noexcept
 
 	void Clear(bool shrink = false) noexcept
 	{
@@ -679,10 +661,8 @@ public:
 			pvGrow(capacity, ArrayGrowCause::reserve);
 	}
 
-	void Shrink()
-	{
-		Shrink(GetCount());
-	}
+	//void Shrink()
+	using ArrayBase::Shrink;
 
 	void Shrink(size_t capacity)
 	{
