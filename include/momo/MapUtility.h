@@ -193,7 +193,10 @@ namespace internal
 		}
 
 		friend bool operator==(MapBidirectionalIterator iter1,
-			MapBidirectionalIterator iter2) noexcept = default;
+			MapBidirectionalIterator iter2) noexcept
+		{
+			return iter1.mSetIterator == iter2.mSetIterator;
+		}
 
 		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(MapBidirectionalIterator)
 
@@ -260,8 +263,10 @@ namespace internal
 			return Pointer(ReferenceProxy(*mSetIterator));
 		}
 
-		friend bool operator==(MapForwardIterator iter1,
-			MapForwardIterator iter2) noexcept = default;
+		friend bool operator==(MapForwardIterator iter1, MapForwardIterator iter2) noexcept
+		{
+			return iter1.mSetIterator == iter2.mSetIterator;
+		}
 
 		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(MapForwardIterator)
 

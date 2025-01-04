@@ -91,7 +91,10 @@ namespace internal
 			return Pointer(ReferenceProxy(*mHashSetPosition));
 		}
 
-		friend bool operator==(HashMapPosition pos1, HashMapPosition pos2) noexcept = default;
+		friend bool operator==(HashMapPosition pos1, HashMapPosition pos2) noexcept
+		{
+			return pos1.mHashSetPosition == pos2.mHashSetPosition;
+		}
 
 		friend bool operator==(HashMapPosition pos1, Iterator iter2) noexcept
 		{

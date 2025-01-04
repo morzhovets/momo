@@ -322,8 +322,10 @@ namespace internal
 			return std::addressof(mRowIterator->template GetByOffset<Item>(mOffset));
 		}
 
-		friend bool operator==(DataConstItemIterator iter1,
-			DataConstItemIterator iter2) noexcept = default;
+		friend bool operator==(DataConstItemIterator iter1, DataConstItemIterator iter2) noexcept
+		{
+			return iter1.mOffset == iter2.mOffset && iter1.mRowIterator == iter2.mRowIterator;
+		}
 
 		friend auto operator<=>(DataConstItemIterator iter1, DataConstItemIterator iter2)
 		{

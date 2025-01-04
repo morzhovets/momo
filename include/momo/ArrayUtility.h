@@ -78,7 +78,10 @@ namespace internal
 				return std::addressof((*mArray)[mIndex]);
 		}
 
-		friend bool operator==(ArrayIndexIterator iter1, ArrayIndexIterator iter2) noexcept = default;
+		friend bool operator==(ArrayIndexIterator iter1, ArrayIndexIterator iter2) noexcept
+		{
+			return iter1.mArray == iter2.mArray && iter1.mIndex == iter2.mIndex;
+		}
 
 		friend auto operator<=>(ArrayIndexIterator iter1, ArrayIndexIterator iter2)
 		{

@@ -143,7 +143,10 @@ public:
 		momo::internal::ObjectManager<Value, MemManager>::Destroy(&mMemPool->GetMemManager(), *ptr);
 	}
 
-	bool operator==(const unsynchronized_pool_allocator& alloc) const noexcept = default;
+	bool operator==(const unsynchronized_pool_allocator& alloc) const noexcept
+	{
+		return mMemPool == alloc.mMemPool;
+	}
 
 protected:
 	explicit unsynchronized_pool_allocator(const std::shared_ptr<MemPool>& memPool) noexcept
