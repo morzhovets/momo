@@ -894,28 +894,31 @@ namespace internal
 		{
 			if (mLazyHead != nullptr)
 			{
-				void* block = mLazyHead.exchange(nullptr);
+				std::byte* block = mLazyHead.exchange(nullptr);
 				if (block != nullptr)
 				{
-					pvFlushDeallocate(MemCopyer::FromBuffer<void*>(block));
-					return static_cast<ResObject*>(block);
+					pvFlushDeallocate(MemCopyer::FromBuffer<std::byte*>(block));
+					return PtrCaster::FromBytePtr<ResObject>(block);
 				}
 			}
 			return mMemPool.template Allocate<ResObject>();
 		}
 
-		void Deallocate(void* block) noexcept
+		template<typename Object>
+		void Deallocate(Object* ptr) noexcept
 		{
 			if (mLazyHead != nullptr)
 				pvFlushDeallocate(mLazyHead.exchange(nullptr));
-			mMemPool.Deallocate(block);
+			mMemPool.Deallocate(ptr);
 		}
 
-		void DeallocateLazy(void* block) noexcept
+		template<typename Object>
+		void DeallocateLazy(Object* ptr) noexcept
 		{
+			std::byte* block = PtrCaster::ToBytePtr(ptr);
 			while (true)
 			{
-				void* lazyHead = mLazyHead;
+				std::byte* lazyHead = mLazyHead;
 				MemCopyer::ToBuffer(lazyHead, block);
 				if (mLazyHead.compare_exchange_weak(lazyHead, block))
 					break;
@@ -923,11 +926,11 @@ namespace internal
 		}
 
 	private:
-		void pvFlushDeallocate(void* block) noexcept
+		void pvFlushDeallocate(std::byte* block) noexcept
 		{
 			while (block != nullptr)
 			{
-				void* nextBlock = MemCopyer::FromBuffer<void*>(block);
+				std::byte* nextBlock = MemCopyer::FromBuffer<std::byte*>(block);
 				mMemPool.Deallocate(block);
 				block = nextBlock;
 			}
@@ -935,7 +938,7 @@ namespace internal
 
 	private:
 		MemPool mMemPool;
-		std::atomic<void*> mLazyHead;
+		std::atomic<std::byte*> mLazyHead;
 	};
 
 	template<conceptMemManager TBaseMemManager, conceptMemPoolParams TMemPoolParams>
