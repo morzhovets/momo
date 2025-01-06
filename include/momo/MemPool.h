@@ -571,12 +571,12 @@ private:
 		}
 	}
 
-	int8_t pvGetNextFreeBlockIndex(Byte* block) const noexcept
+	static int8_t pvGetNextFreeBlockIndex(Byte* block) noexcept
 	{
 		return internal::MemCopyer::FromBuffer<int8_t>(block);
 	}
 
-	void pvSetNextFreeBlockIndex(Byte* block, int8_t nextFreeBlockIndex) noexcept
+	static void pvSetNextFreeBlockIndex(Byte* block, int8_t nextFreeBlockIndex) noexcept
 	{
 		internal::MemCopyer::ToBuffer(nextFreeBlockIndex, block);
 	}
@@ -707,17 +707,17 @@ private:
 		}
 	}
 
-	int8_t pvGetFirstBlockIndex(Byte* buffer) const noexcept
+	static int8_t pvGetFirstBlockIndex(Byte* buffer) noexcept
 	{
 		return internal::MemCopyer::FromBuffer<int8_t>(buffer);
 	}
 
-	void pvSetFirstBlockIndex(Byte* buffer, int8_t firstBlockIndex) noexcept
+	static void pvSetFirstBlockIndex(Byte* buffer, int8_t firstBlockIndex) noexcept
 	{
 		return internal::MemCopyer::ToBuffer(firstBlockIndex, buffer);
 	}
 
-	BufferBytes pvGetBufferBytes(Byte* buffer) noexcept
+	BufferBytes pvGetBufferBytes(Byte* buffer) const noexcept
 	{
 		return internal::MemCopyer::FromBuffer<BufferBytes>(pvGetBufferBytesPosition(buffer));
 	}
@@ -762,7 +762,7 @@ private:
 		return pvGetPrevBufferPosition(buffer) + sizeof(Byte*);
 	}
 
-	uint16_t pvGetBeginOffset(Byte* buffer) noexcept
+	uint16_t pvGetBeginOffset(Byte* buffer) const noexcept
 	{
 		return internal::MemCopyer::FromBuffer<uint16_t>(pvGetBeginOffsetPosition(buffer));
 	}
