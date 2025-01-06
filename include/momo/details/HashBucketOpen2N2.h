@@ -47,27 +47,24 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		template<size_t count, bool useHashCodePartGetter>
-		struct HashData;
+		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt ShortHash;
 
-		template<size_t count>
-		struct HashData<count, false>
+		template<size_t codeCount = maxCount, bool hasCodeProbes = useHashCodePartGetter>
+		struct HashData
+		{
+			ShortHash shortHashes[codeCount];
+			uint8_t hashProbes[codeCount];
+		};
+
+		template<size_t codeCount>
+		struct HashData<codeCount, false>
 		{
 			union
 			{
-				uint16_t shortHashes[count];
-				uint8_t hashProbes[count];
+				ShortHash shortHashes[codeCount];
+				uint8_t hashProbes[codeCount];
 			};
 		};
-
-		template<size_t count>
-		struct HashData<count, true>
-		{
-			uint8_t shortHashes[count];
-			uint8_t hashProbes[count];
-		};
-
-		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt ShortHash;
 
 		static const size_t hashCodeShift = sizeof(size_t) * 8 - sizeof(ShortHash) * 8 + 1;
 		static const ShortHash emptyShortHash = ShortHash{1} << (sizeof(ShortHash) * 8 - 1);
@@ -257,7 +254,7 @@ namespace internal
 
 	private:
 		uint8_t mState[2];
-		HashData<maxCount, useHashCodePartGetter> mHashData;
+		HashData<> mHashData;
 		ObjectBuffer<Item, ItemTraits::alignment, maxCount> mItems;
 	};
 }

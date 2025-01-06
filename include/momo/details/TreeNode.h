@@ -46,20 +46,17 @@ namespace internal
 	private:
 		typedef BoolConstant<isContinuous> IsContinuous;
 
-		template<size_t capacity, bool hasIndexes>
-		struct Counter;
-
-		template<size_t capacity>
-		struct Counter<capacity, false>
+		template<size_t capacity = maxCapacity, size_t indexCount = isContinuous ? 0 : capacity>
+		struct Counter
 		{
 			uint8_t count;
+			uint8_t indexes[indexCount];
 		};
 
 		template<size_t capacity>
-		struct Counter<capacity, true>
+		struct Counter<capacity, 0>
 		{
 			uint8_t count;
-			uint8_t indexes[capacity];
 		};
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
