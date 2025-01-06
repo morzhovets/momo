@@ -361,7 +361,7 @@ namespace internal
 		//Node*[maxCapacity + 1] // for internal nodes
 		Node* mParent;
 		uint8_t mMemPoolIndex;
-		Counter<maxCapacity, !isContinuous> mCounter;
+		Counter<> mCounter;
 		//Item[]
 	};
 }
