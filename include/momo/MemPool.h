@@ -671,7 +671,7 @@ public:
 		}
 		while (true)
 		{
-			Byte* buffer = GetPrevBuffer(memPool.mFreeBufferHead);
+			Byte* buffer = Chunker::GetPrevBuffer(memPool.mFreeBufferHead);
 			if (buffer == nullptr)
 				break;
 			Byte* prevBuffer = Chunker::GetPrevBuffer(buffer);
