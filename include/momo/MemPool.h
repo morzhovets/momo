@@ -173,10 +173,268 @@ public:
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 };
 
+namespace internal
+{
+	template<conceptMemPoolParams TParams>
+	class MemChunker : public TParams
+	{
+	public:
+		typedef TParams Params;
+
+	private:
+		typedef std::byte Byte;
+
+		struct BufferBytes
+		{
+			int8_t firstFreeBlockIndex;
+			int8_t freeBlockCount;
+		};
+
+	public:
+		explicit MemChunker(Params&& params)
+			: Params(std::move(params))
+		{
+		}
+
+		template<conceptMemManager MemManager>
+		Byte* NewBuffer(MemManager& memManager) const
+		{
+			Byte* begin = MemManagerProxy<MemManager>::template Allocate<Byte>(
+				memManager, pvGetBufferSize());
+			return pvNewBuffer(begin);
+		}
+
+		template<conceptMemManager MemManager>
+		void DeleteBuffer(MemManager& memManager, Byte* buffer) const noexcept
+		{
+			Byte* begin = pvGetBlock(buffer, pvGetFirstBlockIndex(buffer))
+				- size_t{pvGetBeginOffset(buffer)};
+			MemManagerProxy<MemManager>::Deallocate(memManager, begin, pvGetBufferSize());
+		}
+
+		Byte* NewBlock(Byte* buffer, size_t& freeBlockCount) const noexcept
+		{
+			BufferBytes bytes = pvGetBufferBytes(buffer);
+			MOMO_ASSERT(bytes.freeBlockCount > 0);
+			Byte* block = pvGetBlock(buffer, bytes.firstFreeBlockIndex);
+			bytes.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
+			--bytes.freeBlockCount;
+			pvSetBufferBytes(buffer, bytes);
+			freeBlockCount = static_cast<size_t>(bytes.freeBlockCount);
+			return block;
+		}
+
+		void DeleteBlock(Byte* block, Byte*& buffer, size_t& freeBlockCount) const noexcept
+		{
+			int8_t blockIndex = pvGetBlockIndex(block, buffer);
+			freeBlockCount = static_cast<size_t>(pvDeleteBlock(block, buffer, blockIndex));
+		}
+
+		template<conceptPredicate<Byte*> BlockFilter>
+		void DeleteBlocks(Byte* buffer, FastCopyableFunctor<BlockFilter> blockFilter) const
+		{
+			int8_t firstBlockIndex = pvGetFirstBlockIndex(buffer);
+			uint8_t freeBlockBits[16] = {};
+			BufferBytes bytes = pvGetBufferBytes(buffer);
+			int8_t freeBlockIndex = bytes.firstFreeBlockIndex;
+			for (int8_t i = 0; i < bytes.freeBlockCount; ++i)
+			{
+				UIntMath<uint8_t>::SetBit(freeBlockBits,
+					static_cast<size_t>(freeBlockIndex - firstBlockIndex));
+				freeBlockIndex = pvGetNextFreeBlockIndex(pvGetBlock(buffer, freeBlockIndex));
+			}
+			for (size_t i = 0; i < Params::GetBlockCount(); ++i)
+			{
+				if (UIntMath<uint8_t>::GetBit(freeBlockBits, i))
+					continue;
+				int8_t blockIndex = firstBlockIndex + static_cast<int8_t>(i);
+				Byte* block = pvGetBlock(buffer, blockIndex);
+				if (blockFilter(block))
+					pvDeleteBlock(block, buffer, blockIndex);
+			}
+		}
+
+		Byte* GetPrevBuffer(Byte* buffer) const noexcept
+		{
+			return MemCopyer::FromBuffer<Byte*>(pvGetPrevBufferPosition(buffer));
+		}
+
+		void SetPrevBuffer(Byte* buffer, Byte* prevBuffer) const noexcept
+		{
+			return MemCopyer::ToBuffer(prevBuffer, pvGetPrevBufferPosition(buffer));
+		}
+
+		Byte* GetNextBuffer(Byte* buffer) const noexcept
+		{
+			return MemCopyer::FromBuffer<Byte*>(pvGetNextBufferPosition(buffer));
+		}
+
+		void SetNextBuffer(Byte* buffer, Byte* nextBuffer) const noexcept
+		{
+			return MemCopyer::ToBuffer(nextBuffer, pvGetNextBufferPosition(buffer));
+		}
+
+	private:
+		size_t pvGetAlignmentAddend() const noexcept
+		{
+			const size_t blockAlignment = Params::GetBlockAlignment();
+			return blockAlignment - std::minmax(size_t{UIntConst::maxAllocAlignment},
+				size_t{1} << std::countr_zero(blockAlignment)).first;
+		}
+
+		static int8_t pvGetNextFreeBlockIndex(Byte* block) noexcept
+		{
+			return MemCopyer::FromBuffer<int8_t>(block);
+		}
+
+		static void pvSetNextFreeBlockIndex(Byte* block, int8_t nextFreeBlockIndex) noexcept
+		{
+			MemCopyer::ToBuffer(nextFreeBlockIndex, block);
+		}
+
+		Byte* pvGetBlock(Byte* buffer, int8_t index) const noexcept
+		{
+			return buffer + ptrdiff_t{index} * static_cast<ptrdiff_t>(Params::GetBlockSize())
+				+ (static_cast<ptrdiff_t>(Params::GetBlockAlignment()) & -ptrdiff_t{index >= 0});
+		}
+
+		int8_t pvGetBlockIndex(Byte* block, Byte*& buffer) const noexcept
+		{
+			const uintptr_t uipBlockSize = uintptr_t{Params::GetBlockSize()};
+			const uintptr_t uipBlockAlignment = uintptr_t{Params::GetBlockAlignment()};
+			const uintptr_t uipBlockCount = uintptr_t{Params::GetBlockCount()};
+			uintptr_t uipBlock = PtrCaster::ToUInt(block);
+			MOMO_ASSERT(uipBlock % uipBlockAlignment == 0);
+			ptrdiff_t dir = static_cast<ptrdiff_t>(((uipBlock % uipBlockSize) / uipBlockAlignment) % 2);
+			ptrdiff_t index = static_cast<ptrdiff_t>((uipBlock / uipBlockSize) % uipBlockCount)
+				- (static_cast<ptrdiff_t>(uipBlockCount) & (dir - 1));
+			buffer = block - index * static_cast<ptrdiff_t>(uipBlockSize)
+				- (static_cast<ptrdiff_t>(uipBlockAlignment) & -dir);
+			return static_cast<int8_t>(index);
+		}
+
+		Byte* pvNewBuffer(Byte* begin) const noexcept
+		{
+			const uintptr_t uipBlockSize = uintptr_t{Params::GetBlockSize()};
+			const uintptr_t uipBlockAlignment = uintptr_t{Params::GetBlockAlignment()};
+			const uintptr_t uipBlockCount = uintptr_t{Params::GetBlockCount()};
+			uintptr_t uipBegin = PtrCaster::ToUInt(begin);
+			uintptr_t uipBlock = UIntMath<uintptr_t>::Ceil(uipBegin, uipBlockAlignment);
+			uipBlock += (uipBlock % uipBlockSize) % (2 * uipBlockAlignment);
+			if ((uipBlock + uipBlockAlignment) % uipBlockSize == 0)
+				uipBlock += uipBlockAlignment;
+			if ((uipBlock / uipBlockSize) % uipBlockCount == 0)
+				uipBlock += uipBlockAlignment;
+			size_t beginOffset = static_cast<size_t>(uipBlock - uipBegin);
+			MOMO_ASSERT(beginOffset < (1 << 16));
+			Byte* block = begin + beginOffset;
+			Byte* buffer;
+			int8_t blockIndex = pvGetBlockIndex(block, buffer);
+			pvSetFirstBlockIndex(buffer, blockIndex);
+			BufferBytes bytes;
+			bytes.firstFreeBlockIndex = blockIndex;
+			bytes.freeBlockCount = static_cast<int8_t>(uipBlockCount);
+			pvSetBufferBytes(buffer, bytes);
+			SetPrevBuffer(buffer, nullptr);
+			SetNextBuffer(buffer, nullptr);
+			pvSetBeginOffset(buffer, static_cast<uint16_t>(beginOffset));
+			for (uintptr_t i = 1; i < uipBlockCount; ++i)
+			{
+				++blockIndex;
+				pvSetNextFreeBlockIndex(block, blockIndex);
+				block = pvGetBlock(buffer, blockIndex);
+			}
+			pvSetNextFreeBlockIndex(block, int8_t{-128});
+			return buffer;
+		}
+
+		int8_t pvDeleteBlock(Byte* block, Byte* buffer, int8_t blockIndex) const noexcept
+		{
+			BufferBytes bytes = pvGetBufferBytes(buffer);
+			pvSetNextFreeBlockIndex(block, bytes.firstFreeBlockIndex);
+			bytes.firstFreeBlockIndex = blockIndex;
+			++bytes.freeBlockCount;
+			pvSetBufferBytes(buffer, bytes);
+			return bytes.freeBlockCount;
+		}
+
+		size_t pvGetBufferSize() const noexcept
+		{
+			const size_t blockSize = Params::GetBlockSize();
+			const size_t blockAlignment = Params::GetBlockAlignment();
+			return Params::GetBlockCount() * blockSize + pvGetAlignmentAddend()
+				+ (2 + (blockSize / blockAlignment) % 2) * blockAlignment
+				+ (pvIsBufferBytesNear() ? 0 : sizeof(BufferBytes))
+				+ 2 * sizeof(Byte*) + sizeof(uint16_t);
+		}
+
+		static int8_t pvGetFirstBlockIndex(Byte* buffer) noexcept
+		{
+			return MemCopyer::FromBuffer<int8_t>(buffer);
+		}
+
+		static void pvSetFirstBlockIndex(Byte* buffer, int8_t firstBlockIndex) noexcept
+		{
+			return MemCopyer::ToBuffer(firstBlockIndex, buffer);
+		}
+
+		BufferBytes pvGetBufferBytes(Byte* buffer) const noexcept
+		{
+			return MemCopyer::FromBuffer<BufferBytes>(pvGetBufferBytesPosition(buffer));
+		}
+
+		void pvSetBufferBytes(Byte* buffer, BufferBytes bufferBytes) const noexcept
+		{
+			return MemCopyer::ToBuffer(bufferBytes, pvGetBufferBytesPosition(buffer));
+		}
+
+		Byte* pvGetBufferBytesPosition(Byte* buffer) const noexcept
+		{
+			return pvIsBufferBytesNear() ? buffer + 1 : pvGetBlocksEndPosition(buffer);
+		}
+
+		Byte* pvGetPrevBufferPosition(Byte* buffer) const noexcept
+		{
+			return pvGetBlocksEndPosition(buffer) + (pvIsBufferBytesNear() ? 0 : sizeof(BufferBytes));
+		}
+
+		Byte* pvGetNextBufferPosition(Byte* buffer) const noexcept
+		{
+			return pvGetPrevBufferPosition(buffer) + sizeof(Byte*);
+		}
+
+		uint16_t pvGetBeginOffset(Byte* buffer) const noexcept
+		{
+			return MemCopyer::FromBuffer<uint16_t>(pvGetBeginOffsetPosition(buffer));
+		}
+
+		void pvSetBeginOffset(Byte* buffer, uint16_t beginOffset) const noexcept
+		{
+			return MemCopyer::ToBuffer(beginOffset, pvGetBeginOffsetPosition(buffer));
+		}
+
+		Byte* pvGetBeginOffsetPosition(Byte* buffer) const noexcept
+		{
+			return pvGetNextBufferPosition(buffer) + sizeof(Byte*);
+		}
+
+		Byte* pvGetBlocksEndPosition(Byte* buffer) const noexcept
+		{
+			return buffer + Params::GetBlockAlignment() + Params::GetBlockSize()
+				* (Params::GetBlockCount() - static_cast<size_t>(-pvGetFirstBlockIndex(buffer)));
+		}
+
+		bool pvIsBufferBytesNear() const noexcept
+		{
+			return Params::GetBlockAlignment() >= sizeof(BufferBytes) + 1;
+		}
+	};
+}
+
 template<conceptMemPoolParams TParams = MemPoolParams<>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
-class MemPool : private TParams
+class MemPool : private internal::MemChunker<TParams>
 {
 public:
 	typedef TParams Params;
@@ -184,6 +442,7 @@ public:
 	typedef TSettings Settings;
 
 private:
+	typedef internal::MemChunker<Params> Chunker;
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	class Data : public MemManager
@@ -218,12 +477,6 @@ private:
 		size_t allocCount;
 	};
 
-	struct BufferBytes
-	{
-		int8_t firstFreeBlockIndex;
-		int8_t freeBlockCount;
-	};
-
 	typedef std::byte Byte;
 
 public:
@@ -238,7 +491,7 @@ public:
 	}
 
 	explicit MemPool(Params params, MemManager memManager = MemManager())
-		: Params(std::move(params)),
+		: Chunker(std::move(params)),
 		mData(std::move(memManager)),
 		mFreeBufferHead(nullptr),
 		mCachedCount(0),
@@ -248,7 +501,7 @@ public:
 	}
 
 	MemPool(MemPool&& memPool) noexcept
-		: Params(std::move(memPool.pvGetParams())),
+		: Chunker(std::move(memPool.pvGetChunker())),
 		mData(std::move(memPool.mData)),
 		mFreeBufferHead(std::exchange(memPool.mFreeBufferHead, nullptr)),
 		mCachedCount(std::exchange(memPool.mCachedCount, 0)),
@@ -269,7 +522,7 @@ public:
 
 	MemPool& operator=(MemPool&& memPool) noexcept
 	{
-		pvGetParams() = std::move(memPool.pvGetParams());
+		pvGetChunker() = std::move(memPool.pvGetChunker());
 		mData = std::move(memPool.mData);
 		mFreeBufferHead = std::exchange(memPool.mFreeBufferHead, nullptr);
 		mCachedCount = std::exchange(memPool.mCachedCount, 0);
@@ -278,15 +531,6 @@ public:
 	}
 
 	MemPool& operator=(const MemPool&) = delete;
-
-	//void Swap(MemPool& memPool) noexcept
-	//{
-	//	std::swap(pvGetParams(), memPool.pvGetParams());
-	//	std::swap(mData, memPool.mData);
-	//	std::swap(mFreeBufferHead, memPool.mFreeBufferHead);
-	//	std::swap(mCachedCount, memPool.mCachedCount);
-	//	std::swap(mCacheHead, memPool.mCacheHead);
-	//}
 
 	size_t GetBlockSize() const noexcept
 	{
@@ -379,7 +623,7 @@ public:
 			return;
 		while (true)
 		{
-			Byte* prevBuffer = pvGetPrevBuffer(mFreeBufferHead);
+			Byte* prevBuffer = Chunker::GetPrevBuffer(mFreeBufferHead);
 			if (prevBuffer == nullptr)
 				break;
 			pvDeleteBuffer(prevBuffer);
@@ -387,7 +631,7 @@ public:
 		while (mFreeBufferHead != nullptr)
 		{
 			Byte* buffer = mFreeBufferHead;
-			mFreeBufferHead = pvGetNextBuffer(buffer);
+			mFreeBufferHead = Chunker::GetNextBuffer(buffer);
 			pvDeleteBuffer(buffer);
 		}
 		mData.allocCount = 0;
@@ -427,37 +671,37 @@ public:
 		}
 		while (true)
 		{
-			Byte* buffer = pvGetPrevBuffer(memPool.mFreeBufferHead);
+			Byte* buffer = GetPrevBuffer(memPool.mFreeBufferHead);
 			if (buffer == nullptr)
 				break;
-			Byte* prevBuffer = pvGetPrevBuffer(buffer);
+			Byte* prevBuffer = Chunker::GetPrevBuffer(buffer);
 			Byte* nextBuffer = memPool.mFreeBufferHead;
 			if (prevBuffer != nullptr)
-				pvSetNextBuffer(prevBuffer, nextBuffer);
-			pvSetPrevBuffer(nextBuffer, prevBuffer);
-			prevBuffer = pvGetPrevBuffer(mFreeBufferHead);
+				Chunker::SetNextBuffer(prevBuffer, nextBuffer);
+			Chunker::SetPrevBuffer(nextBuffer, prevBuffer);
+			prevBuffer = Chunker::GetPrevBuffer(mFreeBufferHead);
 			nextBuffer = mFreeBufferHead;
-			pvSetPrevBuffer(buffer, prevBuffer);
-			pvSetNextBuffer(buffer, nextBuffer);
+			Chunker::SetPrevBuffer(buffer, prevBuffer);
+			Chunker::SetNextBuffer(buffer, nextBuffer);
 			if (prevBuffer != nullptr)
-				pvSetNextBuffer(prevBuffer, nextBuffer);
-			pvSetPrevBuffer(nextBuffer, prevBuffer);
+				Chunker::SetNextBuffer(prevBuffer, nextBuffer);
+			Chunker::SetPrevBuffer(nextBuffer, prevBuffer);
 		}
 		Byte* buffer = mFreeBufferHead;
 		while (true)
 		{
-			Byte* nextBuffer = pvGetNextBuffer(buffer);
+			Byte* nextBuffer = Chunker::GetNextBuffer(buffer);
 			if (nextBuffer == nullptr)
 				break;
 			buffer = nextBuffer;
 		}
-		pvSetNextBuffer(buffer, memPool.mFreeBufferHead);
-		pvSetPrevBuffer(memPool.mFreeBufferHead, buffer);
+		Chunker::SetNextBuffer(buffer, memPool.mFreeBufferHead);
+		Chunker::SetPrevBuffer(memPool.mFreeBufferHead, buffer);
 		memPool.mFreeBufferHead = nullptr;
 	}
 
 private:
-	Params& pvGetParams() noexcept
+	Chunker& pvGetChunker() noexcept
 	{
 		return *this;
 	}
@@ -546,39 +790,28 @@ private:
 	Byte* pvNewBlock()
 	{
 		if (mFreeBufferHead == nullptr)
-			mFreeBufferHead = pvNewBuffer();
-		BufferBytes bytes = pvGetBufferBytes(mFreeBufferHead);
-		Byte* nextBuffer = pvGetNextBuffer(mFreeBufferHead);
-		if (bytes.freeBlockCount == int8_t{1} && nextBuffer == nullptr)
+			mFreeBufferHead = pvNewBuffer(nullptr);
+		size_t freeBlockCount;
+		Byte* block = Chunker::NewBlock(mFreeBufferHead, freeBlockCount);
+		if (freeBlockCount == 0)
 		{
-			nextBuffer = pvNewBuffer();
-			pvSetNextBuffer(mFreeBufferHead, nextBuffer);
-			pvSetPrevBuffer(nextBuffer, mFreeBufferHead);
-		}
-		Byte* block = pvGetBlock(mFreeBufferHead, bytes.firstFreeBlockIndex);
-		bytes.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
-		--bytes.freeBlockCount;
-		pvSetBufferBytes(mFreeBufferHead, bytes);
-		if (bytes.freeBlockCount == int8_t{0})
+			Byte* nextBuffer = Chunker::GetNextBuffer(mFreeBufferHead);
+			if (nextBuffer == nullptr)
+			{
+				nextBuffer = pvNewBuffer(block);
+				Chunker::SetNextBuffer(mFreeBufferHead, nextBuffer);
+				Chunker::SetPrevBuffer(nextBuffer, mFreeBufferHead);
+			}
 			mFreeBufferHead = nextBuffer;
+		}
 		return block;
 	}
 
 	void pvDeleteBlock(Byte* block) noexcept
 	{
 		Byte* buffer;
-		int8_t blockIndex = pvGetBlockIndex(block, buffer);
-		pvDeleteBlock(block, buffer, blockIndex);
-	}
-
-	void pvDeleteBlock(Byte* block, Byte* buffer, int8_t blockIndex) noexcept
-	{
-		BufferBytes bytes = pvGetBufferBytes(buffer);
-		pvSetNextFreeBlockIndex(block, bytes.firstFreeBlockIndex);
-		bytes.firstFreeBlockIndex = blockIndex;
-		++bytes.freeBlockCount;
-		pvSetBufferBytes(buffer, bytes);
-		size_t freeBlockCount = static_cast<size_t>(bytes.freeBlockCount);
+		size_t freeBlockCount;
+		Chunker::DeleteBlock(block, buffer, freeBlockCount);
 		if (freeBlockCount == 1)
 			pvMoveBufferToHead(buffer);
 		if (freeBlockCount == Params::GetBlockCount())
@@ -586,7 +819,7 @@ private:
 			bool del = true;
 			if (buffer == mFreeBufferHead)
 			{
-				Byte* nextBuffer = pvGetNextBuffer(buffer);
+				Byte* nextBuffer = Chunker::GetNextBuffer(buffer);
 				del = (nextBuffer != nullptr);
 				if (del)
 					mFreeBufferHead = nextBuffer;
@@ -596,116 +829,54 @@ private:
 		}
 	}
 
-	int8_t pvGetNextFreeBlockIndex(Byte* block) const noexcept
+	MOMO_NOINLINE Byte* pvNewBuffer(Byte* delBlock)
 	{
-		return internal::MemCopyer::FromBuffer<int8_t>(block);
-	}
-
-	void pvSetNextFreeBlockIndex(Byte* block, int8_t nextFreeBlockIndex) noexcept
-	{
-		internal::MemCopyer::ToBuffer(nextFreeBlockIndex, block);
-	}
-
-	Byte* pvGetBlock(Byte* buffer, int8_t index) const noexcept
-	{
-		return buffer + ptrdiff_t{index} * static_cast<ptrdiff_t>(Params::GetBlockSize())
-			+ (static_cast<ptrdiff_t>(Params::GetBlockAlignment()) & -ptrdiff_t{index >= 0});
-	}
-
-	int8_t pvGetBlockIndex(Byte* block, Byte*& buffer) const noexcept
-	{
-		const uintptr_t uipBlockSize = uintptr_t{Params::GetBlockSize()};
-		const uintptr_t uipBlockAlignment = uintptr_t{Params::GetBlockAlignment()};
-		const uintptr_t uipBlockCount = uintptr_t{Params::GetBlockCount()};
-		uintptr_t uipBlock = internal::PtrCaster::ToUInt(block);
-		MOMO_ASSERT(uipBlock % uipBlockAlignment == 0);
-		ptrdiff_t dir = static_cast<ptrdiff_t>(((uipBlock % uipBlockSize) / uipBlockAlignment) % 2);
-		ptrdiff_t index = static_cast<ptrdiff_t>((uipBlock / uipBlockSize) % uipBlockCount)
-			- (static_cast<ptrdiff_t>(uipBlockCount) & (dir - 1));
-		buffer = block - index * static_cast<ptrdiff_t>(uipBlockSize)
-			- (static_cast<ptrdiff_t>(uipBlockAlignment) & -dir);
-		return static_cast<int8_t>(index);
-	}
-
-	MOMO_NOINLINE Byte* pvNewBuffer()
-	{
-		const uintptr_t uipBlockSize = uintptr_t{Params::GetBlockSize()};
-		const uintptr_t uipBlockAlignment = uintptr_t{Params::GetBlockAlignment()};
-		const uintptr_t uipBlockCount = uintptr_t{Params::GetBlockCount()};
-		Byte* begin = MemManagerProxy::template Allocate<Byte>(
-			GetMemManager(), pvGetBufferSize());
-		uintptr_t uipBegin = internal::PtrCaster::ToUInt(begin);
-		uintptr_t uipBlock = internal::UIntMath<uintptr_t>::Ceil(uipBegin, uipBlockAlignment);
-		uipBlock += (uipBlock % uipBlockSize) % (2 * uipBlockAlignment);
-		if ((uipBlock + uipBlockAlignment) % uipBlockSize == 0)
-			uipBlock += uipBlockAlignment;
-		if ((uipBlock / uipBlockSize) % uipBlockCount == 0)
-			uipBlock += uipBlockAlignment;
-		size_t beginOffset = static_cast<size_t>(uipBlock - uipBegin);
-		MOMO_ASSERT(beginOffset < (1 << 16));
-		Byte* block = begin + beginOffset;
-		Byte* buffer;
-		int8_t blockIndex = pvGetBlockIndex(block, buffer);
-		pvSetFirstBlockIndex(buffer, blockIndex);
-		BufferBytes bytes;
-		bytes.firstFreeBlockIndex = blockIndex;
-		bytes.freeBlockCount = static_cast<int8_t>(uipBlockCount);
-		pvSetBufferBytes(buffer, bytes);
-		pvSetPrevBuffer(buffer, nullptr);
-		pvSetNextBuffer(buffer, nullptr);
-		pvSetBeginOffset(buffer, static_cast<uint16_t>(beginOffset));
-		for (uintptr_t i = 1; i < uipBlockCount; ++i)
+		try
 		{
-			++blockIndex;
-			pvSetNextFreeBlockIndex(block, blockIndex);
-			block = pvGetBlock(buffer, blockIndex);
+			return Chunker::NewBuffer(GetMemManager());
 		}
-		pvSetNextFreeBlockIndex(block, int8_t{-128});
-		return buffer;
+		catch (...)
+		{
+			if (delBlock)
+			{
+				Byte* buffer;
+				size_t freeBlockCount;
+				Chunker::DeleteBlock(delBlock, buffer, freeBlockCount);
+			}
+			throw;
+		}
 	}
 
 	MOMO_NOINLINE void pvDeleteBuffer(Byte* buffer) noexcept
 	{
 		MOMO_ASSERT(buffer != mFreeBufferHead);
-		Byte* prevBuffer = pvGetPrevBuffer(buffer);
-		Byte* nextBuffer = pvGetNextBuffer(buffer);
+		Byte* prevBuffer = Chunker::GetPrevBuffer(buffer);
+		Byte* nextBuffer = Chunker::GetNextBuffer(buffer);
 		if (prevBuffer != nullptr)
-			pvSetNextBuffer(prevBuffer, nextBuffer);
+			Chunker::SetNextBuffer(prevBuffer, nextBuffer);
 		if (nextBuffer != nullptr)
-			pvSetPrevBuffer(nextBuffer, prevBuffer);
-		Byte* begin = pvGetBlock(buffer, pvGetFirstBlockIndex(buffer))
-			- size_t{pvGetBeginOffset(buffer)};
-		MemManagerProxy::Deallocate(GetMemManager(), begin, pvGetBufferSize());
+			Chunker::SetPrevBuffer(nextBuffer, prevBuffer);
+		Chunker::DeleteBuffer(GetMemManager(), buffer);
 	}
 
 	void pvMoveBufferToHead(Byte* buffer) noexcept
 	{
-		Byte* headPrevBuffer = pvGetPrevBuffer(mFreeBufferHead);
+		Byte* headPrevBuffer = Chunker::GetPrevBuffer(mFreeBufferHead);
 		MOMO_ASSERT(headPrevBuffer != nullptr);
 		if (buffer != headPrevBuffer)
 		{
-			Byte* prevBuffer = pvGetPrevBuffer(buffer);
-			Byte* nextBuffer = pvGetNextBuffer(buffer);
+			Byte* prevBuffer = Chunker::GetPrevBuffer(buffer);
+			Byte* nextBuffer = Chunker::GetNextBuffer(buffer);
 			MOMO_ASSERT(nextBuffer != nullptr);
-			pvSetPrevBuffer(nextBuffer, prevBuffer);
+			Chunker::SetPrevBuffer(nextBuffer, prevBuffer);
 			if (prevBuffer != nullptr)
-				pvSetNextBuffer(prevBuffer, nextBuffer);
-			pvSetPrevBuffer(buffer, headPrevBuffer);
-			pvSetNextBuffer(buffer, mFreeBufferHead);
-			pvSetPrevBuffer(mFreeBufferHead, buffer);
-			pvSetNextBuffer(headPrevBuffer, buffer);
+				Chunker::SetNextBuffer(prevBuffer, nextBuffer);
+			Chunker::SetPrevBuffer(buffer, headPrevBuffer);
+			Chunker::SetNextBuffer(buffer, mFreeBufferHead);
+			Chunker::SetPrevBuffer(mFreeBufferHead, buffer);
+			Chunker::SetNextBuffer(headPrevBuffer, buffer);
 		}
 		mFreeBufferHead = buffer;
-	}
-
-	size_t pvGetBufferSize() const noexcept
-	{
-		const size_t blockSize = Params::GetBlockSize();
-		const size_t blockAlignment = Params::GetBlockAlignment();
-		return Params::GetBlockCount() * blockSize + pvGetAlignmentAddend()
-			+ (2 + (blockSize / blockAlignment) % 2) * blockAlignment
-			+ (pvIsBufferBytesNear() ? 0 : sizeof(BufferBytes))
-			+ 2 * sizeof(Byte*) + sizeof(uint16_t);
 	}
 
 	template<internal::conceptPredicate<void*> BlockFilter>
@@ -714,16 +885,16 @@ private:
 		Byte* buffer = mFreeBufferHead;
 		while (true)
 		{
-			Byte* nextBuffer = pvGetNextBuffer(buffer);
+			Byte* nextBuffer = Chunker::GetNextBuffer(buffer);
 			pvDeleteBlocks(buffer, blockFilter);
 			if (nextBuffer == nullptr)
 				break;
 			buffer = nextBuffer;
 		}
-		buffer = pvGetPrevBuffer(mFreeBufferHead);
+		buffer = Chunker::GetPrevBuffer(mFreeBufferHead);
 		while (buffer != nullptr)
 		{
-			Byte* prevBuffer = pvGetPrevBuffer(buffer);
+			Byte* prevBuffer = Chunker::GetPrevBuffer(buffer);
 			pvDeleteBlocks(buffer, blockFilter);
 			buffer = prevBuffer;
 		}
@@ -732,108 +903,14 @@ private:
 	template<internal::conceptPredicate<void*> BlockFilter>
 	void pvDeleteBlocks(Byte* buffer, FastCopyableFunctor<BlockFilter> blockFilter)
 	{
-		int8_t firstBlockIndex = pvGetFirstBlockIndex(buffer);
-		uint8_t freeBlockBits[16] = {};
-		BufferBytes bytes = pvGetBufferBytes(buffer);
-		int8_t freeBlockIndex = bytes.firstFreeBlockIndex;
-		for (int8_t i = 0; i < bytes.freeBlockCount; ++i)
+		auto chunkerBlockFilter = [this, blockFilter] (Byte* block)
 		{
-			internal::UIntMath<uint8_t>::SetBit(freeBlockBits,
-				static_cast<size_t>(freeBlockIndex - firstBlockIndex));
-			freeBlockIndex = pvGetNextFreeBlockIndex(pvGetBlock(buffer, freeBlockIndex));
-		}
-		for (size_t i = 0; i < Params::GetBlockCount(); ++i)
-		{
-			if (internal::UIntMath<uint8_t>::GetBit(freeBlockBits, i))
-				continue;
-			int8_t blockIndex = firstBlockIndex + static_cast<int8_t>(i);
-			Byte* block = pvGetBlock(buffer, blockIndex);
-			if (!blockFilter(static_cast<void*>(block)))
-				continue;
-			pvDeleteBlock(block, buffer, blockIndex);
-			--mData.allocCount;
-		}
-	}
-
-	int8_t pvGetFirstBlockIndex(Byte* buffer) const noexcept
-	{
-		return internal::MemCopyer::FromBuffer<int8_t>(buffer);
-	}
-
-	void pvSetFirstBlockIndex(Byte* buffer, int8_t firstBlockIndex) noexcept
-	{
-		return internal::MemCopyer::ToBuffer(firstBlockIndex, buffer);
-	}
-
-	BufferBytes pvGetBufferBytes(Byte* buffer) noexcept
-	{
-		return internal::MemCopyer::FromBuffer<BufferBytes>(pvGetBufferBytesPosition(buffer));
-	}
-
-	void pvSetBufferBytes(Byte* buffer, BufferBytes bufferBytes) noexcept
-	{
-		return internal::MemCopyer::ToBuffer(bufferBytes, pvGetBufferBytesPosition(buffer));
-	}
-
-	Byte* pvGetBufferBytesPosition(Byte* buffer) const noexcept
-	{
-		return pvIsBufferBytesNear() ? buffer + 1 : pvGetBlocksEndPosition(buffer);
-	}
-
-	Byte* pvGetPrevBuffer(Byte* buffer) const noexcept
-	{
-		return internal::MemCopyer::FromBuffer<Byte*>(pvGetPrevBufferPosition(buffer));
-	}
-
-	void pvSetPrevBuffer(Byte* buffer, Byte* prevBuffer) noexcept
-	{
-		return internal::MemCopyer::ToBuffer(prevBuffer, pvGetPrevBufferPosition(buffer));
-	}
-
-	Byte* pvGetPrevBufferPosition(Byte* buffer) const noexcept
-	{
-		return pvGetBlocksEndPosition(buffer) + (pvIsBufferBytesNear() ? 0 : sizeof(BufferBytes));
-	}
-
-	Byte* pvGetNextBuffer(Byte* buffer) const noexcept
-	{
-		return internal::MemCopyer::FromBuffer<Byte*>(pvGetNextBufferPosition(buffer));
-	}
-
-	void pvSetNextBuffer(Byte* buffer, Byte* nextBuffer) noexcept
-	{
-		return internal::MemCopyer::ToBuffer(nextBuffer, pvGetNextBufferPosition(buffer));
-	}
-
-	Byte* pvGetNextBufferPosition(Byte* buffer) const noexcept
-	{
-		return pvGetPrevBufferPosition(buffer) + sizeof(Byte*);
-	}
-
-	uint16_t pvGetBeginOffset(Byte* buffer) noexcept
-	{
-		return internal::MemCopyer::FromBuffer<uint16_t>(pvGetBeginOffsetPosition(buffer));
-	}
-
-	void pvSetBeginOffset(Byte* buffer, uint16_t beginOffset) noexcept
-	{
-		return internal::MemCopyer::ToBuffer(beginOffset, pvGetBeginOffsetPosition(buffer));
-	}
-
-	Byte* pvGetBeginOffsetPosition(Byte* buffer) const noexcept
-	{
-		return pvGetNextBufferPosition(buffer) + sizeof(Byte*);
-	}
-
-	Byte* pvGetBlocksEndPosition(Byte* buffer) const noexcept
-	{
-		return buffer + Params::GetBlockAlignment() + Params::GetBlockSize()
-			* (Params::GetBlockCount() - static_cast<size_t>(-pvGetFirstBlockIndex(buffer)));
-	}
-
-	bool pvIsBufferBytesNear() const noexcept
-	{
-		return Params::GetBlockAlignment() >= sizeof(BufferBytes) + 1;
+			bool res = blockFilter(static_cast<void*>(block));
+			if (res)
+				--mData.allocCount;
+			return res;
+		};
+		Chunker::DeleteBlocks(buffer, FastCopyableFunctor(chunkerBlockFilter));
 	}
 
 private:
