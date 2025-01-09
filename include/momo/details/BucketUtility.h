@@ -13,6 +13,7 @@
 #pragma once
 
 #include "../IteratorUtility.h"
+#include "../ObjectManager.h"
 
 namespace momo
 {
