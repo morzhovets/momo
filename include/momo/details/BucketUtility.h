@@ -100,6 +100,21 @@ namespace internal
 	class BucketBase
 	{
 	public:
+		template<bool first, conceptMutableThis Bucket,
+			conceptObjectPredicate<typename Bucket::Item> ItemPredicate,
+			typename Iterator = typename Bucket::Iterator>
+		MOMO_FORCEINLINE Iterator Find(this Bucket& bucket, typename Bucket::Params& params,
+			FastCopyableFunctor<ItemPredicate> itemPred, size_t /*hashCode*/)
+		{
+			typename Bucket::Bounds bounds = bucket.GetBounds(params);
+			for (Iterator iter = bounds.GetBegin(), end = bounds.GetEnd(); iter != end; ++iter)
+			{
+				if (itemPred(std::as_const(*iter)))
+					return iter;
+			}
+			return Iterator();
+		}
+
 		size_t GetMaxProbe(size_t logBucketCount) const noexcept
 		{
 			return (size_t{1} << logBucketCount) - 1;

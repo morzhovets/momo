@@ -136,18 +136,6 @@ namespace internal
 			return Bounds(items, data.count);
 		}
 
-		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
-		MOMO_FORCEINLINE Iterator Find(Params& params,
-			FastCopyableFunctor<ItemPredicate> itemPred, size_t /*hashCode*/)
-		{
-			for (Item& item : GetBounds(params))
-			{
-				if (itemPred(std::as_const(item)))
-					return std::addressof(item);
-			}
-			return nullptr;
-		}
-
 		bool IsFull() const noexcept
 		{
 			if (pvIsEmpty())
