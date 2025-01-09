@@ -522,7 +522,8 @@ private:
 	{
 		if (mFreeBufferHead == nullptr)
 			mFreeBufferHead = pvNewBuffer();
-		BufferBytes bytes = pvGetBufferBytes(mFreeBufferHead);
+		Byte* bytesPos = pvGetBufferBytesPosition(mFreeBufferHead);
+		BufferBytes bytes = pvGetBufferBytes(bytesPos);
 		Byte* nextBuffer = pvGetNextBuffer(mFreeBufferHead);
 		if (bytes.freeBlockCount == int8_t{1} && nextBuffer == nullptr)
 		{
@@ -533,7 +534,7 @@ private:
 		Byte* block = pvGetBlock(mFreeBufferHead, bytes.firstFreeBlockIndex);
 		bytes.firstFreeBlockIndex = pvGetNextFreeBlockIndex(block);
 		--bytes.freeBlockCount;
-		pvSetBufferBytes(mFreeBufferHead, bytes);
+		pvSetBufferBytes(bytesPos, bytes);
 		if (bytes.freeBlockCount == int8_t{0})
 			mFreeBufferHead = nextBuffer;
 		return block;
@@ -548,11 +549,12 @@ private:
 
 	void pvDeleteBlock(Byte* block, Byte* buffer, int8_t blockIndex) noexcept
 	{
-		BufferBytes bytes = pvGetBufferBytes(buffer);
+		Byte* bytesPos = pvGetBufferBytesPosition(buffer);
+		BufferBytes bytes = pvGetBufferBytes(bytesPos);
 		pvSetNextFreeBlockIndex(block, bytes.firstFreeBlockIndex);
 		bytes.firstFreeBlockIndex = blockIndex;
 		++bytes.freeBlockCount;
-		pvSetBufferBytes(buffer, bytes);
+		pvSetBufferBytes(bytesPos, bytes);
 		size_t freeBlockCount = static_cast<size_t>(bytes.freeBlockCount);
 		if (freeBlockCount == 1)
 			pvMoveBufferToHead(buffer);
@@ -625,7 +627,7 @@ private:
 		BufferBytes bytes;
 		bytes.firstFreeBlockIndex = blockIndex;
 		bytes.freeBlockCount = static_cast<int8_t>(uipBlockCount);
-		pvSetBufferBytes(buffer, bytes);
+		pvSetBufferBytes(pvGetBufferBytesPosition(buffer), bytes);
 		pvSetPrevBuffer(buffer, nullptr);
 		pvSetNextBuffer(buffer, nullptr);
 		pvSetBeginOffset(buffer, static_cast<uint16_t>(beginOffset));
@@ -653,7 +655,7 @@ private:
 		MemManagerProxy::Deallocate(GetMemManager(), begin, pvGetBufferSize());
 	}
 
-	void pvMoveBufferToHead(Byte* buffer) noexcept
+	MOMO_NOINLINE void pvMoveBufferToHead(Byte* buffer) noexcept
 	{
 		Byte* headPrevBuffer = pvGetPrevBuffer(mFreeBufferHead);
 		MOMO_ASSERT(headPrevBuffer != nullptr);
@@ -686,7 +688,7 @@ private:
 	{
 		int8_t firstBlockIndex = pvGetFirstBlockIndex(buffer);
 		uint8_t freeBlockBits[16] = {};
-		BufferBytes bytes = pvGetBufferBytes(buffer);
+		BufferBytes bytes = pvGetBufferBytes(pvGetBufferBytesPosition(buffer));
 		int8_t freeBlockIndex = bytes.firstFreeBlockIndex;
 		for (int8_t i = 0; i < bytes.freeBlockCount; ++i)
 		{
@@ -714,17 +716,17 @@ private:
 
 	static void pvSetFirstBlockIndex(Byte* buffer, int8_t firstBlockIndex) noexcept
 	{
-		return internal::MemCopyer::ToBuffer(firstBlockIndex, buffer);
+		internal::MemCopyer::ToBuffer(firstBlockIndex, buffer);
 	}
 
-	BufferBytes pvGetBufferBytes(Byte* buffer) const noexcept
+	BufferBytes pvGetBufferBytes(Byte* bufferBytesPos) const noexcept
 	{
-		return internal::MemCopyer::FromBuffer<BufferBytes>(pvGetBufferBytesPosition(buffer));
+		return internal::MemCopyer::FromBuffer<BufferBytes>(bufferBytesPos);
 	}
 
-	void pvSetBufferBytes(Byte* buffer, BufferBytes bufferBytes) noexcept
+	void pvSetBufferBytes(Byte* bufferBytesPos, BufferBytes bufferBytes) noexcept
 	{
-		return internal::MemCopyer::ToBuffer(bufferBytes, pvGetBufferBytesPosition(buffer));
+		internal::MemCopyer::ToBuffer(bufferBytes, bufferBytesPos);
 	}
 
 	Byte* pvGetBufferBytesPosition(Byte* buffer) const noexcept
@@ -739,7 +741,7 @@ private:
 
 	void pvSetPrevBuffer(Byte* buffer, Byte* prevBuffer) noexcept
 	{
-		return internal::MemCopyer::ToBuffer(prevBuffer, pvGetPrevBufferPosition(buffer));
+		internal::MemCopyer::ToBuffer(prevBuffer, pvGetPrevBufferPosition(buffer));
 	}
 
 	Byte* pvGetPrevBufferPosition(Byte* buffer) const noexcept
@@ -754,7 +756,7 @@ private:
 
 	void pvSetNextBuffer(Byte* buffer, Byte* nextBuffer) noexcept
 	{
-		return internal::MemCopyer::ToBuffer(nextBuffer, pvGetNextBufferPosition(buffer));
+		internal::MemCopyer::ToBuffer(nextBuffer, pvGetNextBufferPosition(buffer));
 	}
 
 	Byte* pvGetNextBufferPosition(Byte* buffer) const noexcept
@@ -769,7 +771,7 @@ private:
 
 	void pvSetBeginOffset(Byte* buffer, uint16_t beginOffset) noexcept
 	{
-		return internal::MemCopyer::ToBuffer(beginOffset, pvGetBeginOffsetPosition(buffer));
+		internal::MemCopyer::ToBuffer(beginOffset, pvGetBeginOffsetPosition(buffer));
 	}
 
 	Byte* pvGetBeginOffsetPosition(Byte* buffer) const noexcept
