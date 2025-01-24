@@ -19,7 +19,7 @@ jobs:
       uses: actions/checkout@v4
     - name: Calculate LOC
       id: loc
-      uses: PavanMudigonda/lines-of-code-reporter@v1
+      uses: PavanMudigonda/lines-of-code-reporter@v1.6
       with:
         directory: ${{ matrix.dir }}
     - name: Print output
