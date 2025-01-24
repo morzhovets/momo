@@ -22,5 +22,3 @@ jobs:
       uses: PavanMudigonda/lines-of-code-reporter@v1.6
       with:
         directory: ${{ matrix.dir }}
-    - name: Add summary
-      run: echo "${{ steps.loc.outputs.lines-of-code-summary }}" >> $GITHUB_STEP_SUMMARY
