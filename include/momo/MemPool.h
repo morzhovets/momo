@@ -822,13 +822,13 @@ namespace internal
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 		typedef Array<Byte*, MemManager, ArrayItemTraits<Byte*, MemManager>,
-			NestedArraySettings<>> Buffers;
+			NestedArraySettings<>> Chunks;
 
 	public:
 		explicit MemPoolUInt32(size_t blockSize, MemManager&& memManager, size_t maxTotalBlockCount)
-			: mBuffers(std::move(memManager)),
+			: mChunks(std::move(memManager)),
 			mBlockHead(nullPtr),
-			mMaxBufferCount(maxTotalBlockCount / blockCount),
+			mMaxChunkCount(maxTotalBlockCount / blockCount),
 			mBlockSize(std::minmax(blockSize, sizeof(uint32_t)).second),
 			mAllocCount(0)
 		{
@@ -849,27 +849,27 @@ namespace internal
 
 		const MemManager& GetMemManager() const noexcept
 		{
-			return mBuffers.GetMemManager();
+			return mChunks.GetMemManager();
 		}
 
 		MemManager& GetMemManager() noexcept
 		{
-			return mBuffers.GetMemManager();
+			return mChunks.GetMemManager();
 		}
 
 		template<typename ResObject = void>
 		ResObject* GetRealPointer(uint32_t block) noexcept
 		{
 			MOMO_ASSERT(block != nullPtr);
-			Byte* buffer = mBuffers[block / blockCount];
-			Byte* bytePtr = buffer + (size_t{block} % blockCount) * mBlockSize;
+			Byte* chunk = mChunks[block / blockCount];
+			Byte* bytePtr = chunk + (size_t{block} % blockCount) * mBlockSize;
 			return PtrCaster::FromBytePtr<ResObject>(bytePtr);
 		}
 
 		uint32_t Allocate()
 		{
 			if (mBlockHead == nullPtr)
-				pvNewBuffer();
+				pvNewChunk();
 			uint32_t block = mBlockHead;
 			mBlockHead = pvGetNextBlock(GetRealPointer(mBlockHead));
 			++mAllocCount;
@@ -883,7 +883,7 @@ namespace internal
 			pvSetNextBlock(mBlockHead, GetRealPointer(block));
 			mBlockHead = block;
 			--mAllocCount;
-			if (mAllocCount == 0 && mBuffers.GetCount() > 2)
+			if (mAllocCount == 0 && mChunks.GetCount() > 2)
 				pvClear();
 		}
 
@@ -904,43 +904,43 @@ namespace internal
 			internal::MemCopyer::ToBuffer(nextBlock, realPtr);
 		}
 
-		void pvNewBuffer()
+		void pvNewChunk()
 		{
-			size_t bufferCount = mBuffers.GetCount();
-			if (bufferCount >= mMaxBufferCount)
-				throw std::length_error("Invalid buffer count");
-			mBuffers.Reserve(bufferCount + 1);
-			Byte* buffer = MemManagerProxy::template Allocate<Byte>(GetMemManager(),
-				pvGetBufferSize());
+			size_t chunkCount = mChunks.GetCount();
+			if (chunkCount >= mMaxChunkCount)
+				throw std::length_error("Invalid chunk count");
+			mChunks.Reserve(chunkCount + 1);
+			Byte* chunk = MemManagerProxy::template Allocate<Byte>(GetMemManager(),
+				pvGetChunkSize());
 			for (size_t i = 0; i < blockCount; ++i)
 			{
 				uint32_t nextBlock = (i + 1 < blockCount)
-					? static_cast<uint32_t>(bufferCount * blockCount + i + 1) : nullPtr;
-				pvSetNextBlock(nextBlock, buffer + mBlockSize * i);
+					? static_cast<uint32_t>(chunkCount * blockCount + i + 1) : nullPtr;
+				pvSetNextBlock(nextBlock, chunk + mBlockSize * i);
 			}
-			mBlockHead = static_cast<uint32_t>(bufferCount * blockCount);
-			mBuffers.AddBackNogrow(buffer);
+			mBlockHead = static_cast<uint32_t>(chunkCount * blockCount);
+			mChunks.AddBackNogrow(chunk);
 		}
 
 		void pvClear() noexcept
 		{
 			MemManager& memManager = GetMemManager();
-			size_t bufferSize = pvGetBufferSize();
-			for (Byte* buffer : mBuffers)
-				MemManagerProxy::Deallocate(memManager, buffer, bufferSize);
+			size_t chunkSize = pvGetChunkSize();
+			for (Byte* chunk : mChunks)
+				MemManagerProxy::Deallocate(memManager, chunk, chunkSize);
 			mBlockHead = nullPtr;
-			mBuffers.Clear(true);
+			mChunks.Clear(true);
 		}
 
-		size_t pvGetBufferSize() const noexcept
+		size_t pvGetChunkSize() const noexcept
 		{
 			return blockCount * mBlockSize;
 		}
 
 	private:
-		Buffers mBuffers;
+		Chunks mChunks;
 		uint32_t mBlockHead;
-		size_t mMaxBufferCount;
+		size_t mMaxChunkCount;
 		size_t mBlockSize;
 		size_t mAllocCount;
 	};
