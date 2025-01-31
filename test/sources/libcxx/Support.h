@@ -50,6 +50,7 @@
 #include "support/set_allocator_requirement_test_templates.h"
 #include "support/map_allocator_requirement_test_templates.h"
 #include "support/asan_testing.h"
+#include "support/increasing_allocator.h"
 #include "support/min_allocator.h"
 
 #if TEST_STD_VER >= 23
