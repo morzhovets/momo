@@ -19,7 +19,7 @@
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 
-#if defined(__cpp_lib_containers_ranges)
+#if defined(__cpp_lib_containers_ranges) && defined(__cpp_lib_allocate_at_least)
 # define TEST_STD_VER 23
 #else
 # define TEST_STD_VER 20
