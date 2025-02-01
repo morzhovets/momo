@@ -14,17 +14,6 @@
 
 #include "TestSettings.h"
 
-#ifdef TEST_MSVC
-# define _SCL_SECURE_NO_WARNINGS
-# define _CRT_SECURE_NO_WARNINGS
-# pragma warning (disable: 4127)	// conditional expression is constant
-# pragma warning (disable: 4458)	// declaration of '...' hides class member
-# if _MSC_VER == 1900
-#  pragma warning (disable: 4503)	// decorated name length exceeded, name was truncated
-#  pragma warning (disable: 4702)	// unreachable code
-# endif
-#endif
-
 #ifdef _WIN32
 # ifdef TEST_LIBCXX_NEW
 #  define NOMINMAX
