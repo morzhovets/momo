@@ -10,11 +10,11 @@ jobs:
 
         - win_ver: '2022'
           build_type: 'Release'
-          flags: '-msse2'
+          flags: '/WX -msse2'
 
         - win_ver: '2022'
           build_type: 'Debug'
-          flags: '-msse2'
+          flags: '/WX -msse2'
 
     runs-on: windows-${{ matrix.win_ver }}
 
