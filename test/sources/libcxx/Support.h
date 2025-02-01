@@ -16,6 +16,7 @@
 #include <string>
 #include <cmath>
 #include <optional>
+#include <sstream>
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 
