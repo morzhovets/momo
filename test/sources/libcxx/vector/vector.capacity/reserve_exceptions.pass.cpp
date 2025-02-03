@@ -75,6 +75,7 @@ template <typename T, typename Alloc>
 void test_move_ctor_exception_for_basic_guarantee(std::vector<move_only_throwing_t<T>, Alloc>& v,
                                                   const std::vector<T>& values) {
   assert(v.empty() && !values.empty());
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   int throw_after = static_cast<int>(values.size() + values.size() / 2); // Trigger an exception halfway through reallocation
   v.reserve(values.size());
   for (std::size_t i = 0; i < values.size(); ++i)
@@ -87,6 +88,7 @@ void test_move_ctor_exception_for_basic_guarantee(std::vector<move_only_throwing
     return;
   }
   assert(false);
+#endif
 }
 
 #endif
@@ -130,7 +132,7 @@ void test_allocation_exceptions() {
     int a[] = {1, 2, 3, 4, 5};
     std::vector<int> in(a, a + sizeof(a) / sizeof(a[0]));
     std::vector<int, test_allocator<int> > v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, ULLONG_MAX/*v.max_size() + 1*/);
+    test_allocation_exception_for_strong_guarantee(v, in, SIZE_MAX/*v.max_size() + 1*/);
   }
   check_new_delete_called();
 
@@ -301,9 +303,7 @@ int main(int, char**) {
   test_allocation_exceptions();
   test_copy_ctor_exceptions();
 #if TEST_STD_VER >= 11
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
   test_move_ctor_exceptions();
-#endif
 #endif
   return 0;
 }
