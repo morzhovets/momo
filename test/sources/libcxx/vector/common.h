@@ -176,15 +176,23 @@ struct throwing_iterator {
   using pointer           = T*;
 
   int i_;
-  mutable T v_;
+  T v_;
 
   explicit throwing_iterator(int i = 0, const T& v = T()) : i_(i), v_(v) {}
 
+#if MOMO_VERSION_MAJOR > 3
   reference operator*() const {
+    if (i_ == 1)
+      throw 1;
+    return const_cast<reference>(v_);
+  }
+#else
+  reference operator*() {
     if (i_ == 1)
       throw 1;
     return v_;
   }
+#endif
 
   friend bool operator==(const throwing_iterator& lhs, const throwing_iterator& rhs) { return lhs.i_ == rhs.i_; }
   friend bool operator!=(const throwing_iterator& lhs, const throwing_iterator& rhs) { return lhs.i_ != rhs.i_; }

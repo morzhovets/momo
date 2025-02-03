@@ -136,6 +136,12 @@ LIBCXX_TEST_BEGIN(capacity_reserve)
 #include "vector/vector.capacity/reserve.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
+LIBCXX_TEST_BEGIN(capacity_reserve_exceptions)
+#include "vector/vector.capacity/reserve_exceptions.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(capacity_resize_size)
 #include "vector/vector.capacity/resize_size.pass.cpp"
 LIBCXX_TEST_END
