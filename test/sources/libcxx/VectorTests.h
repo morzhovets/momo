@@ -146,13 +146,31 @@ LIBCXX_TEST_BEGIN(capacity_resize_size)
 #include "vector/vector.capacity/resize_size.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
+LIBCXX_TEST_BEGIN(capacity_resize_size_exceptions)
+#include "vector/vector.capacity/resize_size_exceptions.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(capacity_resize_size_value)
 #include "vector/vector.capacity/resize_size_value.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
+LIBCXX_TEST_BEGIN(capacity_resize_size_value_exceptions)
+#include "vector/vector.capacity/resize_size_value_exceptions.pass.cpp"
+LIBCXX_TEST_END
+#endif
+
 LIBCXX_TEST_BEGIN(capacity_shrink_to_fit)
 #include "vector/vector.capacity/shrink_to_fit.pass.cpp"
 LIBCXX_TEST_END
+
+#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
+LIBCXX_TEST_BEGIN(capacity_shrink_to_fit_exceptions)
+#include "vector/vector.capacity/shrink_to_fit_exceptions.pass.cpp"
+LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(capacity_size)
 #include "vector/vector.capacity/size.pass.cpp"

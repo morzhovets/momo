@@ -12,59 +12,59 @@
 
 // UNSUPPORTED: no-exceptions
 
-// This test file validates that std::vector<T>::reserve provides the strong exception guarantee if T is
-// Cpp17MoveInsertable and no exception is thrown by the move constructor of T during the reserve call.
-// It also checks that if T's move constructor is not noexcept, reserve provides only the basic exception
-// guarantee.
+// This test file validates that std::vector<T>::shrink_to_fit provides the strong exception guarantee when
+// T is Cpp17MoveInsertable and its move constructor does not throw exceptions during the shrink_to_fit
+// call. Additionally, it checks that for move-only types where T's move constructor is not noexcept, only
+// the basic exception guarantee is ensured.
 
 #include "../common.h"
 
 template <typename T, typename Alloc>
-void test_allocation_exception_for_strong_guarantee(
-    std::vector<T, Alloc>& v, const std::vector<T>& values, std::size_t new_cap) {
+void test_allocation_exception_for_strong_guarantee(std::vector<T, Alloc>& v, const std::vector<T>& values) {
   assert(v.size() == values.size());
   T* old_data          = v.data();
   std::size_t old_size = v.size();
   std::size_t old_cap  = v.capacity();
+  (void)old_data; (void)old_cap;
 
   try {
-    v.reserve(new_cap);
-  } catch (...) { // std::length_error, std::bad_alloc
-    assert(v.data() == old_data);
-    assert(v.size() == old_size);
-    assert(v.capacity() == old_cap);
-    for (std::size_t i = 0; i < v.size(); ++i)
-      assert(v[i] == values[i]);
-    return;
+    v.shrink_to_fit();
+  } catch (...) {
   }
-  assert(false);
+
+  // As shrink_to_fit may swallow any exceptions, we place the checks outisde the catch block.
+#ifndef LIBCXX_TEST_INTCAP_ARRAY
+  assert(v.data() == old_data);
+  assert(v.capacity() == old_cap);
+#endif
+  assert(v.size() == old_size);
+  for (std::size_t i = 0; i < v.size(); ++i)
+    assert(v[i] == values[i]);
 }
 
 template <typename T, typename Alloc>
 void test_copy_ctor_exception_for_strong_guarantee(std::vector<throwing_data<T>, Alloc>& v,
                                                    const std::vector<T>& values) {
   assert(v.empty() && !values.empty());
+  v.reserve(values.size() * 2);
   int throw_after = static_cast<int>(values.size() + values.size() / 2); // Trigger an exception halfway through reallocation
-  v.reserve(values.size());
   for (std::size_t i = 0; i < values.size(); ++i)
     v.emplace_back(values[i], throw_after);
 
   throwing_data<T>* old_data = v.data();
   std::size_t old_size       = v.size();
   std::size_t old_cap        = v.capacity();
-  std::size_t new_cap        = 2 * old_cap;
 
   try {
-    v.reserve(new_cap);
+    v.shrink_to_fit();
   } catch (...) {
-    assert(v.data() == old_data);
-    assert(v.size() == old_size);
-    assert(v.capacity() == old_cap);
-    for (std::size_t i = 0; i < v.size(); ++i)
-      assert(v[i].data_ == values[i]);
-    return;
   }
-  assert(false);
+
+  assert(v.data() == old_data);
+  assert(v.size() == old_size);
+  assert(v.capacity() == old_cap);
+  for (std::size_t i = 0; i < v.size(); ++i)
+    assert(v[i].data_ == values[i]);
 }
 
 #if TEST_STD_VER >= 11
@@ -74,18 +74,16 @@ void test_move_ctor_exception_for_basic_guarantee(std::vector<move_only_throwing
                                                   const std::vector<T>& values) {
   assert(v.empty() && !values.empty());
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+  v.reserve(values.size() * 2);
   int throw_after = static_cast<int>(values.size() + values.size() / 2); // Trigger an exception halfway through reallocation
-  v.reserve(values.size());
   for (std::size_t i = 0; i < values.size(); ++i)
     v.emplace_back(values[i], throw_after);
 
   try {
-    v.reserve(2 * v.capacity());
+    v.shrink_to_fit();
   } catch (...) {
-    use_unspecified_but_valid_state_vector(v);
-    return;
   }
-  assert(false);
+  use_unspecified_but_valid_state_vector(v);
 #endif
 }
 
@@ -93,78 +91,32 @@ void test_move_ctor_exception_for_basic_guarantee(std::vector<move_only_throwing
 
 // Check the strong exception guarantee during reallocation failures
 void test_allocation_exceptions() {
-  //
-  // Tests for std::length_error during reallocation failures
-  //
   {
-    std::vector<int> v;
-    test_allocation_exception_for_strong_guarantee(v, std::vector<int>(), v.max_size() + 1);
+    int a[] = {1, 2, 3, 4, 5};
+    std::vector<int> in(a, a + sizeof(a) / sizeof(a[0]));
+    std::vector<int, limited_allocator<int, 100> > v;
+    v.reserve(100);
+    for (std::size_t i = 0; i < in.size(); ++i)
+      v.push_back(in[i]);
+    test_allocation_exception_for_strong_guarantee(v, in);
   }
   check_new_delete_called();
 
   {
-    int a[] = {1, 2, 3, 4, 5};
-    std::vector<int> in(a, a + sizeof(a) / sizeof(a[0]));
-    std::vector<int> v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, v.max_size() + 1);
-  }
-  check_new_delete_called();
-
-  {
-    int a[] = {1, 2, 3, 4, 5};
-    std::vector<int> in(a, a + sizeof(a) / sizeof(a[0]));
-    std::vector<int, min_allocator<int> > v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, v.max_size() + 1);
-  }
-  check_new_delete_called();
-
-  {
-    int a[] = {1, 2, 3, 4, 5};
-    std::vector<int> in(a, a + sizeof(a) / sizeof(a[0]));
-    std::vector<int, safe_allocator<int> > v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, v.max_size() + 1);
-  }
-  check_new_delete_called();
-
-  {
-    int a[] = {1, 2, 3, 4, 5};
-    std::vector<int> in(a, a + sizeof(a) / sizeof(a[0]));
-    std::vector<int, test_allocator<int> > v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, SIZE_MAX/*v.max_size() + 1*/);
+    std::vector<int> in(50, 42);
+    std::vector<int, limited_allocator<int, 100> > v;
+    v.reserve(100);
+    for (std::size_t i = 0; i < in.size(); ++i)
+      v.push_back(in[i]);
+    test_allocation_exception_for_strong_guarantee(v, in);
   }
   check_new_delete_called();
 
   {
     std::vector<int> in(10, 42);
     std::vector<int, limited_allocator<int, 100> > v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, v.max_size() + 1);
-  }
-  check_new_delete_called();
-
-#if TEST_STD_VER >= 23
-  {
-    std::vector<int> in{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    std::vector<int, increasing_allocator<int>> v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, v.max_size() + 1);
-  }
-  check_new_delete_called();
-#endif
-
-  //
-  // Tests for std::bad_alloc during reallocation failures
-  //
-  {
-    std::vector<int> in(10, 42);
-    std::vector<int, limited_allocator<int, 100> > v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, 91);
-  }
-  check_new_delete_called();
-
-  {
-    std::vector<int> in(10, 42);
-    std::vector<int, limited_allocator<int, 100> > v(in.begin(), in.end());
-    v.reserve(30);
-    test_allocation_exception_for_strong_guarantee(v, in, 61);
+    v.reserve(90);
+    test_allocation_exception_for_strong_guarantee(v, in);
   }
   check_new_delete_called();
 
@@ -172,32 +124,36 @@ void test_allocation_exceptions() {
   {
     std::vector<MoveOnly> in(10);
     std::vector<MoveOnly, limited_allocator<MoveOnly, 100> > v(10);
-    test_allocation_exception_for_strong_guarantee(v, in, 91);
+    v.reserve(90);
+    test_allocation_exception_for_strong_guarantee(v, in);
   }
   check_new_delete_called();
 
   {
     std::vector<MoveOnly> in(10);
-    in.insert(in.cbegin() + 5, MoveOnly(42));
     std::vector<MoveOnly, limited_allocator<MoveOnly, 100> > v(10);
-    v.reserve(30);
+    v.reserve(90);
+    in.insert(in.cbegin() + 5, MoveOnly(42));
     v.insert(v.cbegin() + 5, MoveOnly(42));
-    test_allocation_exception_for_strong_guarantee(v, in, 61);
+    test_allocation_exception_for_strong_guarantee(v, in);
   }
   check_new_delete_called();
 #endif
 
   { // Practical example: Testing with 100 integers.
     auto in = getIntegerInputs(100);
-    std::vector<int, limited_allocator<int, 299> > v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, 200);
+    std::vector<int, limited_allocator<int, 100> > v(in.begin(), in.end());
+    in.erase(in.end() - 10, in.end());
+    v.erase(v.end() - 10, v.end());
+    test_allocation_exception_for_strong_guarantee(v, in);
   }
   check_new_delete_called();
 
   { // Practical example: Testing with 100 strings, each 256 characters long.
     std::vector<std::string> in = getStringInputsWithLength(100, 256);
-    std::vector<std::string, limited_allocator<std::string, 299> > v(in.begin(), in.end());
-    test_allocation_exception_for_strong_guarantee(v, in, 200);
+    std::vector<std::string, limited_allocator<std::string, 300> > v(in.begin(), in.end());
+    v.reserve(200);
+    test_allocation_exception_for_strong_guarantee(v, in);
   }
   check_new_delete_called();
 }
@@ -241,15 +197,6 @@ void test_copy_ctor_exceptions() {
   }
   check_new_delete_called();
 
-#if TEST_STD_VER >= 23
-  {
-    std::vector<int> in{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    std::vector<throwing_data<int>, increasing_allocator<throwing_data<int>>> v;
-    test_copy_ctor_exception_for_strong_guarantee(v, in);
-  }
-  check_new_delete_called();
-#endif
-
   { // Practical example: Testing with 100 integers.
     auto in = getIntegerInputs(100);
     std::vector<throwing_data<int> > v;
@@ -268,7 +215,7 @@ void test_copy_ctor_exceptions() {
 #if TEST_STD_VER >= 11
 
 // Check that if T is Cpp17MoveInsertible && !Cpp17CopyInsertible, and T's move-ctor is not noexcept, then
-// std::vector::reserve only provides basic guarantee.
+// std::vector::shrink_to_fit only provides basic guarantee.
 void test_move_ctor_exceptions() {
   {
     std::vector<int> in{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
