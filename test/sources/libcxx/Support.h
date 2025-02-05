@@ -16,10 +16,11 @@
 #include <string>
 #include <cmath>
 #include <optional>
+#include <sstream>
 
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 
-#if defined(__cpp_lib_containers_ranges)
+#if defined(__cpp_lib_containers_ranges) && defined(__cpp_lib_allocate_at_least)
 # define TEST_STD_VER 23
 #else
 # define TEST_STD_VER 20
@@ -50,6 +51,7 @@
 #include "support/set_allocator_requirement_test_templates.h"
 #include "support/map_allocator_requirement_test_templates.h"
 #include "support/asan_testing.h"
+#include "support/increasing_allocator.h"
 #include "support/min_allocator.h"
 
 #if TEST_STD_VER >= 23

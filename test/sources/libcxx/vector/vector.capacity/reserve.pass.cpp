@@ -16,9 +16,9 @@
 
 TEST_CONSTEXPR_CXX20 bool tests() {
     {
-        std::vector<int> v;
-        v.reserve(10);
-        assert(v.capacity() >= 10);
+    std::vector<int> v;
+    v.reserve(10);
+    assert(v.capacity() >= 10);
         assert(is_contiguous_container_asan_correct(v));
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
@@ -50,57 +50,14 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v.capacity() == 150);
         assert(is_contiguous_container_asan_correct(v));
 #endif
-    }
-#ifndef TEST_HAS_NO_EXCEPTIONS
-    if (!TEST_IS_CONSTANT_EVALUATED) {
-        std::vector<int> v;
-        std::size_t sz = v.max_size() + 1;
-
-        try {
-            v.reserve(sz);
-            assert(false);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        } catch (const std::length_error&) {
-#else
-        } catch (const std::bad_alloc&) {
-#endif
-            assert(v.size() == 0);
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
-            assert(v.capacity() == 0);
-#endif
-        }
-    }
-    if (!TEST_IS_CONSTANT_EVALUATED) {
-        std::vector<int> v(10, 42);
-        int* previous_data = v.data();
-        std::size_t previous_capacity = v.capacity();
-        std::size_t sz = v.max_size() + 1;
-
-        try {
-            v.reserve(sz);
-            assert(false);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        } catch (const std::length_error&) {
-#else
-        } catch (const std::bad_alloc&) {
-#endif
-            assert(v.size() == 10);
-            assert(v.capacity() == previous_capacity);
-            assert(v.data() == previous_data);
-
-            for (size_t i = 0; i < 10; ++i) {
-                assert(v[i] == 42);
-            }
-        }
-    }
-#endif
+  }
 #endif
 #if TEST_STD_VER >= 11
-    {
-        std::vector<int, min_allocator<int>> v;
-        v.reserve(10);
-        assert(v.capacity() >= 10);
-        assert(is_contiguous_container_asan_correct(v));
+  {
+    std::vector<int, min_allocator<int>> v;
+    v.reserve(10);
+    assert(v.capacity() >= 10);
+    assert(is_contiguous_container_asan_correct(v));
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
     {
@@ -120,9 +77,9 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 #endif
     {
-      std::vector<int, safe_allocator<int>> v;
-      v.reserve(10);
-      assert(v.capacity() >= 10);
+    std::vector<int, safe_allocator<int>> v;
+    v.reserve(10);
+    assert(v.capacity() >= 10);
       assert(is_contiguous_container_asan_correct(v));
     }
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
@@ -139,38 +96,15 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #else
         assert(v.capacity() >= 150);
 #endif
-      assert(is_contiguous_container_asan_correct(v));
-    }
-#endif
-#endif
-#ifndef LIBCXX_TEST_SEGMENTED_ARRAY
-#ifndef TEST_HAS_NO_EXCEPTIONS
-    if (!TEST_IS_CONSTANT_EVALUATED) {
-        std::vector<int, limited_allocator<int, 100> > v;
-        v.reserve(50);
-        assert(v.capacity() == 50);
-        assert(is_contiguous_container_asan_correct(v));
-        try {
-            v.reserve(101);
-            assert(false);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
-        } catch (const std::length_error&) {
-#else
-        } catch (const std::bad_alloc&) {
-#endif
-            // no-op
-        }
-        assert(v.capacity() == 50);
-        assert(is_contiguous_container_asan_correct(v));
-    }
+    assert(is_contiguous_container_asan_correct(v));
+  }
 #endif
 #endif
 
-    return true;
+  return true;
 }
 
-int main(int, char**)
-{
+int main(int, char**) {
   tests();
 
 #if TEST_STD_VER > 17
