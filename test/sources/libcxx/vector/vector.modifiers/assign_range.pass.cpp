@@ -62,10 +62,28 @@
       v.assign_range(in);
       assert(std::ranges::equal(v, in));
     }
+
+    { // Ensure input-only sized ranges are accepted.
+      using input_iter = cpp20_input_iterator<const int*>;
+      const int in[]{1, 2, 3, 4};
+      std::vector<int> v;
+      v.assign_range(std::views::counted(input_iter{std::ranges::begin(in)}, std::ranges::ssize(in)));
+      assert(std::ranges::equal(v, std::vector<int>{1, 2, 3, 4}));
+    }
   }
 
   return true;
 }
+
+#ifndef TEST_HAS_NO_LOCALIZATION
+void test_counted_istream_view() {
+  std::istringstream is{"1 2 3 4"};
+  auto vals = std::views::istream<int>(is);
+  std::vector<int> v;
+  v.assign_range(std::views::counted(vals.begin(), 3));
+  assert(v == (std::vector<int>{1, 2, 3}));
+}
+#endif
 
 int main(int, char**) {
   test();
@@ -75,6 +93,10 @@ int main(int, char**) {
   test_assign_range_exception_safety_throwing_copy<std::vector>();
 #endif
   test_assign_range_exception_safety_throwing_allocator<std::vector, int>();
+
+#ifndef TEST_HAS_NO_LOCALIZATION
+  test_counted_istream_view();
+#endif
 
   return 0;
 }
