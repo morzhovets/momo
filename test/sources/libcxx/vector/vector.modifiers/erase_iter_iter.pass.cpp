@@ -103,6 +103,9 @@ TEST_CONSTEXPR_CXX20 void tests() {
       }
     }
   }
+#if defined(LIBCXX_TEST_INTCAP_ARRAY) || (defined(TEST_CLANG) && __clang_major__ == 12)
+  if constexpr (!std::is_same_v<T, NonTriviallyRelocatable>)
+#endif
   {
     using InnerVector = std::vector<T, Allocator<T> >;
     using Vector      = std::vector<InnerVector, Allocator<InnerVector> >;
@@ -143,13 +146,9 @@ TEST_CONSTEXPR_CXX20 void tests() {
 
 TEST_CONSTEXPR_CXX20 bool tests() {
   tests<std::allocator, int>();
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
   tests<std::allocator, NonTriviallyRelocatable>();
-#endif
   tests<min_allocator, int>();
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
   tests<min_allocator, NonTriviallyRelocatable>();
-#endif
   return true;
 }
 
