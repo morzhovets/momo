@@ -22,4 +22,3 @@ jobs:
       uses: PavanMudigonda/lines-of-code-reporter@v1.6
       with:
         directory: ${{ matrix.dir }}
-        skip_check_run: true
