@@ -725,19 +725,19 @@ namespace internal
 			return *this;
 		}
 
-		template<typename RowLessFunc>
-		EnableIf<IsInvocable<const RowLessFunc&, bool, ConstRowReference, ConstRowReference>::value,
-		DataSelection&&> Sort(const RowLessFunc& rowLessFunc) &&
+		template<typename RowLessComparer>
+		EnableIf<IsInvocable<const RowLessComparer&, bool, ConstRowReference, ConstRowReference>::value,
+		DataSelection&&> Sort(const RowLessComparer& rowLessComp) &&
 		{
-			pvSort(rowLessFunc);
+			pvSort(rowLessComp);
 			return std::move(*this);
 		}
 
-		template<typename RowLessFunc>
-		EnableIf<IsInvocable<const RowLessFunc&, bool, ConstRowReference, ConstRowReference>::value,
-		DataSelection&> Sort(const RowLessFunc& rowLessFunc) &
+		template<typename RowLessComparer>
+		EnableIf<IsInvocable<const RowLessComparer&, bool, ConstRowReference, ConstRowReference>::value,
+		DataSelection&> Sort(const RowLessComparer& rowLessComp) &
 		{
-			pvSort(rowLessFunc);
+			pvSort(rowLessComp);
 			return *this;
 		}
 
@@ -806,9 +806,9 @@ namespace internal
 		{
 			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
-			auto rawLessFunc = [&offsets] (Raw* raw1, Raw* raw2)
+			auto rawLessComp = [&offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsLess<void, Items...>(raw1, raw2, offsets.data()); };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessFunc, GetMemManager());
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessComp, GetMemManager());
 		}
 
 		template<typename Void, typename Item, typename... Items>
@@ -828,13 +828,13 @@ namespace internal
 			return false;
 		}
 
-		template<typename RowLessFunc>
-		EnableIf<IsInvocable<const RowLessFunc&, bool, ConstRowReference, ConstRowReference>::value>
-		pvSort(const RowLessFunc& rowLessFunc)
+		template<typename RowLessComparer>
+		EnableIf<IsInvocable<const RowLessComparer&, bool, ConstRowReference, ConstRowReference>::value>
+		pvSort(const RowLessComparer& rowLessComp)
 		{
-			auto rawLessFunc = [this, &rowLessFunc] (Raw* raw1, Raw* raw2)
-				{ return rowLessFunc(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
-			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessFunc, GetMemManager());
+			auto rawLessComp = [this, &rowLessComp] (Raw* raw1, Raw* raw2)
+				{ return rowLessComp(pvMakeConstRowReference(raw1), pvMakeConstRowReference(raw2)); };
+			DataTraits::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawLessComp, GetMemManager());
 		}
 
 		template<typename... Items>
@@ -842,9 +842,9 @@ namespace internal
 		{
 			static const size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
-			auto hashFunc = [&offsets] (Raw* raw)
+			auto rawHasher = [&offsets] (Raw* raw)
 				{ return pvGetHashCode<void, Items...>(raw, offsets.data()); };
-			auto equalFunc = [&offsets] (Raw* raw1, Raw* raw2)
+			auto rawEqualComp = [&offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsEqual<void, Items...>(raw1, raw2, offsets.data()); };
 			Array<size_t, MemManagerPtr<MemManager>> hashCodes(
 				(MemManagerPtr<MemManager>(GetMemManager())));
@@ -854,13 +854,13 @@ namespace internal
 			}
 			catch (const std::bad_alloc&)
 			{
-				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), hashFunc, equalFunc);
+				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawHasher, rawEqualComp);
 				return;
 			}
 			for (Raw* raw : mRaws)
-				hashCodes.AddBackNogrow(hashFunc(raw));
+				hashCodes.AddBackNogrow(rawHasher(raw));
 			HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
-				hashCodes.GetBegin(), equalFunc);
+				hashCodes.GetBegin(), rawEqualComp);
 		}
 
 		template<typename Void, typename Item, typename... Items>
