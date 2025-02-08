@@ -500,7 +500,8 @@ public:
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
 	friend auto operator<=>(const vector& left, const vector& right)
-		requires requires { typename momo::internal::TieThreeComparer<value_type>; }
+		requires (std::three_way_comparable<std::tuple<const value_type&>>)	// gcc 11
+		//requires requires { typename momo::internal::TieThreeComparer<value_type>; }
 	{
 		return std::lexicographical_compare_three_way(left.begin(), left.end(),
 			right.begin(), right.end(), momo::internal::TieThreeComparer<value_type>());
