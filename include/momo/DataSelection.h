@@ -823,7 +823,7 @@ namespace internal
 				(pvAccumulateHashCode<Items>(hashCode, raw, *offsetPtr++), ...);
 				return hashCode;
 			};
-			auto rawEqualComparer = [&offsets] (Raw* raw1, Raw* raw2)
+			auto rawEqualComp = [&offsets] (Raw* raw1, Raw* raw2)
 			{
 				const size_t* offsetPtr = offsets.data();
 				return (pvIsEqual<Items>(raw1, raw2, *offsetPtr++) && ...);
@@ -836,13 +836,13 @@ namespace internal
 			}
 			catch (const std::bad_alloc&)
 			{
-				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawHasher, rawEqualComparer);
+				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawHasher, rawEqualComp);
 				return;
 			}
 			for (Raw* raw : mRaws)
 				hashCodes.AddBackNogrow(rawHasher(raw));
 			HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
-				hashCodes.GetBegin(), rawEqualComparer);
+				hashCodes.GetBegin(), rawEqualComp);
 		}
 
 		template<typename Item>
