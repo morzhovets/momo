@@ -882,15 +882,15 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManagerPtr> Columns;
 
-	typedef void (*CreateFunc)(MemManager&, const ColumnRecord*, const DataColumnList*,
+	typedef void (*RawItemsCreator)(MemManager&, const ColumnRecord*, const DataColumnList*,
 		const Raw*, Raw*);
-	typedef void (*DestroyFunc)(MemManager*, const ColumnRecord*, Raw*) /*noexcept*/;
+	typedef void (*RawItemsDestroyer)(MemManager*, const ColumnRecord*, Raw*) /*noexcept*/;
 
 	struct FuncRecord
 	{
 		size_t columnIndex;
-		CreateFunc createFunc;
-		DestroyFunc destroyFunc;
+		RawItemsCreator rawItemsCreator;
+		RawItemsDestroyer rawItemsDestroyer;
 	};
 
 	typedef internal::NestedArrayIntCap<0, FuncRecord, MemManagerPtr> FuncRecords;
@@ -1021,7 +1021,7 @@ public:
 	void DestroyRaw(MemManager* memManager, Raw* raw) const noexcept
 	{
 		for (const FuncRecord& funcRec : mFuncRecords)
-			funcRec.destroyFunc(memManager, &mColumns[funcRec.columnIndex], raw);
+			funcRec.rawItemsDestroyer(memManager, &mColumns[funcRec.columnIndex], raw);
 	}
 
 	void ImportRaw(MemManager& memManager, const DataColumnList& srcColumnList,
@@ -1120,7 +1120,7 @@ private:
 		}
 		FuncRecord funcRec;
 		funcRec.columnIndex = initColumnCount;
-		funcRec.createFunc = [] (MemManager& memManager, const ColumnRecord* columns,
+		funcRec.rawItemsCreator = [] (MemManager& memManager, const ColumnRecord* columns,
 			const DataColumnList* srcColumnList, const Raw* srcRaw, Raw* raw)
 		{
 			if (srcRaw == nullptr)
@@ -1130,7 +1130,7 @@ private:
 			else
 				pvCreate<Items...>(memManager, columns, srcColumnList, srcRaw, raw);
 		};
-		funcRec.destroyFunc = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw) noexcept
+		funcRec.rawItemsDestroyer = [] (MemManager* memManager, const ColumnRecord* columns, Raw* raw) noexcept
 			{ pvDestroy<void, Items...>(memManager, columns, raw); };
 		mColumns.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
@@ -1291,7 +1291,7 @@ private:
 			for (; funcIndex < funcCount; ++funcIndex)
 			{
 				const FuncRecord& funcRec = mFuncRecords[funcIndex];
-				funcRec.createFunc(memManager, &mColumns[funcRec.columnIndex],
+				funcRec.rawItemsCreator(memManager, &mColumns[funcRec.columnIndex],
 					srcColumnList, srcRaw, raw);
 			}
 		}
@@ -1300,7 +1300,7 @@ private:
 			for (size_t i = 0; i < funcIndex; ++i)
 			{
 				const FuncRecord& funcRec = mFuncRecords[i];
-				funcRec.destroyFunc(&memManager, &mColumns[funcRec.columnIndex], raw);
+				funcRec.rawItemsDestroyer(&memManager, &mColumns[funcRec.columnIndex], raw);
 			}
 			throw;
 		}

@@ -846,11 +846,11 @@ namespace internal
 				{ return pvGetHashCode<void, Items...>(raw, offsets.data()); };
 			auto equalFunc = [&offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsEqual<void, Items...>(raw1, raw2, offsets.data()); };
-			Array<size_t, MemManagerPtr<MemManager>> hashes(
+			Array<size_t, MemManagerPtr<MemManager>> hashCodes(
 				(MemManagerPtr<MemManager>(GetMemManager())));
 			try
 			{
-				hashes.Reserve(mRaws.GetCount());
+				hashCodes.Reserve(mRaws.GetCount());
 			}
 			catch (const std::bad_alloc&)
 			{
@@ -858,9 +858,9 @@ namespace internal
 				return;
 			}
 			for (Raw* raw : mRaws)
-				hashes.AddBackNogrow(hashFunc(raw));
+				hashCodes.AddBackNogrow(hashFunc(raw));
 			HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
-				hashes.GetBegin(), equalFunc);
+				hashCodes.GetBegin(), equalFunc);
 		}
 
 		template<typename Void, typename Item, typename... Items>
