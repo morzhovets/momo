@@ -582,10 +582,10 @@ public:
 	friend auto operator<=>(const set& left, const set& right)
 		requires requires (const_reference ref) { std::tie(ref) <=> std::tie(ref); }
 	{
-		auto comp = [] (const value_type& value1, const value_type& value2)
+		auto valueThreeComp = [] (const value_type& value1, const value_type& value2)
 			{ return std::tie(value1) <=> std::tie(value2); };
 		return std::lexicographical_compare_three_way(left.begin(), left.end(),
-			right.begin(), right.end(), comp);
+			right.begin(), right.end(), valueThreeComp);
 	}
 #else
 	friend bool operator<(const set& left, const set& right)
