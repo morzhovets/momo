@@ -640,7 +640,7 @@ namespace internal
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
 		friend auto operator<=>(const map_base& left, const map_base& right)
-			requires (std::three_way_comparable<const_reference>)
+			requires requires (const_reference ref) { ref <=> ref; }
 		{
 			return std::lexicographical_compare_three_way(left.begin(), left.end(),
 				right.begin(), right.end());

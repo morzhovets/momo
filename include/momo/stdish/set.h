@@ -580,11 +580,12 @@ public:
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
 	friend auto operator<=>(const set& left, const set& right)
-		requires (std::three_way_comparable<std::tuple<const value_type&>>)
-		//requires requires { typename momo::internal::TieThreeComparer<value_type>; }
+		requires requires (const_reference ref) { std::tie(ref) <=> std::tie(ref); }
 	{
+		auto comp = [] (const value_type& value1, const value_type& value2)
+			{ return std::tie(value1) <=> std::tie(value2); };
 		return std::lexicographical_compare_three_way(left.begin(), left.end(),
-			right.begin(), right.end(), momo::internal::TieThreeComparer<value_type>());
+			right.begin(), right.end(), comp);
 	}
 #else
 	friend bool operator<(const set& left, const set& right)
