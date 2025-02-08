@@ -103,7 +103,7 @@ TEST_CONSTEXPR_CXX20 void tests() {
       }
     }
   }
-#if defined(LIBCXX_TEST_INTCAP_ARRAY)
+#if defined(LIBCXX_TEST_INTCAP_ARRAY) || (defined(TEST_CLANG) && __clang_major__ == 12)
   if constexpr (!std::is_same_v<T, NonTriviallyRelocatable>)
 #endif
   {
