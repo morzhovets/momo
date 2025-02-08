@@ -332,16 +332,16 @@ private:
 	static Iterator pvFindOther(Iterator begin, size_t count, const EqualFunc& equalFunc)
 	{
 		MOMO_ASSERT(count > 0);
-		auto iterComparer = [begin, &equalFunc] (Iterator iter)
+		auto iterThreeComp = [begin, &equalFunc] (Iterator iter)
 			{ return equalFunc(*begin, *iter) ? -1 : 1; };
-		return pvExponentialSearch(begin + 1, count - 1, iterComparer).iterator;
+		return pvExponentialSearch(begin + 1, count - 1, iterThreeComp).iterator;
 	}
 
 	template<typename Iterator, typename IterHashFunc>
 	static FindResult<Iterator> pvFindHash(Iterator begin, size_t count,
 		HashCode itemHash, const IterHashFunc& iterHashFunc)
 	{
-		auto iterComparer = [itemHash, &iterHashFunc] (Iterator iter)
+		auto iterThreeComp = [itemHash, &iterHashFunc] (Iterator iter)
 			{ return pvCompare(iterHashFunc(iter), itemHash); };
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
@@ -356,7 +356,7 @@ private:
 				if (step == 0)
 				{
 					return pvExponentialSearch(SMath::Next(begin, leftIndex),
-						rightIndex - leftIndex, iterComparer);
+						rightIndex - leftIndex, iterThreeComp);
 				}
 				middleIndex += pvMultShift(itemHash - middleHash, count);
 				if (middleIndex >= rightIndex)
@@ -368,10 +368,10 @@ private:
 				if (step == 0)
 				{
 					typedef std::reverse_iterator<Iterator> ReverseIterator;
-					auto revCompareFunc = [itemHash, &iterHashFunc] (ReverseIterator iter)
+					auto revIterThreeComp = [itemHash, &iterHashFunc] (ReverseIterator iter)
 						{ return -pvCompare(iterHashFunc(iter), itemHash); };
 					auto res = pvExponentialSearch(ReverseIterator(SMath::Next(begin, rightIndex)),
-						rightIndex - leftIndex, revCompareFunc);
+						rightIndex - leftIndex, revIterThreeComp);
 					return { res.iterator.base() - (res.found ? 1 : 0), res.found };
 				}
 				size_t diff = pvMultShift(middleHash - itemHash, count);
@@ -385,36 +385,36 @@ private:
 			}
 			--step;
 		}
-		return pvBinarySearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex, iterComparer);
+		return pvBinarySearch(SMath::Next(begin, leftIndex), rightIndex - leftIndex, iterThreeComp);
 	}
 
-	template<typename Iterator, typename IterComparer>
+	template<typename Iterator, typename IterThreeComparer>
 	static FindResult<Iterator> pvExponentialSearch(Iterator begin, size_t count,
-		const IterComparer& iterComparer)
+		const IterThreeComparer& iterThreeComp)
 	{
 		size_t leftIndex = 0;
 		for (size_t i = 0; i < count; i = i * 2 + 2)
 		{
-			int cmp = iterComparer(SMath::Next(begin, i));
+			int cmp = iterThreeComp(SMath::Next(begin, i));
 			if (cmp > 0)
-				return pvBinarySearch(SMath::Next(begin, leftIndex), i - leftIndex, iterComparer);
+				return pvBinarySearch(SMath::Next(begin, leftIndex), i - leftIndex, iterThreeComp);
 			else if (cmp == 0)
 				return { SMath::Next(begin, i), true };
 			leftIndex = i + 1;
 		}
-		return pvBinarySearch(SMath::Next(begin, leftIndex), count - leftIndex, iterComparer);
+		return pvBinarySearch(SMath::Next(begin, leftIndex), count - leftIndex, iterThreeComp);
 	}
 
-	template<typename Iterator, typename IterComparer>
+	template<typename Iterator, typename IterThreeComparer>
 	static FindResult<Iterator> pvBinarySearch(Iterator begin, size_t count,
-		const IterComparer& iterComparer)
+		const IterThreeComparer& iterThreeComp)
 	{
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
 		while (leftIndex < rightIndex)
 		{
 			size_t middleIndex = (leftIndex + rightIndex) / 2;
-			int cmp = iterComparer(SMath::Next(begin, middleIndex));
+			int cmp = iterThreeComp(SMath::Next(begin, middleIndex));
 			if (cmp < 0)
 				leftIndex = middleIndex + 1;
 			else if (cmp > 0)
