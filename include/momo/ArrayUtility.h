@@ -173,6 +173,8 @@ namespace internal
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
+			if (count == 0)
+				return;
 			MemManager& memManager = array.GetMemManager();
 			if (index + count < initCount)
 			{
@@ -203,6 +205,8 @@ namespace internal
 			MOMO_CHECK(index <= initCount);
 			MemManager& memManager = array.GetMemManager();
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
+			if (count == 0)
+				return;
 			if (index + count < initCount)
 			{
 				for (size_t i = initCount - count; i < initCount; ++i)
@@ -407,6 +411,8 @@ namespace internal
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index + count <= initCount);
+			if (count == 0)
+				return;
 			MemManager& memManager = array.GetMemManager();
 			for (size_t i = index + count; i < initCount; ++i)
 				ItemTraits::Assign(memManager, std::move(array[i]), array[i - count]);
