@@ -29,10 +29,10 @@ namespace libcxx_test_tree_set
 
 LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey,
-	typename TLessFunc = std::less<TKey>,
+	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-using set = momo::stdish::set<TKey, TLessFunc, TAllocator,
-	momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessFunc, false,
+using set = momo::stdish::set<TKey, TLessComparer, TAllocator,
+	momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessComparer, false,
 		momo::TreeNode<4, 2, momo::MemPoolParams<1>, false>>,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,

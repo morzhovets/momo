@@ -40,14 +40,14 @@ namespace internal
 	{
 	};
 
-	template<typename LessFunc,
+	template<typename LessComparer,
 		typename = void>
 	struct TreeTraitsStdIsValidKeyArg : public std::false_type
 	{
 	};
 
-	template<typename LessFunc>
-	struct TreeTraitsStdIsValidKeyArg<LessFunc, Void<typename LessFunc::is_transparent>>
+	template<typename LessComparer>
+	struct TreeTraitsStdIsValidKeyArg<LessComparer, Void<typename LessComparer::is_transparent>>
 		: public std::true_type
 	{
 	};
@@ -117,30 +117,30 @@ public:
 };
 
 template<typename TKey,
-	typename TLessFunc = std::less<TKey>,
+	typename TLessComparer = std::less<TKey>,
 	bool tMultiKey = false,
 	typename TTreeNode = TreeNodeDefault>
 class TreeTraitsStd
 {
 public:
 	typedef TKey Key;
-	typedef TLessFunc LessFunc;
+	typedef TLessComparer LessComparer;
 	typedef TTreeNode TreeNode;
 
 	static const bool multiKey = tMultiKey;
 
 	static const bool useLinearSearch =
-		std::is_same<LessFunc, std::less<Key>>::value && IsFastComparable<Key>::value;
+		std::is_same<LessComparer, std::less<Key>>::value && IsFastComparable<Key>::value;
 
 	template<typename ItemTraits>
 	using Node = typename TreeNode::template Node<ItemTraits>;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = internal::TreeTraitsStdIsValidKeyArg<LessFunc>;
+	using IsValidKeyArg = internal::TreeTraitsStdIsValidKeyArg<LessComparer>;
 
 public:
-	explicit TreeTraitsStd(const LessFunc& lessFunc = LessFunc())
-		: mLessFunc(lessFunc)
+	explicit TreeTraitsStd(const LessComparer& lessComp = LessComparer())
+		: mLessComparer(lessComp)
 	{
 	}
 
@@ -152,16 +152,16 @@ public:
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		return mLessFunc(key1, key2);
+		return mLessComparer(key1, key2);
 	}
 
-	const LessFunc& GetLessFunc() const noexcept
+	const LessComparer& GetLessComparer() const noexcept
 	{
-		return mLessFunc;
+		return mLessComparer;
 	}
 
 private:
-	/*[[no_unique_address]]*/ LessFunc mLessFunc;
+	/*[[no_unique_address]]*/ LessComparer mLessComparer;
 };
 
 } // namespace momo

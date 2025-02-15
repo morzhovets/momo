@@ -209,9 +209,9 @@ namespace internal
 	};
 
 	template<typename Key, typename Allocator,
-		typename LessFunc = std::less<Key>,
+		typename LessComparer = std::less<Key>,
 		typename = decltype(std::declval<Allocator&>().allocate(size_t{})),
-		typename = decltype(std::declval<LessFunc&>()(std::declval<const Key&>(),
+		typename = decltype(std::declval<LessComparer&>()(std::declval<const Key&>(),
 			std::declval<const Key&>()))>
 	class ordered_checker
 	{

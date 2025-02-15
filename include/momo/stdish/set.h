@@ -51,9 +51,9 @@ namespace stdish
 */
 
 template<typename TKey,
-	typename TLessFunc = std::less<TKey>,
+	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>,
-	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessFunc>, MemManagerStd<TAllocator>>>
+	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>
 class set
 {
 private:
@@ -63,7 +63,7 @@ private:
 
 public:
 	typedef TKey key_type;
-	typedef TLessFunc key_compare;
+	typedef TLessComparer key_compare;
 	typedef TAllocator allocator_type;
 
 	typedef TreeSet nested_container_type;
@@ -116,8 +116,8 @@ public:
 	{
 	}
 
-	explicit set(const key_compare& lessFunc, const allocator_type& alloc = allocator_type())
-		: mTreeSet(TreeTraits(lessFunc), MemManager(alloc))
+	explicit set(const key_compare& lessComp, const allocator_type& alloc = allocator_type())
+		: mTreeSet(TreeTraits(lessComp), MemManager(alloc))
 	{
 	}
 
@@ -129,9 +129,9 @@ public:
 	}
 
 	template<typename Iterator>
-	set(Iterator first, Iterator last, const key_compare& lessFunc,
+	set(Iterator first, Iterator last, const key_compare& lessComp,
 		const allocator_type& alloc = allocator_type())
-		: set(lessFunc, alloc)
+		: set(lessComp, alloc)
 	{
 		insert(first, last);
 	}
@@ -143,8 +143,8 @@ public:
 	}
 
 	set(std::initializer_list<momo::internal::Identity<value_type>> values,
-		const key_compare& lessFunc, const allocator_type& alloc = allocator_type())
-		: mTreeSet(values, TreeTraits(lessFunc), MemManager(alloc))
+		const key_compare& lessComp, const allocator_type& alloc = allocator_type())
+		: mTreeSet(values, TreeTraits(lessComp), MemManager(alloc))
 	{
 	}
 
@@ -159,9 +159,9 @@ public:
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	set(std::from_range_t, Range&& values, const key_compare& lessFunc,
+	set(std::from_range_t, Range&& values, const key_compare& lessComp,
 		const allocator_type& alloc = allocator_type())
-		: set(lessFunc, alloc)
+		: set(lessComp, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}
@@ -294,7 +294,7 @@ public:
 
 	key_compare key_comp() const
 	{
-		return mTreeSet.GetTreeTraits().GetLessFunc();
+		return mTreeSet.GetTreeTraits().GetLessComparer();
 	}
 
 	value_compare value_comp() const
@@ -654,14 +654,14 @@ private:
 */
 
 template<typename TKey,
-	typename TLessFunc = std::less<TKey>,
+	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>,
-	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessFunc, true>,
+	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessComparer, true>,
 		MemManagerStd<TAllocator>>>
-class multiset : public set<TKey, TLessFunc, TAllocator, TTreeSet>
+class multiset : public set<TKey, TLessComparer, TAllocator, TTreeSet>
 {
 private:
-	typedef set<TKey, TLessFunc, TAllocator, TTreeSet> Set;
+	typedef set<TKey, TLessComparer, TAllocator, TTreeSet> Set;
 
 public:
 	using typename Set::size_type;
@@ -724,22 +724,22 @@ template<typename Iterator, \
 	typename = internal::ordered_checker<Key, Allocator>> \
 set(Iterator, Iterator, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
-template<typename Iterator, typename LessFunc, \
+template<typename Iterator, typename LessComparer, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
-set(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
-	-> set<Key, LessFunc, Allocator>; \
+	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+set(Iterator, Iterator, LessComparer, Allocator = Allocator()) \
+	-> set<Key, LessComparer, Allocator>; \
 template<typename Key, \
 	typename Allocator = std::allocator<Key>, \
 	typename = internal::ordered_checker<Key, Allocator>> \
 set(std::initializer_list<Key>, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
-template<typename Key, typename LessFunc, \
+template<typename Key, typename LessComparer, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
-set(std::initializer_list<Key>, LessFunc, Allocator = Allocator()) \
-	-> set<Key, LessFunc, Allocator>;
+	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+set(std::initializer_list<Key>, LessComparer, Allocator = Allocator()) \
+	-> set<Key, LessComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(set)
 MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
@@ -755,12 +755,12 @@ template<std::ranges::input_range Range, \
 	typename = internal::ordered_checker<Key, Allocator>> \
 set(std::from_range_t, Range&&, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
-template<std::ranges::input_range Range, typename LessFunc, \
+template<std::ranges::input_range Range, typename LessComparer, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
-set(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
-	-> set<Key, LessFunc, Allocator>;
+	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+set(std::from_range_t, Range&&, LessComparer, Allocator = Allocator()) \
+	-> set<Key, LessComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multiset)

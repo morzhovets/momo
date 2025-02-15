@@ -28,12 +28,12 @@ namespace stdish
 
 namespace internal
 {
-	template<typename TKey, typename TLessFunc>
+	template<typename TKey, typename TLessComparer>
 	class map_value_compare
 	{
 	protected:
 		typedef TKey Key;
-		typedef TLessFunc LessFunc;
+		typedef TLessComparer LessComparer;
 
 	public:
 		template<typename Value>
@@ -45,16 +45,16 @@ namespace internal
 		}
 
 	protected:
-		map_value_compare(const LessFunc& lessFunc)
-			: comp(lessFunc)
+		map_value_compare(const LessComparer& lessComp)
+			: comp(lessComp)
 		{
 		}
 
 	protected:
-		LessFunc comp;
+		LessComparer comp;
 	};
 
-	template<typename TKey, typename TMapped, typename TLessFunc, typename TAllocator,
+	template<typename TKey, typename TMapped, typename TLessComparer, typename TAllocator,
 		typename TTreeMap>
 	class map_base
 	{
@@ -68,7 +68,7 @@ namespace internal
 	public:
 		typedef TKey key_type;
 		typedef TMapped mapped_type;
-		typedef TLessFunc key_compare;
+		typedef TLessComparer key_compare;
 		typedef TAllocator allocator_type;
 
 		typedef TreeMap nested_container_type;
@@ -136,8 +136,8 @@ namespace internal
 		{
 		}
 
-		explicit map_base(const key_compare& lessFunc, const allocator_type& alloc = allocator_type())
-			: mTreeMap(TreeTraits(lessFunc), MemManager(alloc))
+		explicit map_base(const key_compare& lessComp, const allocator_type& alloc = allocator_type())
+			: mTreeMap(TreeTraits(lessComp), MemManager(alloc))
 		{
 		}
 
@@ -149,9 +149,9 @@ namespace internal
 		}
 
 		template<typename Iterator>
-		map_base(Iterator first, Iterator last, const key_compare& lessFunc,
+		map_base(Iterator first, Iterator last, const key_compare& lessComp,
 			const allocator_type& alloc = allocator_type())
-			: map_base(lessFunc, alloc)
+			: map_base(lessComp, alloc)
 		{
 			insert(first, last);
 		}
@@ -163,8 +163,8 @@ namespace internal
 		}
 
 		map_base(std::initializer_list<momo::internal::Identity<value_type>> values,
-			const key_compare& lessFunc, const allocator_type& alloc = allocator_type())
-			: map_base(values.begin(), values.end(), lessFunc, alloc)
+			const key_compare& lessComp, const allocator_type& alloc = allocator_type())
+			: map_base(values.begin(), values.end(), lessComp, alloc)
 		{
 		}
 
@@ -179,9 +179,9 @@ namespace internal
 
 		template<std::ranges::input_range Range>
 		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-		map_base(std::from_range_t, Range&& values, const key_compare& lessFunc,
+		map_base(std::from_range_t, Range&& values, const key_compare& lessComp,
 			const allocator_type& alloc = allocator_type())
-			: map_base(lessFunc, alloc)
+			: map_base(lessComp, alloc)
 		{
 			insert_range(std::forward<Range>(values));
 		}
@@ -315,7 +315,7 @@ namespace internal
 
 		key_compare key_comp() const
 		{
-			return mTreeMap.GetTreeTraits().GetLessFunc();
+			return mTreeMap.GetTreeTraits().GetLessComparer();
 		}
 
 		value_compare value_comp() const
@@ -829,14 +829,14 @@ namespace internal
 */
 
 template<typename TKey, typename TMapped,
-	typename TLessFunc = std::less<TKey>,
+	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
-	typename TTreeMap = TreeMap<TKey, TMapped, TreeTraitsStd<TKey, TLessFunc>,
+	typename TTreeMap = TreeMap<TKey, TMapped, TreeTraitsStd<TKey, TLessComparer>,
 		MemManagerStd<TAllocator>>>
-class map : public internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap>
+class map : public internal::map_base<TKey, TMapped, TLessComparer, TAllocator, TTreeMap>
 {
 private:
-	typedef internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap> MapBase;
+	typedef internal::map_base<TKey, TMapped, TLessComparer, TAllocator, TTreeMap> MapBase;
 	typedef TTreeMap TreeMap;
 
 public:
@@ -970,14 +970,14 @@ private:
 */
 
 template<typename TKey, typename TMapped,
-	typename TLessFunc = std::less<TKey>,
+	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
-	typename TTreeMap = TreeMap<TKey, TMapped, TreeTraitsStd<TKey, TLessFunc, true>,
+	typename TTreeMap = TreeMap<TKey, TMapped, TreeTraitsStd<TKey, TLessComparer, true>,
 		MemManagerStd<TAllocator>>>
-class multimap : public internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap>
+class multimap : public internal::map_base<TKey, TMapped, TLessComparer, TAllocator, TTreeMap>
 {
 private:
-	typedef internal::map_base<TKey, TMapped, TLessFunc, TAllocator, TTreeMap> MapBase;
+	typedef internal::map_base<TKey, TMapped, TLessComparer, TAllocator, TTreeMap> MapBase;
 
 public:
 	using typename MapBase::key_type;
@@ -1068,26 +1068,26 @@ template<typename Iterator, \
 	typename = internal::ordered_checker<Key, Allocator>> \
 map(Iterator, Iterator, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
-template<typename Iterator, typename LessFunc, \
+template<typename Iterator, typename LessComparer, \
 	typename Value = typename std::iterator_traits<Iterator>::value_type, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
-map(Iterator, Iterator, LessFunc, Allocator = Allocator()) \
-	-> map<Key, Mapped, LessFunc, Allocator>; \
+	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+map(Iterator, Iterator, LessComparer, Allocator = Allocator()) \
+	-> map<Key, Mapped, LessComparer, Allocator>; \
 template<typename QKey, typename Mapped, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
 	typename = internal::ordered_checker<Key, Allocator>> \
 map(std::initializer_list<std::pair<QKey, Mapped>>, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
-template<typename QKey, typename Mapped, typename LessFunc, \
+template<typename QKey, typename Mapped, typename LessComparer, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
-map(std::initializer_list<std::pair<QKey, Mapped>>, LessFunc, Allocator = Allocator()) \
-	-> map<Key, Mapped, LessFunc, Allocator>;
+	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+map(std::initializer_list<std::pair<QKey, Mapped>>, LessComparer, Allocator = Allocator()) \
+	-> map<Key, Mapped, LessComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(map)
 MOMO_DECLARE_DEDUCTION_GUIDES(multimap)
@@ -1105,14 +1105,14 @@ template<std::ranges::input_range Range, \
 	typename = internal::ordered_checker<Key, Allocator>> \
 map(std::from_range_t, Range&&, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
-template<std::ranges::input_range Range, typename LessFunc, \
+template<std::ranges::input_range Range, typename LessComparer, \
 	typename Value = std::ranges::range_value_t<Range>, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::ordered_checker<Key, Allocator, LessFunc>> \
-map(std::from_range_t, Range&&, LessFunc, Allocator = Allocator()) \
-	-> map<Key, Mapped, LessFunc, Allocator>;
+	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+map(std::from_range_t, Range&&, LessComparer, Allocator = Allocator()) \
+	-> map<Key, Mapped, LessComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multimap)
