@@ -302,7 +302,7 @@ namespace internal
 			if (items == nullptr)
 			{
 				MOMO_ASSERT(memPoolIndex == minMemPoolIndex || memPoolIndex == maxCount);
-				pvSetHashProbe(0, hashCode, logBucketCount, probe);
+				pvSetCodeProbe(0, hashCode, logBucketCount, probe);
 				if (memPoolIndex == minMemPoolIndex)
 					return pvAdd0<minMemPoolIndex>(params, std::move(itemCreator), hashCode);
 				else
@@ -318,23 +318,23 @@ namespace internal
 					switch (memPoolIndex)
 					{
 					case 1:
-						pvSetHashProbe(1, hashCode, logBucketCount, probe);
+						pvSetCodeProbe(1, hashCode, logBucketCount, probe);
 						return pvAdd<1>(params, std::move(itemCreator),
 							hashCode, items);
 					case 2:
-						pvSetHashProbe(2, hashCode, logBucketCount, probe);
+						pvSetCodeProbe(2, hashCode, logBucketCount, probe);
 						return pvAdd<2>(params, std::move(itemCreator),
 							hashCode, items);
 					default:
 						MOMO_ASSERT(memPoolIndex == 3);
-						pvSetHashProbe(3, hashCode, logBucketCount, probe);
+						pvSetCodeProbe(3, hashCode, logBucketCount, probe);
 						return pvAdd<3>(params, std::move(itemCreator),
 							hashCode, items);
 					}
 				}
 				else
 				{
-					pvSetHashProbe(count, hashCode, logBucketCount, probe);
+					pvSetCodeProbe(count, hashCode, logBucketCount, probe);
 					std::move(itemCreator)(items + count);
 					mShortCodes[count] = pvCalcShortCode(hashCode);
 					pvSetPtrState(items, memPoolIndex);
@@ -462,7 +462,7 @@ namespace internal
 			return (logBucketCount + logBucketCountAddend) % logBucketCountStep;
 		}
 
-		void pvSetHashProbe(size_t index, size_t hashCode, size_t logBucketCount,
+		void pvSetCodeProbe(size_t index, size_t hashCode, size_t logBucketCount,
 			size_t probe) noexcept
 		{
 			if (!useHashCodePartGetter || codeCount - 1 - index <= index)
