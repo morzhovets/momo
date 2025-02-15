@@ -27,12 +27,12 @@
 
 template<typename TKey, typename TMapped,
 	typename THasher = momo::HashCoder<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using unordered_map2 = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqualFunc, TAllocator,
-	momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THasher, TEqualFunc>,
+using unordered_map2 = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
+	momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THasher, TEqualComparer>,
 		momo::MemManagerStd<TAllocator>,
-		typename std::unordered_map<TKey, TMapped, THasher, TEqualFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
+		typename std::unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator>::nested_container_type::KeyValueTraits>>;
 
 template <class Map>
 bool map_equal(const Map& map, Map other)

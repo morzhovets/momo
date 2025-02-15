@@ -124,7 +124,7 @@ public:
 	{
 		typedef momo::TreeMap<std::string, std::string> TreeMap;
 		typedef TreeMap::ConstIterator::Reference Reference;
-		auto equalFunc = [] (Reference ref1, Reference ref2)
+		auto equalComp = [] (Reference ref1, Reference ref2)
 			{ return ref1.key == ref2.key && ref1.value == ref2.value; };
 
 		std::string s1 = "s1";
@@ -193,7 +193,7 @@ public:
 		assert(ep.IsEmpty());
 
 		map.Insert(map2.GetBegin(), std::next(map2.GetBegin()));
-		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), equalFunc));
+		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), equalComp));
 
 		map.Clear();
 		assert(map.IsEmpty());
@@ -202,7 +202,7 @@ public:
 		map.Add(map.GetUpperBound("s2"), s2, "s2");
 		map.Add(map.GetLowerBound(s3), "s3", s3);
 		map.Add(map.GetUpperBound(s4), "s4", "s4");
-		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), equalFunc));
+		assert(std::equal(map.GetBegin(), map.GetEnd(), map2.GetBegin(), equalComp));
 	}
 
 	static void TestTemplAll()

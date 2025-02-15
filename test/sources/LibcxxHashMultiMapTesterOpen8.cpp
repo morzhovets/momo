@@ -42,10 +42,10 @@ LIBCXX_NAMESPACE_STD_BEGIN
 
 template<typename TKey, typename TMapped,
 	typename THasher = std::hash<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using unordered_multimap = momo::stdish::unordered_multimap_open<TKey, TMapped,
-	THasher, TEqualFunc, TAllocator>;
+	THasher, TEqualComparer, TAllocator>;
 
 #ifdef TEST_LIBCXX_NEW
 template<typename TKey>

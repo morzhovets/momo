@@ -37,9 +37,9 @@ namespace libcxx_test_hash_set
 LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey,
 	typename THasher = std::hash<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-using unordered_set = momo::stdish::unordered_set_open<TKey, THasher, TEqualFunc, TAllocator>;
+using unordered_set = momo::stdish::unordered_set_open<TKey, THasher, TEqualComparer, TAllocator>;
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_open"

@@ -37,10 +37,10 @@ namespace libcxx_test_hash_map
 LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey, typename TMapped,
 	typename THasher = std::hash<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using unordered_map = momo::stdish::unordered_map_open<TKey, TMapped,
-	THasher, TEqualFunc, TAllocator>;
+	THasher, TEqualComparer, TAllocator>;
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_open"

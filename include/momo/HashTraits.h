@@ -58,15 +58,15 @@ namespace internal
 	};
 #endif
 
-	template<typename Hasher, typename EqualFunc,
+	template<typename Hasher, typename EqualComparer,
 		typename = void>
 	struct HashTraitsStdIsValidKeyArg : public std::false_type
 	{
 	};
 
-	template<typename Hasher, typename EqualFunc>
-	struct HashTraitsStdIsValidKeyArg<Hasher, EqualFunc,
-		Void<typename Hasher::is_transparent, typename EqualFunc::is_transparent>>
+	template<typename Hasher, typename EqualComparer>
+	struct HashTraitsStdIsValidKeyArg<Hasher, EqualComparer,
+		Void<typename Hasher::is_transparent, typename EqualComparer::is_transparent>>
 		: public std::true_type
 	{
 	};
@@ -190,14 +190,14 @@ using HashTraitsOpen = HashTraits<TKey, HashBucketOpenDefault>;
 
 template<typename TKey,
 	typename THasher = HashCoder<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
 	typename THashBucket = HashBucketDefault>
 class HashTraitsStd
 {
 public:
 	typedef TKey Key;
 	typedef THasher Hasher;
-	typedef TEqualFunc EqualFunc;
+	typedef TEqualComparer EqualComparer;
 	typedef THashBucket HashBucket;
 
 	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value
@@ -208,14 +208,14 @@ public:
 	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
 
 	template<typename KeyArg>
-	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<Hasher, EqualFunc>;
+	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<Hasher, EqualComparer>;
 
 public:
 	explicit HashTraitsStd(size_t startBucketCount = size_t{1} << HashBucket::logStartBucketCount,
 		const Hasher& hasher = Hasher(),
-		const EqualFunc& equalFunc = EqualFunc())
+		const EqualComparer& equalComp = EqualComparer())
 		: mHasher(hasher),
-		mEqualFunc(equalFunc),
+		mEqualComparer(equalComp),
 		mMaxLoadFactor(0.0)
 	{
 		startBucketCount = std::minmax(startBucketCount, size_t{8}).second;
@@ -224,7 +224,7 @@ public:
 
 	HashTraitsStd(const HashTraitsStd& hashTraits, float maxLoadFactor)
 		: mHasher(hashTraits.mHasher),
-		mEqualFunc(hashTraits.mEqualFunc),
+		mEqualComparer(hashTraits.mEqualComparer),
 		mLogStartBucketCount(hashTraits.mLogStartBucketCount),
 		mMaxLoadFactor(maxLoadFactor)
 	{
@@ -258,7 +258,7 @@ public:
 	template<typename KeyArg1, typename KeyArg2>
 	bool IsEqual(const KeyArg1& key1, const KeyArg2& key2) const
 	{
-		return mEqualFunc(key1, key2);
+		return mEqualComparer(key1, key2);
 	}
 
 	const Hasher& GetHasher() const noexcept
@@ -266,9 +266,9 @@ public:
 		return mHasher;
 	}
 
-	const EqualFunc& GetEqualFunc() const noexcept
+	const EqualComparer& GetEqualComparer() const noexcept
 	{
-		return mEqualFunc;
+		return mEqualComparer;
 	}
 
 	float GetMaxLoadFactor(size_t bucketMaxItemCount) const noexcept
@@ -283,7 +283,7 @@ public:
 
 private:
 	Hasher mHasher;
-	EqualFunc mEqualFunc;
+	EqualComparer mEqualComparer;
 	uint8_t mLogStartBucketCount;
 	float mMaxLoadFactor;
 };

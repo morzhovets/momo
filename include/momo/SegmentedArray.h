@@ -591,18 +591,20 @@ public:
 		return ArrayShifter::Remove(*this, itemFilter);
 	}
 
-	template<typename EqualFunc = std::equal_to<Item>>
-	bool Contains(const Item& item, const EqualFunc& equalFunc = EqualFunc()) const
+	template<typename ItemEqualComparer = std::equal_to<Item>>
+	bool Contains(const Item& item,
+		const ItemEqualComparer& itemEqualComp = ItemEqualComparer()) const
 	{
 		return std::any_of(GetBegin(), GetEnd(),
-			[&item, &equalFunc] (const Item& thisItem) { return equalFunc(thisItem, item); });
+			[&item, &itemEqualComp] (const Item& thisItem) { return itemEqualComp(thisItem, item); });
 	}
 
-	template<typename EqualFunc = std::equal_to<Item>>
-	bool IsEqual(const SegmentedArray& array, const EqualFunc& equalFunc = EqualFunc()) const
+	template<typename ItemEqualComparer = std::equal_to<Item>>
+	bool IsEqual(const SegmentedArray& array,
+		const ItemEqualComparer& itemEqualComp = ItemEqualComparer()) const
 	{
 		return GetCount() == array.GetCount() &&
-			std::equal(GetBegin(), GetEnd(), array.GetBegin(), equalFunc);
+			std::equal(GetBegin(), GetEnd(), array.GetBegin(), itemEqualComp);
 	}
 
 private:

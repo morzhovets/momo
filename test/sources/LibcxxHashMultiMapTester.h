@@ -39,10 +39,10 @@ LIBCXX_NAMESPACE_STD_BEGIN
 
 template<typename TKey, typename TMapped,
 	typename THasher = std::hash<TKey>,
-	typename TEqualFunc = std::equal_to<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using unordered_multimap = momo::stdish::unordered_multimap<TKey, TMapped, THasher, TEqualFunc, TAllocator,
-	momo::HashMultiMap<TKey, TMapped, momo::HashTraitsStd<TKey, THasher, TEqualFunc, LIBCXX_TEST_BUCKET>,
+using unordered_multimap = momo::stdish::unordered_multimap<TKey, TMapped, THasher, TEqualComparer, TAllocator,
+	momo::HashMultiMap<TKey, TMapped, momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>,
 		momo::MemManagerStd<TAllocator>,
 		momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 		LibcxxHashMultiMapSettings>>;
