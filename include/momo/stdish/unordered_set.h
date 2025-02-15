@@ -49,10 +49,10 @@ namespace stdish
 */
 
 template<typename TKey,
-	typename THashFunc = HashCoder<TKey>,
+	typename THasher = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>,
-	typename THashSet = HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc>,
+	typename THashSet = HashSet<TKey, HashTraitsStd<TKey, THasher, TEqualFunc>,
 		MemManagerStd<TAllocator>>>
 class unordered_set
 {
@@ -63,7 +63,7 @@ private:
 
 public:
 	typedef TKey key_type;
-	typedef THashFunc hasher;
+	typedef THasher hasher;
 	typedef TEqualFunc key_equal;
 	typedef TAllocator allocator_type;
 
@@ -344,7 +344,7 @@ public:
 
 	hasher hash_function() const
 	{
-		return mHashSet.GetHashTraits().GetHashFunc();
+		return mHashSet.GetHashTraits().GetHasher();
 	}
 
 	key_equal key_eq() const
@@ -720,16 +720,16 @@ private:
 */
 
 template<typename TKey,
-	typename THashFunc = HashCoder<TKey>,
+	typename THasher = HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-class unordered_set_open : public unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
-	HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
+class unordered_set_open : public unordered_set<TKey, THasher, TEqualFunc, TAllocator,
+	HashSet<TKey, HashTraitsStd<TKey, THasher, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>>
 {
 private:
-	typedef unordered_set<TKey, THashFunc, TEqualFunc, TAllocator,
-		momo::HashSet<TKey, HashTraitsStd<TKey, THashFunc, TEqualFunc, HashBucketOpenDefault>,
+	typedef unordered_set<TKey, THasher, TEqualFunc, TAllocator,
+		momo::HashSet<TKey, HashTraitsStd<TKey, THasher, TEqualFunc, HashBucketOpenDefault>,
 		MemManagerStd<TAllocator>>> UnorderedSet;
 
 public:
@@ -772,18 +772,18 @@ template<typename Iterator, \
 	typename = internal::unordered_checker<Key, Allocator, HashCoder<Key>>> \
 unordered_set(Iterator, Iterator, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename Iterator, typename HashFunc, \
+template<typename Iterator, typename Hasher, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::unordered_checker<Key, Allocator, HashFunc>> \
-unordered_set(Iterator, Iterator, size_t, HashFunc, Allocator = Allocator()) \
-	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
-template<typename Iterator, typename HashFunc, typename EqualFunc, \
+	typename = internal::unordered_checker<Key, Allocator, Hasher>> \
+unordered_set(Iterator, Iterator, size_t, Hasher, Allocator = Allocator()) \
+	-> unordered_set<Key, Hasher, std::equal_to<Key>, Allocator>; \
+template<typename Iterator, typename Hasher, typename EqualFunc, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::unordered_checker<Key, Allocator, HashFunc, EqualFunc>> \
-unordered_set(Iterator, Iterator, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
-	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>; \
+	typename = internal::unordered_checker<Key, Allocator, Hasher, EqualFunc>> \
+unordered_set(Iterator, Iterator, size_t, Hasher, EqualFunc, Allocator = Allocator()) \
+	-> unordered_set<Key, Hasher, EqualFunc, Allocator>; \
 template<typename Key> \
 unordered_set(std::initializer_list<Key>) \
 	-> unordered_set<Key>; \
@@ -792,16 +792,16 @@ template<typename Key, \
 	typename = internal::unordered_checker<Key, Allocator, HashCoder<Key>>> \
 unordered_set(std::initializer_list<Key>, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename Key, typename HashFunc, \
+template<typename Key, typename Hasher, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::unordered_checker<Key, Allocator, HashFunc>> \
-unordered_set(std::initializer_list<Key>, size_t, HashFunc, Allocator = Allocator()) \
-	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
-template<typename Key, typename HashFunc, typename EqualFunc, \
+	typename = internal::unordered_checker<Key, Allocator, Hasher>> \
+unordered_set(std::initializer_list<Key>, size_t, Hasher, Allocator = Allocator()) \
+	-> unordered_set<Key, Hasher, std::equal_to<Key>, Allocator>; \
+template<typename Key, typename Hasher, typename EqualFunc, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::unordered_checker<Key, Allocator, HashFunc, EqualFunc>> \
-unordered_set(std::initializer_list<Key>, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
-	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
+	typename = internal::unordered_checker<Key, Allocator, Hasher, EqualFunc>> \
+unordered_set(std::initializer_list<Key>, size_t, Hasher, EqualFunc, Allocator = Allocator()) \
+	-> unordered_set<Key, Hasher, EqualFunc, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set_open)
@@ -821,18 +821,18 @@ template<std::ranges::input_range Range, \
 	typename = internal::unordered_checker<Key, Allocator, HashCoder<Key>>> \
 unordered_set(std::from_range_t, Range&&, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<std::ranges::input_range Range, typename HashFunc, \
+template<std::ranges::input_range Range, typename Hasher, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::unordered_checker<Key, Allocator, HashFunc>> \
-unordered_set(std::from_range_t, Range&&, size_t, HashFunc, Allocator = Allocator()) \
-	-> unordered_set<Key, HashFunc, std::equal_to<Key>, Allocator>; \
-template<std::ranges::input_range Range, typename HashFunc, typename EqualFunc, \
+	typename = internal::unordered_checker<Key, Allocator, Hasher>> \
+unordered_set(std::from_range_t, Range&&, size_t, Hasher, Allocator = Allocator()) \
+	-> unordered_set<Key, Hasher, std::equal_to<Key>, Allocator>; \
+template<std::ranges::input_range Range, typename Hasher, typename EqualFunc, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::unordered_checker<Key, Allocator, HashFunc, EqualFunc>> \
-unordered_set(std::from_range_t, Range&&, size_t, HashFunc, EqualFunc, Allocator = Allocator()) \
-	-> unordered_set<Key, HashFunc, EqualFunc, Allocator>;
+	typename = internal::unordered_checker<Key, Allocator, Hasher, EqualFunc>> \
+unordered_set(std::from_range_t, Range&&, size_t, Hasher, EqualFunc, Allocator = Allocator()) \
+	-> unordered_set<Key, Hasher, EqualFunc, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set_open)

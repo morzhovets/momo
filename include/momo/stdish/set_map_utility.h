@@ -198,10 +198,10 @@ namespace internal
 	};
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
-	template<typename Key, typename Allocator, typename HashFunc,
+	template<typename Key, typename Allocator, typename Hasher,
 		typename EqualFunc = std::equal_to<Key>,
 		typename = decltype(std::declval<Allocator&>().allocate(size_t{})),
-		typename = decltype(std::declval<HashFunc&>()(std::declval<const Key&>())),
+		typename = decltype(std::declval<Hasher&>()(std::declval<const Key&>())),
 		typename = decltype(std::declval<EqualFunc&>()(std::declval<const Key&>(),
 			std::declval<const Key&>()))>
 	class unordered_checker

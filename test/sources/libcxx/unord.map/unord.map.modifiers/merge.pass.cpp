@@ -26,13 +26,13 @@
 //   void merge(unordered_multimap<key_type, value_type, H2, P2, allocator_type>&& source);
 
 template<typename TKey, typename TMapped,
-	typename THashFunc = momo::HashCoder<TKey>,
+	typename THasher = momo::HashCoder<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using unordered_map2 = momo::stdish::unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator,
-	momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THashFunc, TEqualFunc>,
+using unordered_map2 = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqualFunc, TAllocator,
+	momo::HashMap<TKey, TMapped, momo::HashTraitsStd<TKey, THasher, TEqualFunc>,
 		momo::MemManagerStd<TAllocator>,
-		typename std::unordered_map<TKey, TMapped, THashFunc, TEqualFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
+		typename std::unordered_map<TKey, TMapped, THasher, TEqualFunc, TAllocator>::nested_container_type::KeyValueTraits>>;
 
 template <class Map>
 bool map_equal(const Map& map, Map other)

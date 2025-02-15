@@ -60,30 +60,30 @@ public:
 	};
 
 private:
-	template<typename HashFunc>
-	class IterHashFunc
+	template<typename Hasher>
+	class IterHasher
 	{
 	public:
-		explicit IterHashFunc(const HashFunc& hashFunc) noexcept
-			: mHashFunc(hashFunc)
+		explicit IterHasher(const Hasher& hasher) noexcept
+			: mHasher(hasher)
 		{
 		}
 
 		template<typename Iterator>
 		HashCode operator()(Iterator iter) const
 		{
-			return mHashFunc(*iter);
+			return mHasher(*iter);
 		}
 
 	private:
-		const HashFunc& mHashFunc;
+		const Hasher& mHasher;
 	};
 
 	template<typename Iterator, typename HashIterator>
-	class IterPrehashFunc
+	class IterPrehasher
 	{
 	public:
-		explicit IterPrehashFunc(Iterator begin, HashIterator hashBegin) noexcept
+		explicit IterPrehasher(Iterator begin, HashIterator hashBegin) noexcept
 			: mBegin(begin),
 			mHashBegin(hashBegin)
 		{
@@ -108,13 +108,13 @@ private:
 
 public:
 	template<typename Iterator,
-		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
+		typename Hasher = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>,
 		typename IterSwapper = Swapper<Iterator>>
-	static void Sort(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
+	static void Sort(Iterator begin, size_t count, const Hasher& hasher = Hasher(),
 		const EqualFunc& equalFunc = EqualFunc(), const IterSwapper& iterSwapper = IterSwapper())
 	{
-		pvSort(begin, count, IterHashFunc<HashFunc>(hashFunc), equalFunc, iterSwapper);
+		pvSort(begin, count, IterHasher<Hasher>(hasher), equalFunc, iterSwapper);
 	}
 
 	template<typename Iterator, typename HashIterator,
@@ -128,17 +128,17 @@ public:
 			iterSwapper(iter1, iter2);
 			std::swap(hashBegin[iter1 - begin], hashBegin[iter2 - begin]);
 		};
-		pvSort(begin, count, IterPrehashFunc<Iterator, HashIterator>(begin, hashBegin),
+		pvSort(begin, count, IterPrehasher<Iterator, HashIterator>(begin, hashBegin),
 			equalFunc, iterHashSwapper);
 	}
 
 	template<typename Iterator,
-		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
+		typename Hasher = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
-	static bool IsSorted(Iterator begin, size_t count, const HashFunc& hashFunc = HashFunc(),
+	static bool IsSorted(Iterator begin, size_t count, const Hasher& hasher = Hasher(),
 		const EqualFunc& equalFunc = EqualFunc())
 	{
-		return pvIsSorted(begin, count, IterHashFunc<HashFunc>(hashFunc), equalFunc);
+		return pvIsSorted(begin, count, IterHasher<Hasher>(hasher), equalFunc);
 	}
 
 	template<typename Iterator, typename HashIterator,
@@ -147,18 +147,18 @@ public:
 		const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvIsSorted(begin, count,
-			IterPrehashFunc<Iterator, HashIterator>(begin, hashBegin), equalFunc);
+			IterPrehasher<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 	template<typename Iterator,
-		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
+		typename Hasher = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static FindResult<Iterator> Find(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item,
-		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
+		const Hasher& hasher = Hasher(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return pvFind(begin, count, item, hashFunc(item),
-			IterHashFunc<HashFunc>(hashFunc), equalFunc);
+		return pvFind(begin, count, item, hasher(item),
+			IterHasher<Hasher>(hasher), equalFunc);
 	}
 
 	template<typename Iterator, typename HashIterator,
@@ -168,18 +168,18 @@ public:
 		const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvFind(begin, count, item, itemHash,
-			IterPrehashFunc<Iterator, HashIterator>(begin, hashBegin), equalFunc);
+			IterPrehasher<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 	template<typename Iterator,
-		typename HashFunc = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
+		typename Hasher = HashCoder<typename std::iterator_traits<Iterator>::value_type>,
 		typename EqualFunc = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static Bounds<Iterator> GetBounds(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item,
-		const HashFunc& hashFunc = HashFunc(), const EqualFunc& equalFunc = EqualFunc())
+		const Hasher& hasher = Hasher(), const EqualFunc& equalFunc = EqualFunc())
 	{
-		return pvGetBounds(begin, count, item, hashFunc(item),
-			IterHashFunc<HashFunc>(hashFunc), equalFunc);
+		return pvGetBounds(begin, count, item, hasher(item),
+			IterHasher<Hasher>(hasher), equalFunc);
 	}
 
 	template<typename Iterator, typename HashIterator,
@@ -189,12 +189,12 @@ public:
 		HashCode itemHash, const EqualFunc& equalFunc = EqualFunc())
 	{
 		return pvGetBounds(begin, count, item, itemHash,
-			IterPrehashFunc<Iterator, HashIterator>(begin, hashBegin), equalFunc);
+			IterPrehasher<Iterator, HashIterator>(begin, hashBegin), equalFunc);
 	}
 
 private:
-	template<typename Iterator, typename IterHashFunc, typename EqualFunc, typename IterSwapper>
-	static void pvSort(Iterator begin, size_t count, const IterHashFunc& iterHashFunc,
+	template<typename Iterator, typename IterHasher, typename EqualFunc, typename IterSwapper>
+	static void pvSort(Iterator begin, size_t count, const IterHasher& iterHasher,
 		const EqualFunc& equalFunc, const IterSwapper& iterSwapper)
 	{
 		auto groupFunc = [&equalFunc, &iterSwapper] (Iterator begin, size_t count)
@@ -202,7 +202,7 @@ private:
 			if (count > 2)
 				pvGroup(begin, count, equalFunc, iterSwapper);
 		};
-		internal::RadixSorter<>::Sort(begin, count, iterHashFunc, iterSwapper, groupFunc);
+		internal::RadixSorter<>::Sort(begin, count, iterHasher, iterSwapper, groupFunc);
 	}
 
 	template<typename Iterator, typename EqualFunc, typename IterSwapper>
@@ -224,15 +224,15 @@ private:
 		}
 	}
 
-	template<typename Iterator, typename IterHashFunc, typename EqualFunc>
-	static bool pvIsSorted(Iterator begin, size_t count, const IterHashFunc& iterHashFunc,
+	template<typename Iterator, typename IterHasher, typename EqualFunc>
+	static bool pvIsSorted(Iterator begin, size_t count, const IterHasher& iterHasher,
 		const EqualFunc& equalFunc)
 	{
 		size_t prevIndex = 0;
-		HashCode prevHash = iterHashFunc(begin);
+		HashCode prevHash = iterHasher(begin);
 		for (size_t i = 1; i < count; ++i)
 		{
-			HashCode hash = iterHashFunc(SMath::Next(begin, i));
+			HashCode hash = iterHasher(SMath::Next(begin, i));
 			if (hash < prevHash)
 				return false;
 			if (hash != prevHash)
@@ -262,30 +262,30 @@ private:
 		return true;
 	}
 
-	template<typename Iterator, typename IterHashFunc, typename EqualFunc>
+	template<typename Iterator, typename IterHasher, typename EqualFunc>
 	static FindResult<Iterator> pvFind(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
-		const IterHashFunc& iterHashFunc, const EqualFunc& equalFunc)
+		const IterHasher& iterHasher, const EqualFunc& equalFunc)
 	{
-		auto res = pvFindHash(begin, count, itemHash, iterHashFunc);
+		auto res = pvFindHash(begin, count, itemHash, iterHasher);
 		if (!res.found)
 			return res;
 		if (equalFunc(*res.iterator, item))
 			return res;
 		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.iterator + 1),
-			SMath::Dist(begin, res.iterator + 1), item, itemHash, iterHashFunc, equalFunc);
+			SMath::Dist(begin, res.iterator + 1), item, itemHash, iterHasher, equalFunc);
 		if (revRes.found)
 			return { revRes.iterator.base() - 1, true };
 		return pvFindNext(res.iterator, count - SMath::Dist(begin, res.iterator),
-			item, itemHash, iterHashFunc, equalFunc);
+			item, itemHash, iterHasher, equalFunc);
 	}
 
-	template<typename Iterator, typename IterHashFunc, typename EqualFunc>
+	template<typename Iterator, typename IterHasher, typename EqualFunc>
 	static Bounds<Iterator> pvGetBounds(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
-		const IterHashFunc& iterHashFunc, const EqualFunc& equalFunc)
+		const IterHasher& iterHasher, const EqualFunc& equalFunc)
 	{
-		auto res = pvFindHash(begin, count, itemHash, iterHashFunc);
+		auto res = pvFindHash(begin, count, itemHash, iterHasher);
 		if (!res.found)
 			return Bounds<Iterator>(res.iterator, res.iterator);
 		if (equalFunc(*res.iterator, item))
@@ -296,7 +296,7 @@ private:
 				pvFindOther(res.iterator, count - SMath::Dist(begin, res.iterator), equalFunc));
 		}
 		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.iterator + 1),
-			SMath::Dist(begin, res.iterator + 1), item, itemHash, iterHashFunc, equalFunc);
+			SMath::Dist(begin, res.iterator + 1), item, itemHash, iterHasher, equalFunc);
 		if (revRes.found)
 		{
 			Iterator resBegin = pvFindOther(revRes.iterator,
@@ -304,23 +304,23 @@ private:
 			return Bounds<Iterator>(resBegin, revRes.iterator.base());
 		}
 		res = pvFindNext(res.iterator, count - SMath::Dist(begin, res.iterator), item, itemHash,
-			iterHashFunc, equalFunc);
+			iterHasher, equalFunc);
 		if (!res.found)
 			return Bounds<Iterator>(res.iterator, res.iterator);
 		return Bounds<Iterator>(res.iterator,
 			pvFindOther(res.iterator, count - SMath::Dist(begin, res.iterator), equalFunc));
 	}
 
-	template<typename Iterator, typename IterHashFunc, typename EqualFunc>
+	template<typename Iterator, typename IterHasher, typename EqualFunc>
 	static FindResult<Iterator> pvFindNext(Iterator begin, size_t count,
 		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
-		const IterHashFunc& iterHashFunc, const EqualFunc& equalFunc)
+		const IterHasher& iterHasher, const EqualFunc& equalFunc)
 	{
 		Iterator iter = begin;
 		while (true)
 		{
 			iter = pvFindOther(iter, count - SMath::Dist(begin, iter), equalFunc);
-			if (iter == SMath::Next(begin, count) || iterHashFunc(iter) != itemHash)
+			if (iter == SMath::Next(begin, count) || iterHasher(iter) != itemHash)
 				break;
 			if (equalFunc(*iter, item))
 				return { iter, true };
@@ -337,19 +337,19 @@ private:
 		return pvExponentialSearch(begin + 1, count - 1, iterThreeComp).iterator;
 	}
 
-	template<typename Iterator, typename IterHashFunc>
+	template<typename Iterator, typename IterHasher>
 	static FindResult<Iterator> pvFindHash(Iterator begin, size_t count,
-		HashCode itemHash, const IterHashFunc& iterHashFunc)
+		HashCode itemHash, const IterHasher& iterHasher)
 	{
-		auto iterThreeComp = [itemHash, &iterHashFunc] (Iterator iter)
-			{ return pvCompare(iterHashFunc(iter), itemHash); };
+		auto iterThreeComp = [itemHash, &iterHasher] (Iterator iter)
+			{ return pvCompare(iterHasher(iter), itemHash); };
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
 		size_t middleIndex = pvMultShift(itemHash, count);
 		size_t step = pvGetStepCount(count);
 		while (true)
 		{
-			HashCode middleHash = iterHashFunc(SMath::Next(begin, middleIndex));
+			HashCode middleHash = iterHasher(SMath::Next(begin, middleIndex));
 			if (middleHash < itemHash)
 			{
 				leftIndex = middleIndex + 1;
@@ -368,8 +368,8 @@ private:
 				if (step == 0)
 				{
 					typedef std::reverse_iterator<Iterator> ReverseIterator;
-					auto revIterThreeComp = [itemHash, &iterHashFunc] (ReverseIterator iter)
-						{ return -pvCompare(iterHashFunc(iter), itemHash); };
+					auto revIterThreeComp = [itemHash, &iterHasher] (ReverseIterator iter)
+						{ return -pvCompare(iterHasher(iter), itemHash); };
 					auto res = pvExponentialSearch(ReverseIterator(SMath::Next(begin, rightIndex)),
 						rightIndex - leftIndex, revIterThreeComp);
 					return { res.iterator.base() - (res.found ? 1 : 0), res.found };

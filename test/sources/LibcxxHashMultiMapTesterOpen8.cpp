@@ -41,11 +41,11 @@ namespace libcxx_test_hash_multimap
 LIBCXX_NAMESPACE_STD_BEGIN
 
 template<typename TKey, typename TMapped,
-	typename THashFunc = std::hash<TKey>,
+	typename THasher = std::hash<TKey>,
 	typename TEqualFunc = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using unordered_multimap = momo::stdish::unordered_multimap_open<TKey, TMapped,
-	THashFunc, TEqualFunc, TAllocator>;
+	THasher, TEqualFunc, TAllocator>;
 
 #ifdef TEST_LIBCXX_NEW
 template<typename TKey>
