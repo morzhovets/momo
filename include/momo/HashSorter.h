@@ -164,10 +164,10 @@ public:
 	template<typename Iterator, typename HashIterator,
 		typename EqualComparer = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static FindResult<Iterator> FindPrehashed(Iterator begin, size_t count, HashIterator hashBegin,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHashCode,
 		const EqualComparer& equalComp = EqualComparer())
 	{
-		return pvFind(begin, count, item, itemHash,
+		return pvFind(begin, count, item, itemHashCode,
 			IterPrehasher<Iterator, HashIterator>(begin, hashBegin), equalComp);
 	}
 
@@ -186,9 +186,9 @@ public:
 		typename EqualComparer = std::equal_to<typename std::iterator_traits<Iterator>::value_type>>
 	static Bounds<Iterator> GetBoundsPrehashed(Iterator begin, size_t count,
 		HashIterator hashBegin, const typename std::iterator_traits<Iterator>::value_type& item,
-		HashCode itemHash, const EqualComparer& equalComp = EqualComparer())
+		HashCode itemHashCode, const EqualComparer& equalComp = EqualComparer())
 	{
-		return pvGetBounds(begin, count, item, itemHash,
+		return pvGetBounds(begin, count, item, itemHashCode,
 			IterPrehasher<Iterator, HashIterator>(begin, hashBegin), equalComp);
 	}
 
@@ -229,18 +229,18 @@ private:
 		const EqualComparer& equalComp)
 	{
 		size_t prevIndex = 0;
-		HashCode prevHash = iterHasher(begin);
+		HashCode prevHashCode = iterHasher(begin);
 		for (size_t i = 1; i < count; ++i)
 		{
-			HashCode hash = iterHasher(SMath::Next(begin, i));
-			if (hash < prevHash)
+			HashCode hashCode = iterHasher(SMath::Next(begin, i));
+			if (hashCode < prevHashCode)
 				return false;
-			if (hash != prevHash)
+			if (hashCode != prevHashCode)
 			{
 				if (!pvIsGrouped(SMath::Next(begin, prevIndex), i - prevIndex, equalComp))
 					return false;
 				prevIndex = i;
-				prevHash = hash;
+				prevHashCode = hashCode;
 			}
 		}
 		return pvIsGrouped(SMath::Next(begin, prevIndex), count - prevIndex, equalComp);
@@ -264,28 +264,28 @@ private:
 
 	template<typename Iterator, typename IterHasher, typename EqualComparer>
 	static FindResult<Iterator> pvFind(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHashCode,
 		const IterHasher& iterHasher, const EqualComparer& equalComp)
 	{
-		auto res = pvFindHash(begin, count, itemHash, iterHasher);
+		auto res = pvFindHashCode(begin, count, itemHashCode, iterHasher);
 		if (!res.found)
 			return res;
 		if (equalComp(*res.iterator, item))
 			return res;
 		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.iterator + 1),
-			SMath::Dist(begin, res.iterator + 1), item, itemHash, iterHasher, equalComp);
+			SMath::Dist(begin, res.iterator + 1), item, itemHashCode, iterHasher, equalComp);
 		if (revRes.found)
 			return { revRes.iterator.base() - 1, true };
 		return pvFindNext(res.iterator, count - SMath::Dist(begin, res.iterator),
-			item, itemHash, iterHasher, equalComp);
+			item, itemHashCode, iterHasher, equalComp);
 	}
 
 	template<typename Iterator, typename IterHasher, typename EqualComparer>
 	static Bounds<Iterator> pvGetBounds(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHashCode,
 		const IterHasher& iterHasher, const EqualComparer& equalComp)
 	{
-		auto res = pvFindHash(begin, count, itemHash, iterHasher);
+		auto res = pvFindHashCode(begin, count, itemHashCode, iterHasher);
 		if (!res.found)
 			return Bounds<Iterator>(res.iterator, res.iterator);
 		if (equalComp(*res.iterator, item))
@@ -296,14 +296,14 @@ private:
 				pvFindOther(res.iterator, count - SMath::Dist(begin, res.iterator), equalComp));
 		}
 		auto revRes = pvFindNext(std::reverse_iterator<Iterator>(res.iterator + 1),
-			SMath::Dist(begin, res.iterator + 1), item, itemHash, iterHasher, equalComp);
+			SMath::Dist(begin, res.iterator + 1), item, itemHashCode, iterHasher, equalComp);
 		if (revRes.found)
 		{
 			Iterator resBegin = pvFindOther(revRes.iterator,
 				SMath::Dist(begin, revRes.iterator.base()), equalComp).base();
 			return Bounds<Iterator>(resBegin, revRes.iterator.base());
 		}
-		res = pvFindNext(res.iterator, count - SMath::Dist(begin, res.iterator), item, itemHash,
+		res = pvFindNext(res.iterator, count - SMath::Dist(begin, res.iterator), item, itemHashCode,
 			iterHasher, equalComp);
 		if (!res.found)
 			return Bounds<Iterator>(res.iterator, res.iterator);
@@ -313,14 +313,14 @@ private:
 
 	template<typename Iterator, typename IterHasher, typename EqualComparer>
 	static FindResult<Iterator> pvFindNext(Iterator begin, size_t count,
-		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHash,
+		const typename std::iterator_traits<Iterator>::value_type& item, HashCode itemHashCode,
 		const IterHasher& iterHasher, const EqualComparer& equalComp)
 	{
 		Iterator iter = begin;
 		while (true)
 		{
 			iter = pvFindOther(iter, count - SMath::Dist(begin, iter), equalComp);
-			if (iter == SMath::Next(begin, count) || iterHasher(iter) != itemHash)
+			if (iter == SMath::Next(begin, count) || iterHasher(iter) != itemHashCode)
 				break;
 			if (equalComp(*iter, item))
 				return { iter, true };
@@ -338,19 +338,19 @@ private:
 	}
 
 	template<typename Iterator, typename IterHasher>
-	static FindResult<Iterator> pvFindHash(Iterator begin, size_t count,
-		HashCode itemHash, const IterHasher& iterHasher)
+	static FindResult<Iterator> pvFindHashCode(Iterator begin, size_t count,
+		HashCode itemHashCode, const IterHasher& iterHasher)
 	{
-		auto iterThreeComp = [itemHash, &iterHasher] (Iterator iter)
-			{ return pvCompare(iterHasher(iter), itemHash); };
+		auto iterThreeComp = [itemHashCode, &iterHasher] (Iterator iter)
+			{ return pvCompare(iterHasher(iter), itemHashCode); };
 		size_t leftIndex = 0;
 		size_t rightIndex = count;
-		size_t middleIndex = pvMultShift(itemHash, count);
+		size_t middleIndex = pvMultShift(itemHashCode, count);
 		size_t step = pvGetStepCount(count);
 		while (true)
 		{
-			HashCode middleHash = iterHasher(SMath::Next(begin, middleIndex));
-			if (middleHash < itemHash)
+			HashCode middleHashCode = iterHasher(SMath::Next(begin, middleIndex));
+			if (middleHashCode < itemHashCode)
 			{
 				leftIndex = middleIndex + 1;
 				if (step == 0)
@@ -358,23 +358,23 @@ private:
 					return pvExponentialSearch(SMath::Next(begin, leftIndex),
 						rightIndex - leftIndex, iterThreeComp);
 				}
-				middleIndex += pvMultShift(itemHash - middleHash, count);
+				middleIndex += pvMultShift(itemHashCode - middleHashCode, count);
 				if (middleIndex >= rightIndex)
 					break;
 			}
-			else if (middleHash > itemHash)
+			else if (middleHashCode > itemHashCode)
 			{
 				rightIndex = middleIndex;
 				if (step == 0)
 				{
 					typedef std::reverse_iterator<Iterator> ReverseIterator;
-					auto revIterThreeComp = [itemHash, &iterHasher] (ReverseIterator iter)
-						{ return -pvCompare(iterHasher(iter), itemHash); };
+					auto revIterThreeComp = [itemHashCode, &iterHasher] (ReverseIterator iter)
+						{ return -pvCompare(iterHasher(iter), itemHashCode); };
 					auto res = pvExponentialSearch(ReverseIterator(SMath::Next(begin, rightIndex)),
 						rightIndex - leftIndex, revIterThreeComp);
 					return { res.iterator.base() - (res.found ? 1 : 0), res.found };
 				}
-				size_t diff = pvMultShift(middleHash - itemHash, count);
+				size_t diff = pvMultShift(middleHashCode - itemHashCode, count);
 				if (leftIndex + diff > middleIndex)
 					break;
 				middleIndex -= diff;
