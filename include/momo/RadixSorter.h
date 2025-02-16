@@ -64,24 +64,24 @@ namespace internal
 		{
 			auto iterSwapper = [] (Iterator iter1, Iterator iter2)
 				{ std::iter_swap(iter1, iter2); };
-			auto groupFunc = [] (Iterator, size_t) noexcept {};
-			Sort(begin, count, codeGetter, iterSwapper, groupFunc);
+			auto itemsGrouper = [] (Iterator, size_t) noexcept {};
+			Sort(begin, count, codeGetter, iterSwapper, itemsGrouper);
 		}
 
-		template<typename Iterator, typename CodeGetter, typename IterSwapper, typename GroupFunc>
+		template<typename Iterator, typename CodeGetter, typename IterSwapper, typename ItemsGrouper>
 		static void Sort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const IterSwapper& iterSwapper, const GroupFunc& groupFunc)
+			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper)
 		{
 			typedef decltype(codeGetter(begin)) Code;
-			pvSort<Code>(begin, count, codeGetter, iterSwapper, groupFunc,
+			pvSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper,
 				8 * sizeof(Code) - radixSize);
 		}
 
 	private:
 		template<typename Code, typename Iterator, typename CodeGetter,
-			typename IterSwapper, typename GroupFunc>
+			typename IterSwapper, typename ItemsGrouper>
 		static void pvSort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const IterSwapper& iterSwapper, const GroupFunc& groupFunc, size_t shift)
+			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper, size_t shift)
 		{
 			if (count < 2)
 				return;
@@ -92,15 +92,15 @@ namespace internal
 				return;
 			}
 			if (count <= selectionSortMaxCount)
-				pvSelectionSort<Code>(begin, count, codeGetter, iterSwapper, groupFunc);
+				pvSelectionSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper);
 			else
-				pvRadixSort<Code>(begin, count, codeGetter, iterSwapper, groupFunc, shift);
+				pvRadixSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper, shift);
 		}
 
 		template<typename Code, typename Iterator, typename CodeGetter,
-			typename IterSwapper, typename GroupFunc>
+			typename IterSwapper, typename ItemsGrouper>
 		static void pvSelectionSort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const IterSwapper& iterSwapper, const GroupFunc& groupFunc)
+			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper)
 		{
 			MOMO_ASSERT(count > 0);
 			std::array<Code, selectionSortMaxCount> codes;	//?
@@ -121,17 +121,17 @@ namespace internal
 			{
 				if (codes[i] != codes[prevIndex])
 				{
-					groupFunc(UIntMath<>::Next(begin, prevIndex), i - prevIndex);
+					itemsGrouper(UIntMath<>::Next(begin, prevIndex), i - prevIndex);
 					prevIndex = i;
 				}
 			}
-			groupFunc(UIntMath<>::Next(begin, prevIndex), count - prevIndex);
+			itemsGrouper(UIntMath<>::Next(begin, prevIndex), count - prevIndex);
 		}
 
 		template<typename Code, typename Iterator, typename CodeGetter,
-			typename IterSwapper, typename GroupFunc>
+			typename IterSwapper, typename ItemsGrouper>
 		static void pvRadixSort(Iterator begin, size_t count, const CodeGetter& codeGetter,
-			const IterSwapper& iterSwapper, const GroupFunc& groupFunc, size_t shift)
+			const IterSwapper& iterSwapper, const ItemsGrouper& itemsGrouper, size_t shift)
 		{
 			MOMO_ASSERT(count > 0);
 			std::array<size_t, radixCount> endIndexes;
@@ -150,13 +150,13 @@ namespace internal
 				singleRadix &= (radix == radix0);
 			}
 			if (singleCode)
-				return groupFunc(begin, count);
+				return itemsGrouper(begin, count);
 			size_t nextShift = (shift > radixSize) ? shift - radixSize : 0;
 			if (singleRadix)
 			{
 				MOMO_ASSERT(shift > 0);
 				return pvRadixSort<Code>(begin, count,
-					codeGetter, iterSwapper, groupFunc, nextShift);
+					codeGetter, iterSwapper, itemsGrouper, nextShift);
 			}
 			for (size_t r = 1; r < radixCount; ++r)
 				endIndexes[r] += endIndexes[r - 1];
@@ -167,7 +167,7 @@ namespace internal
 				for (size_t e : endIndexes)
 				{
 					pvSort<Code>(UIntMath<>::Next(begin, beginIndex), e - beginIndex, codeGetter,
-						iterSwapper, groupFunc, nextShift);
+						iterSwapper, itemsGrouper, nextShift);
 					beginIndex = e;
 				}
 			}
@@ -175,7 +175,7 @@ namespace internal
 			{
 				for (size_t e : endIndexes)
 				{
-					groupFunc(UIntMath<>::Next(begin, beginIndex), e - beginIndex);
+					itemsGrouper(UIntMath<>::Next(begin, beginIndex), e - beginIndex);
 					beginIndex = e;
 				}
 			}

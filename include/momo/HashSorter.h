@@ -197,12 +197,12 @@ private:
 	static void pvSort(Iterator begin, size_t count, const IterHasher& iterHasher,
 		const EqualComparer& equalComp, const IterSwapper& iterSwapper)
 	{
-		auto groupFunc = [&equalComp, &iterSwapper] (Iterator begin, size_t count)
+		auto itemsGrouper = [&equalComp, &iterSwapper] (Iterator begin, size_t count)
 		{
 			if (count > 2)
 				pvGroup(begin, count, equalComp, iterSwapper);
 		};
-		internal::RadixSorter<>::Sort(begin, count, iterHasher, iterSwapper, groupFunc);
+		internal::RadixSorter<>::Sort(begin, count, iterHasher, iterSwapper, itemsGrouper);
 	}
 
 	template<typename Iterator, typename EqualComparer, typename IterSwapper>
