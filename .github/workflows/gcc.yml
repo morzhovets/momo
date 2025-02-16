@@ -11,37 +11,37 @@ jobs:
         - gcc_ver: '5'
           build_type: 'Release'
           flags: '-std=c++11 -Werror -Wno-unused-variable -msse2'
-          ubuntu_ver: '20.04'
+          ubuntu_ver: '22.04'
 
         - gcc_ver: '5'
           build_type: 'Release'
           flags: '-std=c++11 -Werror -Wno-unused-variable -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
-          ubuntu_ver: '20.04'
+          ubuntu_ver: '22.04'
 
         - gcc_ver: '5'
           build_type: 'Release'
           flags: '-std=c++14 -Werror -Wno-unused-variable -msse2'
-          ubuntu_ver: '20.04'
+          ubuntu_ver: '22.04'
 
         - gcc_ver: '6'
           build_type: 'Release'
           flags: '-std=c++17 -Werror -msse2'
-          ubuntu_ver: '20.04'
+          ubuntu_ver: '22.04'
 
         - gcc_ver: '7'
           build_type: 'Release'
           flags: '-std=c++17 -Werror -msse2 -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
-          ubuntu_ver: '20.04'
+          ubuntu_ver: '22.04'
 
         - gcc_ver: '8'
           build_type: 'Release'
           flags: '-std=c++17 -Werror -msse2'
-          ubuntu_ver: '20.04'
+          ubuntu_ver: '22.04'
 
         - gcc_ver: '9'
           build_type: 'Release'
           flags: '-std=c++17 -Werror -msse2'
-          ubuntu_ver: '20.04'
+          ubuntu_ver: '22.04'
 
         - gcc_ver: '10'
           build_type: 'Release'
@@ -88,11 +88,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Prepare Xenial and Bionic
-      if: matrix.ubuntu_ver == '20.04'
+    - name: Prepare old Ubuntu
+      if: matrix.ubuntu_ver == '22.04'
       run: |
         echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main universe" | sudo tee -a /etc/apt/sources.list
         echo "deb http://dk.archive.ubuntu.com/ubuntu/ bionic main universe" | sudo tee -a /etc/apt/sources.list
+        echo "deb http://dk.archive.ubuntu.com/ubuntu/ focal main universe" | sudo tee -a /etc/apt/sources.list
         sudo apt update
     - name: Install Ninja
       run: sudo apt-get install ninja-build
