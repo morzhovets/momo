@@ -33,19 +33,15 @@ jobs:
           flags: '-std=c++26 -Werror -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           ubuntu_ver: '24.04'
 
-    runs-on: ubuntu-latest
-    container: ubuntu:${{ matrix.ubuntu_ver }}
+    runs-on: ubuntu-${{ matrix.ubuntu_ver }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Prepare
-      run: |
-        apt-get update
-        apt-get install -y ninja-build
-        apt-get install -y cmake
+    - name: Install Ninja
+      run: sudo apt-get install ninja-build
     - name: Install GCC
-      run: apt install -y g++-${{ matrix.gcc_ver }}
+      run: sudo apt install g++-${{ matrix.gcc_ver }}
     - name: Build
       env:
         CXX: g++-${{ matrix.gcc_ver }}
