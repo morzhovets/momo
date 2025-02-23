@@ -3,7 +3,7 @@ name: Perf Clang
 on: [push, pull_request]
 
 jobs:
-  build-and-test:
+  momo-perf:
     strategy:
       matrix:
         include:

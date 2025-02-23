@@ -3,7 +3,7 @@ name: MSVC
 on: [push, pull_request]
 
 jobs:
-  build-and-test:
+  momo-test:
     strategy:
       matrix:
         include:
