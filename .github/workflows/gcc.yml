@@ -42,8 +42,8 @@ jobs:
     - name: Prepare
       run: |
         apt-get update
-        apt-get install ninja-build
-        apt-get install cmake
+        apt-get install -y ninja-build
+        apt-get install -y cmake
     - name: Install GCC
       run: apt install -y g++-${{ matrix.gcc_ver }}
     - name: Build
