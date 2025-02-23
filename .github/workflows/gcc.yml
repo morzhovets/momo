@@ -40,9 +40,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Install Ninja
-      run: sudo apt-get install ninja-build
+      run: apt-get install ninja-build
     - name: Install GCC
-      run: sudo apt install g++-${{ matrix.gcc_ver }}
+      run: apt install g++-${{ matrix.gcc_ver }}
     - name: Build
       env:
         CXX: g++-${{ matrix.gcc_ver }}
