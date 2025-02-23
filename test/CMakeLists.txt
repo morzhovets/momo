@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.20)
 
 project(momo_test
   LANGUAGES CXX)
@@ -8,9 +8,7 @@ add_executable(momo_test ${MOMO_TEST_SOURCES})
 
 target_compile_features(momo_test PRIVATE cxx_std_23)
 
-if(NOT (${CMAKE_VERSION} VERSION_LESS "3.16"))
-  target_precompile_headers(momo_test PRIVATE "sources/pch.h")
-endif()
+target_precompile_headers(momo_test PRIVATE "sources/pch.h")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
