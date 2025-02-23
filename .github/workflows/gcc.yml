@@ -39,8 +39,11 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install Ninja
-      run: apt-get update && apt-get install ninja-build
+    - name: Prepare
+      run: |
+        apt-get update
+        apt-get install ninja-build
+        apt-get install cmake
     - name: Install GCC
       run: apt install -y g++-${{ matrix.gcc_ver }}
     - name: Build
