@@ -14,6 +14,8 @@
 
 #include "../../include/momo/UserSettings.h"
 
+#include "LibcxxTester.h"
+
 int main()
 {
 	std::cout << std::endl;
@@ -30,7 +32,7 @@ int main()
 
 	std::cout << "__GNUC__: ";
 #ifdef __GNUC__
-	std::cout <<  __GNUC__;
+	std::cout << __GNUC__;
 #endif
 	std::cout << std::endl;
 
@@ -105,6 +107,26 @@ int main()
 	std::cout << "defined";
 #endif
 	std::cout << std::endl;
+
+#ifdef TEST_LIBCXX_NEW
+
+	std::cout << "TEST_STD_VER: " << TEST_STD_VER << std::endl;
+
+#else // TEST_LIBCXX_NEW
+
+	std::cout << "LIBCPP_HAS_NO_TRANSPARENT_OPERATORS: ";
+#ifdef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+	std::cout << "LIBCPP_TEST_DEDUCTION_GUIDES: ";
+#ifdef LIBCPP_TEST_DEDUCTION_GUIDES
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+#endif // TEST_LIBCXX_NEW
 
 	return 0;
 }
