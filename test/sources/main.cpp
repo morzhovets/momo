@@ -12,18 +12,67 @@
 
 #include "pch.h"
 
+#include "../../include/momo/UserSettings.h"
+
+#include "LibcxxTester.h"
+
 int main()
 {
-#ifdef _MSC_VER
-	std::cout << "_MSC_VER: " << _MSC_VER << std::endl;
-#endif
-#ifdef __GNUC__
-	std::cout << "__GNUC__: " << __GNUC__ << std::endl;
-#endif
-#ifdef __clang_major__
-	std::cout << "__clang_major__: " << __clang_major__ << std::endl;
-#endif
+	std::cout << std::endl;
+
 	std::cout << "__cplusplus: " << __cplusplus << std::endl;
+
 	std::cout << "sizeof(void*): " << sizeof(void*) << std::endl;
+
+	std::cout << "_MSC_VER: ";
+#ifdef _MSC_VER
+	std::cout << _MSC_VER;
+#endif
+	std::cout << std::endl;
+
+	std::cout << "__GNUC__: ";
+#ifdef __GNUC__
+	std::cout << __GNUC__;
+#endif
+	std::cout << std::endl;
+
+	std::cout << "__clang_major__: ";
+#ifdef __clang_major__
+	std::cout << __clang_major__;
+#endif
+	std::cout << std::endl;
+
+	std::cout << "_MSVC_STL_VERSION: ";
+#ifdef _MSVC_STL_VERSION
+	std::cout << _MSVC_STL_VERSION;
+#endif
+	std::cout << std::endl;
+
+	std::cout << "__GLIBCXX__: ";
+#ifdef __GLIBCXX__
+	std::cout << __GLIBCXX__;
+#endif
+	std::cout << std::endl;
+
+	std::cout << "_LIBCPP_VERSION: ";
+#ifdef _LIBCPP_VERSION
+	std::cout << _LIBCPP_VERSION;
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_MAX_ALIGNMENT: ";
+#ifdef MOMO_MAX_ALIGNMENT
+	std::cout << MOMO_MAX_ALIGNMENT;
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_USE_SSE2: ";
+#ifdef MOMO_USE_SSE2
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+	std::cout << "TEST_STD_VER: " << TEST_STD_VER << std::endl;
+
 	return 0;
 }
