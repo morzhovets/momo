@@ -28,7 +28,7 @@ jobs:
         - build_type: 'Debug'
           flags: '-m32 -std=c++26 -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
 
-    runs-on: windows-2022
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
