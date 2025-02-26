@@ -776,8 +776,7 @@ public:
 		}
 		catch (...)
 		{
-			pvClearValueArrays();
-			mValueCrew.Destroy(GetMemManager());
+			pvDestroy();
 			throw;
 		}
 	}
@@ -808,8 +807,7 @@ public:
 		}
 		catch (...)
 		{
-			pvClearValueArrays();
-			mValueCrew.Destroy(GetMemManager());
+			pvDestroy();
 			throw;
 		}
 	}
@@ -817,10 +815,7 @@ public:
 	~HashMultiMap() noexcept
 	{
 		if (!mValueCrew.IsNull())
-		{
-			pvClearValueArrays();
-			mValueCrew.Destroy(GetMemManager());
-		}
+			pvDestroy();
 	}
 
 	HashMultiMap& operator=(HashMultiMap&& hashMultiMap) noexcept
@@ -890,13 +885,10 @@ public:
 
 	void Clear() noexcept
 	{
-		if (!mValueCrew.IsNull())
-		{
-			pvClearValueArrays();
-			mHashMap.Clear();
-			mValueCount = 0;
-			++mValueCrew.GetValueVersion();
-		}
+		pvClearValueArrays();
+		mHashMap.Clear();
+		mValueCount = 0;
+		++mValueCrew.GetValueVersion();
 	}
 
 	ConstKeyBounds GetKeyBounds() const noexcept
@@ -1191,6 +1183,12 @@ public:
 	}
 
 private:
+	void pvDestroy() noexcept
+	{
+		pvClearValueArrays();
+		mValueCrew.Destroy(GetMemManager());
+	}
+
 	void pvClearValueArrays() noexcept
 	{
 		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
