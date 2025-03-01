@@ -8,7 +8,7 @@ add_executable(momo_test ${MOMO_TEST_SOURCES})
 
 target_compile_features(momo_test PRIVATE cxx_std_11)
 
-if(NOT (${CMAKE_VERSION} VERSION_LESS "3.16"))
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.16)
   target_precompile_headers(momo_test PRIVATE "sources/pch.h")
 endif()
 
