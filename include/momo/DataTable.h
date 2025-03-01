@@ -392,7 +392,8 @@ public:
 
 	~DataTable() noexcept
 	{
-		pvDestroyRaws();
+		if (!mCrew.IsNull())
+			pvDestroyRaws();
 	}
 
 	DataTable& operator=(DataTable&& table) noexcept
@@ -1031,8 +1032,6 @@ private:
 
 	void pvDestroyRaws() noexcept
 	{
-		if (mCrew.IsNull())
-			return;
 		pvDeallocateFreeRaws();
 		for (Raw* raw : mRaws)
 			pvDestroyRaw(raw);
