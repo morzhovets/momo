@@ -272,15 +272,12 @@ public:
 
 	MergeMap& operator=(MergeMap&& mergeMap) noexcept
 	{
-		MergeMap(std::move(mergeMap)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(mergeMap), *this);
 	}
 
 	MergeMap& operator=(const MergeMap& mergeMap)
 	{
-		if (this != &mergeMap)
-			MergeMap(mergeMap).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(mergeMap, *this);
 	}
 
 	void Swap(MergeMap& mergeMap) noexcept

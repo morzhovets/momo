@@ -820,15 +820,12 @@ public:
 
 	HashMultiMap& operator=(HashMultiMap&& hashMultiMap) noexcept
 	{
-		HashMultiMap(std::move(hashMultiMap)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(hashMultiMap), *this);
 	}
 
 	HashMultiMap& operator=(const HashMultiMap& hashMultiMap)
 	{
-		if (this != &hashMultiMap)
-			HashMultiMap(hashMultiMap).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(hashMultiMap, *this);
 	}
 
 	void Swap(HashMultiMap& hashMultiMap) noexcept

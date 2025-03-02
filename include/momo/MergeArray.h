@@ -267,15 +267,12 @@ public:
 
 	MergeArray& operator=(MergeArray&& array) noexcept
 	{
-		MergeArray(std::move(array)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(array), *this);
 	}
 
 	MergeArray& operator=(const MergeArray& array)
 	{
-		if (this != &array)
-			MergeArray(array).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(array, *this);
 	}
 
 	void Swap(MergeArray& array) noexcept

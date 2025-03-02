@@ -576,15 +576,12 @@ public:
 
 	MergeSet& operator=(MergeSet&& mergeSet) noexcept
 	{
-		MergeSet(std::move(mergeSet)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(mergeSet), *this);
 	}
 
 	MergeSet& operator=(const MergeSet& mergeSet)
 	{
-		if (this != &mergeSet)
-			MergeSet(mergeSet).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(mergeSet, *this);
 	}
 
 	void Swap(MergeSet& mergeSet) noexcept

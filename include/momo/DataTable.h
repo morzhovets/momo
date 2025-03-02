@@ -398,15 +398,12 @@ public:
 
 	DataTable& operator=(DataTable&& table) noexcept
 	{
-		DataTable(std::move(table)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(table), *this);
 	}
 
 	DataTable& operator=(const DataTable& table)
 	{
-		if (this != &table)
-			DataTable(table).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(table, *this);
 	}
 
 	void Swap(DataTable& table) noexcept

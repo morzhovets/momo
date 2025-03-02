@@ -500,15 +500,12 @@ namespace internal
 
 		DataSelection& operator=(DataSelection&& selection) noexcept
 		{
-			DataSelection(std::move(selection)).Swap(*this);
-			return *this;
+			return ContainerAssigner::Move(std::move(selection), *this);
 		}
 
 		DataSelection& operator=(const DataSelection& selection)
 		{
-			if (this != &selection)
-				DataSelection(selection).Swap(*this);
-			return *this;
+			return ContainerAssigner::Copy(selection, *this);
 		}
 
 		operator ConstSelection() && noexcept

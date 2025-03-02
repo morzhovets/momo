@@ -600,15 +600,12 @@ public:
 
 	TreeSet& operator=(TreeSet&& treeSet) noexcept
 	{
-		TreeSet(std::move(treeSet)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(treeSet), *this);
 	}
 
 	TreeSet& operator=(const TreeSet& treeSet)
 	{
-		if (this != &treeSet)
-			TreeSet(treeSet).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(treeSet, *this);
 	}
 
 	void Swap(TreeSet& treeSet) noexcept

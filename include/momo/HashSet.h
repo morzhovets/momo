@@ -651,15 +651,12 @@ public:
 
 	HashSet& operator=(HashSet&& hashSet) noexcept
 	{
-		HashSet(std::move(hashSet)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(hashSet), *this);
 	}
 
 	HashSet& operator=(const HashSet& hashSet)
 	{
-		if (this != &hashSet)
-			HashSet(hashSet).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(hashSet, *this);
 	}
 
 	void Swap(HashSet& hashSet) noexcept

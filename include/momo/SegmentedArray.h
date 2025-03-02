@@ -302,15 +302,12 @@ public:
 
 	SegmentedArray& operator=(SegmentedArray&& array) noexcept
 	{
-		SegmentedArray(std::move(array)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(array), *this);
 	}
 
 	SegmentedArray& operator=(const SegmentedArray& array)
 	{
-		if (this != &array)
-			SegmentedArray(array).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(array, *this);
 	}
 
 	void Swap(SegmentedArray& array) noexcept

@@ -303,15 +303,12 @@ public:
 
 	TreeMap& operator=(TreeMap&& treeMap) noexcept
 	{
-		TreeMap(std::move(treeMap)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(treeMap), *this);
 	}
 
 	TreeMap& operator=(const TreeMap& treeMap)
 	{
-		if (this != &treeMap)
-			TreeMap(treeMap).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(treeMap, *this);
 	}
 
 	void Swap(TreeMap& treeMap) noexcept

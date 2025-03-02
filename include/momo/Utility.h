@@ -352,6 +352,35 @@ namespace internal
 			return object.GetEnd();
 		}
 	};
+
+	class ContainerAssigner
+	{
+	public:
+		template<typename Container>
+		static Container& Move(Container&& srcCont, Container& dstCont) noexcept
+		{
+			if (&srcCont != &dstCont)
+			{
+				srcCont.Swap(dstCont);
+				if (!srcCont.IsEmpty())
+				{
+					if constexpr (requires { srcCont.Clear(true); })
+						srcCont.Clear(true);
+					else
+						srcCont.Clear();
+				}
+			}
+			return dstCont;
+		}
+
+		template<typename Container>
+		static Container& Copy(const Container& srcCont, Container& dstCont)
+		{
+			if (&srcCont != &dstCont)
+				Container(srcCont).Swap(dstCont);
+			return dstCont;
+		}
+	};
 }
 
 enum class CheckMode
