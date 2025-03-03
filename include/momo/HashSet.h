@@ -545,6 +545,7 @@ private:
 		const HashTraits& mHashTraits;
 	};
 
+#if !(defined(_MSC_VER) && defined(__clang__))	// msvc-clang 19.1.1
 	template<typename KeyArg>
 	requires requires (const KeyArg& key1, const Key& key2)
 		{ { HashTraits::IsEqual(key1, key2) } -> std::convertible_to<bool>; }
@@ -564,6 +565,7 @@ private:
 	private:
 		const KeyArg& mKey;
 	};
+#endif
 
 public:
 	HashSet()
