@@ -218,15 +218,19 @@ public:
 	}
 #endif // __cpp_lib_containers_ranges
 
-	unordered_set(unordered_set&& right) noexcept
-		: mHashSet(std::move(right.mHashSet))
+	unordered_set(unordered_set&& right)
+		: unordered_set(std::move(right), right.get_allocator())
 	{
 	}
 
 	unordered_set(unordered_set&& right, const std::type_identity_t<allocator_type>& alloc)
-		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
-		: mHashSet(pvCreateSet(std::move(right), alloc))
+		: mHashSet(right.mHashSet.GetHashTraits(), MemManager(alloc))
 	{
+		if (right.get_allocator() == alloc)
+			mHashSet = std::move(right.mHashSet);
+		else
+			mHashSet.MergeFrom(right.mHashSet);
+		right.clear();
 	}
 
 	unordered_set(const unordered_set& right)
@@ -247,10 +251,11 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mHashSet = pvCreateSet(std::move(right), alloc);
+			allocator_type alloc = get_allocator();
+			mHashSet = (right.get_allocator() == alloc ||
+				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+					? std::move(right.mHashSet)
+					: std::move(unordered_set(std::move(right), alloc).mHashSet);
 		}
 		return *this;
 	}
@@ -259,9 +264,9 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
+			allocator_type alloc =
+				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
+					? right.get_allocator() : get_allocator();
 			mHashSet = HashSet(right.mHashSet, MemManager(alloc));
 		}
 		return *this;
@@ -684,15 +689,6 @@ public:
 	}
 
 private:
-	static HashSet pvCreateSet(unordered_set&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mHashSet);
-		HashSet hashSet(right.mHashSet.GetHashTraits(), MemManager(alloc));
-		hashSet.MergeFrom(right.mHashSet);
-		return hashSet;
-	}
-
 	template<std::input_iterator Iterator,
 		momo::internal::conceptSentinel<Iterator> Sentinel>
 	void pvInsertRange(Iterator begin, Sentinel end)

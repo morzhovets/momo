@@ -233,16 +233,25 @@ public:
 	}
 #endif // __cpp_lib_containers_ranges
 
-	unordered_multimap(unordered_multimap&& right) noexcept
-		: mHashMultiMap(std::move(right.mHashMultiMap))
+	unordered_multimap(unordered_multimap&& right)
+		: unordered_multimap(std::move(right), right.get_allocator())
 	{
 	}
 
 	unordered_multimap(unordered_multimap&& right,
 		const std::type_identity_t<allocator_type>& alloc)
-		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
-		: mHashMultiMap(pvCreateMultiMap(std::move(right), alloc))
+		: mHashMultiMap(right.mHashMultiMap.GetHashTraits(), MemManager(alloc))
 	{
+		if (right.get_allocator() == alloc)
+		{
+			mHashMultiMap = std::move(right.mHashMultiMap);
+		}
+		else
+		{
+			for (reference ref : right)
+				mHashMultiMap.Add(ref.first, std::move(ref.second));
+			right.clear();
+		}
 	}
 
 	unordered_multimap(const unordered_multimap& right)
@@ -264,10 +273,11 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mHashMultiMap = pvCreateMultiMap(std::move(right), alloc);
+			allocator_type alloc = get_allocator();
+			mHashMultiMap = (right.get_allocator() == alloc ||
+				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+					? std::move(right.mHashMultiMap)
+					: std::move(unordered_multimap(std::move(right), alloc).mHashMultiMap);
 		}
 		return *this;
 	}
@@ -276,9 +286,9 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
+			allocator_type alloc =
+				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
+					? right.get_allocator() : get_allocator();
 			mHashMultiMap = HashMultiMap(right.mHashMultiMap, MemManager(alloc));
 		}
 		return *this;
@@ -649,17 +659,6 @@ public:
 	}
 
 private:
-	static HashMultiMap pvCreateMultiMap(unordered_multimap&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mHashMultiMap);
-		HashMultiMap hashMultiMap(right.mHashMultiMap.GetHashTraits(), MemManager(alloc));
-		for (reference ref : right)
-			hashMultiMap.Add(ref.first, std::move(ref.second));
-		right.clear();
-		return hashMultiMap;
-	}
-
 	template<typename Iterator, typename IteratorProxy, typename HashMultiMap, typename KeyIterator>
 	static std::pair<Iterator, Iterator> pvEqualRange(HashMultiMap& hashMultiMap,
 		KeyIterator keyIter)

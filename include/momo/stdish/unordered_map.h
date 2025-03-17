@@ -251,15 +251,19 @@ public:
 	}
 #endif // __cpp_lib_containers_ranges
 
-	unordered_map(unordered_map&& right) noexcept
-		: mHashMap(std::move(right.mHashMap))
+	unordered_map(unordered_map&& right)
+		: unordered_map(std::move(right), right.get_allocator())
 	{
 	}
 
 	unordered_map(unordered_map&& right, const std::type_identity_t<allocator_type>& alloc)
-		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
-		: mHashMap(pvCreateMap(std::move(right), alloc))
+		: mHashMap(right.mHashMap.GetHashTraits(), MemManager(alloc))
 	{
+		if (right.get_allocator() == alloc)
+			mHashMap = std::move(right.mHashMap);
+		else
+			mHashMap.MergeFrom(right.mHashMap);
+		right.clear();
 	}
 
 	unordered_map(const unordered_map& right)
@@ -280,10 +284,11 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mHashMap = pvCreateMap(std::move(right), alloc);
+			allocator_type alloc = get_allocator();
+			mHashMap = (right.get_allocator() == alloc ||
+				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+					? std::move(right.mHashMap)
+					: std::move(unordered_map(std::move(right), alloc).mHashMap);
 		}
 		return *this;
 	}
@@ -292,9 +297,9 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
+			allocator_type alloc =
+				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
+					? right.get_allocator() : get_allocator();
 			mHashMap = HashMap(right.mHashMap, MemManager(alloc));
 		}
 		return *this;
@@ -838,15 +843,6 @@ public:
 	}
 
 private:
-	static HashMap pvCreateMap(unordered_map&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mHashMap);
-		HashMap hashMap(right.mHashMap.GetHashTraits(), MemManager(alloc));
-		hashMap.MergeFrom(right.mHashMap);
-		return hashMap;
-	}
-
 	template<typename Hint, typename... KeyArgs, typename... MappedArgs>
 	std::pair<iterator, bool> pvEmplace(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 		std::tuple<MappedArgs...>&& mappedArgs)

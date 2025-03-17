@@ -180,15 +180,19 @@ namespace internal
 		}
 #endif // __cpp_lib_containers_ranges
 
-		map_base(map_base&& right) noexcept
-			: mTreeMap(std::move(right.mTreeMap))
+		map_base(map_base&& right)
+			: map_base(std::move(right), right.get_allocator())
 		{
 		}
 
 		map_base(map_base&& right, const std::type_identity_t<allocator_type>& alloc)
-			noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
-			: mTreeMap(pvCreateMap(std::move(right), alloc))
+			: mTreeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc))
 		{
+			if (right.get_allocator() == alloc)
+				mTreeMap = std::move(right.mTreeMap);
+			else
+				mTreeMap.MergeFrom(right.mTreeMap);
+			right.clear();
 		}
 
 		map_base(const map_base& right)
@@ -209,10 +213,11 @@ namespace internal
 		{
 			if (this != &right)
 			{
-				bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-					std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-				allocator_type alloc = (propagate ? &right : this)->get_allocator();
-				mTreeMap = pvCreateMap(std::move(right), alloc);
+				allocator_type alloc = get_allocator();
+				mTreeMap = (right.get_allocator() == alloc ||
+					std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+						? std::move(right.mTreeMap)
+						: std::move(map_base(std::move(right), alloc).mTreeMap);
 			}
 			return *this;
 		}
@@ -221,9 +226,9 @@ namespace internal
 		{
 			if (this != &right)
 			{
-				bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-					std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-				allocator_type alloc = (propagate ? &right : this)->get_allocator();
+				allocator_type alloc =
+					std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
+						? right.get_allocator() : get_allocator();
 				mTreeMap = TreeMap(right.mTreeMap, MemManager(alloc));
 			}
 			return *this;
@@ -674,15 +679,6 @@ namespace internal
 		}
 
 	private:
-		static TreeMap pvCreateMap(map_base&& right, const allocator_type& alloc)
-		{
-			if (right.get_allocator() == alloc)
-				return std::move(right.mTreeMap);
-			TreeMap treeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc));
-			treeMap.MergeFrom(right.mTreeMap);
-			return treeMap;
-		}
-
 		bool pvIsOrdered(const key_type& key1, const key_type& key2) const
 		{
 			const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();

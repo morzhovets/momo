@@ -161,15 +161,19 @@ public:
 	}
 #endif // __cpp_lib_containers_ranges
 
-	set(set&& right) noexcept
-		: mTreeSet(std::move(right.mTreeSet))
+	set(set&& right)
+		: set(std::move(right), right.get_allocator())
 	{
 	}
 
 	set(set&& right, const std::type_identity_t<allocator_type>& alloc)
-		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
-		: mTreeSet(pvCreateSet(std::move(right), alloc))
+		: mTreeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc))
 	{
+		if (right.get_allocator() == alloc)
+			mTreeSet = std::move(right.mTreeSet);
+		else
+			mTreeSet.MergeFrom(right.mTreeSet);
+		right.clear();
 	}
 
 	set(const set& right)
@@ -190,10 +194,10 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mTreeSet = pvCreateSet(std::move(right), alloc);
+			allocator_type alloc = get_allocator();
+			mTreeSet = (right.get_allocator() == alloc ||
+				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+					? std::move(right.mTreeSet) : std::move(set(std::move(right), alloc).mTreeSet);
 		}
 		return *this;
 	}
@@ -202,9 +206,9 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
+			allocator_type alloc =
+				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
+					? right.get_allocator() : get_allocator();
 			mTreeSet = TreeSet(right.mTreeSet, MemManager(alloc));
 		}
 		return *this;
@@ -596,15 +600,6 @@ public:
 	}
 
 private:
-	static TreeSet pvCreateSet(set&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mTreeSet);
-		TreeSet treeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc));
-		treeSet.MergeFrom(right.mTreeSet);
-		return treeSet;
-	}
-
 	bool pvIsOrdered(const key_type& key1, const key_type& key2) const
 	{
 		const TreeTraits& treeTraits = mTreeSet.GetTreeTraits();
