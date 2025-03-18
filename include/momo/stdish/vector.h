@@ -142,26 +142,12 @@ public:
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
-		if (this != &right)
-		{
-			allocator_type alloc = get_allocator();
-			mArray = (right.get_allocator() == alloc ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
-					? std::move(right.mArray) : std::move(vector(std::move(right), alloc).mArray);
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
 	vector& operator=(const vector& right)
 	{
-		if (this != &right)
-		{
-			allocator_type alloc =
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
-					? right.get_allocator() : get_allocator();
-			mArray = Array(right.mArray, MemManager(alloc));
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
 	vector& operator=(std::initializer_list<value_type> values)
@@ -172,9 +158,7 @@ public:
 
 	void swap(vector& right) noexcept
 	{
-		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-			|| get_allocator() == right.get_allocator());
-		mArray.Swap(right.mArray);
+		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
 	friend void swap(vector& left, vector& right) noexcept

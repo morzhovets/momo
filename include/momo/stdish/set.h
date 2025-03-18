@@ -192,26 +192,12 @@ public:
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
-		if (this != &right)
-		{
-			allocator_type alloc = get_allocator();
-			mTreeSet = (right.get_allocator() == alloc ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
-					? std::move(right.mTreeSet) : std::move(set(std::move(right), alloc).mTreeSet);
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
 	set& operator=(const set& right)
 	{
-		if (this != &right)
-		{
-			allocator_type alloc =
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
-					? right.get_allocator() : get_allocator();
-			mTreeSet = TreeSet(right.mTreeSet, MemManager(alloc));
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
 	set& operator=(std::initializer_list<value_type> values)
@@ -222,9 +208,7 @@ public:
 
 	void swap(set& right) noexcept
 	{
-		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-			|| get_allocator() == right.get_allocator());
-		mTreeSet.Swap(right.mTreeSet);
+		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
 	friend void swap(set& left, set& right) noexcept

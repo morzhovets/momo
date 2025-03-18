@@ -211,34 +211,17 @@ namespace internal
 			noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
 				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 		{
-			if (this != &right)
-			{
-				allocator_type alloc = get_allocator();
-				mTreeMap = (right.get_allocator() == alloc ||
-					std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
-						? std::move(right.mTreeMap)
-						: std::move(map_base(std::move(right), alloc).mTreeMap);
-			}
-			return *this;
+			return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 		}
 
 		map_base& operator=(const map_base& right)
 		{
-			if (this != &right)
-			{
-				allocator_type alloc =
-					std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
-						? right.get_allocator() : get_allocator();
-				mTreeMap = TreeMap(right.mTreeMap, MemManager(alloc));
-			}
-			return *this;
+			return momo::internal::ContainerAssignerStd::Copy(right, *this);
 		}
 
 		void swap(map_base& right) noexcept
 		{
-			MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-				|| get_allocator() == right.get_allocator());
-			mTreeMap.Swap(right.mTreeMap);
+			momo::internal::ContainerAssignerStd::Swap(*this, right);
 		}
 
 		const nested_container_type& get_nested_container() const noexcept

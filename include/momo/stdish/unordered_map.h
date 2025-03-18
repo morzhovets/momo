@@ -282,27 +282,12 @@ public:
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
 			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
 	{
-		if (this != &right)
-		{
-			allocator_type alloc = get_allocator();
-			mHashMap = (right.get_allocator() == alloc ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
-					? std::move(right.mHashMap)
-					: std::move(unordered_map(std::move(right), alloc).mHashMap);
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
 	unordered_map& operator=(const unordered_map& right)
 	{
-		if (this != &right)
-		{
-			allocator_type alloc =
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
-					? right.get_allocator() : get_allocator();
-			mHashMap = HashMap(right.mHashMap, MemManager(alloc));
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
 	unordered_map& operator=(std::initializer_list<value_type> values)
@@ -315,9 +300,7 @@ public:
 
 	void swap(unordered_map& right) noexcept
 	{
-		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-			|| get_allocator() == right.get_allocator());
-		mHashMap.Swap(right.mHashMap);
+		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
 	friend void swap(unordered_map& left, unordered_map& right) noexcept

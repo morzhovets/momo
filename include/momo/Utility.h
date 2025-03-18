@@ -381,6 +381,52 @@ namespace internal
 			return dstCont;
 		}
 	};
+
+	class ContainerAssignerStd
+	{
+	public:
+		template<typename Container,
+			typename Allocator = typename Container::allocator_type>
+		static Container& Move(Container&& srcCont, Container& dstCont)
+			noexcept(std::allocator_traits<Allocator>::is_always_equal::value ||
+				std::allocator_traits<Allocator>::propagate_on_container_move_assignment::value)
+		{
+			if (&srcCont != &dstCont)
+			{
+				Allocator alloc = dstCont.get_allocator();
+				dstCont.get_nested_container() = (srcCont.get_allocator() == alloc ||
+					std::allocator_traits<Allocator>::propagate_on_container_move_assignment::value)
+						? std::move(srcCont.get_nested_container())
+						: std::move(Container(std::move(srcCont), alloc).get_nested_container());
+			}
+			return dstCont;
+		}
+
+		template<typename Container,
+			typename Allocator = typename Container::allocator_type,
+			typename NestedContainer = typename Container::nested_container_type>
+		static Container& Copy(const Container& srcCont, Container& dstCont)
+		{
+			if (&srcCont != &dstCont)
+			{
+				Allocator alloc =
+					std::allocator_traits<Allocator>::propagate_on_container_copy_assignment::value
+						? srcCont.get_allocator() : dstCont.get_allocator();
+				dstCont.get_nested_container() = NestedContainer(srcCont.get_nested_container(),
+					typename NestedContainer::MemManager(alloc));
+			}
+			return dstCont;
+		}
+
+		template<typename Container,
+			typename Allocator = typename Container::allocator_type>
+		static void Swap(Container& cont1, Container& cont2) noexcept
+		{
+			MOMO_ASSERT(std::allocator_traits<Allocator>::propagate_on_container_swap::value
+				|| cont1.get_allocator() == cont2.get_allocator());
+			cont1.get_nested_container().Swap(cont2.get_nested_container());
+		}
+	};
 }
 
 enum class CheckMode
