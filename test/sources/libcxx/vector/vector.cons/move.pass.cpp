@@ -149,10 +149,14 @@ TEST_CONSTEXPR_CXX20 bool tests()
       Vect v2 = std::move(v);
       assert(alloc_stats.count == 2);
       assert(alloc_stats.copied == 0);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
       assert(alloc_stats.moved == 1);
+#endif
       {
         const test_allocator<int>& a1 = v.get_allocator();
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(a1.get_id() == test_alloc_base::moved_value);
+#endif
         assert(a1.get_data() == 42);
 
         const test_allocator<int>& a2 = v2.get_allocator();

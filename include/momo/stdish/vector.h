@@ -107,14 +107,23 @@ public:
 #endif
 
 	vector(vector&& right) noexcept
-		: mArray(std::move(right.mArray))
+		: vector(std::move(right), right.get_allocator())
 	{
 	}
 
 	vector(vector&& right, const std::type_identity_t<allocator_type>& alloc)
 		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value)
-		: mArray(pvCreateArray(std::move(right), alloc))
+		: vector(alloc)
 	{
+		if (right.get_allocator() == alloc)
+		{
+			mArray = std::move(right.mArray);
+		}
+		else
+		{
+			pvAssign(std::make_move_iterator(right.begin()), std::make_move_iterator(right.end()));
+			right.mArray.Clear(true);
+		}
 	}
 
 	vector(const vector& right)
@@ -135,10 +144,10 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mArray = pvCreateArray(std::move(right), alloc);
+			allocator_type alloc = get_allocator();
+			mArray = (right.get_allocator() == alloc ||
+				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+					? std::move(right.mArray) : std::move(vector(std::move(right), alloc).mArray);
 		}
 		return *this;
 	}
@@ -147,9 +156,9 @@ public:
 	{
 		if (this != &right)
 		{
-			bool propagate = std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
+			allocator_type alloc =
+				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value
+					? right.get_allocator() : get_allocator();
 			mArray = Array(right.mArray, MemManager(alloc));
 		}
 		return *this;
@@ -494,16 +503,6 @@ public:
 	}
 
 private:
-	static Array pvCreateArray(vector&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mArray);
-		Array array(std::make_move_iterator(right.begin()),
-			std::make_move_iterator(right.end()), MemManager(alloc));
-		right.clear();
-		return array;
-	}
-
 	template<std::input_iterator Iterator,
 		momo::internal::conceptSentinel<Iterator> Sentinel>
 	void pvAssign(Iterator begin, Sentinel end)
