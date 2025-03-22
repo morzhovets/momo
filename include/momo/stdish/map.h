@@ -189,10 +189,14 @@ namespace internal
 			: mTreeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc))
 		{
 			if (right.get_allocator() == alloc)
-				mTreeMap = std::move(right.mTreeMap);
+			{
+				mTreeMap.Swap(right.mTreeMap);
+			}
 			else
+			{
 				mTreeMap.MergeFrom(right.mTreeMap);
-			right.clear();
+				right.clear();
+			}
 		}
 
 		map_base(const map_base& right)
@@ -208,8 +212,7 @@ namespace internal
 		~map_base() noexcept = default;
 
 		map_base& operator=(map_base&& right)
-			noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+			noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<map_base>)
 		{
 			return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 		}

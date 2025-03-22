@@ -117,7 +117,7 @@ public:
 	{
 		if (right.get_allocator() == alloc)
 		{
-			mArray = std::move(right.mArray);
+			mArray.Swap(right.mArray);
 		}
 		else
 		{
@@ -139,8 +139,7 @@ public:
 	~vector() noexcept = default;
 
 	vector& operator=(vector&& right)
-		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<vector>)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}

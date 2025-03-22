@@ -227,10 +227,14 @@ public:
 		: mHashSet(right.mHashSet.GetHashTraits(), MemManager(alloc))
 	{
 		if (right.get_allocator() == alloc)
-			mHashSet = std::move(right.mHashSet);
+		{
+			mHashSet.Swap(right.mHashSet);
+		}
 		else
+		{
 			mHashSet.MergeFrom(right.mHashSet);
-		right.clear();
+			right.clear();
+		}
 	}
 
 	unordered_set(const unordered_set& right)
@@ -246,8 +250,7 @@ public:
 	~unordered_set() noexcept = default;
 
 	unordered_set& operator=(unordered_set&& right)
-		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_set>)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}

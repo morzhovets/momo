@@ -260,10 +260,14 @@ public:
 		: mHashMap(right.mHashMap.GetHashTraits(), MemManager(alloc))
 	{
 		if (right.get_allocator() == alloc)
-			mHashMap = std::move(right.mHashMap);
+		{
+			mHashMap.Swap(right.mHashMap);
+		}
 		else
+		{
 			mHashMap.MergeFrom(right.mHashMap);
-		right.clear();
+			right.clear();
+		}
 	}
 
 	unordered_map(const unordered_map& right)
@@ -279,8 +283,7 @@ public:
 	~unordered_map() noexcept = default;
 
 	unordered_map& operator=(unordered_map&& right)
-		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_map>)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}

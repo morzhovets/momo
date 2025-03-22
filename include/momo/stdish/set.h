@@ -170,10 +170,14 @@ public:
 		: mTreeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc))
 	{
 		if (right.get_allocator() == alloc)
-			mTreeSet = std::move(right.mTreeSet);
+		{
+			mTreeSet.Swap(right.mTreeSet);
+		}
 		else
+		{
 			mTreeSet.MergeFrom(right.mTreeSet);
-		right.clear();
+			right.clear();
+		}
 	}
 
 	set(const set& right)
@@ -189,8 +193,7 @@ public:
 	~set() noexcept = default;
 
 	set& operator=(set&& right)
-		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<set>)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}

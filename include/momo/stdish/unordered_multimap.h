@@ -244,7 +244,7 @@ public:
 	{
 		if (right.get_allocator() == alloc)
 		{
-			mHashMultiMap = std::move(right.mHashMultiMap);
+			mHashMultiMap.Swap(right.mHashMultiMap);
 		}
 		else
 		{
@@ -268,8 +268,7 @@ public:
 	~unordered_multimap() noexcept = default;
 
 	unordered_multimap& operator=(unordered_multimap&& right)
-		noexcept(std::allocator_traits<allocator_type>::is_always_equal::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_multimap>)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
