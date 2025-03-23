@@ -495,15 +495,12 @@ public:
 
 	HashMap& operator=(HashMap&& hashMap) noexcept
 	{
-		HashMap(std::move(hashMap)).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Move(std::move(hashMap), *this);
 	}
 
 	HashMap& operator=(const HashMap& hashMap)
 	{
-		if (this != &hashMap)
-			HashMap(hashMap).Swap(*this);
-		return *this;
+		return internal::ContainerAssigner::Copy(hashMap, *this);
 	}
 
 	void Swap(HashMap& hashMap) noexcept

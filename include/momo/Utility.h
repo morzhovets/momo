@@ -447,6 +447,30 @@ namespace internal
 
 		static const uint32_t max32 = UINT32_MAX;
 	};
+
+	class ContainerAssigner
+	{
+	public:
+		template<typename Container>
+		static Container& Move(Container&& srcCont, Container& dstCont) noexcept
+		{
+			if (&srcCont != &dstCont)
+			{
+				srcCont.Swap(dstCont);
+				if (!srcCont.IsEmpty())
+					srcCont.Clear();
+			}
+			return dstCont;
+		}
+
+		template<typename Container>
+		static Container& Copy(const Container& srcCont, Container& dstCont)
+		{
+			if (&srcCont != &dstCont)
+				Container(srcCont).Swap(dstCont);
+			return dstCont;
+		}
+	};
 }
 
 } // namespace momo
