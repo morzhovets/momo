@@ -38,10 +38,8 @@ void main()
         assert(m.size() == 0);
         assert(distance(m.begin(), m.end()) == 0);
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(mo.get_allocator() == A(7));
         assert(mo.key_comp() == C(5));
-#endif
         assert(mo.size() == 0);
         assert(distance(mo.begin(), mo.end()) == 0);
     }
@@ -70,10 +68,8 @@ void main()
         assert(*next(m.begin()) == V(2, 1));
         assert(*next(m.begin(), 2) == V(3, 1));
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         assert(mo.get_allocator() == A(7));
         assert(mo.key_comp() == C(5));
-#endif
         assert(mo.size() == 0);
         assert(distance(mo.begin(), mo.end()) == 0);
     }
