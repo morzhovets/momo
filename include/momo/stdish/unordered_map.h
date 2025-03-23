@@ -301,9 +301,7 @@ public:
 
 	unordered_map& operator=(std::initializer_list<value_type> values)
 	{
-		HashMap hashMap(mHashMap.GetHashTraits(), MemManager(get_allocator()));
-		hashMap.Insert(values.begin(), values.end());
-		mHashMap = std::move(hashMap);
+		mHashMap = HashMap(values, mHashMap.GetHashTraits(), MemManager(get_allocator()));
 		return *this;
 	}
 
