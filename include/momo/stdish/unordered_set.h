@@ -255,7 +255,7 @@ public:
 	~unordered_set() = default;
 
 	unordered_set& operator=(unordered_set&& right)
-		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_set>)
+		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<unordered_set>::value)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}

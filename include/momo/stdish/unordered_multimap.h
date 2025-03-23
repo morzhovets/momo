@@ -274,7 +274,7 @@ public:
 	~unordered_multimap() = default;
 
 	unordered_multimap& operator=(unordered_multimap&& right)
-		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_multimap>)
+		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<unordered_multimap>::value)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}

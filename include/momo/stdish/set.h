@@ -199,7 +199,7 @@ public:
 	~set() = default;
 
 	set& operator=(set&& right)
-		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<set>)
+		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<set>::value)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}

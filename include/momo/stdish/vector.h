@@ -148,7 +148,7 @@ public:
 	~vector() = default;
 
 	vector& operator=(vector&& right)
-		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<vector>)
+		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<vector>::value)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}

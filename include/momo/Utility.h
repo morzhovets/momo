@@ -477,13 +477,13 @@ namespace internal
 	public:
 		template<typename Container,
 			typename Allocator = typename Container::allocator_type>
-		static const bool isNothrowMoveAssignable = std::is_empty<Allocator>::value
-			|| std::allocator_traits<Allocator>::propagate_on_container_move_assignment::value;
+		using IsNothrowMoveAssignable = BoolConstant<std::is_empty<Allocator>::value
+			|| std::allocator_traits<Allocator>::propagate_on_container_move_assignment::value>;
 
 	public:
 		template<typename Container>
 		static Container& Move(Container&& srcCont, Container& dstCont)
-			noexcept(isNothrowMoveAssignable<Container>)
+			noexcept(IsNothrowMoveAssignable<Container>::value)
 		{
 			typedef typename Container::allocator_type Allocator;
 			if (&srcCont != &dstCont)

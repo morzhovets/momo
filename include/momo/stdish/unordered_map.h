@@ -289,7 +289,7 @@ public:
 	~unordered_map() = default;
 
 	unordered_map& operator=(unordered_map&& right)
-		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_map>)
+		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<unordered_map>::value)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}

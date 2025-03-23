@@ -219,7 +219,7 @@ namespace internal
 		~map_base() = default;
 
 		map_base& operator=(map_base&& right)
-			noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<map_base>)
+			noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<map_base>::value)
 		{
 			return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 		}
