@@ -150,33 +150,45 @@ public:
 
 	static void TestTemplAll()
 	{
+		static const size_t minArraySize = 3 * sizeof(void*);
+
 		std::cout << "momo::Array<size_t>: " << std::flush;
 		TestTemplArray<momo::Array<size_t, momo::MemManagerDict<>>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<size_t, momo::MemManagerCpp>: " << std::flush;
-		TestTemplArray<momo::Array<size_t, momo::MemManagerCpp>>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerCpp>, minArraySize>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<TemplItem<false>, momo::MemManagerCpp>: " << std::flush;
-		TestTemplArray<momo::Array<TemplItem<false>, momo::MemManagerCpp>>();
+		TestTemplArray<momo::Array<TemplItem<false>, momo::MemManagerCpp>, minArraySize>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<size_t, momo::MemManagerC>: " << std::flush;
-		TestTemplArray<momo::Array<size_t, momo::MemManagerC>>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerC>, minArraySize>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<TemplItem<true>, momo::MemManagerC>: " << std::flush;
-		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerC>>();
+		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerC>, minArraySize>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::Array<size_t, momo::MemManagerStd>: " << std::flush;
+		TestTemplArray<momo::Array<size_t, momo::MemManagerStd<std::allocator<size_t>>>,
+			minArraySize>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::Array<TemplItem<true>, momo::MemManagerStd>: " << std::flush;
+		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerStd<std::allocator<TemplItem<true>>>>,
+			minArraySize>();
 		std::cout << "ok" << std::endl;
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 		std::cout << "momo::Array<size_t, momo::MemManagerWin>: " << std::flush;
-		TestTemplArray<momo::Array<size_t, momo::MemManagerWin>>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerWin>, minArraySize>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<TemplItem<true>, momo::MemManagerWin>: " << std::flush;
-		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerWin>>();
+		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerWin>, minArraySize>();
 		std::cout << "ok" << std::endl;
 #endif
 
@@ -201,10 +213,13 @@ public:
 		std::cout << "ok" << std::endl;
 	}
 
-	template<typename Array>
+	template<typename Array,
+		size_t arraySize = 0>
 	static void TestTemplArray()
 	{
 		typedef typename Array::Item Item;
+
+		MOMO_STATIC_ASSERT(arraySize == 0 || arraySize == sizeof(Array));
 
 		Array ar;
 		static const size_t count = 20000;
