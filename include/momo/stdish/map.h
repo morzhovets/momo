@@ -187,15 +187,23 @@ namespace internal
 		}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-		map_base(map_base&& right) noexcept
-			: mTreeMap(std::move(right.mTreeMap))
+		map_base(map_base&& right)
+			: map_base(std::move(right), right.get_allocator())
 		{
 		}
 
 		map_base(map_base&& right, const momo::internal::Identity<allocator_type>& alloc)
-			noexcept(std::is_empty<allocator_type>::value)
-			: mTreeMap(pvCreateMap(std::move(right), alloc))
+			: mTreeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc))
 		{
+			if (right.get_allocator() == alloc)
+			{
+				mTreeMap.Swap(right.mTreeMap);
+			}
+			else
+			{
+				mTreeMap.MergeFrom(right.mTreeMap);
+				right.clear();
+			}
 		}
 
 		map_base(const map_base& right)
@@ -211,36 +219,19 @@ namespace internal
 		~map_base() = default;
 
 		map_base& operator=(map_base&& right)
-			noexcept(std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+			noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<map_base>)
 		{
-			if (this != &right)
-			{
-				bool propagate = std::is_empty<allocator_type>::value ||
-					std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-				allocator_type alloc = (propagate ? &right : this)->get_allocator();
-				mTreeMap = pvCreateMap(std::move(right), alloc);
-			}
-			return *this;
+			return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 		}
 
 		map_base& operator=(const map_base& right)
 		{
-			if (this != &right)
-			{
-				bool propagate = std::is_empty<allocator_type>::value ||
-					std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-				allocator_type alloc = (propagate ? &right : this)->get_allocator();
-				mTreeMap = TreeMap(right.mTreeMap, MemManager(alloc));
-			}
-			return *this;
+			return momo::internal::ContainerAssignerStd::Copy(right, *this);
 		}
 
 		void swap(map_base& right) noexcept
 		{
-			MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-				|| get_allocator() == right.get_allocator());
-			mTreeMap.Swap(right.mTreeMap);
+			momo::internal::ContainerAssignerStd::Swap(*this, right);
 		}
 
 		const nested_container_type& get_nested_container() const noexcept
@@ -674,15 +665,6 @@ namespace internal
 		}
 
 	private:
-		static TreeMap pvCreateMap(map_base&& right, const allocator_type& alloc)
-		{
-			if (right.get_allocator() == alloc)
-				return std::move(right.mTreeMap);
-			TreeMap treeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc));
-			treeMap.MergeFrom(right.mTreeMap);
-			return treeMap;
-		}
-
 		bool pvIsOrdered(const key_type& key1, const key_type& key2) const
 		{
 			const TreeTraits& treeTraits = mTreeMap.GetTreeTraits();

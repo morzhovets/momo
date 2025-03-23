@@ -167,15 +167,23 @@ public:
 	}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-	set(set&& right) noexcept
-		: mTreeSet(std::move(right.mTreeSet))
+	set(set&& right)
+		: set(std::move(right), right.get_allocator())
 	{
 	}
 
 	set(set&& right, const momo::internal::Identity<allocator_type>& alloc)
-		noexcept(std::is_empty<allocator_type>::value)
-		: mTreeSet(pvCreateSet(std::move(right), alloc))
+		: mTreeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc))
 	{
+		if (right.get_allocator() == alloc)
+		{
+			mTreeSet.Swap(right.mTreeSet);
+		}
+		else
+		{
+			mTreeSet.MergeFrom(right.mTreeSet);
+			right.clear();
+		}
 	}
 
 	set(const set& right)
@@ -191,29 +199,14 @@ public:
 	~set() = default;
 
 	set& operator=(set&& right)
-		noexcept(std::is_empty<allocator_type>::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<set>)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mTreeSet = pvCreateSet(std::move(right), alloc);
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
 	set& operator=(const set& right)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mTreeSet = TreeSet(right.mTreeSet, MemManager(alloc));
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
 	set& operator=(std::initializer_list<value_type> values)
@@ -224,9 +217,7 @@ public:
 
 	void swap(set& right) noexcept
 	{
-		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-			|| get_allocator() == right.get_allocator());
-		mTreeSet.Swap(right.mTreeSet);
+		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
 	friend void swap(set& left, set& right) noexcept
@@ -597,15 +588,6 @@ public:
 	MOMO_MORE_COMPARISON_OPERATORS(const set&)
 
 private:
-	static TreeSet pvCreateSet(set&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mTreeSet);
-		TreeSet treeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc));
-		treeSet.MergeFrom(right.mTreeSet);
-		return treeSet;
-	}
-
 	bool pvIsOrdered(const key_type& key1, const key_type& key2) const
 	{
 		const TreeTraits& treeTraits = mTreeSet.GetTreeTraits();

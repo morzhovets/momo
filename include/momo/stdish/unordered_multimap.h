@@ -239,16 +239,25 @@ public:
 	}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-	unordered_multimap(unordered_multimap&& right) noexcept
-		: mHashMultiMap(std::move(right.mHashMultiMap))
+	unordered_multimap(unordered_multimap&& right)
+		: unordered_multimap(std::move(right), right.get_allocator())
 	{
 	}
 
 	unordered_multimap(unordered_multimap&& right,
 		const momo::internal::Identity<allocator_type>& alloc)
-		noexcept(std::is_empty<allocator_type>::value)
-		: mHashMultiMap(pvCreateMultiMap(std::move(right), alloc))
+		: mHashMultiMap(right.mHashMultiMap.GetHashTraits(), MemManager(alloc))
 	{
+		if (right.get_allocator() == alloc)
+		{
+			mHashMultiMap.Swap(right.mHashMultiMap);
+		}
+		else
+		{
+			for (reference ref : right)
+				mHashMultiMap.Add(ref.first, std::move(ref.second));
+			right.clear();
+		}
 	}
 
 	unordered_multimap(const unordered_multimap& right)
@@ -265,29 +274,14 @@ public:
 	~unordered_multimap() = default;
 
 	unordered_multimap& operator=(unordered_multimap&& right)
-		noexcept(std::is_empty<allocator_type>::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_multimap>)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mHashMultiMap = pvCreateMultiMap(std::move(right), alloc);
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
 	unordered_multimap& operator=(const unordered_multimap& right)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mHashMultiMap = HashMultiMap(right.mHashMultiMap, MemManager(alloc));
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
 	unordered_multimap& operator=(std::initializer_list<value_type> values)
@@ -300,9 +294,7 @@ public:
 
 	void swap(unordered_multimap& right) noexcept
 	{
-		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-			|| get_allocator() == right.get_allocator());
-		mHashMultiMap.Swap(right.mHashMultiMap);
+		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
 	friend void swap(unordered_multimap& left, unordered_multimap& right) noexcept
@@ -649,17 +641,6 @@ public:
 	}
 
 private:
-	static HashMultiMap pvCreateMultiMap(unordered_multimap&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mHashMultiMap);
-		HashMultiMap hashMultiMap(right.mHashMultiMap.GetHashTraits(), MemManager(alloc));
-		for (reference ref : right)
-			hashMultiMap.Add(ref.first, std::move(ref.second));
-		right.clear();
-		return hashMultiMap;
-	}
-
 	template<typename Iterator, typename IteratorProxy, typename HashMultiMap, typename KeyIterator>
 	static std::pair<Iterator, Iterator> pvEqualRange(HashMultiMap& hashMultiMap,
 		KeyIterator keyIter)

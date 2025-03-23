@@ -257,15 +257,23 @@ public:
 	}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-	unordered_map(unordered_map&& right) noexcept
-		: mHashMap(std::move(right.mHashMap))
+	unordered_map(unordered_map&& right)
+		: unordered_map(std::move(right), right.get_allocator())
 	{
 	}
 
 	unordered_map(unordered_map&& right, const momo::internal::Identity<allocator_type>& alloc)
-		noexcept(std::is_empty<allocator_type>::value)
-		: mHashMap(pvCreateMap(std::move(right), alloc))
+		: mHashMap(right.mHashMap.GetHashTraits(), MemManager(alloc))
 	{
+		if (right.get_allocator() == alloc)
+		{
+			mHashMap.Swap(right.mHashMap);
+		}
+		else
+		{
+			mHashMap.MergeFrom(right.mHashMap);
+			right.clear();
+		}
 	}
 
 	unordered_map(const unordered_map& right)
@@ -281,29 +289,14 @@ public:
 	~unordered_map() = default;
 
 	unordered_map& operator=(unordered_map&& right)
-		noexcept(std::is_empty<allocator_type>::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_map>)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mHashMap = pvCreateMap(std::move(right), alloc);
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
 	unordered_map& operator=(const unordered_map& right)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mHashMap = HashMap(right.mHashMap, MemManager(alloc));
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
 	unordered_map& operator=(std::initializer_list<value_type> values)
@@ -316,9 +309,7 @@ public:
 
 	void swap(unordered_map& right) noexcept
 	{
-		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-			|| get_allocator() == right.get_allocator());
-		mHashMap.Swap(right.mHashMap);
+		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
 	friend void swap(unordered_map& left, unordered_map& right) noexcept
@@ -831,15 +822,6 @@ public:
 	}
 
 private:
-	static HashMap pvCreateMap(unordered_map&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mHashMap);
-		HashMap hashMap(right.mHashMap.GetHashTraits(), MemManager(alloc));
-		hashMap.MergeFrom(right.mHashMap);
-		return hashMap;
-	}
-
 	template<typename Hint, typename... KeyArgs, typename... MappedArgs>
 	std::pair<iterator, bool> pvEmplace(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 		std::tuple<MappedArgs...>&& mappedArgs)

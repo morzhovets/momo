@@ -116,14 +116,23 @@ public:
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
 	vector(vector&& right) noexcept
-		: mArray(std::move(right.mArray))
+		: vector(std::move(right), right.get_allocator())
 	{
 	}
 
 	vector(vector&& right, const momo::internal::Identity<allocator_type>& alloc)
 		noexcept(std::is_empty<allocator_type>::value)
-		: mArray(pvCreateArray(std::move(right), alloc))
+		: vector(alloc)
 	{
+		if (right.get_allocator() == alloc)
+		{
+			mArray.Swap(right.mArray);
+		}
+		else
+		{
+			pvAssign(std::make_move_iterator(right.begin()), std::make_move_iterator(right.end()));
+			right.mArray.Clear(true);
+		}
 	}
 
 	vector(const vector& right)
@@ -139,29 +148,14 @@ public:
 	~vector() = default;
 
 	vector& operator=(vector&& right)
-		noexcept(std::is_empty<allocator_type>::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<vector>)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mArray = pvCreateArray(std::move(right), alloc);
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
 	vector& operator=(const vector& right)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mArray = Array(right.mArray, MemManager(alloc));
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
 	vector& operator=(std::initializer_list<value_type> values)
@@ -172,9 +166,7 @@ public:
 
 	void swap(vector& right) noexcept
 	{
-		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-			|| get_allocator() == right.get_allocator());
-		mArray.Swap(right.mArray);
+		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
 	friend void swap(vector& left, vector& right) noexcept
@@ -517,16 +509,6 @@ public:
 	MOMO_MORE_COMPARISON_OPERATORS(const vector&)
 
 private:
-	static Array pvCreateArray(vector&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mArray);
-		Array array(std::make_move_iterator(right.begin()),
-			std::make_move_iterator(right.end()), MemManager(alloc));
-		right.clear();
-		return array;
-	}
-
 	template<typename Iterator, typename Sentinel>
 	void pvAssign(Iterator begin, Sentinel end)
 	{

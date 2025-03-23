@@ -223,15 +223,23 @@ public:
 	}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-	unordered_set(unordered_set&& right) noexcept
-		: mHashSet(std::move(right.mHashSet))
+	unordered_set(unordered_set&& right)
+		: unordered_set(std::move(right), right.get_allocator())
 	{
 	}
 
 	unordered_set(unordered_set&& right, const momo::internal::Identity<allocator_type>& alloc)
-		noexcept(std::is_empty<allocator_type>::value)
-		: mHashSet(pvCreateSet(std::move(right), alloc))
+		: mHashSet(right.mHashSet.GetHashTraits(), MemManager(alloc))
 	{
+		if (right.get_allocator() == alloc)
+		{
+			mHashSet.Swap(right.mHashSet);
+		}
+		else
+		{
+			mHashSet.MergeFrom(right.mHashSet);
+			right.clear();
+		}
 	}
 
 	unordered_set(const unordered_set& right)
@@ -247,29 +255,14 @@ public:
 	~unordered_set() = default;
 
 	unordered_set& operator=(unordered_set&& right)
-		noexcept(std::is_empty<allocator_type>::value ||
-			std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_set>)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_move_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mHashSet = pvCreateSet(std::move(right), alloc);
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
 	unordered_set& operator=(const unordered_set& right)
 	{
-		if (this != &right)
-		{
-			bool propagate = std::is_empty<allocator_type>::value ||
-				std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
-			allocator_type alloc = (propagate ? &right : this)->get_allocator();
-			mHashSet = HashSet(right.mHashSet, MemManager(alloc));
-		}
-		return *this;
+		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
 	unordered_set& operator=(std::initializer_list<value_type> values)
@@ -280,9 +273,7 @@ public:
 
 	void swap(unordered_set& right) noexcept
 	{
-		MOMO_ASSERT(std::allocator_traits<allocator_type>::propagate_on_container_swap::value
-			|| get_allocator() == right.get_allocator());
-		mHashSet.Swap(right.mHashSet);
+		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
 	friend void swap(unordered_set& left, unordered_set& right) noexcept
@@ -682,15 +673,6 @@ public:
 	}
 
 private:
-	static HashSet pvCreateSet(unordered_set&& right, const allocator_type& alloc)
-	{
-		if (right.get_allocator() == alloc)
-			return std::move(right.mHashSet);
-		HashSet hashSet(right.mHashSet.GetHashTraits(), MemManager(alloc));
-		hashSet.MergeFrom(right.mHashSet);
-		return hashSet;
-	}
-
 	template<typename Iterator, typename Sentinel>
 	momo::internal::EnableIf<momo::internal::IsSetArgIterator<Iterator, value_type>::value,
 	void> pvInsertRange(Iterator begin, Sentinel end)
