@@ -172,7 +172,7 @@ public:
 
 //! `MemManagerStd` uses `allocator<unsigned char>::allocate` and `deallocate`
 template<typename TAllocator>
-class MemManagerStd
+class MOMO_EMPTY_BASES MemManagerStd
 	: private std::allocator_traits<TAllocator>::template rebind_alloc<internal::Byte>
 {
 public:
