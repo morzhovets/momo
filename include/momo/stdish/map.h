@@ -649,9 +649,7 @@ namespace internal
 	protected:	//?
 		void ptAssign(std::initializer_list<value_type> values)
 		{
-			TreeMap treeMap(mTreeMap.GetTreeTraits(), MemManager(get_allocator()));
-			treeMap.Insert(values.begin(), values.end());
-			mTreeMap = std::move(treeMap);
+			mTreeMap = TreeMap(values, mTreeMap.GetTreeTraits(), MemManager(get_allocator()));
 		}
 
 		template<typename Hint, typename... KeyArgs, typename... MappedArgs>
