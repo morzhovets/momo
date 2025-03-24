@@ -164,7 +164,7 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
 		= MergeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = MergeMapSettings>
-class MergeMap
+class MOMO_EMPTY_BASES MergeMap
 	: public internal::Rangeable, public internal::Swappable
 {
 public:

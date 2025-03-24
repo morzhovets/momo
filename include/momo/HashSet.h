@@ -449,7 +449,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	conceptSetItemTraits<TKey, TMemManager> TItemTraits = HashSetItemTraits<TKey, TMemManager>,
 	typename TSettings = HashSetSettings>
-class HashSet
+class MOMO_EMPTY_BASES HashSet
 	: public internal::Rangeable, public internal::Swappable
 {
 public:

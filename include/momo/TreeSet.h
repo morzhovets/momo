@@ -251,7 +251,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	conceptSetItemTraits<TKey, TMemManager> TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = TreeSetSettings>
-class TreeSet
+class MOMO_EMPTY_BASES TreeSet
 	: public internal::Rangeable, public internal::Swappable
 {
 public:

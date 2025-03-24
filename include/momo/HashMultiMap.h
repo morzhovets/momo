@@ -588,7 +588,7 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptHashMultiMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
 		= HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMultiMapSettings>
-class HashMultiMap
+class MOMO_EMPTY_BASES HashMultiMap
 	: public internal::Rangeable, public internal::Swappable
 {
 public:

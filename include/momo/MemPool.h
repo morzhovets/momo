@@ -436,7 +436,8 @@ namespace internal
 template<conceptMemPoolParams TParams = MemPoolParams<>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
-class MemPool : private internal::MemChunker<TParams>//, public internal::Swappable
+class MOMO_EMPTY_BASES MemPool
+	: private internal::MemChunker<TParams>, public internal::Swappable
 {
 public:
 	typedef TParams Params;

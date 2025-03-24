@@ -239,7 +239,7 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
 		= HashMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMapSettings>
-class HashMap
+class MOMO_EMPTY_BASES HashMap
 	: public internal::Rangeable, public internal::Swappable
 {
 public:

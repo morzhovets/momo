@@ -133,8 +133,8 @@ namespace internal
 	};
 
 	template<typename TMergeSetCrew>
-	class MergeSetNestedArrayMemManager : private TMergeSetCrew,
-		public MemManagerPtr<typename TMergeSetCrew::MemManager>
+	class MOMO_EMPTY_BASES MergeSetNestedArrayMemManager
+		: private TMergeSetCrew, public MemManagerPtr<typename TMergeSetCrew::MemManager>
 	{
 	public:
 		typedef TMergeSetCrew MergeSetCrew;
@@ -461,7 +461,7 @@ template<conceptObject TKey,
 	conceptMemManager TMemManager = MemManagerDefault,
 	conceptSetItemTraits<TKey, TMemManager> TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = MergeSetSettings>
-class MergeSet
+class MOMO_EMPTY_BASES MergeSet
 	: public internal::Rangeable, public internal::Swappable
 {
 public:

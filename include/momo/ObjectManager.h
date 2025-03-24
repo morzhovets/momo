@@ -309,13 +309,14 @@ namespace internal
 
 	template<conceptObject TObject, conceptMemManager TMemManager,
 		typename Indexes, typename... ObjectArgs>
-	class ObjectCreator;
+	class MOMO_EMPTY_BASES ObjectCreator;
 
 	template<conceptObject TObject, conceptMemManager TMemManager,
 		typename... ObjectArgs, size_t... indexes>
 	requires (std::is_constructible_v<TObject, ObjectArgs...>
 		|| HasCustomConstructor<TMemManager, TObject, ObjectArgs...>::value)
-	class ObjectCreator<TObject, TMemManager, std::index_sequence<indexes...>, ObjectArgs...>
+	class MOMO_EMPTY_BASES ObjectCreator<
+		TObject, TMemManager, std::index_sequence<indexes...>, ObjectArgs...>
 		: private ObjectCreatorBase<TMemManager, TObject, ObjectArgs...>,
 		private ObjectCreatorArg<ObjectArgs, indexes>...
 	{
@@ -357,7 +358,7 @@ namespace internal
 	template<conceptObject TObject, conceptMemManager TMemManager>
 	requires (conceptSmallAndTriviallyCopyable<TObject> &&
 		!HasCustomConstructor<TMemManager, TObject, const TObject&>::value)
-	class ObjectCreator<TObject, TMemManager, std::index_sequence<0>, const TObject&>
+	class MOMO_EMPTY_BASES ObjectCreator<TObject, TMemManager, std::index_sequence<0>, const TObject&>
 		: public ObjectCreator<TObject, TMemManager, std::index_sequence<0>, TObject>
 	{
 	private:

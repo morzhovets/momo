@@ -202,7 +202,7 @@ namespace internal
 	};
 
 	template<typename TRawBounds, typename TRowReference>
-	class DataRowBounds
+	class MOMO_EMPTY_BASES DataRowBounds
 		: private VersionKeeper<typename TRowReference::Settings>, public Rangeable
 	{
 	protected:
@@ -403,7 +403,7 @@ namespace internal
 	};
 
 	template<typename TRowReference, typename TDataTraits>
-	class DataSelection
+	class MOMO_EMPTY_BASES DataSelection
 		: private VersionKeeper<typename TRowReference::ColumnList::Settings>,
 		public Rangeable, public Swappable
 	{

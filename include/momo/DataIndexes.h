@@ -230,7 +230,7 @@ namespace internal
 	};
 
 	template<typename TRawIterator, typename TSettings>
-	class DataRawMultiHashBounds
+	class MOMO_EMPTY_BASES DataRawMultiHashBounds
 		: private VersionKeeper<TSettings>, public Rangeable
 	{
 	public:

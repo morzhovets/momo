@@ -193,7 +193,7 @@ template<conceptObject TKey, conceptObject TValue,
 	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
 		= TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = TreeMapSettings>
-class TreeMap
+class MOMO_EMPTY_BASES TreeMap
 	: public internal::Rangeable, public internal::Swappable
 {
 public:

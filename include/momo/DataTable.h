@@ -76,7 +76,7 @@ public:
 
 template<conceptDataColumnList TColumnList = DataColumnList<>,
 	conceptDataTraits TDataTraits = DataTraits>
-class DataTable
+class MOMO_EMPTY_BASES DataTable
 	: public internal::Rangeable, public internal::Swappable
 {
 public:
