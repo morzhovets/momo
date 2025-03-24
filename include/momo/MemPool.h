@@ -436,7 +436,7 @@ namespace internal
 template<conceptMemPoolParams TParams = MemPoolParams<>,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TSettings = MemPoolSettings>
-class MemPool : private internal::MemChunker<TParams>
+class MemPool : private internal::MemChunker<TParams>//, public internal::Swappable
 {
 public:
 	typedef TParams Params;
@@ -524,15 +524,25 @@ public:
 
 	MemPool& operator=(MemPool&& memPool) noexcept
 	{
-		pvGetChunker() = std::move(memPool.pvGetChunker());
-		mData = std::move(memPool.mData);
-		mFreeChunkHead = std::exchange(memPool.mFreeChunkHead, nullptr);
-		mCachedCount = std::exchange(memPool.mCachedCount, 0);
-		mCacheHead = std::exchange(memPool.mCacheHead, nullptr);
+		if (this != &memPool)
+		{
+			Swap(memPool);
+			if (memPool.CanDeallocateAll())
+				memPool.DeallocateAll();
+		}
 		return *this;
 	}
 
 	MemPool& operator=(const MemPool&) = delete;
+
+	void Swap(MemPool& memPool) noexcept
+	{
+		std::swap(pvGetChunker(), memPool.pvGetChunker());
+		std::swap(mData, memPool.mData);
+		std::swap(mFreeChunkHead, memPool.mFreeChunkHead);
+		std::swap(mCachedCount, memPool.mCachedCount);
+		std::swap(mCacheHead, memPool.mCacheHead);
+	}
 
 	size_t GetBlockSize() const noexcept
 	{
