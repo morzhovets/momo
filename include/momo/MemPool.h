@@ -516,11 +516,7 @@ public:
 
 	~MemPool() noexcept
 	{
-		MOMO_EXTRA_CHECK(mData.allocCount == 0);
-		if (CanDeallocateAll())
-			DeallocateAll();
-		else if (pvUseCache())
-			pvFlushDeallocate();
+		pvDestroy();
 	}
 
 	MemPool& operator=(MemPool&& memPool) noexcept
@@ -528,8 +524,7 @@ public:
 		if (this != &memPool)
 		{
 			Swap(memPool);
-			if (memPool.CanDeallocateAll())
-				memPool.DeallocateAll();
+			memPool.pvDestroy();
 		}
 		return *this;
 	}
@@ -731,6 +726,17 @@ private:
 		MOMO_CHECK(blockCount == 1 || blockSize / blockAlignment >= 2);
 		if (blockSize > internal::UIntConst::maxSize / blockCount)	//?
 			throw std::length_error("Invalid block size");
+	}
+
+	void pvDestroy() noexcept
+	{
+		MOMO_EXTRA_CHECK(mData.allocCount == 0);
+		if (CanDeallocateAll())
+			DeallocateAll();
+		else if (pvUseCache())
+			pvFlushDeallocate();
+		mData.allocCount = 0;
+		mFreeChunkHead = nullptr;
 	}
 
 	bool pvUseCache() const noexcept
