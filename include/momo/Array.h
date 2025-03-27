@@ -573,14 +573,14 @@ public:
 	Array& operator=(Array&& array) noexcept
 	{
 		if (this != &array)
-			mData.Assign<true>(std::move(array.mData));
+			mData.template Assign<true>(std::move(array.mData));
 		return *this;
 	}
 
 	Array& operator=(const Array& array)
 	{
 		if (this != &array)
-			mData.Assign<false>(std::move(Array(array).mData));
+			mData.template Assign<false>(std::move(Array(array).mData));
 		return *this;
 	}
 
@@ -589,8 +589,8 @@ public:
 		if (this != &array)
 		{
 			Data tempData(std::move(mData));
-			mData.Assign<false>(std::move(array.mData));
-			array.mData.Assign<false>(std::move(tempData));
+			mData.template Assign<false>(std::move(array.mData));
+			array.mData.template Assign<false>(std::move(tempData));
 		}
 	}
 
