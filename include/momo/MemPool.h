@@ -471,7 +471,7 @@ private:
 
 		void Swap(Data& data) noexcept
 		{
-			if (this != &data)
+			if (this != &data)	//?
 				MemManagerProxy::Swap(*this, data);
 			std::swap(allocCount, data.allocCount);
 		}

@@ -438,8 +438,7 @@ namespace internal
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
 		{
-			MOMO_ASSERT(&memManager1 != &memManager2);
-			if constexpr (std::is_empty_v<MemManager>)
+			if (&memManager1 == &memManager2 || std::is_empty<MemManager>::value)
 				return true;
 			else if constexpr (conceptMemManagerWithIsEqual<MemManager>)
 				return memManager1.IsEqual(memManager2);
@@ -453,8 +452,8 @@ namespace internal
 			if constexpr (!std::is_empty_v<MemManager>)
 			{
 				MemManager tempMemManager(std::move(memManager1));
-				MemManagerProxy::Assign(std::move(memManager2), memManager1);
-				MemManagerProxy::Assign(std::move(tempMemManager), memManager2);
+				Assign(std::move(memManager2), memManager1);
+				Assign(std::move(tempMemManager), memManager2);
 			}
 		}
 
