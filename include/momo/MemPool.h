@@ -164,18 +164,14 @@ private:
 
 		~Data() = default;
 
+		Data& operator=(const Data&) = delete;
+
 		void Swap(Data& data) noexcept
 		{
-			if (!MemManagerProxy::IsEqual(*this, data))
-			{
-				MemManager memManager(std::move(static_cast<MemManager&>(*this)));
-				MemManagerProxy::Assign(std::move(static_cast<MemManager&>(data)), *this);
-				MemManagerProxy::Assign(std::move(memManager), data);
-			}
+			if (this != &data)	//?
+				MemManagerProxy::Swap(*this, data);
 			std::swap(allocCount, data.allocCount);
 		}
-
-		Data& operator=(const Data&) = delete;
 
 	public:
 		size_t allocCount;
@@ -226,16 +222,16 @@ public:
 
 	~MemPool() noexcept
 	{
-		MOMO_EXTRA_CHECK(mData.allocCount == 0);
-		if (CanDeallocateAll())
-			DeallocateAll();
-		else if (pvUseCache())
-			pvFlushDeallocate();
+		pvDestroy();
 	}
 
 	MemPool& operator=(MemPool&& memPool) noexcept
 	{
-		MemPool(std::move(memPool)).Swap(*this);
+		if (this != &memPool)
+		{
+			Swap(memPool);
+			memPool.pvDestroy();
+		}
 		return *this;
 	}
 
@@ -451,6 +447,17 @@ private:
 		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize / Params::blockAlignment >= 2);
 		if (Params::blockSize > internal::UIntConst::maxSize / Params::blockCount)	//?
 			throw std::length_error("Invalid block size");
+	}
+
+	void pvDestroy() noexcept
+	{
+		MOMO_EXTRA_CHECK(mData.allocCount == 0);
+		if (CanDeallocateAll())
+			DeallocateAll();
+		else if (pvUseCache())
+			pvFlushDeallocate();
+		mData.allocCount = 0;
+		mFreeChunkHead = nullptr;
 	}
 
 	bool pvUseCache() const noexcept
