@@ -461,12 +461,25 @@ namespace internal
 			return pvIsEqual(memManager1, memManager2, HasIsEqual<MemManager>());
 		}
 
+		static void Swap(MemManager& memManager1, MemManager& memManager2) noexcept
+		{
+			MOMO_ASSERT(&memManager1 != &memManager2);
+			if (!std::is_empty<MemManager>::value)
+			{
+				MemManager tempMemManager(std::move(memManager1));
+				Assign(std::move(memManager2), memManager1);
+				Assign(std::move(tempMemManager), memManager2);
+			}
+		}
+
 		static void Assign(MemManager&& srcMemManager, MemManager& dstMemManager) noexcept
 		{
-			if (&srcMemManager == &dstMemManager || std::is_empty<MemManager>::value)
-				return;
-			pvAssign(std::move(srcMemManager), dstMemManager,
-				std::is_nothrow_move_assignable<MemManager>());
+			MOMO_ASSERT(&srcMemManager != &dstMemManager);
+			if (!std::is_empty<MemManager>::value)
+			{
+				pvAssign(std::move(srcMemManager), dstMemManager,
+					std::is_nothrow_move_assignable<MemManager>());
+			}
 		}
 
 	private:
