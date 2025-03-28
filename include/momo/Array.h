@@ -243,18 +243,21 @@ private:
 			pvDestroy();
 		}
 
-		Data& operator=(Data&& data) noexcept
-		{
-			if (this != &data)
-			{
-				pvDestroy();
-				MemManagerProxy::Assign(std::move(data.GetMemManager()), GetMemManager());
-				pvInit(std::move(data));
-			}
-			return *this;
-		}
-
 		Data& operator=(const Data&) = delete;
+
+		template<bool swapMemManagers>
+		void Assign(Data&& data) noexcept
+		{
+			MOMO_ASSERT(this != &data);
+			pvDestroy();
+			MemManager& thisMemManager = GetMemManager();
+			MemManager& dataMemManager = data.GetMemManager();
+			if (swapMemManagers)
+				MemManagerProxy::Swap(thisMemManager, dataMemManager);
+			else
+				MemManagerProxy::Assign(std::move(dataMemManager), thisMemManager);
+			pvInit(std::move(data));
+		}
 
 		const Item* GetItems() const noexcept
 		{
@@ -594,21 +597,26 @@ public:
 
 	Array& operator=(Array&& array) noexcept
 	{
-		mData = std::move(array.mData);
+		if (this != &array)
+			mData.template Assign<true>(std::move(array.mData));
 		return *this;
 	}
 
 	Array& operator=(const Array& array)
 	{
 		if (this != &array)
-			*this = Array(array);
+			mData.template Assign<false>(std::move(Array(array).mData));
 		return *this;
 	}
 
 	void Swap(Array& array) noexcept
 	{
 		if (this != &array)
-			std::swap(mData, array.mData);
+		{
+			Data tempData(std::move(mData));
+			mData.template Assign<false>(std::move(array.mData));
+			array.mData.template Assign<false>(std::move(tempData));
+		}
 	}
 
 	ConstIterator GetBegin() const noexcept
