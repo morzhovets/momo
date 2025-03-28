@@ -252,15 +252,9 @@ private:
 			MemManager& thisMemManager = GetMemManager();
 			MemManager& dataMemManager = data.GetMemManager();
 			if constexpr (swapMemManagers)
-			{
-				MemManager tempMemManager(std::move(thisMemManager));
-				MemManagerProxy::Assign(std::move(dataMemManager), thisMemManager);
-				MemManagerProxy::Assign(std::move(tempMemManager), dataMemManager);
-			}
+				MemManagerProxy::Swap(thisMemManager, dataMemManager);
 			else
-			{
 				MemManagerProxy::Assign(std::move(dataMemManager), thisMemManager);
-			}
 			pvInit(std::move(data));
 		}
 

@@ -438,26 +438,40 @@ namespace internal
 
 		static bool IsEqual(const MemManager& memManager1, const MemManager& memManager2) noexcept
 		{
-			if (&memManager1 == &memManager2 || std::is_empty_v<MemManager>)
+			MOMO_ASSERT(&memManager1 != &memManager2);
+			if constexpr (std::is_empty_v<MemManager>)
 				return true;
-			if constexpr (conceptMemManagerWithIsEqual<MemManager>)
+			else if constexpr (conceptMemManagerWithIsEqual<MemManager>)
 				return memManager1.IsEqual(memManager2);
 			else
 				return false;
 		}
 
+		static void Swap(MemManager& memManager1, MemManager& memManager2) noexcept
+		{
+			MOMO_ASSERT(&memManager1 != &memManager2);
+			if constexpr (!std::is_empty_v<MemManager>)
+			{
+				MemManager tempMemManager(std::move(memManager1));
+				MemManagerProxy::Assign(std::move(memManager2), memManager1);
+				MemManagerProxy::Assign(std::move(tempMemManager), memManager2);
+			}
+		}
+
 		static void Assign(MemManager&& srcMemManager, MemManager& dstMemManager) noexcept
 		{
-			if (&srcMemManager == &dstMemManager || std::is_empty_v<MemManager>)
-				return;
-			if constexpr (std::is_nothrow_move_assignable_v<MemManager>)
+			MOMO_ASSERT(&srcMemManager != &dstMemManager);
+			if constexpr (!std::is_empty_v<MemManager>)
 			{
-				dstMemManager = std::move(srcMemManager);
-			}
-			else
-			{
-				std::destroy_at(&dstMemManager);
-				std::construct_at(&dstMemManager, std::move(srcMemManager));
+				if constexpr (std::is_nothrow_move_assignable_v<MemManager>)
+				{
+					dstMemManager = std::move(srcMemManager);
+				}
+				else
+				{
+					std::destroy_at(&dstMemManager);
+					std::construct_at(&dstMemManager, std::move(srcMemManager));
+				}
 			}
 		}
 

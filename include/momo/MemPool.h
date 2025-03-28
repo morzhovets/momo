@@ -467,14 +467,14 @@ private:
 
 		~Data() noexcept = default;
 
-		Data& operator=(Data&& data) noexcept
-		{
-			MemManagerProxy::Assign(std::move(static_cast<MemManager&>(data)), *this);
-			allocCount = std::exchange(data.allocCount, 0);
-			return *this;
-		}
-
 		Data& operator=(const Data&) = delete;
+
+		void Swap(Data& data) noexcept
+		{
+			if (this != &data)
+				MemManagerProxy::Swap(*this, data);
+			std::swap(allocCount, data.allocCount);
+		}
 
 	public:
 		size_t allocCount;
@@ -534,7 +534,7 @@ public:
 	void Swap(MemPool& memPool) noexcept
 	{
 		std::swap(pvGetChunker(), memPool.pvGetChunker());
-		std::swap(mData, memPool.mData);
+		mData.Swap(memPool.mData);
 		std::swap(mFreeChunkHead, memPool.mFreeChunkHead);
 		std::swap(mCachedCount, memPool.mCachedCount);
 		std::swap(mCacheHead, memPool.mCacheHead);
