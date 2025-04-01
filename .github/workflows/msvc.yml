@@ -22,13 +22,13 @@ jobs:
           win_ver: '2019'
 
         - toolset: '14.0'
-          arch: 'x86'
+          arch: 'x64_x86'
           build_type: 'Release'
           flags: '/std:c++14 /WX'
           win_ver: '2019'
 
         - toolset: '14.0'
-          arch: 'x86'
+          arch: 'x64_x86'
           build_type: 'Release'
           flags: '/std:c++14 /WX /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
           win_ver: '2019'
@@ -37,7 +37,7 @@ jobs:
         - toolset: '14.1'
           arch: 'x64'
           build_type: 'Release'
-          flags: '/std:c++17 /WX /permissive- /DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
+          flags: '/std:c++17 /WX /permissive-'
           win_ver: '2019'
 
         # Visual Studio 2019
@@ -73,25 +73,25 @@ jobs:
           win_ver: '2022'
 
         - toolset: '14.4'
-          arch: 'x86'
+          arch: 'x64_x86'
           build_type: 'Release'
           flags: '/std:c++latest /WX /wd4702 /DTEST_LIBCXX_NEW'
           win_ver: '2022'
 
         - toolset: '14.4'
-          arch: 'x86'
+          arch: 'x64_x86'
           build_type: 'Release'
           flags: '/std:c++latest /WX /wd4702 /DTEST_LIBCXX_NEW /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
           win_ver: '2022'
 
         - toolset: '14.4'
-          arch: 'x86'
+          arch: 'x64_x86'
           build_type: 'Debug'
           flags: '/std:c++latest /WX /DTEST_LIBCXX_NEW'
           win_ver: '2022'
 
         - toolset: '14.4'
-          arch: 'x86'
+          arch: 'x64_x86'
           build_type: 'Debug'
           flags: '/std:c++latest /WX /DTEST_LIBCXX_NEW /DMOMO_USE_SAFE_MAP_BRACKETS /DMOMO_USE_UNORDERED_HINT_ITERATORS /DMOMO_DISABLE_TYPE_INFO'
           win_ver: '2022'
