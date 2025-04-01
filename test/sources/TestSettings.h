@@ -43,10 +43,6 @@
 # define TEST_LIBCXX_TREE_MAP
 #endif
 
-#if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG)	// vs2015 release
-# undef TEST_LIBCXX_TREE_MAP
-#endif
-
 //#define TEST_LIBCXX_NEW
 
 //#define TEST_NATVIS
