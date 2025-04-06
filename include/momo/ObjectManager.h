@@ -585,7 +585,16 @@ namespace internal
 		{
 			SrcIterator srcIter = srcBegin;
 			DstIterator dstIter = dstBegin;
-			if constexpr (isNothrowRelocatable)
+			if constexpr (isTriviallyRelocatable
+				&& std::is_pointer_v<SrcIterator> && std::is_pointer_v<DstIterator>)
+			{
+				if (count > 0)
+				{
+					std::memcpy(std::to_address(dstBegin), std::to_address(srcBegin),
+						count * sizeof(Object));
+				}
+			}
+			else if constexpr (isNothrowRelocatable)
 			{
 				for (size_t i = 0; i < count; ++i)
 					Relocate(memManager, *srcIter++, std::to_address(dstIter++));
