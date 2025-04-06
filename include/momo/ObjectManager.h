@@ -370,7 +370,9 @@ namespace internal
 		{
 			MOMO_STATIC_ASSERT(std::is_same<Object&,
 				typename std::iterator_traits<Iterator>::reference>::value);
-			pvRelocate(memManager, srcBegin, dstBegin, count, BoolConstant<isNothrowRelocatable>());
+			pvRelocate(memManager, srcBegin, dstBegin, count,
+				BoolConstant<isTriviallyRelocatable && std::is_pointer<Iterator>::value>(),
+				BoolConstant<isNothrowRelocatable>());
 		}
 
 		template<typename Iterator, typename ObjectCreator>
@@ -501,29 +503,32 @@ namespace internal
 		}
 
 		template<typename Iterator>
-		static void pvRelocate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, std::true_type /*isNothrowRelocatable*/) noexcept
+		static void pvRelocate(MemManager& /*memManager*/, Iterator srcBegin, Iterator dstBegin,
+			size_t count, std::true_type /*isTriviallyRelocatable*/,
+			std::true_type /*isNothrowRelocatable*/) noexcept
 		{
-			if (isTriviallyRelocatable && std::is_pointer<Iterator>::value)
+			if (count > 0)
 			{
-				if (count > 0)
-				{
-					std::memcpy(std::addressof(*dstBegin), std::addressof(*srcBegin),
-						count * sizeof(Object));
-				}
-			}
-			else
-			{
-				Iterator srcIter = srcBegin;
-				Iterator dstIter = dstBegin;
-				for (size_t i = 0; i < count; ++i, (void)++srcIter, (void)++dstIter)
-					Relocate(memManager, *srcIter, std::addressof(*dstIter));
+				std::memcpy(std::addressof(*dstBegin), std::addressof(*srcBegin),
+					count * sizeof(Object));
 			}
 		}
 
 		template<typename Iterator>
 		static void pvRelocate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, std::false_type /*isNothrowRelocatable*/)
+			size_t count, std::false_type /*isTriviallyRelocatable*/,
+			std::true_type /*isNothrowRelocatable*/) noexcept
+		{
+			Iterator srcIter = srcBegin;
+			Iterator dstIter = dstBegin;
+			for (size_t i = 0; i < count; ++i, (void)++srcIter, (void)++dstIter)
+				Relocate(memManager, *srcIter, std::addressof(*dstIter));
+		}
+
+		template<typename Iterator>
+		static void pvRelocate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
+			size_t count, std::false_type /*isTriviallyRelocatable*/,
+			std::false_type /*isNothrowRelocatable*/)
 		{
 			if (count > 0)
 			{
