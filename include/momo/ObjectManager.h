@@ -503,10 +503,21 @@ namespace internal
 		static void pvRelocate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
 			size_t count, std::true_type /*isNothrowRelocatable*/) noexcept
 		{
-			Iterator srcIter = srcBegin;
-			Iterator dstIter = dstBegin;
-			for (size_t i = 0; i < count; ++i, (void)++srcIter, (void)++dstIter)
-				Relocate(memManager, *srcIter, std::addressof(*dstIter));
+			if (isTriviallyRelocatable && std::is_pointer<Iterator>::value)
+			{
+				if (count > 0)
+				{
+					std::memcpy(std::addressof(*dstBegin), std::addressof(*srcBegin),
+						count * sizeof(Object));
+				}
+			}
+			else
+			{
+				Iterator srcIter = srcBegin;
+				Iterator dstIter = dstBegin;
+				for (size_t i = 0; i < count; ++i, (void)++srcIter, (void)++dstIter)
+					Relocate(memManager, *srcIter, std::addressof(*dstIter));
+			}
 		}
 
 		template<typename Iterator>
