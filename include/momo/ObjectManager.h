@@ -92,26 +92,27 @@ public:
 			&& (MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object)));
 
 public:
-	static void Relocate(MemManager* memManager, Object& srcObject,
+	static void Relocate(MemManager* /*memManager*/, Object& srcObject,
 		Object* dstObject) noexcept(isNothrowRelocatable)
 	{
 		MOMO_ASSERT(std::addressof(srcObject) != dstObject);
-		pvRelocate(memManager, srcObject, dstObject, internal::BoolConstant<isTriviallyRelocatable
-			&& !std::is_nothrow_move_constructible<Object>::value>());
+		pvRelocate(srcObject, dstObject,
+			internal::BoolConstant<isTriviallyRelocatable
+				&& !std::is_nothrow_move_constructible<Object>::value>());	//?
 	}
 
 private:
-	static void pvRelocate(MemManager* /*memManager*/, Object& srcObject, Object* dstObject,
+	static void pvRelocate(Object& srcObject, Object* dstObject,
 		std::true_type /*isTriviallyRelocatable*/) noexcept
 	{
 		std::memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
 	}
 
-	static void pvRelocate(MemManager* memManager, Object& srcObject, Object* dstObject,
+	static void pvRelocate(Object& srcObject, Object* dstObject,
 		std::false_type /*isTriviallyRelocatable*/) noexcept(isNothrowRelocatable)
 	{
 		::new(static_cast<void*>(dstObject)) Object(std::move(srcObject));
-		ObjectDestroyer<Object, MemManager>::Destroy(memManager, srcObject);
+		srcObject.~Object();
 	}
 };
 
