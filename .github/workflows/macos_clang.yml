@@ -8,13 +8,25 @@ jobs:
       matrix:
         include:
 
+#        - clang_ver: '18'
+#          build_type: 'Release'
+#          flags: '-std=c++26 -Werror -msse2'
+#          path_prefix: '/usr/local'
+#          macos_ver: '13'
+
         - clang_ver: '19'
           build_type: 'Release'
           flags: '-std=c++26 -Werror -msse2'
           path_prefix: '/usr/local'
           macos_ver: '13'
 
-        - clang_ver: '19'
+        - clang_ver: '20'
+          build_type: 'Release'
+          flags: '-std=c++26 -Werror -msse2'
+          path_prefix: '/usr/local'
+          macos_ver: '13'
+
+        - clang_ver: '20'
           build_type: 'Debug'
           flags: '-std=c++26 -Werror -msse2'
           path_prefix: '/usr/local'
@@ -29,23 +41,29 @@ jobs:
 
         - clang_ver: '19'
           build_type: 'Release'
+          flags: '-std=c++23 -Werror'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - clang_ver: '20'
+          build_type: 'Release'
           flags: '-std=c++26 -Werror'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-        - clang_ver: '19'
+        - clang_ver: '20'
           build_type: 'Release'
           flags: '-std=c++26 -Werror -fsized-deallocation -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-        - clang_ver: '19'
+        - clang_ver: '20'
           build_type: 'Debug'
           flags: '-std=c++26 -Werror -fsanitize=address,undefined'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
-        - clang_ver: '19'
+        - clang_ver: '20'
           build_type: 'Debug'
           flags: '-std=c++26 -Werror -fsanitize=address,undefined -fsized-deallocation -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
           path_prefix: '/opt/homebrew'
