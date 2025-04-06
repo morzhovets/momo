@@ -92,14 +92,11 @@ public:
 	typedef TObject Object;
 	typedef TMemManager MemManager;
 
-private:
-	typedef ObjectDestroyer<Object, MemManager> Destroyer;
-
 public:
 	static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
 	static const bool isRelocatable = isTriviallyRelocatable
-		|| (std::is_move_constructible_v<Object> && Destroyer::isNothrowDestructible);
+		|| (std::is_move_constructible_v<Object> && std::is_nothrow_destructible_v<Object>);
 
 	static const bool isNothrowRelocatable = isRelocatable
 		&& (isTriviallyRelocatable || std::is_nothrow_move_constructible_v<Object>
@@ -108,17 +105,17 @@ public:
 public:
 	template<internal::conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
 		internal::conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
-	static void Relocate(SrcMemManagerOrNullPtr srcMemManager, DstMemManagerOrNullPtr /*dstMemManager*/,
+	static void Relocate(SrcMemManagerOrNullPtr /*srcMemManager*/, DstMemManagerOrNullPtr /*dstMemManager*/,
 		Object& srcObject, Object* dstObject) noexcept(isNothrowRelocatable) requires isRelocatable
 	{
 		//MOMO_ASSERT(std::is_null_pointer_v<SrcMemManagerOrNullPtr> || srcMemManager != nullptr);
 		//MOMO_ASSERT(std::is_null_pointer_v<DstMemManagerOrNullPtr> || dstMemManager != nullptr);
 		MOMO_ASSERT(std::addressof(srcObject) != dstObject);
 		if constexpr (!isTriviallyRelocatable ||
-			(std::is_nothrow_move_constructible_v<Object> && Destroyer::isNothrowDestructible))	//?
+			(std::is_nothrow_move_constructible_v<Object> && std::is_nothrow_destructible_v<Object>))	//?
 		{
 			std::construct_at(dstObject, std::move(srcObject));
-			Destroyer::Destroy(srcMemManager, srcObject);
+			srcObject.~Object();
 		}
 		else
 		{
