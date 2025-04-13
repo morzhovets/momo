@@ -101,6 +101,19 @@ public:
 				&& !std::is_nothrow_move_constructible<Object>::value>());	//?
 	}
 
+	// optional function:
+	//template<typename Iterator>
+	//static void RelocateNothrow(MemManager& memManager,
+	//	Iterator srcBegin, Iterator dstBegin, size_t count) noexcept
+
+	template<bool enable = isTriviallyRelocatable>
+	static internal::EnableIf<enable> RelocateNothrow(MemManager& /*memManager*/,
+		Object* srcObjects, Object* dstObjects, size_t count) noexcept
+	{
+		if (count > 0)
+			std::memcpy(dstObjects, srcObjects, sizeof(Object) * count);
+	}
+
 private:
 	static void pvRelocate(Object& srcObject, Object* dstObject,
 		std::true_type /*isTriviallyRelocatable*/) noexcept
@@ -137,6 +150,20 @@ namespace internal
 			using std::swap;
 			return noexcept(swap(std::declval<Object&>(), std::declval<Object&>()));
 		}
+	};
+
+	template<typename Relocator, typename Iterator,
+		typename = void>
+	struct HasRelocateNothrow : public std::false_type
+	{
+	};
+
+	template<typename Relocator, typename Iterator>
+	struct HasRelocateNothrow<Relocator, Iterator,
+		EnableIf<noexcept(Relocator::RelocateNothrow(std::declval<typename Relocator::MemManager&>(),
+			std::declval<Iterator>(), std::declval<Iterator>(), size_t{}))>>
+		: public std::true_type
+	{
 	};
 
 	template<typename TObject>
@@ -371,8 +398,7 @@ namespace internal
 			MOMO_STATIC_ASSERT(std::is_same<Object&,
 				typename std::iterator_traits<Iterator>::reference>::value);
 			pvRelocate(memManager, srcBegin, dstBegin, count,
-				BoolConstant<isTriviallyRelocatable && std::is_pointer<Iterator>::value>(),
-				BoolConstant<isNothrowRelocatable>());
+				HasRelocateNothrow<Relocator, Iterator>(), BoolConstant<isNothrowRelocatable>());
 		}
 
 		template<typename Iterator, typename ObjectCreator>
@@ -502,21 +528,17 @@ namespace internal
 			}
 		}
 
-		template<typename Iterator>
-		static void pvRelocate(MemManager& /*memManager*/, Iterator srcBegin, Iterator dstBegin,
-			size_t count, std::true_type /*isTriviallyRelocatable*/,
-			std::true_type /*isNothrowRelocatable*/) noexcept
+		template<typename Iterator, bool isNothrowRelocatable>
+		static void pvRelocate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
+			size_t count, std::true_type /*hasRelocateNothrow*/,
+			BoolConstant<isNothrowRelocatable>) noexcept
 		{
-			if (count > 0)
-			{
-				std::memcpy(std::addressof(*dstBegin), std::addressof(*srcBegin),
-					count * sizeof(Object));
-			}
+			Relocator::RelocateNothrow(memManager, srcBegin, dstBegin, count);
 		}
 
 		template<typename Iterator>
 		static void pvRelocate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, std::false_type /*isTriviallyRelocatable*/,
+			size_t count, std::false_type /*hasRelocateNothrow*/,
 			std::true_type /*isNothrowRelocatable*/) noexcept
 		{
 			Iterator srcIter = srcBegin;
@@ -527,7 +549,7 @@ namespace internal
 
 		template<typename Iterator>
 		static void pvRelocate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
-			size_t count, std::false_type /*isTriviallyRelocatable*/,
+			size_t count, std::false_type /*hasRelocateNothrow*/,
 			std::false_type /*isNothrowRelocatable*/)
 		{
 			if (count > 0)
