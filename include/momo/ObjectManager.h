@@ -80,7 +80,6 @@ public:
 	static void Destroy(MemManagerOrNullPtr /*memManager*/, Object& object) noexcept
 		requires isNothrowDestructible
 	{
-		//MOMO_ASSERT(std::is_null_pointer_v<MemManagerOrNullPtr> || memManager != nullptr);
 		object.~Object();
 	}
 };
@@ -108,19 +107,30 @@ public:
 	static void Relocate(SrcMemManagerOrNullPtr /*srcMemManager*/, DstMemManagerOrNullPtr /*dstMemManager*/,
 		Object& srcObject, Object* dstObject) noexcept(isNothrowRelocatable) requires isRelocatable
 	{
-		//MOMO_ASSERT(std::is_null_pointer_v<SrcMemManagerOrNullPtr> || srcMemManager != nullptr);
-		//MOMO_ASSERT(std::is_null_pointer_v<DstMemManagerOrNullPtr> || dstMemManager != nullptr);
 		MOMO_ASSERT(std::addressof(srcObject) != dstObject);
-		if constexpr (!isTriviallyRelocatable ||
-			(std::is_nothrow_move_constructible_v<Object> && std::is_nothrow_destructible_v<Object>))	//?
+		if constexpr (isTriviallyRelocatable &&
+			!(std::is_nothrow_move_constructible_v<Object> && std::is_nothrow_destructible_v<Object>))	//?
+		{
+			std::memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
+		}
+		else
 		{
 			std::construct_at(dstObject, std::move(srcObject));
 			srcObject.~Object();
 		}
-		else
-		{
-			std::memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
-		}
+	}
+
+	// optional function:
+	//template<internal::conceptIncIterator<Object> SrcIterator,
+	//	internal::conceptIncIterator<Object> DstIterator>
+	//static void RelocateNothrow(MemManager& memManager,
+	//	SrcIterator srcBegin, DstIterator dstBegin, size_t count) noexcept
+
+	static void RelocateNothrow(MemManager& /*memManager*/, Object* srcObjects, Object* dstObjects,
+		size_t count) noexcept requires isTriviallyRelocatable
+	{
+		if (count > 0)
+			std::memcpy(dstObjects, srcObjects, sizeof(Object) * count);
 	}
 };
 
@@ -580,32 +590,31 @@ namespace internal
 			requires isNothrowRelocatable ||
 				(isCopyConstructible && isMoveConstructible && isNothrowDestructible)
 		{
-			SrcIterator srcIter = srcBegin;
-			DstIterator dstIter = dstBegin;
-			if constexpr (isTriviallyRelocatable
-				&& std::is_pointer_v<SrcIterator> && std::is_pointer_v<DstIterator>)
+			if constexpr (requires { {
+				Relocator::RelocateNothrow(memManager, srcBegin, dstBegin, count) } noexcept; })
 			{
-				if (count > 0)
-				{
-					std::memcpy(std::to_address(dstBegin), std::to_address(srcBegin),
-						count * sizeof(Object));
-				}
-			}
-			else if constexpr (isNothrowRelocatable)
-			{
-				for (size_t i = 0; i < count; ++i)
-					Relocate(memManager, *srcIter++, std::to_address(dstIter++));
+				Relocator::RelocateNothrow(memManager, srcBegin, dstBegin, count);
 			}
 			else
 			{
-				if (count > 0)
+				SrcIterator srcIter = srcBegin;
+				DstIterator dstIter = dstBegin;
+				if constexpr (isNothrowRelocatable)
 				{
-					Object& srcObject0 = *srcIter++;
-					Object& dstObject0 = *dstIter++;
-					RelocateCreate(memManager, srcIter, dstIter, count - 1,
-						FastMovableFunctor(Creator<Object&&>(memManager, std::move(srcObject0))),
-						std::addressof(dstObject0));
-					Destroy(&memManager, srcObject0);
+					for (size_t i = 0; i < count; ++i)
+						Relocate(memManager, *srcIter++, std::to_address(dstIter++));
+				}
+				else
+				{
+					if (count > 0)
+					{
+						Object& srcObject0 = *srcIter++;
+						Object& dstObject0 = *dstIter++;
+						RelocateCreate(memManager, srcIter, dstIter, count - 1,
+							FastMovableFunctor(Creator<Object&&>(memManager, std::move(srcObject0))),
+							std::addressof(dstObject0));
+						Destroy(&memManager, srcObject0);
+					}
 				}
 			}
 		}
