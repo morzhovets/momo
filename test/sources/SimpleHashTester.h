@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "TestSettings.h"
+
 #include "../../include/momo/HashSet.h"
 #include "../../include/momo/HashMap.h"
 #include "../../include/momo/HashMultiMap.h"

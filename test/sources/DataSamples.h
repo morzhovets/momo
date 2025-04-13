@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "TestSettings.h"
+
 #include "../../include/momo/DataTable.h"
 
 #include <string>
