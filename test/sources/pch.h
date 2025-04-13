@@ -14,17 +14,15 @@
 
 #include "TestSettings.h"
 
-#ifdef _WIN32
-# define MOMO_USE_MEM_MANAGER_WIN
-# define NOMINMAX
+#ifdef MOMO_USE_MEM_MANAGER_WIN
 # include <Windows.h>
 #endif
-
-#include "../../include/momo/Utility.h"
 
 #include <version>
 #include <string>
 #include <iostream>
 #include <random>
+
+#include "../../include/momo/Utility.h"
 
 #include "LibcxxTester.h"	//?
