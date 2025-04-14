@@ -160,8 +160,8 @@ namespace internal
 
 	template<typename Relocator, typename Iterator>
 	struct HasRelocateNothrow<Relocator, Iterator,
-		EnableIf<noexcept(Relocator::RelocateNothrow(std::declval<typename Relocator::MemManager&>(),
-			std::declval<Iterator>(), std::declval<Iterator>(), size_t{}))>>
+		decltype(Relocator::RelocateNothrow(std::declval<typename Relocator::MemManager&>(),
+			std::declval<Iterator>(), std::declval<Iterator>(), size_t{}))>
 		: public std::true_type
 	{
 	};
