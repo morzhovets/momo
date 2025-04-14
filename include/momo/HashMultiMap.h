@@ -759,6 +759,23 @@ public:
 	{
 	}
 
+	template<internal::conceptMapArgIterator<Key> ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
+	explicit HashMultiMap(ArgIterator begin, ArgSentinel end,
+		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
+		: HashMultiMap(hashTraits, std::move(memManager))
+	{
+		try
+		{
+			Add(std::move(begin), std::move(end));
+		}
+		catch (...)
+		{
+			pvDestroy();
+			throw;
+		}
+	}
+
 	template<typename Pair = std::pair<Key, Value>>
 	HashMultiMap(std::initializer_list<Pair> pairs)
 		: HashMultiMap(pairs, HashTraits())
@@ -768,17 +785,8 @@ public:
 	template<typename Pair = std::pair<Key, Value>>
 	explicit HashMultiMap(std::initializer_list<Pair> pairs, const HashTraits& hashTraits,
 		MemManager memManager = MemManager())
-		: HashMultiMap(hashTraits, std::move(memManager))
+		: HashMultiMap(pairs.begin(), pairs.end(), hashTraits, std::move(memManager))
 	{
-		try
-		{
-			Add(pairs);
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
-		}
 	}
 
 	HashMultiMap(HashMultiMap&& hashMultiMap) noexcept

@@ -239,6 +239,15 @@ public:
 	{
 	}
 
+	template<internal::conceptMapArgIterator<Key> ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
+	explicit MergeMap(ArgIterator begin, ArgSentinel end,
+		const MergeTraits& mergeTraits = MergeTraits(), MemManager memManager = MemManager())
+		: MergeMap(mergeTraits, std::move(memManager))
+	{
+		Insert(std::move(begin), std::move(end));
+	}
+
 	template<typename Pair = std::pair<Key, Value>>
 	MergeMap(std::initializer_list<Pair> pairs)
 		: MergeMap(pairs, MergeTraits())
@@ -248,9 +257,8 @@ public:
 	template<typename Pair = std::pair<Key, Value>>
 	explicit MergeMap(std::initializer_list<Pair> pairs, const MergeTraits& mergeTraits,
 		MemManager memManager = MemManager())
-		: MergeMap(mergeTraits, std::move(memManager))
+		: MergeMap(pairs.begin(), pairs.end(), mergeTraits, std::move(memManager))
 	{
-		Insert(pairs);
 	}
 
 	MergeMap(MergeMap&& mergeMap) noexcept

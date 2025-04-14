@@ -522,6 +522,23 @@ public:
 	{
 	}
 
+	template<internal::conceptSetArgIterator<Item> ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
+	explicit MergeSet(ArgIterator begin, ArgSentinel end,
+		const MergeTraits& mergeTraits = MergeTraits(), MemManager memManager = MemManager())
+		: MergeSet(mergeTraits, std::move(memManager))
+	{
+		try
+		{
+			Insert(std::move(begin), std::move(end));
+		}
+		catch (...)
+		{
+			pvFilterClear();
+			throw;
+		}
+	}
+
 	MergeSet(std::initializer_list<Item> items)
 		: MergeSet(items, MergeTraits())
 	{
@@ -529,17 +546,8 @@ public:
 
 	explicit MergeSet(std::initializer_list<Item> items, const MergeTraits& mergeTraits,
 		MemManager memManager = MemManager())
-		: MergeSet(mergeTraits, std::move(memManager))
+		: MergeSet(items.begin(), items.end(), mergeTraits, std::move(memManager))
 	{
-		try
-		{
-			Insert(items);
-		}
-		catch (...)
-		{
-			pvFilterClear();
-			throw;
-		}
 	}
 
 	MergeSet(MergeSet&& mergeSet) noexcept

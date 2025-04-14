@@ -346,6 +346,15 @@ public:
 	{
 	}
 
+	template<internal::conceptMapArgIterator<Key> ArgIterator,
+		internal::conceptSentinel<ArgIterator> ArgSentinel>
+	explicit HashMap(ArgIterator begin, ArgSentinel end,
+		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
+		: HashMap(hashTraits, std::move(memManager))
+	{
+		Insert(std::move(begin), std::move(end));
+	}
+
 	template<typename Pair = std::pair<Key, Value>>
 	HashMap(std::initializer_list<Pair> pairs)
 		: HashMap(pairs, HashTraits())
@@ -355,9 +364,8 @@ public:
 	template<typename Pair = std::pair<Key, Value>>
 	explicit HashMap(std::initializer_list<Pair> pairs, const HashTraits& hashTraits,
 		MemManager memManager = MemManager())
-		: HashMap(hashTraits, std::move(memManager))
+		: HashMap(pairs.begin(), pairs.end(), hashTraits, std::move(memManager))
 	{
-		Insert(pairs);
 	}
 
 	HashMap(HashMap&& hashMap) noexcept
