@@ -200,7 +200,7 @@ public:
 	}
 
 	MergeArray(std::initializer_list<Item> items)
-		: MergeArray(items.begin(), items.end())
+		: MergeArray(items, MemManager())
 	{
 	}
 
