@@ -512,6 +512,23 @@ public:
 	{
 	}
 
+	template<typename ArgIterator, typename ArgSentinel,
+		typename = decltype(*std::declval<ArgIterator>())>
+	explicit TreeSet(ArgIterator begin, ArgSentinel end,
+		const TreeTraits& treeTraits = TreeTraits(), MemManager memManager = MemManager())
+		: TreeSet(treeTraits, std::move(memManager))
+	{
+		try
+		{
+			Insert(std::move(begin), std::move(end));
+		}
+		catch (...)
+		{
+			pvDestroy();
+			throw;
+		}
+	}
+
 	TreeSet(std::initializer_list<Item> items)
 		: TreeSet(items, TreeTraits())
 	{
@@ -519,17 +536,8 @@ public:
 
 	explicit TreeSet(std::initializer_list<Item> items, const TreeTraits& treeTraits,
 		MemManager memManager = MemManager())
-		: TreeSet(treeTraits, std::move(memManager))
+		: TreeSet(items.begin(), items.end(), treeTraits, std::move(memManager))
 	{
-		try
-		{
-			Insert(items);
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
-		}
 	}
 
 	TreeSet(TreeSet&& treeSet) noexcept

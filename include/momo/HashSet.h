@@ -545,6 +545,23 @@ public:
 	{
 	}
 
+	template<typename ArgIterator, typename ArgSentinel,
+		typename = decltype(*std::declval<ArgIterator>())>
+	explicit HashSet(ArgIterator begin, ArgSentinel end,
+		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
+		: HashSet(hashTraits, std::move(memManager))
+	{
+		try
+		{
+			Insert(std::move(begin), std::move(end));
+		}
+		catch (...)
+		{
+			pvDestroy();
+			throw;
+		}
+	}
+
 	HashSet(std::initializer_list<Item> items)
 		: HashSet(items, HashTraits())
 	{
@@ -552,17 +569,8 @@ public:
 
 	explicit HashSet(std::initializer_list<Item> items, const HashTraits& hashTraits,
 		MemManager memManager = MemManager())
-		: HashSet(hashTraits, std::move(memManager))
+		: HashSet(items.begin(), items.end(), hashTraits, std::move(memManager))
 	{
-		try
-		{
-			Insert(items);
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
-		}
 	}
 
 	HashSet(HashSet&& hashSet) noexcept

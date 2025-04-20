@@ -547,7 +547,7 @@ public:
 	}
 
 	Array(std::initializer_list<Item> items)
-		: Array(items.begin(), items.end())
+		: Array(items, MemManager())
 	{
 	}
 

@@ -307,6 +307,15 @@ public:
 	{
 	}
 
+	template<typename ArgIterator, typename ArgSentinel,
+		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
+	explicit TreeMap(ArgIterator begin, ArgSentinel end,
+		const TreeTraits& treeTraits = TreeTraits(), MemManager memManager = MemManager())
+		: TreeMap(treeTraits, std::move(memManager))
+	{
+		Insert(std::move(begin), std::move(end));
+	}
+
 	template<typename Pair = std::pair<Key, Value>>
 	TreeMap(std::initializer_list<Pair> pairs)
 		: TreeMap(pairs, TreeTraits())
@@ -316,9 +325,8 @@ public:
 	template<typename Pair = std::pair<Key, Value>>
 	explicit TreeMap(std::initializer_list<Pair> pairs, const TreeTraits& treeTraits,
 		MemManager memManager = MemManager())
-		: TreeMap(treeTraits, std::move(memManager))
+		: TreeMap(pairs.begin(), pairs.end(), treeTraits, std::move(memManager))
 	{
-		Insert(pairs);
 	}
 
 	TreeMap(TreeMap&& treeMap) noexcept

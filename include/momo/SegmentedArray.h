@@ -235,7 +235,7 @@ public:
 	}
 
 	SegmentedArray(std::initializer_list<Item> items)
-		: SegmentedArray(items.begin(), items.end())
+		: SegmentedArray(items, MemManager())
 	{
 	}
 
