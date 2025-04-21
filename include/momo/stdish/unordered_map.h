@@ -988,8 +988,6 @@ public:
 public:
 	using UnorderedMap::UnorderedMap;
 
-	unordered_map_open() {}	// clang 3.6
-
 	unordered_map_open& operator=(std::initializer_list<value_type> values)
 	{
 		UnorderedMap::operator=(values);

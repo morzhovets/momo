@@ -76,8 +76,8 @@ Some examples are [here](https://github.com/morzhovets/momo/blob/branch_cpp11/te
 
 - GCC (5+)
 
-- Clang (3.6+)
+- Clang (3.9+)
 
-- Apple Clang (8.1+, Xcode 8.3+)
+- Apple Clang
 
 - Intel C++
