@@ -112,6 +112,6 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        cmake --build . -v
+        make VERBOSE=1
     - name: Test
       run: test/build/momo_test
