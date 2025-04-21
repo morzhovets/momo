@@ -95,7 +95,7 @@ jobs:
       run: |
         apt-get update
         apt-get install -y git
-        git clone --depth=1 https://github.com/${{ github.repository }}
+        git clone --depth=1 https://github.com/${{ github.repository }} .
     - name: Install utilities
       run: |
         apt-get update
