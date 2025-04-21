@@ -1,9 +1,13 @@
-cmake_minimum_required(VERSION 3.14...4.0)
+cmake_minimum_required(VERSION 3.8...4.0)
 
 project(momo_test
   LANGUAGES CXX)
 
-file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
+  file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
+else()
+  file(GLOB MOMO_TEST_SOURCES "sources/*.cpp")
+endif()
 add_executable(momo_test ${MOMO_TEST_SOURCES})
 
 target_compile_features(momo_test PRIVATE cxx_std_11)
@@ -22,7 +26,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   if(MSVC_VERSION GREATER_EQUAL 1910)
     target_compile_options(momo_test PRIVATE /Zc:__cplusplus)
   endif()
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+elseif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14
+    AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
+	AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
   target_compile_options(momo_test PRIVATE /W4 /D_ITERATOR_DEBUG_LEVEL=0
     -Wold-style-cast -Wsign-conversion -Wno-unused-local-typedefs)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
