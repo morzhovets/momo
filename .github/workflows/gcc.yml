@@ -87,12 +87,13 @@ jobs:
     container: ubuntu:${{ matrix.ubuntu_ver }}
 
     steps:
-    - name: Checkout
-      if: matrix.ubuntu_ver != '18.04'
-      uses: actions/checkout@v4
-    - name: Checkout 18.04
+    - name: Prepare Bionic
       if: matrix.ubuntu_ver == '18.04'
-      uses: actions/checkout@v3
+      run: |
+        apt-get remove nodejs
+        nvm install 16.15.1
+    - name: Checkout
+      uses: actions/checkout@v4
     - name: Install utilities
       run: |
         apt-get update
