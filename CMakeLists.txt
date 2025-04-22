@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8...4.0)
+cmake_minimum_required(VERSION 3.10...4.0)
 
 project(momo
   VERSION 3.10

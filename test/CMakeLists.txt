@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8...4.0)
+cmake_minimum_required(VERSION 3.10...4.0)
 
 project(momo_test
   LANGUAGES CXX)
@@ -10,7 +10,7 @@ else()
 endif()
 add_executable(momo_test ${MOMO_TEST_SOURCES})
 
-target_compile_features(momo_test PRIVATE cxx_std_11)
+#target_compile_features(momo_test PRIVATE cxx_std_11)
 
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.16)
   target_precompile_headers(momo_test PRIVATE "sources/pch.h")

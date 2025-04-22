@@ -90,11 +90,16 @@ jobs:
     - name: Install tools
       run: |
         apt-get update
-        apt-get install -y git
         apt-get install -y cmake
         apt-get install -y ninja-build
     - name: Checkout
-      run: git clone --depth=1 https://github.com/${{ github.repository }} .
+      if: matrix.ubuntu_ver != '18.04'
+      uses: actions/checkout@v4
+    - name: Checkout 18.04
+      if: matrix.ubuntu_ver == '18.04'
+      run: |
+        apt-get install -y git
+        git clone --depth=1 https://github.com/${{ github.repository }} .
     - name: Install GCC
       run: apt-get install -y g++-${{ matrix.gcc_ver }}
     - name: Build
