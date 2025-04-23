@@ -43,6 +43,10 @@
 # define TEST_LIBCXX_TREE_MAP
 #endif
 
+#if defined(TEST_GCC) && __GNUC__ < 6
+# undef TEST_SIMPLE_DATA
+#endif
+
 //#define TEST_LIBCXX_NEW
 
 //#define TEST_NATVIS
