@@ -112,9 +112,9 @@
 	{ \
 	}
 
-// Result = decltype((std::declval<RObject&&>().*&Object##Proxy::pt##Func)(std::declval<Args&&>()...))	// gcc
-#define MOMO_DECLARE_PROXY_FUNCTION(Object, Func, Result) \
-	template<typename RObject, typename... Args> \
+#define MOMO_DECLARE_PROXY_FUNCTION(Object, Func, ResultUnused) \
+	template<typename RObject, typename... Args, typename Result = decltype( \
+		(std::declval<RObject&&>().*&Object##Proxy::pt##Func)(std::declval<Args&&>()...))> \
 	static Result Func(RObject&& object, Args&&... args) \
 		noexcept(noexcept((std::forward<RObject>(object).*&Object##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
