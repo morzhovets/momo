@@ -372,6 +372,10 @@ namespace internal
 	public:
 		using RowBounds::RowBounds;
 
+		explicit DataRowPointer() noexcept	// vs2015, gcc 5
+		{
+		}
+
 		explicit DataRowPointer(RowBounds rowBounds) noexcept
 			: RowBounds(rowBounds)
 		{
