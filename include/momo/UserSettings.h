@@ -204,24 +204,15 @@
 #endif
 
 #ifdef __has_cpp_attribute
-# if __has_cpp_attribute(nodiscard)
+# if __has_cpp_attribute(nodiscard) && (__cplusplus >= 201703L || defined(_MSC_VER))
 #  define MOMO_NODISCARD [[nodiscard]]
-#  if defined(__clang__) && __cplusplus < 201703L
-#   undef MOMO_NODISCARD	// avoid Clang warning
-#  endif
+# endif
+# if __has_cpp_attribute(deprecated) && (__cplusplus >= 201402L || defined(_MSC_VER))
+#  define MOMO_DEPRECATED [[deprecated]]
 # endif
 #endif
 #ifndef MOMO_NODISCARD
 # define MOMO_NODISCARD
-#endif
-
-#ifdef __has_cpp_attribute
-# if __has_cpp_attribute(deprecated)
-#  define MOMO_DEPRECATED [[deprecated]]
-#  if defined(__clang__) && __cplusplus < 201402L
-#   undef MOMO_DEPRECATED	// avoid Clang warning
-#  endif
-# endif
 #endif
 #ifndef MOMO_DEPRECATED
 # define MOMO_DEPRECATED
