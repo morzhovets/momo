@@ -102,6 +102,7 @@ public:
 			std::cout << "ok" << std::endl;
 		}
 
+#if !(defined(TEST_GCC) && __GNUC__ < 6)	// std::hash<enum class>
 		{
 			std::cout << "momo::DataColumnList (struct, -RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<Struct, 4>,
@@ -112,6 +113,7 @@ public:
 			TestData<true>(table, intStruct, dblStruct, strStruct);
 			std::cout << "ok" << std::endl;
 		}
+#endif
 
 		{
 			std::cout << "momo::DataColumnList (string, +RowNumber): " << std::flush;
