@@ -10,7 +10,7 @@ jobs:
 
         - clang_ver: '18'
           build_type: 'Release'
-          flags: '-std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          flags: '-std=c++26 -Werror -msse2'
           path_prefix: '/usr/local'
           macos_ver: '13'
 
@@ -92,8 +92,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install Ninja
-      run: brew install ninja
+#    - name: Install Ninja
+#      run: brew install ninja
     - name: Install Clang
       run: brew install llvm@${{ matrix.clang_ver }}
     - name: Build

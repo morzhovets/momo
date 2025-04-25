@@ -52,8 +52,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install Ninja
-      run: brew install ninja
+#    - name: Install Ninja
+#      run: brew install ninja
     - name: Build
       env:
         CXX: clang++

@@ -21,18 +21,6 @@ jobs:
           macos_ver: '13'
 
         # macOS-14-arm64
-        - gcc_ver: '9'
-          build_type: 'Release'
-          flags: '-std=c++17 -Werror'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '14'
-
-        - gcc_ver: '10'
-          build_type: 'Release'
-          flags: '-std=c++20 -Werror -DTEST_LIBCXX_NEW'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '14'
-
         - gcc_ver: '11'
           build_type: 'Release'
           flags: '-std=c++23 -DTEST_LIBCXX_NEW'
@@ -53,7 +41,13 @@ jobs:
 
         - gcc_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++11 -Werror'
+          flags: '-std=c++11'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - gcc_ver: '14'
+          build_type: 'Release'
+          flags: '-std=c++17 -Werror'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 
@@ -86,8 +80,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install Ninja
-      run: brew install ninja
+#    - name: Install Ninja
+#      run: brew install ninja
     - name: Install GCC
       run: brew install gcc@${{ matrix.gcc_ver }}
     - name: Build

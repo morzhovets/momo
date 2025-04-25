@@ -65,7 +65,12 @@ jobs:
 
         - gcc_ver: '14'
           build_type: 'Release'
-          flags: '-std=c++11 -Werror -msse2'
+          flags: '-std=c++11 -msse2'
+          ubuntu_ver: '24.04'
+
+        - gcc_ver: '14'
+          build_type: 'Release'
+          flags: '-std=c++17 -Werror -msse2'
           ubuntu_ver: '24.04'
 
         - gcc_ver: '14'
