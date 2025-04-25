@@ -129,8 +129,7 @@ namespace internal
 		struct IteratorProxy : public Iterator
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-			MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetHashSetIterator,
-				typename Iterator::HashSetIterator)
+			MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetHashSetIterator)
 		};
 
 	public:
@@ -417,7 +416,7 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetHashSetIterator, HashSetConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetHashSetIterator)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -428,7 +427,7 @@ private:
 	struct ConstPositionProxy : public ConstPosition
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashSetPosition, HashSetConstPosition)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashSetPosition)
 	};
 
 	struct PositionProxy : public Position
@@ -438,7 +437,7 @@ private:
 
 	struct ExtractedPairProxy : private ExtractedPair
 	{
-		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, HashSetExtractedItem&)
+		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem)
 	};
 
 	struct ConstBucketBoundsProxy : public ConstBucketBounds

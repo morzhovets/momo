@@ -338,9 +338,9 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetNode, Node*)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetItemIndex, size_t)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check, void)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetNode)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetItemIndex)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check)
 	};
 
 	class Relocator

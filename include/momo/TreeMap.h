@@ -283,7 +283,7 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetTreeSetIterator, TreeSetConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetTreeSetIterator)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -293,7 +293,7 @@ private:
 
 	struct ExtractedPairProxy : private ExtractedPair
 	{
-		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem, TreeSetExtractedItem&)
+		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem)
 	};
 
 public:

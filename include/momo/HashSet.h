@@ -518,17 +518,17 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, IsMovable, bool)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, IsMovable)
 	};
 
 	struct ConstPositionProxy : public ConstPosition
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIndex, size_t)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashCode, size_t)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIterator, BucketIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Reset, void)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Check, void)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIndex)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashCode)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Reset)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Check)
 	};
 
 public:

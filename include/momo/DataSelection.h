@@ -472,7 +472,7 @@ namespace internal
 		struct RowReferenceProxy : public RowReference
 		{
 			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
-			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw, Raw*)
+			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw)
 		};
 
 		struct ConstIteratorProxy : public ConstIterator
