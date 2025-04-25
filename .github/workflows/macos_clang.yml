@@ -8,11 +8,11 @@ jobs:
       matrix:
         include:
 
-#        - clang_ver: '18'
-#          build_type: 'Release'
-#          flags: '-std=c++26 -Werror -msse2'
-#          path_prefix: '/usr/local'
-#          macos_ver: '13'
+        - clang_ver: '18'
+          build_type: 'Release'
+          flags: '-std=c++26 -Werror -msse2'
+          path_prefix: '/usr/local'
+          macos_ver: '13'
 
         - clang_ver: '19'
           build_type: 'Release'
