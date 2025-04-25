@@ -8,6 +8,12 @@ jobs:
       matrix:
         include:
 
+        - clang_ver: '18'
+          build_type: 'Release'
+          flags: '-std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          path_prefix: '/usr/local'
+          macos_ver: '13'
+
         - clang_ver: '19'
           build_type: 'Release'
           flags: '-std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
@@ -48,6 +54,12 @@ jobs:
         - clang_ver: '18'
           build_type: 'Release'
           flags: '-std=c++26 -Werror'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - clang_ver: '19'
+          build_type: 'Release'
+          flags: '-std=c++11 -Werror'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
 

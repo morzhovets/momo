@@ -11,14 +11,18 @@ jobs:
         # Apple Clang 15.0.0
         - macos_ver: '13'
           build_type: 'Release'
-          flags: '-std=c++11 -Werror -msse2'
-
-        - macos_ver: '13'
-          build_type: 'Release'
           flags: '-std=c++20 -Werror -msse2'
 
         # macOS-14-arm64
         # Apple Clang 15.0.0
+        - macos_ver: '14'
+          build_type: 'Release'
+          flags: '-std=c++11 -Werror'
+
+        - macos_ver: '14'
+          build_type: 'Release'
+          flags: '-std=c++11 -Werror -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+
         - macos_ver: '14'
           build_type: 'Release'
           flags: '-std=c++20 -Werror'
