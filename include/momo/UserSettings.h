@@ -204,10 +204,12 @@
 #endif
 
 #ifdef __has_cpp_attribute
-# if __has_cpp_attribute(nodiscard) && !(defined(__clang__) && __cplusplus < 201703L)
+# if __has_cpp_attribute(nodiscard) \
+	&& !(__cplusplus < 201703L && (defined(__GNUC__) || defined(__clang__)))
 #  define MOMO_NODISCARD [[nodiscard]]
 # endif
-# if __has_cpp_attribute(deprecated) && !(defined(__clang__) && __cplusplus < 201402L)
+# if __has_cpp_attribute(deprecated) \
+	&& !(__cplusplus < 201402L && (defined(__GNUC__) || defined(__clang__)))	// gcc 5 & 6
 #  define MOMO_DEPRECATED [[deprecated]]
 # endif
 #endif
