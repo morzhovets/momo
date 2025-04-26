@@ -58,4 +58,8 @@
 # endif
 #endif
 
+#if defined(__clang__) && defined(_MSC_VER)
+# define _ITERATOR_DEBUG_LEVEL 0
+#endif
+
 #include "../../include/momo/UserSettings.h"
