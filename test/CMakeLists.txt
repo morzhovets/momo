@@ -6,7 +6,7 @@ project(momo_test
 file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
 add_executable(momo_test ${MOMO_TEST_SOURCES})
 
-target_compile_features(momo_test PRIVATE cxx_std_23)
+#target_compile_features(momo_test PRIVATE cxx_std_23)
 
 target_precompile_headers(momo_test PRIVATE "sources/pch.h")
 

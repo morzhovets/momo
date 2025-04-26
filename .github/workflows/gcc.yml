@@ -15,6 +15,11 @@ jobs:
 
         - gcc_ver: '14'
           build_type: 'Release'
+          flags: '-std=c++23 -Werror -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          ubuntu_ver: '24.04'
+
+        - gcc_ver: '14'
+          build_type: 'Release'
           flags: '-std=c++26 -Werror -msse2'
           ubuntu_ver: '24.04'
 

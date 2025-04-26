@@ -29,6 +29,12 @@ jobs:
 
         - gcc_ver: '14'
           build_type: 'Release'
+          flags: '-std=c++23 -Werror -Wno-psabi -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          path_prefix: '/opt/homebrew'
+          macos_ver: '14'
+
+        - gcc_ver: '14'
+          build_type: 'Release'
           flags: '-std=c++26 -Werror -Wno-psabi'
           path_prefix: '/opt/homebrew'
           macos_ver: '14'
@@ -56,8 +62,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install Ninja
-      run: brew install ninja
+#    - name: Install Ninja
+#      run: brew install ninja
     - name: Install GCC
       run: brew install gcc@${{ matrix.gcc_ver }}
     - name: Build
