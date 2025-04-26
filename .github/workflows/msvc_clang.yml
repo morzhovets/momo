@@ -17,6 +17,15 @@ jobs:
           build_type: 'Release'
           flags: '/std:c++latest /WX -msse2 /DTEST_LIBCXX_NEW'
 
+        # Clang 19.1.1 with MSVC-like command-line
+        - win_ver: '2025'
+          build_type: 'Release'
+          flags: '/std:c++17 /WX -msse2'
+
+        - win_ver: '2025'
+          build_type: 'Release'
+          flags: '/std:c++20 /WX -msse2 /DTEST_LIBCXX_NEW'
+
         - win_ver: '2025'
           build_type: 'Release'
           flags: '/std:c++latest /WX -msse2 /DTEST_LIBCXX_NEW'

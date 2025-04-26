@@ -31,6 +31,14 @@ jobs:
         # Apple Clang 16.0.0
         - macos_ver: '15'
           build_type: 'Release'
+          flags: '-std=c++14 -Werror'
+
+        - macos_ver: '15'
+          build_type: 'Release'
+          flags: '-std=c++17 -Werror'
+
+        - macos_ver: '15'
+          build_type: 'Release'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '15'
