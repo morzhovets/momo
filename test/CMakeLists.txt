@@ -10,11 +10,13 @@ else()
 endif()
 add_executable(momo_test ${MOMO_TEST_SOURCES})
 
-#target_compile_features(momo_test PRIVATE cxx_std_11)
-
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.16)
   target_precompile_headers(momo_test PRIVATE "sources/pch.h")
 endif()
+
+target_include_directories(momo_test PRIVATE "../include")
+
+#target_compile_features(momo_test PRIVATE cxx_std_11)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -28,7 +30,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   endif()
 elseif(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14
     AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang"
-	AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+    AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
   target_compile_options(momo_test PRIVATE /W4 -Wold-style-cast -Wsign-conversion
     -Wno-unused-local-typedefs)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
