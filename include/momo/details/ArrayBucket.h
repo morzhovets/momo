@@ -14,7 +14,6 @@
 #define MOMO_INCLUDE_GUARD_DETAILS_ARRAY_BUCKET
 
 #include "BucketUtility.h"
-#include "../MemPool.h"
 
 namespace momo
 {

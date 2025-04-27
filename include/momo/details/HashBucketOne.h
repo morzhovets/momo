@@ -17,7 +17,6 @@
 #define MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_ONE
 
 #include "BucketUtility.h"
-#include "../ObjectManager.h"
 
 namespace momo
 {

@@ -17,7 +17,16 @@
 #ifndef MOMO_INCLUDE_GUARD_STDISH_MAP
 #define MOMO_INCLUDE_GUARD_STDISH_MAP
 
-#include "../TreeMap.h"
+#ifdef __has_include
+# if __has_include(<momo/Utility.h>)
+#  include <momo/Utility.h>
+# endif
+#endif
+#ifndef MOMO_PARENT_HEADER
+# include "../Utility.h"
+#endif
+
+#include MOMO_PARENT_HEADER(TreeMap)
 #include "set_map_utility.h"
 
 namespace momo

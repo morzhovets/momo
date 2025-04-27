@@ -17,7 +17,16 @@
 #ifndef MOMO_INCLUDE_GUARD_STDISH_UNORDERED_MAP
 #define MOMO_INCLUDE_GUARD_STDISH_UNORDERED_MAP
 
-#include "../HashMap.h"
+#ifdef __has_include
+# if __has_include(<momo/Utility.h>)
+#  include <momo/Utility.h>
+# endif
+#endif
+#ifndef MOMO_PARENT_HEADER
+# include "../Utility.h"
+#endif
+
+#include MOMO_PARENT_HEADER(HashMap)
 #include "set_map_utility.h"
 
 namespace momo

@@ -17,7 +17,16 @@
 #ifndef MOMO_INCLUDE_GUARD_STDISH_SET
 #define MOMO_INCLUDE_GUARD_STDISH_SET
 
-#include "../TreeSet.h"
+#ifdef __has_include
+# if __has_include(<momo/Utility.h>)
+#  include <momo/Utility.h>
+# endif
+#endif
+#ifndef MOMO_PARENT_HEADER
+# include "../Utility.h"
+#endif
+
+#include MOMO_PARENT_HEADER(TreeSet)
 #include "set_map_utility.h"
 
 namespace momo

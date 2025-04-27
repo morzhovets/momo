@@ -40,6 +40,17 @@
 # include <compare>
 #endif
 
+// Avoid '..' in include paths (C4464)
+#ifdef __has_include
+# if __has_include(<momo/Utility.h>)
+#  define MOMO_PARENT_HEADER(file) <momo/file.h>
+# endif
+#endif
+#ifndef MOMO_PARENT_HEADER
+# define MOMO_PARENT_HEADER_STRING(expr) #expr
+# define MOMO_PARENT_HEADER(file) MOMO_PARENT_HEADER_STRING(../file.h)
+#endif
+
 #define MOMO_FRIEND_SWAP(Object) \
 	friend void swap(Object& object1, Object& object2) \
 		noexcept(noexcept(object1.Swap(object2))) \

@@ -17,7 +17,6 @@
 #define MOMO_INCLUDE_GUARD_DETAILS_HASH_BUCKET_LIMP1
 
 #include "BucketUtility.h"
-#include "../MemPool.h"
 
 namespace momo
 {

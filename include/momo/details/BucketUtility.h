@@ -13,7 +13,18 @@
 #ifndef MOMO_INCLUDE_GUARD_DETAILS_BUCKET_UTILITY
 #define MOMO_INCLUDE_GUARD_DETAILS_BUCKET_UTILITY
 
-#include "../IteratorUtility.h"
+#ifdef __has_include
+# if __has_include(<momo/Utility.h>)
+#  include <momo/Utility.h>
+# endif
+#endif
+#ifndef MOMO_PARENT_HEADER
+# include "../Utility.h"
+#endif
+
+#include MOMO_PARENT_HEADER(IteratorUtility)
+#include MOMO_PARENT_HEADER(ObjectManager)
+#include MOMO_PARENT_HEADER(MemPool)
 
 namespace momo
 {
