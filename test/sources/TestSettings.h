@@ -12,8 +12,6 @@
 
 #pragma once
 
-#undef NDEBUG
-
 #if defined(__clang__)
 # define TEST_CLANG
 #elif defined(__GNUC__)	// && !defined(__clang__)
@@ -50,13 +48,11 @@
 
 #endif // TEST_DISABLE_ALL
 
+#undef NDEBUG
+
 #ifdef _WIN32
 # define MOMO_USE_MEM_MANAGER_WIN
 # define NOMINMAX
-#endif
-
-#if defined(__clang__) && defined(_MSC_VER)
-# define _ITERATOR_DEBUG_LEVEL 0
 #endif
 
 #include "../../include/momo/UserSettings.h"
