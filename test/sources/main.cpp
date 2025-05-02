@@ -72,6 +72,30 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "MOMO_USE_SAFE_MAP_BRACKETS: ";
+#ifdef MOMO_USE_SAFE_MAP_BRACKETS
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_USE_UNORDERED_HINT_ITERATORS: ";
+#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_DISABLE_TYPE_INFO: ";
+#ifdef MOMO_DISABLE_TYPE_INFO
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_USE_MEM_MANAGER_WIN: ";
+#ifdef MOMO_USE_MEM_MANAGER_WIN
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
 	std::cout << "TEST_STD_VER: " << TEST_STD_VER << std::endl;
 
 	return 0;
