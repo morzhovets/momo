@@ -10,38 +10,49 @@ jobs:
 
         # x64
         - build_type: 'Release'
-          flags: '-std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror -DTEST_LIBCXX_NEW'
 
         - build_type: 'Debug'
-          flags: '-std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror -DTEST_LIBCXX_NEW'
 
         # x86
         - build_type: 'Release'
-          flags: '-m32 -std=c++14 -Werror -msse2'
+          test_extra: 'Off'
+          flags: '-m32 -std=c++14 -Werror'
 
         - build_type: 'Release'
-          flags: '-m32 -std=c++14 -Werror -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          test_extra: 'On'
+          flags: '-m32 -std=c++14 -Werror'
 
         - build_type: 'Release'
-          flags: '-m32 -std=c++17 -Werror -msse2'
+          test_extra: 'Off'
+          flags: '-m32 -std=c++17 -Werror'
 
         - build_type: 'Release'
-          flags: '-m32 -std=c++20 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          test_extra: 'Off'
+          flags: '-m32 -std=c++20 -Werror -DTEST_LIBCXX_NEW'
 
         - build_type: 'Release'
-          flags: '-m32 -std=c++23 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          test_extra: 'Off'
+          flags: '-m32 -std=c++23 -Werror -DTEST_LIBCXX_NEW'
 
         - build_type: 'Release'
-          flags: '-m32 -std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          test_extra: 'Off'
+          flags: '-m32 -std=c++26 -Werror -DTEST_LIBCXX_NEW'
 
         - build_type: 'Release'
-          flags: '-m32 -std=c++26 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          test_extra: 'On'
+          flags: '-m32 -std=c++26 -Werror -DTEST_LIBCXX_NEW'
 
         - build_type: 'Debug'
-          flags: '-m32 -std=c++26 -Werror -msse2 -DTEST_LIBCXX_NEW'
+          test_extra: 'Off'
+          flags: '-m32 -std=c++26 -Werror -DTEST_LIBCXX_NEW'
 
         - build_type: 'Debug'
-          flags: '-m32 -std=c++26 -Werror -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+          test_extra: 'On'
+          flags: '-m32 -std=c++26 -Werror -DTEST_LIBCXX_NEW'
 
     runs-on: windows-latest
 
@@ -59,7 +70,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test.exe

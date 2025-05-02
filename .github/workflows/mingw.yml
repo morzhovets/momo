@@ -10,41 +10,50 @@ jobs:
 
         - arch: 'x64'
           build_type: 'Release'
-          flags: '-std=c++11 -Wa,-mbig-obj -msse2'
+          test_extra: 'Off'
+          flags: '-std=c++11 -Wa,-mbig-obj'
 
         - arch: 'x64'
           build_type: 'Release'
-          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
+          test_extra: 'Off'
+          flags: '-std=c++23 -Wa,-mbig-obj -DTEST_LIBCXX_NEW'
 
         # Debug: Fatal error: .obj: file too big
 
 #        - arch: 'x86'
 #          build_type: 'Release'
-#          flags: '-std=c++11 -Wa,-mbig-obj -msse2'
+#          test_extra: 'Off'
+#          flags: '-std=c++11 -Wa,-mbig-obj'
 #
 #        - arch: 'x86'
 #          build_type: 'Release'
-#          flags: '-std=c++11 -Wa,-mbig-obj -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+#          test_extra: 'On'
+#          flags: '-std=c++11 -Wa,-mbig-obj'
 #
 #        - arch: 'x86'
 #          build_type: 'Release'
-#          flags: '-std=c++14 -Wa,-mbig-obj -msse2'
+#          test_extra: 'Off'
+#          flags: '-std=c++14 -Wa,-mbig-obj'
 #
 #        - arch: 'x86'
 #          build_type: 'Release'
-#          flags: '-std=c++17 -Wa,-mbig-obj -msse2'
+#          test_extra: 'Off'
+#          flags: '-std=c++17 -Wa,-mbig-obj'
 #
 #        - arch: 'x86'
 #          build_type: 'Release'
-#          flags: '-std=c++20 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
+#          test_extra: 'Off'
+#          flags: '-std=c++20 -Wa,-mbig-obj -DTEST_LIBCXX_NEW'
 #
 #        - arch: 'x86'
 #          build_type: 'Release'
-#          flags: '-std=c++23 -Wa,-mbig-obj -msse2 -DTEST_LIBCXX_NEW'
+#          test_extra: 'Off'
+#          flags: '-std=c++23 -Wa,-mbig-obj -DTEST_LIBCXX_NEW'
 #
 #        - arch: 'x86'
 #          build_type: 'Release'
-#          flags: '-std=c++23 -Wa,-mbig-obj -DTEST_LIBCXX_NEW -fno-rtti -DMOMO_USE_SAFE_MAP_BRACKETS -DMOMO_USE_UNORDERED_HINT_ITERATORS -DMOMO_DISABLE_TYPE_INFO'
+#          test_extra: 'On'
+#          flags: '-std=c++23 -Wa,-mbig-obj -DTEST_LIBCXX_NEW'
 
     runs-on: windows-latest
 
@@ -65,7 +74,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test.exe
