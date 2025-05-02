@@ -10,40 +10,40 @@ jobs:
 
         # x64
         - build_type: 'Release'
-          test_extra: 'OFF'
+          test_extra: 'Off'
           flags: '-std=c++23 -Werror'
 
         - build_type: 'Release'
-          test_extra: 'OFF'
+          test_extra: 'Off'
           flags: '-std=c++26 -Werror'
 
         - build_type: 'Debug'
-          test_extra: 'OFF'
+          test_extra: 'Off'
           flags: '-std=c++26 -Werror'
 
         # x86
         - build_type: 'Release'
-          test_extra: 'OFF'
+          test_extra: 'Off'
           flags: '-m32 -std=c++23 -Werror'
 
         - build_type: 'Release'
-          test_extra: 'ON'
+          test_extra: 'On'
           flags: '-m32 -std=c++23 -Werror'
 
         - build_type: 'Release'
-          test_extra: 'OFF'
+          test_extra: 'Off'
           flags: '-m32 -std=c++26 -Werror'
 
         - build_type: 'Release'
-          test_extra: 'ON'
+          test_extra: 'On'
           flags: '-m32 -std=c++26 -Werror'
 
         - build_type: 'Debug'
-          test_extra: 'OFF'
+          test_extra: 'Off'
           flags: '-m32 -std=c++26 -Werror'
 
         - build_type: 'Debug'
-          test_extra: 'ON'
+          test_extra: 'On'
           flags: '-m32 -std=c++26 -Werror'
 
     runs-on: windows-latest

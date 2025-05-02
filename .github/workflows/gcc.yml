@@ -10,37 +10,37 @@ jobs:
 
         - gcc_ver: '14'
           build_type: 'Release'
-          test_extra: 'OFF'
+          test_extra: 'Off'
           flags: '-std=c++23 -Werror'
           ubuntu_ver: '24.04'
 
         - gcc_ver: '14'
           build_type: 'Release'
-          test_extra: 'ON'
+          test_extra: 'On'
           flags: '-std=c++23 -Werror'
           ubuntu_ver: '24.04'
 
         - gcc_ver: '14'
           build_type: 'Release'
-          test_extra: 'OFF'
+          test_extra: 'Off'
           flags: '-std=c++26 -Werror'
           ubuntu_ver: '24.04'
 
         - gcc_ver: '14'
           build_type: 'Release'
-          test_extra: 'ON'
+          test_extra: 'On'
           flags: '-std=c++26 -Werror'
           ubuntu_ver: '24.04'
 
         - gcc_ver: '14'
           build_type: 'Debug'
-          test_extra: 'OFF'
+          test_extra: 'Off'
           flags: '-std=c++26 -Werror'
           ubuntu_ver: '24.04'
 
         - gcc_ver: '14'
           build_type: 'Debug'
-          test_extra: 'ON'
+          test_extra: 'On'
           flags: '-std=c++26 -Werror'
           ubuntu_ver: '24.04'
 
