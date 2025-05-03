@@ -1,4 +1,4 @@
-name: Perf Clang
+name: Perf macOS Clang
 
 on: [push, pull_request]
 
@@ -20,7 +20,8 @@ jobs:
         - type: 'data_table_static'
           clang_ver: '15'
 
-    runs-on: ubuntu-24.04
+    # macOS-15-arm64
+    runs-on: macos-15
 
     steps:
     - name: Checkout hash-table-shootout
@@ -56,18 +57,15 @@ jobs:
       uses: actions/checkout@v4
       with:
         path: 'momo_cur'
-    - name: Setup Clang
-      uses: egor-tensin/setup-clang@v1
-      with:
-        version: ${{ matrix.clang_ver }}
+    - name: Install Clang
+      run: brew install llvm@${{ matrix.clang_ver }}
     - name: Build
       run: |
         mkdir build
-        clang++-${{ matrix.clang_ver }} -Imomo_v3_2 -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_1 src/momo_${{ matrix.type }}.cc
-        clang++-${{ matrix.clang_ver }} -Imomo_v3_5 -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_2 src/momo_${{ matrix.type }}.cc
-        clang++-${{ matrix.clang_ver }} -Imomo_v3_7 -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_3 src/momo_${{ matrix.type }}.cc
-        clang++-${{ matrix.clang_ver }} -Imomo_v3_10/include -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_4 src/momo_${{ matrix.type }}.cc
-        clang++-${{ matrix.clang_ver }} -Imomo_cur/include -O3 -DNDEBUG -march=native -std=c++17 -o build/momo_${{ matrix.type }}_0 src/momo_${{ matrix.type }}.cc
+        /opt/homebrew/opt/llvm@${{ matrix.clang_ver }}/bin/clang++ -Imomo_v3_2 -O3 -DNDEBUG -std=c++17 -o build/momo_${{ matrix.type }}_1 src/momo_${{ matrix.type }}.cc
+        /opt/homebrew/opt/llvm@${{ matrix.clang_ver }}/bin/clang++ -Imomo_v3_5 -O3 -DNDEBUG -std=c++17 -o build/momo_${{ matrix.type }}_2 src/momo_${{ matrix.type }}.cc
+        /opt/homebrew/opt/llvm@${{ matrix.clang_ver }}/bin/clang++ -Imomo_v3_7 -O3 -DNDEBUG -std=c++17 -o build/momo_${{ matrix.type }}_3 src/momo_${{ matrix.type }}.cc
+        /opt/homebrew/opt/llvm@${{ matrix.clang_ver }}/bin/clang++ -Imomo_v3_10/include -O3 -DNDEBUG -std=c++17 -o build/momo_${{ matrix.type }}_4 src/momo_${{ matrix.type }}.cc
+        /opt/homebrew/opt/llvm@${{ matrix.clang_ver }}/bin/clang++ -Imomo_cur/include -O3 -DNDEBUG -std=c++17 -o build/momo_${{ matrix.type }}_0 src/momo_${{ matrix.type }}.cc
     - name: Test
-      run: |
-        sudo nice -n-20 ionice -c1 -n0 sudo -u $USER python3 momo_${{ matrix.type }}.py
+      run: python3 momo_${{ matrix.type }}.py
