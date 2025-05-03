@@ -9,16 +9,16 @@ jobs:
         include:
         
         - type: 'unordered_map'
-          clang_ver: '15'
+          clang_ver: '19'
 
         - type: 'unordered_map_open'
-          clang_ver: '15'
+          clang_ver: '19'
 
         - type: 'map'
-          clang_ver: '15'
+          clang_ver: '19'
 
         - type: 'data_table_static'
-          clang_ver: '15'
+          clang_ver: '19'
 
     # macOS-15-arm64
     runs-on: macos-15
