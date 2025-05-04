@@ -9,36 +9,44 @@ jobs:
         include:
 
         - build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++11 -Werror'
 
         - build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'On'
           flags: '-std=c++11 -Werror'
 
         - build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++14 -Werror'
 
         - build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++17 -Werror'
 
         - build_type: 'Release'
+          test_libcxx_new: 'On'
           test_extra: 'Off'
-          flags: '-std=c++20 -Werror -DTEST_LIBCXX_NEW'
+          flags: '-std=c++20 -Werror'
 
         - build_type: 'Release'
+          test_libcxx_new: 'On'
           test_extra: 'On'
-          flags: '-std=c++20 -Werror -DTEST_LIBCXX_NEW'
+          flags: '-std=c++20 -Werror'
 
         - build_type: 'Debug'
+          test_libcxx_new: 'On'
           test_extra: 'Off'
-          flags: '-std=c++20 -Werror -DTEST_LIBCXX_NEW'
+          flags: '-std=c++20 -Werror'
 
         - build_type: 'Debug'
+          test_libcxx_new: 'On'
           test_extra: 'On'
-          flags: '-std=c++20 -Werror -DTEST_LIBCXX_NEW'
+          flags: '-std=c++20 -Werror'
 
     runs-on: ubuntu-latest
 
@@ -65,7 +73,8 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DMOMO_TEST_LIBCXX_NEW=${{ matrix.test_libcxx_new }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test

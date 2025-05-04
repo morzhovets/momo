@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.10...4.0)
 project(momo_test
   LANGUAGES CXX)
 
+option(MOMO_TEST_LIBCXX_NEW "Use new libcxx tests" OFF)
 option(MOMO_TEST_EXTRA "Test extra settings" OFF)
 
 include(CheckCXXCompilerFlag)
@@ -12,6 +13,7 @@ message(STATUS "CMAKE_CXX_COMPILER_ID: " ${CMAKE_CXX_COMPILER_ID})
 message(STATUS "CMAKE_CXX_COMPILER_FRONTEND_VARIANT: " ${CMAKE_CXX_COMPILER_FRONTEND_VARIANT})
 message(STATUS "CMAKE_CXX_STANDARD: " ${CMAKE_CXX_STANDARD})
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
+message(STATUS "MOMO_TEST_LIBCXX_NEW: " ${MOMO_TEST_LIBCXX_NEW})
 message(STATUS "MOMO_TEST_EXTRA: " ${MOMO_TEST_EXTRA})
 message(STATUS "HAS_SSE2_FLAG: " ${HAS_SSE2_FLAG})
 
@@ -27,6 +29,10 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.16)
 endif()
 
 #target_compile_features(momo_test PRIVATE cxx_std_11)
+
+if(MOMO_TEST_LIBCXX_NEW)
+  target_compile_definitions(momo_test PRIVATE TEST_LIBCXX_NEW)
+endif()
 
 if(MOMO_TEST_EXTRA)
   target_compile_definitions(momo_test PRIVATE TEST_EXTRA_SETTINGS)
