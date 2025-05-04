@@ -45,14 +45,18 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+    - name: Install Ninja
+      run: choco install ninja
     - name: Build
       env:
+        CXX: clang-cl
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
         mkdir build
         cd build
-        cmake .. -T ClangCL -DMOMO_TEST_LIBCXX_NEW=${{ matrix.test_libcxx_new }}
-        cmake --build . --config ${{ matrix.build_type }}
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
+          -DMOMO_TEST_LIBCXX_NEW=${{ matrix.test_libcxx_new }}
+        cmake --build . -v
     - name: Test
-      run: test/build/${{ matrix.build_type }}/momo_test.exe
+      run: test/build/momo_test.exe
