@@ -1,0 +1,113 @@
+﻿{
+  "version": 2,
+  "configurePresets": [
+    {
+      "name": "Base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/test/build/${presetName}",
+      "cacheVariables": {
+        "MOMO_TEST": "ON",
+        "CMAKE_CXX_STANDARD": "23"
+      }
+    },
+    {
+      "name": "Base-Ninja",
+      "inherits": "Base",
+      "hidden": true,
+      "generator": "Ninja",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_VERBOSE_MAKEFILE": "ON"
+      }
+    },
+    {
+      "name": "MSVC-x64-Debug",
+      "inherits": "Base-Ninja",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "MSVC-x64-Release",
+      "inherits": "MSVC-x64-Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "MSVC-x86-Debug",
+      "inherits": "MSVC-x64-Debug",
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "MSVC-x86-Release",
+      "inherits": "MSVC-x86-Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "MSVC_Clang-x64-Debug",
+      "inherits": "Base-Ninja",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang-cl",
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "windows-clang-x64"
+        }
+      }
+    },
+    {
+      "name": "MSVC_Clang-x64-Release",
+      "inherits": "MSVC_Clang-x64-Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "MSVC_Clang-x86-Debug",
+      "inherits": "MSVC_Clang-x64-Debug",
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "MSVC_Clang-x86-Release",
+      "inherits": "MSVC_Clang-x86-Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "MSVC_2022-x64",
+      "inherits": "Base",
+      "generator": "Visual Studio 17 2022",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "MSVC_2022-x64-Debug",
+      "configurePreset": "MSVC_2022-x64",
+      "configuration": "Debug"
+    },
+    {
+      "name": "MSVC_2022-x64-Release",
+      "configurePreset": "MSVC_2022-x64",
+      "configuration": "Release"
+    }
+  ]
+}
