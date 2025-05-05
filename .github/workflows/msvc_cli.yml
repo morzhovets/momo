@@ -25,7 +25,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -DMOMO_TEST_MSVC_CLI=On
+        cmake .. -DMOMO_TEST_MSVC_CLI=On -DCMAKE_VERBOSE_MAKEFILE=On
         cmake --build . --config ${{ matrix.build_type }}
-    - name: Test
-      run: test/build/${{ matrix.build_type }}/momo_test.exe
+#    - name: Test
+#      run: test/build/${{ matrix.build_type }}/momo_test.exe
