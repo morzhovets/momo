@@ -60,6 +60,12 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "_M_CEE: ";
+#ifdef _M_CEE
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
 	std::cout << "MOMO_PARENT_HEADER_STRING: ";
 #ifdef MOMO_PARENT_HEADER_STRING
 	std::cout << "defined";

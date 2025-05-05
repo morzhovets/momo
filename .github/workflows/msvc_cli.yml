@@ -11,12 +11,7 @@ jobs:
         # Visual Studio 2019
         - win_ver: '2019'
           build_type: 'Release'
-          flags: '/clr /std:c++17 /WX'
-
-#        # Visual Studio 2022
-#        - win_ver: '2022'
-#          build_type: 'Release'
-#          flags: '/clr /std:c++17 /WX'
+          flags: '/std:c++17 /WX'
 
     runs-on: windows-${{ matrix.win_ver }}
 
@@ -30,7 +25,7 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake ..
+        cmake .. -DMOMO_TEST_MSVC_CLI=On
         cmake --build . --config ${{ matrix.build_type }}
-#    - name: Test
-#      run: test/build/${{ matrix.build_type }}/momo_test.exe
+    - name: Test
+      run: test/build/${{ matrix.build_type }}/momo_test.exe
