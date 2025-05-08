@@ -78,8 +78,13 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
   target_compile_options(momo_test PRIVATE -Wold-style-cast -Wsign-conversion
     -Wno-unused-local-typedefs)
 
-  if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_definitions(momo_test PRIVATE _ITERATOR_DEBUG_LEVEL=0)
+  if(WIN32)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      target_compile_definitions(momo_test PRIVATE _ITERATOR_DEBUG_LEVEL=0)
+    endif()
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+      target_compile_options(momo_test PRIVATE -Wa,-mbig-obj)
+    endif()
   endif()
 
 endif()
