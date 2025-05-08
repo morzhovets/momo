@@ -2,63 +2,89 @@
   "version": 2,
   "configurePresets": [
     {
-      "name": "Base",
+      "name": "Test",
       "hidden": true,
       "binaryDir": "${sourceDir}/test/build/${presetName}",
       "cacheVariables": {
-        "MOMO_TEST": "ON",
-        "CMAKE_CXX_STANDARD": "23"
+        "MOMO_TEST": "ON"
       }
     },
     {
-      "name": "Base-Ninja",
-      "inherits": "Base",
+      "name": "Test-Ninja-x64-std23-Debug",
       "hidden": true,
+      "inherits": "Test",
       "generator": "Ninja",
       "architecture": {
         "value": "x64",
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_VERBOSE_MAKEFILE": "ON"
-      }
-    },
-    {
-      "name": "MSVC-x64-Debug",
-      "inherits": "Base-Ninja",
-      "cacheVariables": {
-        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_CXX_STANDARD": "23",
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "MSVC-x64-Release",
-      "inherits": "MSVC-x64-Debug",
+      "name": "Test-GCC-x64-std23-Debug",
+      "inherits": "Test-Ninja-x64-std23-Debug",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "Test-GCC-x64-std23-Release",
+      "inherits": "Test-GCC-x64-std23-Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
-      "name": "MSVC-x86-Debug",
-      "inherits": "MSVC-x64-Debug",
+      "name": "Test-Clang-x64-std23-Debug",
+      "inherits": "Test-Ninja-x64-std23-Debug",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "Test-Clang-x64-std23-Release",
+      "inherits": "Test-Clang-x64-std23-Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "Test-MSVC-x64-std23-Debug",
+      "inherits": "Test-Ninja-x64-std23-Debug",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl"
+      }
+    },
+    {
+      "name": "Test-MSVC-x64-std23-Release",
+      "inherits": "Test-MSVC-x64-std23-Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "Test-MSVC-x86-std23-Debug",
+      "inherits": "Test-MSVC-x64-std23-Debug",
       "architecture": {
         "value": "x86",
         "strategy": "external"
       }
     },
     {
-      "name": "MSVC-x86-Release",
-      "inherits": "MSVC-x86-Debug",
+      "name": "Test-MSVC-x86-std23-Release",
+      "inherits": "Test-MSVC-x86-std23-Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
-      "name": "MSVC_Clang-x64-Debug",
-      "inherits": "Base-Ninja",
+      "name": "Test-MSVC_Clang-x64-std23-Debug",
+      "inherits": "Test-Ninja-x64-std23-Debug",
       "cacheVariables": {
-        "CMAKE_CXX_COMPILER": "clang-cl",
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_CXX_COMPILER": "clang-cl"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -67,46 +93,114 @@
       }
     },
     {
-      "name": "MSVC_Clang-x64-Release",
-      "inherits": "MSVC_Clang-x64-Debug",
+      "name": "Test-MSVC_Clang-x64-std23-Release",
+      "inherits": "Test-MSVC_Clang-x64-std23-Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
-      "name": "MSVC_Clang-x86-Debug",
-      "inherits": "MSVC_Clang-x64-Debug",
+      "name": "Test-MSVC_Clang-x86-std23-Debug",
+      "inherits": "Test-MSVC_Clang-x64-std23-Debug",
       "architecture": {
         "value": "x86",
         "strategy": "external"
       }
     },
     {
-      "name": "MSVC_Clang-x86-Release",
-      "inherits": "MSVC_Clang-x86-Debug",
+      "name": "Test-MSVC_Clang-x86-std23-Release",
+      "inherits": "Test-MSVC_Clang-x86-std23-Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
-      "name": "MSVC_2022-x64",
-      "inherits": "Base",
+      "name": "Test-MSVC_2022-x64-std23",
+      "inherits": "Test",
       "generator": "Visual Studio 17 2022",
       "architecture": {
         "value": "x64",
         "strategy": "set"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "23"
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "MSVC_2022-x64-Debug",
-      "configurePreset": "MSVC_2022-x64",
+      "name": "Ninja",
+      "hidden": true,
+      "verbose": true
+    },
+    {
+      "name": "GCC-x64-std23-Debug",
+      "configurePreset": "Test-GCC-x64-std23-Debug",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "GCC-x64-std23-Release",
+      "configurePreset": "Test-GCC-x64-std23-Release",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "Clang-x64-std23-Debug",
+      "configurePreset": "Test-Clang-x64-std23-Debug",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "Clang-x64-std23-Release",
+      "configurePreset": "Test-Clang-x64-std23-Release",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC-x64-std23-Debug",
+      "configurePreset": "Test-MSVC-x64-std23-Debug",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC-x64-std23-Release",
+      "configurePreset": "Test-MSVC-x64-std23-Release",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC-x86-std23-Debug",
+      "configurePreset": "Test-MSVC-x86-std23-Debug",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC-x86-std23-Release",
+      "configurePreset": "Test-MSVC-x86-std23-Release",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC_Clang-x64-std23-Debug",
+      "configurePreset": "Test-MSVC_Clang-x64-std23-Debug",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC_Clang-x64-std23-Release",
+      "configurePreset": "Test-MSVC_Clang-x64-std23-Release",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC_Clang-x86-std23-Debug",
+      "configurePreset": "Test-MSVC_Clang-x86-std23-Debug",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC_Clang-x86-std23-Release",
+      "configurePreset": "Test-MSVC_Clang-x86-std23-Release",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC_2022-x64-std23-Debug",
+      "configurePreset": "Test-MSVC_2022-x64-std23",
       "configuration": "Debug"
     },
     {
-      "name": "MSVC_2022-x64-Release",
-      "configurePreset": "MSVC_2022-x64",
+      "name": "MSVC_2022-x64-std23-Release",
+      "configurePreset": "Test-MSVC_2022-x64-std23",
       "configuration": "Release"
     }
   ]
