@@ -65,4 +65,8 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     endif()
   endif()
 
+  if(WIN32 AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    target_compile_options(momo_test PRIVATE -Wa,-mbig-obj)
+  endif()
+
 endif()

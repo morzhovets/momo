@@ -1,0 +1,35 @@
+name: MinGW
+
+on: [push, pull_request]
+
+jobs:
+  momo-test:
+    strategy:
+      matrix:
+        include:
+
+        - build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++23'
+
+        # Debug: Fatal error: .obj: file too big
+
+    runs-on: windows-2025
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+#    - name: Setup Ninja
+#      uses: seanmiddleditch/gha-setup-ninja@v4
+    - name: Build
+      env:
+        CXX: g++
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+        cmake --build . -v
+    - name: Test
+      run: test/build/momo_test.exe

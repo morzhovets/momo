@@ -70,8 +70,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install Ninja
-      run: choco install ninja
+#    - name: Install Ninja
+#      run: choco install ninja
     - name: Setup MSVC
       uses: TheMrMilchmann/setup-msvc-dev@v3
       with:
