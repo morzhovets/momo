@@ -11,6 +11,17 @@ jobs:
         - build_type: 'Release'
           test_extra: 'Off'
           flags: '-std=c++23'
+          prefix: 'x86_64-w64-mingw32'
+
+        - build_type: 'Debug'
+          test_extra: 'Off'
+          flags: '-std=c++23'
+          prefix: 'x86_64-w64-mingw32'
+
+        - build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++23'
+          prefix: 'i686-w64-mingw32'
 
         # Debug: Fatal error: .obj: file too big
 
@@ -23,7 +34,7 @@ jobs:
 #      uses: seanmiddleditch/gha-setup-ninja@v4
     - name: Build
       env:
-        CXX: g++
+        CXX: ${{ matrix.prefix }}-g++
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
