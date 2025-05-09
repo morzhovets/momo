@@ -42,32 +42,35 @@
 #include <unordered_map>
 #include <map>
 
-class IntPtr
+namespace
 {
-public:
-	explicit IntPtr(uint64_t* ptr) noexcept
-		: mPtr(ptr)
+	class IntPtr
 	{
-	}
+	public:
+		explicit IntPtr(uint64_t* ptr) noexcept
+			: mPtr(ptr)
+		{
+		}
 
-	uint64_t GetInt() const noexcept
-	{
-		return *mPtr;
-	}
+		uint64_t GetInt() const noexcept
+		{
+			return *mPtr;
+		}
 
-	bool operator==(const IntPtr& key) const noexcept
-	{
-		return GetInt() == key.GetInt();
-	}
+		bool operator==(const IntPtr& key) const noexcept
+		{
+			return GetInt() == key.GetInt();
+		}
 
-	bool operator<(const IntPtr& key) const noexcept
-	{
-		return GetInt() < key.GetInt();
-	}
+		bool operator<(const IntPtr& key) const noexcept
+		{
+			return GetInt() < key.GetInt();
+		}
 
-private:
-	uint64_t* mPtr;
-};
+	private:
+		uint64_t* mPtr;
+	};
+}
 
 namespace std
 {
