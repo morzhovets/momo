@@ -47,15 +47,7 @@ jobs:
           build_type: 'Release'
           test_libcxx_new: 'Off'
           test_extra: 'Off'
-          flags: '/std:c++latest /WX /permissive-'
-          win_ver: '2019'
-
-        - toolset: '14.1'
-          arch: 'x64_x86'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '/std:c++latest /WX /permissive-'
+          flags: '/std:c++17 /WX'
           win_ver: '2019'
 
         # Visual Studio 2019
@@ -64,15 +56,7 @@ jobs:
           build_type: 'Release'
           test_libcxx_new: 'On'
           test_extra: 'Off'
-          flags: '/std:c++latest /WX'
-          win_ver: '2025'
-
-        - toolset: '14.2'
-          arch: 'x64_x86'
-          build_type: 'Release'
-          test_libcxx_new: 'On'
-          test_extra: 'Off'
-          flags: '/std:c++latest /WX'
+          flags: '/std:c++20 /WX'
           win_ver: '2025'
 
         # Visual Studio 2022

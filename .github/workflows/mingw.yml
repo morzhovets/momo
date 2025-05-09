@@ -64,7 +64,7 @@ jobs:
 #          test_extra: 'On'
 #          flags: '-std=c++23'
 
-    runs-on: windows-latest
+    runs-on: windows-2025
 
     steps:
     - name: Checkout

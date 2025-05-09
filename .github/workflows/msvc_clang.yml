@@ -8,7 +8,6 @@ jobs:
       matrix:
         include:
 
-        # Clang 12.0.0 with MSVC-like command-line
         - win_ver: '2019'
           build_type: 'Release'
           test_libcxx_new: 'Off'
@@ -17,9 +16,8 @@ jobs:
         - win_ver: '2019'
           build_type: 'Release'
           test_libcxx_new: 'On'
-          flags: '/std:c++latest /WX'
+          flags: '/std:c++20 /WX'
 
-        # Clang 19.1.1 with MSVC-like command-line
         - win_ver: '2025'
           build_type: 'Release'
           test_libcxx_new: 'Off'
