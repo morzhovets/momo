@@ -10,50 +10,50 @@
       }
     },
     {
-      "name": "Test-Ninja-x64-std23-Debug",
+      "name": "Test-Ninja-std23-Debug",
       "hidden": true,
       "inherits": "Test",
       "generator": "Ninja",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
       "cacheVariables": {
         "CMAKE_CXX_STANDARD": "23",
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
     {
-      "name": "Test-GCC-x64-std23-Debug",
-      "inherits": "Test-Ninja-x64-std23-Debug",
+      "name": "Test-GCC-std23-Debug",
+      "inherits": "Test-Ninja-std23-Debug",
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "g++"
       }
     },
     {
-      "name": "Test-GCC-x64-std23-Release",
-      "inherits": "Test-GCC-x64-std23-Debug",
+      "name": "Test-GCC-std23-Release",
+      "inherits": "Test-GCC-std23-Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
-      "name": "Test-Clang-x64-std23-Debug",
-      "inherits": "Test-Ninja-x64-std23-Debug",
+      "name": "Test-Clang-std23-Debug",
+      "inherits": "Test-Ninja-std23-Debug",
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "clang++"
       }
     },
     {
-      "name": "Test-Clang-x64-std23-Release",
-      "inherits": "Test-Clang-x64-std23-Debug",
+      "name": "Test-Clang-std23-Release",
+      "inherits": "Test-Clang-std23-Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
     },
     {
       "name": "Test-MSVC-x64-std23-Debug",
-      "inherits": "Test-Ninja-x64-std23-Debug",
+      "inherits": "Test-Ninja-std23-Debug",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "cl"
       }
@@ -82,7 +82,11 @@
     },
     {
       "name": "Test-MSVC_Clang-x64-std23-Debug",
-      "inherits": "Test-Ninja-x64-std23-Debug",
+      "inherits": "Test-Ninja-std23-Debug",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
       "cacheVariables": {
         "CMAKE_CXX_COMPILER": "clang-cl"
       },
@@ -134,23 +138,23 @@
       "verbose": true
     },
     {
-      "name": "GCC-x64-std23-Debug",
-      "configurePreset": "Test-GCC-x64-std23-Debug",
+      "name": "GCC-std23-Debug",
+      "configurePreset": "Test-GCC-std23-Debug",
       "inherits": "Ninja"
     },
     {
-      "name": "GCC-x64-std23-Release",
-      "configurePreset": "Test-GCC-x64-std23-Release",
+      "name": "GCC-std23-Release",
+      "configurePreset": "Test-GCC-std23-Release",
       "inherits": "Ninja"
     },
     {
-      "name": "Clang-x64-std23-Debug",
-      "configurePreset": "Test-Clang-x64-std23-Debug",
+      "name": "Clang-std23-Debug",
+      "configurePreset": "Test-Clang-std23-Debug",
       "inherits": "Ninja"
     },
     {
-      "name": "Clang-x64-std23-Release",
-      "configurePreset": "Test-Clang-x64-std23-Release",
+      "name": "Clang-std23-Release",
+      "configurePreset": "Test-Clang-std23-Release",
       "inherits": "Ninja"
     },
     {
