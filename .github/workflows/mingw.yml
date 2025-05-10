@@ -8,24 +8,23 @@ jobs:
       matrix:
         include:
 
-        - build_type: 'Release'
+        # GNU 14
+        - win_ver: '2025'
+          build_type: 'Release'
           test_extra: 'Off'
           flags: '-std=c++23'
-          prefix: 'x86_64-w64-mingw32'
 
-        - build_type: 'Debug'
+        - win_ver: '2025'
+          build_type: 'Release'
           test_extra: 'Off'
-          flags: '-std=c++23'
-          prefix: 'x86_64-w64-mingw32'
+          flags: '-std=c++26'
 
-        - build_type: 'Release'
+        - win_ver: '2025'
+          build_type: 'Debug'
           test_extra: 'Off'
-          flags: '-std=c++23'
-          prefix: 'i686-w64-mingw32'
+          flags: '-std=c++26'
 
-        # Debug: Fatal error: .obj: file too big
-
-    runs-on: windows-2025
+    runs-on: windows-${{ matrix.win_ver }}
 
     steps:
     - name: Checkout
@@ -34,7 +33,7 @@ jobs:
 #      uses: seanmiddleditch/gha-setup-ninja@v4
     - name: Build
       env:
-        CXX: ${{ matrix.prefix }}-g++
+        CXX: g++
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
