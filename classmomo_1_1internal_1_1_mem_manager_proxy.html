@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -125,6 +125,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a553706d5983ecb446b6b35d5719d2cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaf7518c8df0dedd89b22ffcd06a30da"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#aeaf7518c8df0dedd89b22ffcd06a30da">IsEqual</a> (const <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager1, const <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager2) noexcept</td></tr>
 <tr class="separator:aeaf7518c8df0dedd89b22ffcd06a30da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3589e656486fa03758cd80c7bda09d89"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a3589e656486fa03758cd80c7bda09d89">Swap</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager1, <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;memManager2) noexcept</td></tr>
+<tr class="separator:a3589e656486fa03758cd80c7bda09d89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b48122d680b348c0f6040a93ef68edf"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a4b48122d680b348c0f6040a93ef68edf">Assign</a> (<a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&amp;srcMemManager, <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;dstMemManager) noexcept</td></tr>
 <tr class="separator:a4b48122d680b348c0f6040a93ef68edf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -465,6 +467,44 @@ template&lt;typename Object &gt; </div>
           <td></td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>newSize</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3589e656486fa03758cd80c7bda09d89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3589e656486fa03758cd80c7bda09d89">&#9670;&nbsp;</a></span>Swap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TMemManager &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html">momo::internal::MemManagerProxy</a>&lt; TMemManager &gt;::Swap </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>memManager1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_mem_manager_proxy.html#a9405863971a31a9823ccd8f0317a01fc">MemManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>memManager2</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -90,12 +90,12 @@ $(document).ready(function(){initNavTree('functions_type_k.html',''); initResiza
 , <a class="el" href="classmomo_1_1_hash_multi_map.html#a763061aa86c98c665a7aeb18704da443">momo::HashMultiMap&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>
 , <a class="el" href="classmomo_1_1_hash_multi_map_key_value_traits.html#a39880e22f51cdef54790319a75d2d2dd">momo::HashMultiMapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;</a>
 , <a class="el" href="classmomo_1_1_hash_set.html#a27a669969c554786a8482a26cc3a2a9f">momo::HashSet&lt; TKey, THashTraits, TMemManager, TItemTraits, TSettings &gt;</a>
-, <a class="el" href="classmomo_1_1_hash_traits.html#aea92460a3b4751dcb81df78161f89a8f">momo::HashTraits&lt; TKey, THashBucket, TKeyArgBase &gt;</a>
-, <a class="el" href="classmomo_1_1_hash_traits_std.html#aadab165badc8f6707ec3c168434e272a">momo::HashTraitsStd&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;</a>
+, <a class="el" href="classmomo_1_1_hash_traits.html#acc523e40b08ea31e86a3a7773109334c">momo::HashTraits&lt; TKey, THashBucket, TBaseKeyArg &gt;</a>
+, <a class="el" href="classmomo_1_1_hash_traits_std.html#abb3426814bca7d8d88e4efc0f3632aed">momo::HashTraitsStd&lt; TKey, THasher, TEqualComparer, THashBucket &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_hash_map_nested_set_item_traits.html#a5692210fc1757804c928ef88a7e372b1">momo::internal::HashMapNestedSetItemTraits&lt; TKeyValueTraits &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_key_reference.html#adc7d82ad7b33ebb9335045837ad5c2bc">momo::internal::HashMultiMapKeyReference&lt; THashMapReference &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_nested_map_key_value_traits.html#a350b46797bceecd61da9923d5a9d5db4">momo::internal::HashMultiMapNestedMapKeyValueTraits&lt; THashMultiMapKeyValueTraits, THashMultiMapSettings &gt;</a>
-, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_reference.html#a5249f4c00c30b644b9e0f7dacf90acc8">momo::internal::HashMultiMapReference&lt; TKey, TValue &gt;</a>
+, <a class="el" href="classmomo_1_1internal_1_1_hash_multi_map_reference.html#abac121c70f2234c1dc8c81143a8576a8">momo::internal::HashMultiMapReference&lt; TKey, TQValue &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_map_extracted_pair.html#a394642d7df548f52c31d2c82df04095d">momo::internal::MapExtractedPair&lt; TSetExtractedItem &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_map_key_value_pair.html#a1b55b1482594febe9f846cf3423615ea">momo::internal::MapKeyValuePair&lt; TKey, TValue, tKeyAlignment, tValueAlignment &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ab8011d130a0f5dc9e24043e18c92b090">momo::internal::MapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;</a>
@@ -104,36 +104,33 @@ $(document).ready(function(){initNavTree('functions_type_k.html',''); initResiza
 , <a class="el" href="classmomo_1_1internal_1_1_map_reference_std.html#aebb6631d3fda024c2585047fffcfdbf2">momo::internal::MapReferenceStd&lt; TMapReference &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_set_item_traits.html#ae8ec9750ccc0ab06686e776eddfbdf45">momo::internal::SetItemTraits&lt; TKey, TMemManager &gt;</a>
 , <a class="el" href="classmomo_1_1internal_1_1_tree_map_nested_set_item_traits.html#a5692210fc1757804c928ef88a7e372b1">momo::internal::TreeMapNestedSetItemTraits&lt; TKeyValueTraits &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__value__compare.html#a55ce763fdf991f1d8096bb5b31d9f8ee">momo::stdish::internal::map_value_compare&lt; TKey, TLessFunc &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__value__compare.html#a0501425be9c2afbb8103ea626186d300">momo::stdish::internal::map_value_compare&lt; TKey, TLessComparer &gt;</a>
 , <a class="el" href="classmomo_1_1_tree_map.html#ab11956cbd467d9446419c14094c8236a">momo::TreeMap&lt; TKey, TValue, TTreeTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>
 , <a class="el" href="classmomo_1_1_tree_map_key_value_traits.html#ab8011d130a0f5dc9e24043e18c92b090">momo::TreeMapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;</a>
 , <a class="el" href="classmomo_1_1_tree_set.html#a9359896bb72168ef1282e757948aab9e">momo::TreeSet&lt; TKey, TTreeTraits, TMemManager, TItemTraits, TSettings &gt;</a>
 , <a class="el" href="classmomo_1_1_tree_traits.html#ad7433e5c0134ebf89efd6a0c820b8fb4">momo::TreeTraits&lt; TKey, tMultiKey, TTreeNode, tUseLinearSearch &gt;</a>
-, <a class="el" href="classmomo_1_1_tree_traits_std.html#a051012fe72acdf7ffece35f13c019994">momo::TreeTraitsStd&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;</a>
+, <a class="el" href="classmomo_1_1_tree_traits_std.html#aac3ed4772cf46d1121daaa8189ed46bf">momo::TreeTraitsStd&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;</a>
 </li>
 <li>key_compare
-: <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html#aac3c83f5290b152d08d60261411e7bcb">momo::stdish::internal::map_base&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1set.html#a7a8e52919475ce22517ca30a41544fe4">momo::stdish::set&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;</a>
+: <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html#a078f7eb7b8ddc640000ad75ec1c14e48">momo::stdish::internal::map_base&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1set.html#a51e4b90ac771455d83f440e1bd4ffba9">momo::stdish::set&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;</a>
 </li>
 <li>key_equal
-: <a class="el" href="classmomo_1_1stdish_1_1unordered__map.html#a7aeb324057b39ab76070f561eca39afc">momo::stdish::unordered_map&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMap &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html#a7350e19a2b50b5bd8a2f53ba9793501e">momo::stdish::unordered_multimap&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMultiMap &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1unordered__set.html#a2479d8a7189c062ef6fafb3b35be8508">momo::stdish::unordered_set&lt; TKey, THashFunc, TEqualFunc, TAllocator, THashSet &gt;</a>
+: <a class="el" href="classmomo_1_1stdish_1_1unordered__map.html#a02d195bc05503ed82fc9ac810fb10e92">momo::stdish::unordered_map&lt; TKey, TMapped, THasher, TEqualComparer, TAllocator, THashMap &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html#ab5c5f3636fb7d02014117489fb3e9ade">momo::stdish::unordered_multimap&lt; TKey, TMapped, THasher, TEqualComparer, TAllocator, THashMultiMap &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1unordered__set.html#a31e83e360f0f18db53c5abb339cd10bd">momo::stdish::unordered_set&lt; TKey, THasher, TEqualComparer, TAllocator, THashSet &gt;</a>
 </li>
 <li>key_type
-: <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html#a8a6d06f26af8dbd86c355fd267891903">momo::stdish::internal::map_base&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;</a>
+: <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html#a4d4a61bb32619cb97e0d5f2cf38a1d04">momo::stdish::internal::map_base&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;</a>
 , <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__node__handle.html#a266d668e37004e4fabfc751b66313bbb">momo::stdish::internal::map_node_handle&lt; TMapExtractedPair &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1map.html#a8a6d06f26af8dbd86c355fd267891903">momo::stdish::map&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a8a6d06f26af8dbd86c355fd267891903">momo::stdish::multimap&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1set.html#a47a17c77ce0eb1abf9f753ee8d00c216">momo::stdish::set&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1unordered__map.html#a137a130894d7fe2edbb646642efeb08d">momo::stdish::unordered_map&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMap &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1unordered__map__open.html#a137a130894d7fe2edbb646642efeb08d">momo::stdish::unordered_map_open&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html#af5377e5d0b9dd03ca1b7a1d009351aa9">momo::stdish::unordered_multimap&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator, THashMultiMap &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#af5377e5d0b9dd03ca1b7a1d009351aa9">momo::stdish::unordered_multimap_open&lt; TKey, TMapped, THashFunc, TEqualFunc, TAllocator &gt;</a>
-, <a class="el" href="classmomo_1_1stdish_1_1unordered__set.html#ae35a1ddd50e74df865915eb8c9233bb1">momo::stdish::unordered_set&lt; TKey, THashFunc, TEqualFunc, TAllocator, THashSet &gt;</a>
-</li>
-<li>KeyArgBase
-: <a class="el" href="classmomo_1_1_hash_traits.html#ae67aa0a6b35051885f6c27e05e82e8e0">momo::HashTraits&lt; TKey, THashBucket, TKeyArgBase &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1map.html#a4d4a61bb32619cb97e0d5f2cf38a1d04">momo::stdish::map&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a4d4a61bb32619cb97e0d5f2cf38a1d04">momo::stdish::multimap&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1set.html#ac29472162b1e59e7e717b5e6c3215000">momo::stdish::set&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1unordered__map.html#a8a7f066d50f98fd1aa644740b2c37d89">momo::stdish::unordered_map&lt; TKey, TMapped, THasher, TEqualComparer, TAllocator, THashMap &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1unordered__map__open.html#a8a7f066d50f98fd1aa644740b2c37d89">momo::stdish::unordered_map_open&lt; TKey, TMapped, THasher, TEqualComparer, TAllocator &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap.html#a9fec8424c777a5085aeeb365e56ed6ba">momo::stdish::unordered_multimap&lt; TKey, TMapped, THasher, TEqualComparer, TAllocator, THashMultiMap &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1unordered__multimap__open.html#a9fec8424c777a5085aeeb365e56ed6ba">momo::stdish::unordered_multimap_open&lt; TKey, TMapped, THasher, TEqualComparer, TAllocator &gt;</a>
+, <a class="el" href="classmomo_1_1stdish_1_1unordered__set.html#aec3009920a86d09c0987e9e11a14cb9c">momo::stdish::unordered_set&lt; TKey, THasher, TEqualComparer, TAllocator, THashSet &gt;</a>
 </li>
 <li>KeyBounds
 : <a class="el" href="classmomo_1_1_hash_multi_map.html#aace50613e58acc5b65a9bea9adc29090">momo::HashMultiMap&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a>

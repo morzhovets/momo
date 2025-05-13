@@ -1,5 +1,7 @@
 var namespacestd =
 [
+    [ "back_insert_iterator< momo::Array< Params... > >", "classstd_1_1back__insert__iterator_3_01momo_1_1_array_3_01_params_8_8_8_01_4_01_4.html", null ],
+    [ "back_insert_iterator< momo::SegmentedArray< Params... > >", "classstd_1_1back__insert__iterator_3_01momo_1_1_segmented_array_3_01_params_8_8_8_01_4_01_4.html", null ],
     [ "iterator_traits< momo::internal::ArrayIndexIterator< A, I > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_array_index_iterator_3_01_a_00_01_i_01_4_01_4.html", null ],
     [ "iterator_traits< momo::internal::DataConstItemIterator< RI, I > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_const_item_iterator_3_01_r_i_00_01_i_01_4_01_4.html", null ],
     [ "iterator_traits< momo::internal::DataRawIterator< R, S > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_raw_iterator_3_01_r_00_01_s_01_4_01_4.html", null ],

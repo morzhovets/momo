@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -127,6 +127,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1ec1272135f4ed8372cabca1a894689c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c3720d6efb956b18a731f451d981c22"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#a7c3720d6efb956b18a731f451d981c22">TreeMap</a> (const <a class="el" href="classmomo_1_1_tree_map.html#a89e8d9a84e48742cd16dfd0462221d31">TreeTraits</a> &amp;treeTraits, <a class="el" href="classmomo_1_1_tree_map.html#aadc8c966f1d9b03b3cd7c9c842161228">MemManager</a> memManager=<a class="el" href="classmomo_1_1_tree_map.html#aadc8c966f1d9b03b3cd7c9c842161228">MemManager</a>())</td></tr>
 <tr class="separator:a7c3720d6efb956b18a731f451d981c22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabac6d3d693aa1cfa998a4e6145d391b"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </td></tr>
+<tr class="memitem:aabac6d3d693aa1cfa998a4e6145d391b"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#aabac6d3d693aa1cfa998a4e6145d391b">TreeMap</a> (ArgIterator begin, ArgSentinel end, const <a class="el" href="classmomo_1_1_tree_map.html#a89e8d9a84e48742cd16dfd0462221d31">TreeTraits</a> &amp;treeTraits=<a class="el" href="classmomo_1_1_tree_map.html#a89e8d9a84e48742cd16dfd0462221d31">TreeTraits</a>(), <a class="el" href="classmomo_1_1_tree_map.html#aadc8c966f1d9b03b3cd7c9c842161228">MemManager</a> memManager=<a class="el" href="classmomo_1_1_tree_map.html#aadc8c966f1d9b03b3cd7c9c842161228">MemManager</a>())</td></tr>
+<tr class="separator:aabac6d3d693aa1cfa998a4e6145d391b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa61657b7df9e967896a663faccdc2904"><td class="memTemplParams" colspan="2">template&lt;typename Pair  = std::pair&lt;Key, Value&gt;&gt; </td></tr>
 <tr class="memitem:aa61657b7df9e967896a663faccdc2904"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_map.html#aa61657b7df9e967896a663faccdc2904">TreeMap</a> (std::initializer_list&lt; Pair &gt; pairs)</td></tr>
 <tr class="separator:aa61657b7df9e967896a663faccdc2904"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -499,7 +502,7 @@ template&lt;typename TKey , typename TValue , typename TTreeTraits  = TreeTraits
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1ec1272135f4ed8372cabca1a894689c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ec1272135f4ed8372cabca1a894689c">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[1/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ec1272135f4ed8372cabca1a894689c">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[1/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -526,7 +529,7 @@ template&lt;typename TKey , typename TValue , typename TTreeTraits  = TreeTraits
 </div>
 </div>
 <a id="a7c3720d6efb956b18a731f451d981c22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c3720d6efb956b18a731f451d981c22">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[2/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c3720d6efb956b18a731f451d981c22">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[2/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -563,8 +566,60 @@ template&lt;typename TKey , typename TValue , typename TTreeTraits  = TreeTraits
 
 </div>
 </div>
+<a id="aabac6d3d693aa1cfa998a4e6145d391b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabac6d3d693aa1cfa998a4e6145d391b">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[3/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TValue , typename TTreeTraits  = TreeTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TKeyValueTraits  = TreeMapKeyValueTraits&lt;TKey, TValue, TMemManager&gt;, typename TSettings  = TreeMapSettings&gt; </div>
+<div class="memtemplate">
+template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1_tree_map.html">momo::TreeMap</a>&lt; TKey, TValue, TTreeTraits, TMemManager, TKeyValueTraits, TSettings &gt;::<a class="el" href="classmomo_1_1_tree_map.html">TreeMap</a> </td>
+          <td>(</td>
+          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramname"><em>begin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ArgSentinel&#160;</td>
+          <td class="paramname"><em>end</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_tree_map.html#a89e8d9a84e48742cd16dfd0462221d31">TreeTraits</a> &amp;&#160;</td>
+          <td class="paramname"><em>treeTraits</em> = <code><a class="el" href="classmomo_1_1_tree_map.html#a89e8d9a84e48742cd16dfd0462221d31">TreeTraits</a>()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_tree_map.html#aadc8c966f1d9b03b3cd7c9c842161228">MemManager</a>&#160;</td>
+          <td class="paramname"><em>memManager</em> = <code><a class="el" href="classmomo_1_1_tree_map.html#aadc8c966f1d9b03b3cd7c9c842161228">MemManager</a>()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa61657b7df9e967896a663faccdc2904"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa61657b7df9e967896a663faccdc2904">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[3/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa61657b7df9e967896a663faccdc2904">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[4/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -594,7 +649,7 @@ template&lt;typename Pair  = std::pair&lt;Key, Value&gt;&gt; </div>
 </div>
 </div>
 <a id="a6c69c91e12b709d16e342a83d4a8909f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c69c91e12b709d16e342a83d4a8909f">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[4/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c69c91e12b709d16e342a83d4a8909f">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[5/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -640,7 +695,7 @@ template&lt;typename Pair  = std::pair&lt;Key, Value&gt;&gt; </div>
 </div>
 </div>
 <a id="ae9ded74f5cd7be4e9bf168a37063798a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9ded74f5cd7be4e9bf168a37063798a">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[5/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9ded74f5cd7be4e9bf168a37063798a">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[6/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -668,7 +723,7 @@ template&lt;typename TKey , typename TValue , typename TTreeTraits  = TreeTraits
 </div>
 </div>
 <a id="a338007144947a611d2f99b265222c377"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a338007144947a611d2f99b265222c377">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[6/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a338007144947a611d2f99b265222c377">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[7/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -696,7 +751,7 @@ template&lt;typename TKey , typename TValue , typename TTreeTraits  = TreeTraits
 </div>
 </div>
 <a id="a8041d55aea3269a752b324714ec2c49c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8041d55aea3269a752b324714ec2c49c">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[7/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8041d55aea3269a752b324714ec2c49c">&#9670;&nbsp;</a></span>TreeMap() <span class="overload">[8/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

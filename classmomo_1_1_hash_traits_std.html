@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::HashTraitsStd&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt; Class Template Reference</title>
+<title>momo: momo::HashTraitsStd&lt; TKey, THasher, TEqualComparer, THashBucket &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1_hash_traits_std.html',''
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classmomo_1_1_hash_traits_std-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::HashTraitsStd&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt; Class Template Reference</div>  </div>
+<div class="title">momo::HashTraitsStd&lt; TKey, THasher, TEqualComparer, THashBucket &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -96,146 +96,146 @@ $(document).ready(function(){initNavTree('classmomo_1_1_hash_traits_std.html',''
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:aadab165badc8f6707ec3c168434e272a"><td class="memItemLeft" align="right" valign="top">typedef TKey&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#aadab165badc8f6707ec3c168434e272a">Key</a></td></tr>
-<tr class="separator:aadab165badc8f6707ec3c168434e272a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11483e7baccb0243c3f27e37a6e38929"><td class="memItemLeft" align="right" valign="top">typedef THashFunc&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a></td></tr>
-<tr class="separator:a11483e7baccb0243c3f27e37a6e38929"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabb0dafcf20db439a1a069ea16ec2643"><td class="memItemLeft" align="right" valign="top">typedef TEqualFunc&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a></td></tr>
-<tr class="separator:aabb0dafcf20db439a1a069ea16ec2643"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dc90ff36d549fe806e18b7e551d2927"><td class="memItemLeft" align="right" valign="top">typedef THashBucket&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a5dc90ff36d549fe806e18b7e551d2927">HashBucket</a></td></tr>
-<tr class="separator:a5dc90ff36d549fe806e18b7e551d2927"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a424931f5f234038da59f284f8dc13c71"><td class="memTemplParams" colspan="2">template&lt;typename ItemTraits &gt; </td></tr>
-<tr class="memitem:a424931f5f234038da59f284f8dc13c71"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a424931f5f234038da59f284f8dc13c71">Bucket</a> = typename HashBucket::template <a class="el" href="classmomo_1_1_hash_traits_std.html#a424931f5f234038da59f284f8dc13c71">Bucket</a>&lt; ItemTraits, !<a class="el" href="classmomo_1_1_hash_traits_std.html#acb2f8601d26925ba18d955f517f7bbf9">isFastNothrowHashable</a> &gt;</td></tr>
-<tr class="separator:a424931f5f234038da59f284f8dc13c71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0dbc0ef5a6d59b87c98bced63bb919c8"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
-<tr class="memitem:a0dbc0ef5a6d59b87c98bced63bb919c8"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a0dbc0ef5a6d59b87c98bced63bb919c8">IsValidKeyArg</a> = <a class="el" href="structmomo_1_1internal_1_1_hash_traits_std_is_valid_key_arg.html">internal::HashTraitsStdIsValidKeyArg</a>&lt; <a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a>, <a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a> &gt;</td></tr>
-<tr class="separator:a0dbc0ef5a6d59b87c98bced63bb919c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb3426814bca7d8d88e4efc0f3632aed"><td class="memItemLeft" align="right" valign="top">typedef TKey&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#abb3426814bca7d8d88e4efc0f3632aed">Key</a></td></tr>
+<tr class="separator:abb3426814bca7d8d88e4efc0f3632aed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1d7959ebb6c308114c00eabfc67dacf"><td class="memItemLeft" align="right" valign="top">typedef THasher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a></td></tr>
+<tr class="separator:aa1d7959ebb6c308114c00eabfc67dacf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62942a41d231a82a2dc0a022d18d655d"><td class="memItemLeft" align="right" valign="top">typedef TEqualComparer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a></td></tr>
+<tr class="separator:a62942a41d231a82a2dc0a022d18d655d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a217c8d5d69bd72c8eed7a14de1b75d5a"><td class="memItemLeft" align="right" valign="top">typedef THashBucket&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a217c8d5d69bd72c8eed7a14de1b75d5a">HashBucket</a></td></tr>
+<tr class="separator:a217c8d5d69bd72c8eed7a14de1b75d5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a483837b5aa052a95d70c96c240393dd1"><td class="memTemplParams" colspan="2">template&lt;typename ItemTraits &gt; </td></tr>
+<tr class="memitem:a483837b5aa052a95d70c96c240393dd1"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a483837b5aa052a95d70c96c240393dd1">Bucket</a> = typename HashBucket::template <a class="el" href="classmomo_1_1_hash_traits_std.html#a483837b5aa052a95d70c96c240393dd1">Bucket</a>&lt; ItemTraits, !<a class="el" href="classmomo_1_1_hash_traits_std.html#a8e9c49454dd1740d23611720310291dd">isFastNothrowHashable</a> &gt;</td></tr>
+<tr class="separator:a483837b5aa052a95d70c96c240393dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab18a4a7ae688946866abf2985e849d21"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
+<tr class="memitem:ab18a4a7ae688946866abf2985e849d21"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#ab18a4a7ae688946866abf2985e849d21">IsValidKeyArg</a> = <a class="el" href="structmomo_1_1internal_1_1_hash_traits_std_is_valid_key_arg.html">internal::HashTraitsStdIsValidKeyArg</a>&lt; <a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a>, <a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a> &gt;</td></tr>
+<tr class="separator:ab18a4a7ae688946866abf2985e849d21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6056b6a0af15d3c4faa12c07ca7a0961"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a6056b6a0af15d3c4faa12c07ca7a0961">HashTraitsStd</a> (size_t startBucketCount=size_t{1}&lt;&lt; HashBucket::logStartBucketCount, const <a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a> &amp;hashFunc=<a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a>(), const <a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a> &amp;equalFunc=<a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a>())</td></tr>
-<tr class="separator:a6056b6a0af15d3c4faa12c07ca7a0961"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e117ade807a54d1bc84842fd08a1110"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a5e117ade807a54d1bc84842fd08a1110">HashTraitsStd</a> (const <a class="el" href="classmomo_1_1_hash_traits_std.html">HashTraitsStd</a> &amp;hashTraits, float maxLoadFactor)</td></tr>
-<tr class="separator:a5e117ade807a54d1bc84842fd08a1110"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5d045373bc3224c16ffd3d822999e1f"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#ae5d045373bc3224c16ffd3d822999e1f">CalcCapacity</a> (size_t bucketCount, size_t bucketMaxItemCount) const noexcept</td></tr>
-<tr class="separator:ae5d045373bc3224c16ffd3d822999e1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3ffea41e7f59feebbcaa12b1840b4bc"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#ab3ffea41e7f59feebbcaa12b1840b4bc">GetBucketCountShift</a> (size_t bucketCount, size_t bucketMaxItemCount) const noexcept</td></tr>
-<tr class="separator:ab3ffea41e7f59feebbcaa12b1840b4bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a734341f624b4e45301212b29a3216dc9"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a734341f624b4e45301212b29a3216dc9">GetLogStartBucketCount</a> () const noexcept</td></tr>
-<tr class="separator:a734341f624b4e45301212b29a3216dc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6c21437945973e7b83aaa3d0725d272"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
-<tr class="memitem:ad6c21437945973e7b83aaa3d0725d272"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#ad6c21437945973e7b83aaa3d0725d272">GetHashCode</a> (const KeyArg &amp;key) const</td></tr>
-<tr class="separator:ad6c21437945973e7b83aaa3d0725d272"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba460105b998688f8cbbbe48442ca0f6"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg1 , typename KeyArg2 &gt; </td></tr>
-<tr class="memitem:aba460105b998688f8cbbbe48442ca0f6"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#aba460105b998688f8cbbbe48442ca0f6">IsEqual</a> (const KeyArg1 &amp;key1, const KeyArg2 &amp;key2) const</td></tr>
-<tr class="separator:aba460105b998688f8cbbbe48442ca0f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf7a9a3fb98aa90e44d57f709f9c6b9a"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#abf7a9a3fb98aa90e44d57f709f9c6b9a">GetHashFunc</a> () const noexcept</td></tr>
-<tr class="separator:abf7a9a3fb98aa90e44d57f709f9c6b9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4469554f8bf10b93433af689bb35490a"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a4469554f8bf10b93433af689bb35490a">GetEqualFunc</a> () const noexcept</td></tr>
-<tr class="separator:a4469554f8bf10b93433af689bb35490a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1014f29da3eda1d918a30db0467e775"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#ab1014f29da3eda1d918a30db0467e775">GetMaxLoadFactor</a> (size_t bucketMaxItemCount) const noexcept</td></tr>
-<tr class="separator:ab1014f29da3eda1d918a30db0467e775"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba136f8191d4fccb60cdfcd4bbb11e28"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#aba136f8191d4fccb60cdfcd4bbb11e28">HashTraitsStd</a> (size_t startBucketCount=size_t{1}&lt;&lt; HashBucket::logStartBucketCount, const <a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a> &amp;hasher=<a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a>(), const <a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a> &amp;equalComp=<a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a>())</td></tr>
+<tr class="separator:aba136f8191d4fccb60cdfcd4bbb11e28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f6b60dc1bf1440b7fbfb9cdcc7958b0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a9f6b60dc1bf1440b7fbfb9cdcc7958b0">HashTraitsStd</a> (const <a class="el" href="classmomo_1_1_hash_traits_std.html">HashTraitsStd</a> &amp;hashTraits, float maxLoadFactor)</td></tr>
+<tr class="separator:a9f6b60dc1bf1440b7fbfb9cdcc7958b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b6cebea94a203a17a9212b9657de040"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a3b6cebea94a203a17a9212b9657de040">CalcCapacity</a> (size_t bucketCount, size_t bucketMaxItemCount) const noexcept</td></tr>
+<tr class="separator:a3b6cebea94a203a17a9212b9657de040"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb29dfdb8393505ca2d97f1a5c007fe5"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#abb29dfdb8393505ca2d97f1a5c007fe5">GetBucketCountShift</a> (size_t bucketCount, size_t bucketMaxItemCount) const noexcept</td></tr>
+<tr class="separator:abb29dfdb8393505ca2d97f1a5c007fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed4e98d6edd15ee43c5e83fb65445fe9"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#aed4e98d6edd15ee43c5e83fb65445fe9">GetLogStartBucketCount</a> () const noexcept</td></tr>
+<tr class="separator:aed4e98d6edd15ee43c5e83fb65445fe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a921ab68fb525fe307b96926e14a28b30"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
+<tr class="memitem:a921ab68fb525fe307b96926e14a28b30"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a921ab68fb525fe307b96926e14a28b30">GetHashCode</a> (const KeyArg &amp;key) const</td></tr>
+<tr class="separator:a921ab68fb525fe307b96926e14a28b30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d3394e169926051f6d52aa681eddc9a"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg1 , typename KeyArg2 &gt; </td></tr>
+<tr class="memitem:a6d3394e169926051f6d52aa681eddc9a"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a6d3394e169926051f6d52aa681eddc9a">IsEqual</a> (const KeyArg1 &amp;key1, const KeyArg2 &amp;key2) const</td></tr>
+<tr class="separator:a6d3394e169926051f6d52aa681eddc9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a477728ad25953616781a6ea8712039b1"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a477728ad25953616781a6ea8712039b1">GetHasher</a> () const noexcept</td></tr>
+<tr class="separator:a477728ad25953616781a6ea8712039b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa283117532d23a27add78fe6a94e6f5f"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#aa283117532d23a27add78fe6a94e6f5f">GetEqualComparer</a> () const noexcept</td></tr>
+<tr class="separator:aa283117532d23a27add78fe6a94e6f5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3392fe6e0de981733b43bf381943c426"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a3392fe6e0de981733b43bf381943c426">GetMaxLoadFactor</a> (size_t bucketMaxItemCount) const noexcept</td></tr>
+<tr class="separator:a3392fe6e0de981733b43bf381943c426"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:acb2f8601d26925ba18d955f517f7bbf9"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#acb2f8601d26925ba18d955f517f7bbf9">isFastNothrowHashable</a></td></tr>
-<tr class="separator:acb2f8601d26925ba18d955f517f7bbf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e9c49454dd1740d23611720310291dd"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a8e9c49454dd1740d23611720310291dd">isFastNothrowHashable</a></td></tr>
+<tr class="separator:a8e9c49454dd1740d23611720310291dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a424931f5f234038da59f284f8dc13c71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a424931f5f234038da59f284f8dc13c71">&#9670;&nbsp;</a></span>Bucket</h2>
+<a id="a483837b5aa052a95d70c96c240393dd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a483837b5aa052a95d70c96c240393dd1">&#9670;&nbsp;</a></span>Bucket</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename ItemTraits &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#a424931f5f234038da59f284f8dc13c71">Bucket</a> =  typename HashBucket::template <a class="el" href="classmomo_1_1_hash_traits_std.html#a424931f5f234038da59f284f8dc13c71">Bucket</a>&lt;ItemTraits, !<a class="el" href="classmomo_1_1_hash_traits_std.html#acb2f8601d26925ba18d955f517f7bbf9">isFastNothrowHashable</a>&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#a483837b5aa052a95d70c96c240393dd1">Bucket</a> =  typename HashBucket::template <a class="el" href="classmomo_1_1_hash_traits_std.html#a483837b5aa052a95d70c96c240393dd1">Bucket</a>&lt;ItemTraits, !<a class="el" href="classmomo_1_1_hash_traits_std.html#a8e9c49454dd1740d23611720310291dd">isFastNothrowHashable</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aabb0dafcf20db439a1a069ea16ec2643"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aabb0dafcf20db439a1a069ea16ec2643">&#9670;&nbsp;</a></span>EqualFunc</h2>
+<a id="a62942a41d231a82a2dc0a022d18d655d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62942a41d231a82a2dc0a022d18d655d">&#9670;&nbsp;</a></span>EqualComparer</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TEqualFunc <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a></td>
+          <td class="memname">typedef TEqualComparer <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a5dc90ff36d549fe806e18b7e551d2927"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5dc90ff36d549fe806e18b7e551d2927">&#9670;&nbsp;</a></span>HashBucket</h2>
+<a id="a217c8d5d69bd72c8eed7a14de1b75d5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a217c8d5d69bd72c8eed7a14de1b75d5a">&#9670;&nbsp;</a></span>HashBucket</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef THashBucket <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#a5dc90ff36d549fe806e18b7e551d2927">HashBucket</a></td>
+          <td class="memname">typedef THashBucket <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#a217c8d5d69bd72c8eed7a14de1b75d5a">HashBucket</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a11483e7baccb0243c3f27e37a6e38929"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11483e7baccb0243c3f27e37a6e38929">&#9670;&nbsp;</a></span>HashFunc</h2>
+<a id="aa1d7959ebb6c308114c00eabfc67dacf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1d7959ebb6c308114c00eabfc67dacf">&#9670;&nbsp;</a></span>Hasher</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef THashFunc <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a></td>
+          <td class="memname">typedef THasher <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a0dbc0ef5a6d59b87c98bced63bb919c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0dbc0ef5a6d59b87c98bced63bb919c8">&#9670;&nbsp;</a></span>IsValidKeyArg</h2>
+<a id="ab18a4a7ae688946866abf2985e849d21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab18a4a7ae688946866abf2985e849d21">&#9670;&nbsp;</a></span>IsValidKeyArg</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename KeyArg &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#a0dbc0ef5a6d59b87c98bced63bb919c8">IsValidKeyArg</a> =  <a class="el" href="structmomo_1_1internal_1_1_hash_traits_std_is_valid_key_arg.html">internal::HashTraitsStdIsValidKeyArg</a>&lt;<a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a>, <a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a>&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#ab18a4a7ae688946866abf2985e849d21">IsValidKeyArg</a> =  <a class="el" href="structmomo_1_1internal_1_1_hash_traits_std_is_valid_key_arg.html">internal::HashTraitsStdIsValidKeyArg</a>&lt;<a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a>, <a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aadab165badc8f6707ec3c168434e272a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aadab165badc8f6707ec3c168434e272a">&#9670;&nbsp;</a></span>Key</h2>
+<a id="abb3426814bca7d8d88e4efc0f3632aed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb3426814bca7d8d88e4efc0f3632aed">&#9670;&nbsp;</a></span>Key</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TKey <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#aadab165badc8f6707ec3c168434e272a">Key</a></td>
+          <td class="memname">typedef TKey <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html#abb3426814bca7d8d88e4efc0f3632aed">Key</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -243,19 +243,19 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6056b6a0af15d3c4faa12c07ca7a0961"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6056b6a0af15d3c4faa12c07ca7a0961">&#9670;&nbsp;</a></span>HashTraitsStd() <span class="overload">[1/2]</span></h2>
+<a id="aba136f8191d4fccb60cdfcd4bbb11e28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba136f8191d4fccb60cdfcd4bbb11e28">&#9670;&nbsp;</a></span>HashTraitsStd() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html">HashTraitsStd</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html">HashTraitsStd</a> </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>startBucketCount</em> = <code>size_t{1}&#160;&lt;&lt;&#160;HashBucket::logStartBucketCount</code>, </td>
@@ -263,14 +263,14 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a> &amp;&#160;</td>
-          <td class="paramname"><em>hashFunc</em> = <code><a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a>()</code>, </td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a> &amp;&#160;</td>
+          <td class="paramname"><em>hasher</em> = <code><a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a>()</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a> &amp;&#160;</td>
-          <td class="paramname"><em>equalFunc</em> = <code><a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a>()</code>&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a> &amp;&#160;</td>
+          <td class="paramname"><em>equalComp</em> = <code><a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a>()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -287,21 +287,21 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="a5e117ade807a54d1bc84842fd08a1110"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5e117ade807a54d1bc84842fd08a1110">&#9670;&nbsp;</a></span>HashTraitsStd() <span class="overload">[2/2]</span></h2>
+<a id="a9f6b60dc1bf1440b7fbfb9cdcc7958b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f6b60dc1bf1440b7fbfb9cdcc7958b0">&#9670;&nbsp;</a></span>HashTraitsStd() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html">HashTraitsStd</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::<a class="el" href="classmomo_1_1_hash_traits_std.html">HashTraitsStd</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_hash_traits_std.html">HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_hash_traits_std.html">HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt; &amp;&#160;</td>
           <td class="paramname"><em>hashTraits</em>, </td>
         </tr>
         <tr>
@@ -326,19 +326,19 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae5d045373bc3224c16ffd3d822999e1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5d045373bc3224c16ffd3d822999e1f">&#9670;&nbsp;</a></span>CalcCapacity()</h2>
+<a id="a3b6cebea94a203a17a9212b9657de040"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b6cebea94a203a17a9212b9657de040">&#9670;&nbsp;</a></span>CalcCapacity()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::CalcCapacity </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::CalcCapacity </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>bucketCount</em>, </td>
@@ -364,19 +364,19 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="ab3ffea41e7f59feebbcaa12b1840b4bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3ffea41e7f59feebbcaa12b1840b4bc">&#9670;&nbsp;</a></span>GetBucketCountShift()</h2>
+<a id="abb29dfdb8393505ca2d97f1a5c007fe5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb29dfdb8393505ca2d97f1a5c007fe5">&#9670;&nbsp;</a></span>GetBucketCountShift()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::GetBucketCountShift </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::GetBucketCountShift </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>bucketCount</em>, </td>
@@ -402,19 +402,19 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="a4469554f8bf10b93433af689bb35490a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4469554f8bf10b93433af689bb35490a">&#9670;&nbsp;</a></span>GetEqualFunc()</h2>
+<a id="aa283117532d23a27add78fe6a94e6f5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa283117532d23a27add78fe6a94e6f5f">&#9670;&nbsp;</a></span>GetEqualComparer()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classmomo_1_1_hash_traits_std.html#aabb0dafcf20db439a1a069ea16ec2643">EqualFunc</a>&amp; <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::GetEqualFunc </td>
+          <td class="memname">const <a class="el" href="classmomo_1_1_hash_traits_std.html#a62942a41d231a82a2dc0a022d18d655d">EqualComparer</a>&amp; <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::GetEqualComparer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -429,13 +429,13 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="ad6c21437945973e7b83aaa3d0725d272"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad6c21437945973e7b83aaa3d0725d272">&#9670;&nbsp;</a></span>GetHashCode()</h2>
+<a id="a921ab68fb525fe307b96926e14a28b30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a921ab68fb525fe307b96926e14a28b30">&#9670;&nbsp;</a></span>GetHashCode()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename KeyArg &gt; </div>
 <table class="mlabels">
@@ -443,7 +443,7 @@ template&lt;typename KeyArg &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::GetHashCode </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::GetHashCode </td>
           <td>(</td>
           <td class="paramtype">const KeyArg &amp;&#160;</td>
           <td class="paramname"><em>key</em></td><td>)</td>
@@ -459,19 +459,19 @@ template&lt;typename KeyArg &gt; </div>
 
 </div>
 </div>
-<a id="abf7a9a3fb98aa90e44d57f709f9c6b9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abf7a9a3fb98aa90e44d57f709f9c6b9a">&#9670;&nbsp;</a></span>GetHashFunc()</h2>
+<a id="a477728ad25953616781a6ea8712039b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a477728ad25953616781a6ea8712039b1">&#9670;&nbsp;</a></span>GetHasher()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classmomo_1_1_hash_traits_std.html#a11483e7baccb0243c3f27e37a6e38929">HashFunc</a>&amp; <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::GetHashFunc </td>
+          <td class="memname">const <a class="el" href="classmomo_1_1_hash_traits_std.html#aa1d7959ebb6c308114c00eabfc67dacf">Hasher</a>&amp; <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::GetHasher </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -486,19 +486,19 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="a734341f624b4e45301212b29a3216dc9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a734341f624b4e45301212b29a3216dc9">&#9670;&nbsp;</a></span>GetLogStartBucketCount()</h2>
+<a id="aed4e98d6edd15ee43c5e83fb65445fe9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed4e98d6edd15ee43c5e83fb65445fe9">&#9670;&nbsp;</a></span>GetLogStartBucketCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::GetLogStartBucketCount </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::GetLogStartBucketCount </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -513,19 +513,19 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="ab1014f29da3eda1d918a30db0467e775"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab1014f29da3eda1d918a30db0467e775">&#9670;&nbsp;</a></span>GetMaxLoadFactor()</h2>
+<a id="a3392fe6e0de981733b43bf381943c426"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3392fe6e0de981733b43bf381943c426">&#9670;&nbsp;</a></span>GetMaxLoadFactor()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">float <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::GetMaxLoadFactor </td>
+          <td class="memname">float <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::GetMaxLoadFactor </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>bucketMaxItemCount</em></td><td>)</td>
@@ -541,13 +541,13 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="aba460105b998688f8cbbbe48442ca0f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aba460105b998688f8cbbbe48442ca0f6">&#9670;&nbsp;</a></span>IsEqual()</h2>
+<a id="a6d3394e169926051f6d52aa681eddc9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d3394e169926051f6d52aa681eddc9a">&#9670;&nbsp;</a></span>IsEqual()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename KeyArg1 , typename KeyArg2 &gt; </div>
 <table class="mlabels">
@@ -555,7 +555,7 @@ template&lt;typename KeyArg1 , typename KeyArg2 &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::IsEqual </td>
+          <td class="memname">bool <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::IsEqual </td>
           <td>(</td>
           <td class="paramtype">const KeyArg1 &amp;&#160;</td>
           <td class="paramname"><em>key1</em>, </td>
@@ -582,19 +582,19 @@ template&lt;typename KeyArg1 , typename KeyArg2 &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="acb2f8601d26925ba18d955f517f7bbf9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb2f8601d26925ba18d955f517f7bbf9">&#9670;&nbsp;</a></span>isFastNothrowHashable</h2>
+<a id="a8e9c49454dd1740d23611720310291dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e9c49454dd1740d23611720310291dd">&#9670;&nbsp;</a></span>isFastNothrowHashable</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typename TEqualFunc  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THashFunc, TEqualFunc, THashBucket &gt;::isFastNothrowHashable</td>
+          <td class="memname">const bool <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::isFastNothrowHashable</td>
         </tr>
       </table>
   </td>
@@ -604,8 +604,8 @@ template&lt;typename TKey , typename THashFunc  = HashCoder&lt;TKey&gt;, typenam
 </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">= IsFastNothrowHashable&lt;Key&gt;::value</div>
-<div class="line">        &amp;&amp; (std::is_same&lt;HashFunc, HashCoder&lt;Key&gt;&gt;::value</div>
-<div class="line">        || std::is_same&lt;HashFunc, std::hash&lt;Key&gt;&gt;::value)</div>
+<div class="line">        &amp;&amp; (std::is_same&lt;Hasher, HashCoder&lt;Key&gt;&gt;::value</div>
+<div class="line">        || std::is_same&lt;Hasher, std::hash&lt;Key&gt;&gt;::value)</div>
 </div><!-- fragment -->
 </div>
 </div>

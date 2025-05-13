@@ -1,12 +1,12 @@
 var classmomo_1_1_tree_traits_std =
 [
-    [ "IsValidKeyArg", "classmomo_1_1_tree_traits_std.html#a15e2cc7f07c3674ff6b4676b1a8396e6", null ],
-    [ "Key", "classmomo_1_1_tree_traits_std.html#a051012fe72acdf7ffece35f13c019994", null ],
-    [ "LessFunc", "classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839", null ],
-    [ "Node", "classmomo_1_1_tree_traits_std.html#a695328f62e5844d1a4cebc8c76344e7d", null ],
-    [ "TreeNode", "classmomo_1_1_tree_traits_std.html#a31f0467b44c90c352293762cf71b571a", null ],
-    [ "TreeTraitsStd", "classmomo_1_1_tree_traits_std.html#a263c4e50c598ba9647c5694322cd38bc", null ],
-    [ "GetLessFunc", "classmomo_1_1_tree_traits_std.html#ad2845e17bc8aeb4caa46b62894ac9f8a", null ],
-    [ "GetSplitItemIndex", "classmomo_1_1_tree_traits_std.html#adc87bdaf5eda25ea821dad57e40ab99d", null ],
-    [ "IsLess", "classmomo_1_1_tree_traits_std.html#ad8c48caee38a92e2b16ade470abe1913", null ]
+    [ "IsValidKeyArg", "classmomo_1_1_tree_traits_std.html#a99a1e30dd87d13a3e1c680587bfa6029", null ],
+    [ "Key", "classmomo_1_1_tree_traits_std.html#aac3ed4772cf46d1121daaa8189ed46bf", null ],
+    [ "LessComparer", "classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb", null ],
+    [ "Node", "classmomo_1_1_tree_traits_std.html#aedf7fea23d1561ed031d518654de5b65", null ],
+    [ "TreeNode", "classmomo_1_1_tree_traits_std.html#aa68339ad2b64b6c8a153cbe1cdccc51f", null ],
+    [ "TreeTraitsStd", "classmomo_1_1_tree_traits_std.html#a8f0c374b162cfe33ed4e04709b451372", null ],
+    [ "GetLessComparer", "classmomo_1_1_tree_traits_std.html#a4194b47566b3026ba11b321f48584055", null ],
+    [ "GetSplitItemIndex", "classmomo_1_1_tree_traits_std.html#a28a510bbc957347e3fbf6deb54561032", null ],
+    [ "IsLess", "classmomo_1_1_tree_traits_std.html#a75aecedce27d64acef6cad010354dbac", null ]
 ];

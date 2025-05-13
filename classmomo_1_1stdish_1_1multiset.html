@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::stdish::multiset&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt; Class Template Reference</title>
+<title>momo: momo::stdish::multiset&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1stdish_1_1multiset.html',
 <a href="#friends">Friends</a> &#124;
 <a href="classmomo_1_1stdish_1_1multiset-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::stdish::multiset&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt; Class Template Reference</div>  </div>
+<div class="title">momo::stdish::multiset&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -97,7 +97,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1stdish_1_1multiset.html',
 
 <p><code>#include &lt;<a class="el" href="set_8h_source.html">set.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for momo::stdish::multiset&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;:</div>
+Inheritance diagram for momo::stdish::multiset&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classmomo_1_1stdish_1_1multiset.png" alt=""/>
@@ -105,59 +105,59 @@ Inheritance diagram for momo::stdish::multiset&lt; TKey, TLessFunc, TAllocator, 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a7020d202cad870b4b8f64618f02a365d"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a7020d202cad870b4b8f64618f02a365d">insert_return_type</a></td></tr>
-<tr class="separator:a7020d202cad870b4b8f64618f02a365d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc6e5104fec5a0ed878e7108169c88a9"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#abc6e5104fec5a0ed878e7108169c88a9">size_type</a></td></tr>
-<tr class="separator:abc6e5104fec5a0ed878e7108169c88a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69adefc71cef85c2653bf8592f564639"><td class="memItemLeft" align="right" valign="top">typedef key_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a></td></tr>
-<tr class="separator:a69adefc71cef85c2653bf8592f564639"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78ba3602c4fc736208a8683786082238"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_tree_set.html#aba953e3ae72c13dd0487398d28306d16">TreeSet::Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a></td></tr>
-<tr class="separator:a78ba3602c4fc736208a8683786082238"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe512029180751cd6e39d8e4a828a47b"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1stdish_1_1internal_1_1set__node__handle.html">internal::set_node_handle</a>&lt; typename <a class="el" href="classmomo_1_1_tree_set.html#aecf861e4e0854d8a3de0b1d700848e9f">TreeSet::ExtractedItem</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#abe512029180751cd6e39d8e4a828a47b">node_type</a></td></tr>
-<tr class="separator:abe512029180751cd6e39d8e4a828a47b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdd44a559ab731f9e29be192360fea13"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#afdd44a559ab731f9e29be192360fea13">insert_return_type</a></td></tr>
+<tr class="separator:afdd44a559ab731f9e29be192360fea13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a824f3fb8411e9ae3e3cf8b1f6ec2265a"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a824f3fb8411e9ae3e3cf8b1f6ec2265a">size_type</a></td></tr>
+<tr class="separator:a824f3fb8411e9ae3e3cf8b1f6ec2265a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3e99379473df08397626f13c53f664e"><td class="memItemLeft" align="right" valign="top">typedef key_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a></td></tr>
+<tr class="separator:ac3e99379473df08397626f13c53f664e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55f1fc447db44f3a1b9386d01bdc16dd"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_tree_set.html#aba953e3ae72c13dd0487398d28306d16">TreeSet::Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a></td></tr>
+<tr class="separator:a55f1fc447db44f3a1b9386d01bdc16dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b642e983436fdb8d78309781a46d296"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1stdish_1_1internal_1_1set__node__handle.html">internal::set_node_handle</a>&lt; typename <a class="el" href="classmomo_1_1_tree_set.html#aecf861e4e0854d8a3de0b1d700848e9f">TreeSet::ExtractedItem</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a8b642e983436fdb8d78309781a46d296">node_type</a></td></tr>
+<tr class="separator:a8b642e983436fdb8d78309781a46d296"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab70449311671818f72d876af7d79fba7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#ab70449311671818f72d876af7d79fba7">operator=</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &gt; values)</td></tr>
-<tr class="separator:ab70449311671818f72d876af7d79fba7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc76760fa72a4a05015dc047e74b0c58"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#adc76760fa72a4a05015dc047e74b0c58">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &amp;&amp;value)</td></tr>
-<tr class="separator:adc76760fa72a4a05015dc047e74b0c58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcafe728306b70e1c30e3f1ca468e2a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#adcafe728306b70e1c30e3f1ca468e2a7">insert</a> (const <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &amp;value)</td></tr>
-<tr class="separator:adcafe728306b70e1c30e3f1ca468e2a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24d8fb2bd8dd9499e9f9bd37fa5a4ff8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a24d8fb2bd8dd9499e9f9bd37fa5a4ff8">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html#abe512029180751cd6e39d8e4a828a47b">node_type</a> &amp;&amp;node)</td></tr>
-<tr class="separator:a24d8fb2bd8dd9499e9f9bd37fa5a4ff8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7372b8c08a6cac08205a24ba173b43b8"><td class="memTemplParams" colspan="2">template&lt;typename... ValueArgs&gt; </td></tr>
-<tr class="memitem:a7372b8c08a6cac08205a24ba173b43b8"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a7372b8c08a6cac08205a24ba173b43b8">emplace</a> (ValueArgs &amp;&amp;... valueArgs)</td></tr>
-<tr class="separator:a7372b8c08a6cac08205a24ba173b43b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65cd466a7e310438fd4fa1db5539575d"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a65cd466a7e310438fd4fa1db5539575d">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &amp;&amp;value)</td></tr>
-<tr class="separator:a65cd466a7e310438fd4fa1db5539575d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac541abf704e6c97c24165e2b8e1f2fb9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac541abf704e6c97c24165e2b8e1f2fb9">insert</a> (const_iterator hint, <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &amp;&amp;value)</td></tr>
-<tr class="separator:ac541abf704e6c97c24165e2b8e1f2fb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1952414cf357247096869207d0d4d163"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a1952414cf357247096869207d0d4d163">insert</a> (const <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &amp;value)</td></tr>
-<tr class="separator:a1952414cf357247096869207d0d4d163"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a530f625550ba5d78d6eaf2cf2d1e2452"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a530f625550ba5d78d6eaf2cf2d1e2452">insert</a> (const_iterator hint, const <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &amp;value)</td></tr>
-<tr class="separator:a530f625550ba5d78d6eaf2cf2d1e2452"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af43165d5cf2dae111107b7464ed282b7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a7020d202cad870b4b8f64618f02a365d">insert_return_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#af43165d5cf2dae111107b7464ed282b7">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html#abe512029180751cd6e39d8e4a828a47b">node_type</a> &amp;&amp;node)</td></tr>
-<tr class="separator:af43165d5cf2dae111107b7464ed282b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaadc334c5fc540d67e431016f1deb17c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#aaadc334c5fc540d67e431016f1deb17c">insert</a> (const_iterator hint, <a class="el" href="classmomo_1_1stdish_1_1multiset.html#abe512029180751cd6e39d8e4a828a47b">node_type</a> &amp;&amp;node)</td></tr>
-<tr class="separator:aaadc334c5fc540d67e431016f1deb17c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6af5dfcfc56a7a0dc93b4f5bf87b7be"><td class="memTemplParams" colspan="2">template&lt;typename Iterator &gt; </td></tr>
-<tr class="memitem:aa6af5dfcfc56a7a0dc93b4f5bf87b7be"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#aa6af5dfcfc56a7a0dc93b4f5bf87b7be">insert</a> (Iterator first, Iterator last)</td></tr>
-<tr class="separator:aa6af5dfcfc56a7a0dc93b4f5bf87b7be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29d0c91cf9e3e27683f7f0f6e0c1bfac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a29d0c91cf9e3e27683f7f0f6e0c1bfac">insert</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &gt; values)</td></tr>
-<tr class="separator:a29d0c91cf9e3e27683f7f0f6e0c1bfac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7189992f24dc35896c22d10ab346f9a0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a7189992f24dc35896c22d10ab346f9a0">operator=</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &gt; values)</td></tr>
+<tr class="separator:a7189992f24dc35896c22d10ab346f9a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec0c7b20df2c9d6978108817f61f8eb9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#aec0c7b20df2c9d6978108817f61f8eb9">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &amp;&amp;value)</td></tr>
+<tr class="separator:aec0c7b20df2c9d6978108817f61f8eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44442eda8ebbf6d0b1b9d754c3b32359"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a44442eda8ebbf6d0b1b9d754c3b32359">insert</a> (const <a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &amp;value)</td></tr>
+<tr class="separator:a44442eda8ebbf6d0b1b9d754c3b32359"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a0963c91f08184274f595fd166100fd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a8a0963c91f08184274f595fd166100fd">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a8b642e983436fdb8d78309781a46d296">node_type</a> &amp;&amp;node)</td></tr>
+<tr class="separator:a8a0963c91f08184274f595fd166100fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76ae9fef87f0ee7c277cd9ed3a7df974"><td class="memTemplParams" colspan="2">template&lt;typename... ValueArgs&gt; </td></tr>
+<tr class="memitem:a76ae9fef87f0ee7c277cd9ed3a7df974"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a76ae9fef87f0ee7c277cd9ed3a7df974">emplace</a> (ValueArgs &amp;&amp;... valueArgs)</td></tr>
+<tr class="separator:a76ae9fef87f0ee7c277cd9ed3a7df974"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb00e7714171810e5c0f9a03ca25597c"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#afb00e7714171810e5c0f9a03ca25597c">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &amp;&amp;value)</td></tr>
+<tr class="separator:afb00e7714171810e5c0f9a03ca25597c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc68758a8765bfa4698124cdad482c2b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#adc68758a8765bfa4698124cdad482c2b">insert</a> (const_iterator hint, <a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &amp;&amp;value)</td></tr>
+<tr class="separator:adc68758a8765bfa4698124cdad482c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a085757d522a084c333168dfca2b83c56"><td class="memItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a085757d522a084c333168dfca2b83c56">insert</a> (const <a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &amp;value)</td></tr>
+<tr class="separator:a085757d522a084c333168dfca2b83c56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d2710775a8ed0c86e552239356b4063"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a2d2710775a8ed0c86e552239356b4063">insert</a> (const_iterator hint, const <a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &amp;value)</td></tr>
+<tr class="separator:a2d2710775a8ed0c86e552239356b4063"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeefb34baaa8f8a81f58972fd60625a3f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#afdd44a559ab731f9e29be192360fea13">insert_return_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#aeefb34baaa8f8a81f58972fd60625a3f">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a8b642e983436fdb8d78309781a46d296">node_type</a> &amp;&amp;node)</td></tr>
+<tr class="separator:aeefb34baaa8f8a81f58972fd60625a3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3964f64cede70069ffe39bbe33a45fb8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a3964f64cede70069ffe39bbe33a45fb8">insert</a> (const_iterator hint, <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a8b642e983436fdb8d78309781a46d296">node_type</a> &amp;&amp;node)</td></tr>
+<tr class="separator:a3964f64cede70069ffe39bbe33a45fb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fbc2af0b4698b3b4ec293e4721f0b18"><td class="memTemplParams" colspan="2">template&lt;typename Iterator &gt; </td></tr>
+<tr class="memitem:a8fbc2af0b4698b3b4ec293e4721f0b18"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a8fbc2af0b4698b3b4ec293e4721f0b18">insert</a> (Iterator first, Iterator last)</td></tr>
+<tr class="separator:a8fbc2af0b4698b3b4ec293e4721f0b18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad766c3d5507fd02ce9ef3efc21656769"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#ad766c3d5507fd02ce9ef3efc21656769">insert</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &gt; values)</td></tr>
+<tr class="separator:ad766c3d5507fd02ce9ef3efc21656769"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:a48babcf13ee3254da306efef4f666de9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a48babcf13ee3254da306efef4f666de9">swap</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a> &amp;left, <a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a> &amp;right) noexcept</td></tr>
 <tr class="separator:a48babcf13ee3254da306efef4f666de9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab25579ccf202c6cdbcaf9895f5e0d75f"><td class="memTemplParams" colspan="2">template&lt;typename ValueFilter &gt; </td></tr>
-<tr class="memitem:ab25579ccf202c6cdbcaf9895f5e0d75f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#abc6e5104fec5a0ed878e7108169c88a9">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#ab25579ccf202c6cdbcaf9895f5e0d75f">erase_if</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a> &amp;cont, const ValueFilter &amp;valueFilter)</td></tr>
+<tr class="memitem:ab25579ccf202c6cdbcaf9895f5e0d75f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a824f3fb8411e9ae3e3cf8b1f6ec2265a">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#ab25579ccf202c6cdbcaf9895f5e0d75f">erase_if</a> (<a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a> &amp;cont, const ValueFilter &amp;valueFilter)</td></tr>
 <tr class="separator:ab25579ccf202c6cdbcaf9895f5e0d75f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename TKey, typename TLessFunc = std::less&lt;TKey&gt;, typename TAllocator = std::allocator&lt;TKey&gt;, typename TTreeSet = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt;<br />
-class momo::stdish::multiset&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;</h3>
+<div class="textblock"><h3>template&lt;typename TKey, typename TLessComparer = std::less&lt;TKey&gt;, typename TAllocator = std::allocator&lt;TKey&gt;, typename TTreeSet = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt;<br />
+class momo::stdish::multiset&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;</h3>
 
 <p><code><a class="el" href="classmomo_1_1stdish_1_1multiset.html" title="momo::stdish::multiset is similar to std::multiset, but much more efficient in memory usage....">momo::stdish::multiset</a></code> is similar to <code>std::multiset</code>, but much more efficient in memory usage. The implementation is based on a B-tree. </p>
 <p>Deviations from standard class:</p><ol type="1">
@@ -165,85 +165,85 @@ class momo::stdish::multiset&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;</h3>
 <li>After each addition or removal of the item all iterators and references to items become invalid and should not be used.</li>
 <li>Functions <code>begin</code>, <code>cbegin</code>, <code>rend</code> and <code>crend</code> have logarithmic complexity.</li>
 <li>If <code>ObjectManager&lt;key_type&gt;::isNothrowAnywayAssignable</code> is false, functions <code>erase</code> can throw exceptions.</li>
-<li>Functions <code>merge</code>, <code>extract</code> and <code><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a24d8fb2bd8dd9499e9f9bd37fa5a4ff8">insert(node_type&amp;&amp;)</a></code> move items.</li>
+<li>Functions <code>merge</code>, <code>extract</code> and <code><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a8a0963c91f08184274f595fd166100fd">insert(node_type&amp;&amp;)</a></code> move items.</li>
 </ol>
 <p>It is allowed to pass to functions <code>insert</code> and <code>emplace</code> references to items within the container.</p>
 <p>Function <code>merge</code> can work fast, if container types are same and each key from one container is less than each key from other container. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a7020d202cad870b4b8f64618f02a365d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7020d202cad870b4b8f64618f02a365d">&#9670;&nbsp;</a></span>insert_return_type</h2>
+<a id="afdd44a559ab731f9e29be192360fea13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdd44a559ab731f9e29be192360fea13">&#9670;&nbsp;</a></span>insert_return_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a7020d202cad870b4b8f64618f02a365d">insert_return_type</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#afdd44a559ab731f9e29be192360fea13">insert_return_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a78ba3602c4fc736208a8683786082238"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78ba3602c4fc736208a8683786082238">&#9670;&nbsp;</a></span>iterator</h2>
+<a id="a55f1fc447db44f3a1b9386d01bdc16dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55f1fc447db44f3a1b9386d01bdc16dd">&#9670;&nbsp;</a></span>iterator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1_tree_set.html#aba953e3ae72c13dd0487398d28306d16">TreeSet::Iterator</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1_tree_set.html#aba953e3ae72c13dd0487398d28306d16">TreeSet::Iterator</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="abe512029180751cd6e39d8e4a828a47b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe512029180751cd6e39d8e4a828a47b">&#9670;&nbsp;</a></span>node_type</h2>
+<a id="a8b642e983436fdb8d78309781a46d296"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b642e983436fdb8d78309781a46d296">&#9670;&nbsp;</a></span>node_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1stdish_1_1internal_1_1set__node__handle.html">internal::set_node_handle</a>&lt;typename <a class="el" href="classmomo_1_1_tree_set.html#aecf861e4e0854d8a3de0b1d700848e9f">TreeSet::ExtractedItem</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#abe512029180751cd6e39d8e4a828a47b">node_type</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1stdish_1_1internal_1_1set__node__handle.html">internal::set_node_handle</a>&lt;typename <a class="el" href="classmomo_1_1_tree_set.html#aecf861e4e0854d8a3de0b1d700848e9f">TreeSet::ExtractedItem</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a8b642e983436fdb8d78309781a46d296">node_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="abc6e5104fec5a0ed878e7108169c88a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc6e5104fec5a0ed878e7108169c88a9">&#9670;&nbsp;</a></span>size_type</h2>
+<a id="a824f3fb8411e9ae3e3cf8b1f6ec2265a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a824f3fb8411e9ae3e3cf8b1f6ec2265a">&#9670;&nbsp;</a></span>size_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef size_t <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#abc6e5104fec5a0ed878e7108169c88a9">size_type</a></td>
+          <td class="memname">typedef size_t <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a824f3fb8411e9ae3e3cf8b1f6ec2265a">size_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a69adefc71cef85c2653bf8592f564639"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69adefc71cef85c2653bf8592f564639">&#9670;&nbsp;</a></span>value_type</h2>
+<a id="ac3e99379473df08397626f13c53f664e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3e99379473df08397626f13c53f664e">&#9670;&nbsp;</a></span>value_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef key_type <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a></td>
+          <td class="memname">typedef key_type <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::<a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -251,13 +251,13 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7372b8c08a6cac08205a24ba173b43b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7372b8c08a6cac08205a24ba173b43b8">&#9670;&nbsp;</a></span>emplace()</h2>
+<a id="a76ae9fef87f0ee7c277cd9ed3a7df974"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76ae9fef87f0ee7c277cd9ed3a7df974">&#9670;&nbsp;</a></span>emplace()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename... ValueArgs&gt; </div>
 <table class="mlabels">
@@ -265,7 +265,7 @@ template&lt;typename... ValueArgs&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::emplace </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::emplace </td>
           <td>(</td>
           <td class="paramtype">ValueArgs &amp;&amp;...&#160;</td>
           <td class="paramname"><em>valueArgs</em></td><td>)</td>
@@ -281,19 +281,19 @@ template&lt;typename... ValueArgs&gt; </div>
 
 </div>
 </div>
-<a id="a1952414cf357247096869207d0d4d163"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1952414cf357247096869207d0d4d163">&#9670;&nbsp;</a></span>insert() <span class="overload">[1/11]</span></h2>
+<a id="a085757d522a084c333168dfca2b83c56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a085757d522a084c333168dfca2b83c56">&#9670;&nbsp;</a></span>insert() <span class="overload">[1/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert</td>
+          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert</td>
         </tr>
       </table>
   </td>
@@ -305,21 +305,21 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="adcafe728306b70e1c30e3f1ca468e2a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adcafe728306b70e1c30e3f1ca468e2a7">&#9670;&nbsp;</a></span>insert() <span class="overload">[2/11]</span></h2>
+<a id="a44442eda8ebbf6d0b1b9d754c3b32359"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44442eda8ebbf6d0b1b9d754c3b32359">&#9670;&nbsp;</a></span>insert() <span class="overload">[2/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &amp;&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
           <td></td>
         </tr>
@@ -333,19 +333,19 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="a530f625550ba5d78d6eaf2cf2d1e2452"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a530f625550ba5d78d6eaf2cf2d1e2452">&#9670;&nbsp;</a></span>insert() <span class="overload">[3/11]</span></h2>
+<a id="a2d2710775a8ed0c86e552239356b4063"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d2710775a8ed0c86e552239356b4063">&#9670;&nbsp;</a></span>insert() <span class="overload">[3/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert</td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert</td>
         </tr>
       </table>
   </td>
@@ -357,19 +357,19 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="aaadc334c5fc540d67e431016f1deb17c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaadc334c5fc540d67e431016f1deb17c">&#9670;&nbsp;</a></span>insert() <span class="overload">[4/11]</span></h2>
+<a id="a3964f64cede70069ffe39bbe33a45fb8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3964f64cede70069ffe39bbe33a45fb8">&#9670;&nbsp;</a></span>insert() <span class="overload">[4/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert</td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert</td>
         </tr>
       </table>
   </td>
@@ -381,19 +381,19 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="ac541abf704e6c97c24165e2b8e1f2fb9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac541abf704e6c97c24165e2b8e1f2fb9">&#9670;&nbsp;</a></span>insert() <span class="overload">[5/11]</span></h2>
+<a id="adc68758a8765bfa4698124cdad482c2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc68758a8765bfa4698124cdad482c2b">&#9670;&nbsp;</a></span>insert() <span class="overload">[5/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert</td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert</td>
         </tr>
       </table>
   </td>
@@ -405,13 +405,13 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="aa6af5dfcfc56a7a0dc93b4f5bf87b7be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa6af5dfcfc56a7a0dc93b4f5bf87b7be">&#9670;&nbsp;</a></span>insert() <span class="overload">[6/11]</span></h2>
+<a id="a8fbc2af0b4698b3b4ec293e4721f0b18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fbc2af0b4698b3b4ec293e4721f0b18">&#9670;&nbsp;</a></span>insert() <span class="overload">[6/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename Iterator &gt; </div>
 <table class="mlabels">
@@ -419,7 +419,7 @@ template&lt;typename Iterator &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert </td>
           <td>(</td>
           <td class="paramtype">typename Iterator&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -435,19 +435,19 @@ template&lt;typename Iterator &gt; </div>
 
 </div>
 </div>
-<a id="af43165d5cf2dae111107b7464ed282b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af43165d5cf2dae111107b7464ed282b7">&#9670;&nbsp;</a></span>insert() <span class="overload">[7/11]</span></h2>
+<a id="aeefb34baaa8f8a81f58972fd60625a3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeefb34baaa8f8a81f58972fd60625a3f">&#9670;&nbsp;</a></span>insert() <span class="overload">[7/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a7020d202cad870b4b8f64618f02a365d">insert_return_type</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert</td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#afdd44a559ab731f9e29be192360fea13">insert_return_type</a> <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert</td>
         </tr>
       </table>
   </td>
@@ -459,21 +459,21 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="a24d8fb2bd8dd9499e9f9bd37fa5a4ff8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24d8fb2bd8dd9499e9f9bd37fa5a4ff8">&#9670;&nbsp;</a></span>insert() <span class="overload">[8/11]</span></h2>
+<a id="a8a0963c91f08184274f595fd166100fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a0963c91f08184274f595fd166100fd">&#9670;&nbsp;</a></span>insert() <span class="overload">[8/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#abe512029180751cd6e39d8e4a828a47b">node_type</a> &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a8b642e983436fdb8d78309781a46d296">node_type</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>node</em></td><td>)</td>
           <td></td>
         </tr>
@@ -487,19 +487,19 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="a29d0c91cf9e3e27683f7f0f6e0c1bfac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a29d0c91cf9e3e27683f7f0f6e0c1bfac">&#9670;&nbsp;</a></span>insert() <span class="overload">[9/11]</span></h2>
+<a id="ad766c3d5507fd02ce9ef3efc21656769"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad766c3d5507fd02ce9ef3efc21656769">&#9670;&nbsp;</a></span>insert() <span class="overload">[9/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert</td>
+          <td class="memname">void <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert</td>
         </tr>
       </table>
   </td>
@@ -511,19 +511,19 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="a65cd466a7e310438fd4fa1db5539575d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65cd466a7e310438fd4fa1db5539575d">&#9670;&nbsp;</a></span>insert() <span class="overload">[10/11]</span></h2>
+<a id="afb00e7714171810e5c0f9a03ca25597c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb00e7714171810e5c0f9a03ca25597c">&#9670;&nbsp;</a></span>insert() <span class="overload">[10/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert</td>
+          <td class="memname">std::pair&lt;<a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a>, bool&gt; <a class="el" href="classmomo_1_1stdish_1_1set.html">momo::stdish::set</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert</td>
         </tr>
       </table>
   </td>
@@ -535,21 +535,21 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="adc76760fa72a4a05015dc047e74b0c58"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adc76760fa72a4a05015dc047e74b0c58">&#9670;&nbsp;</a></span>insert() <span class="overload">[11/11]</span></h2>
+<a id="aec0c7b20df2c9d6978108817f61f8eb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec0c7b20df2c9d6978108817f61f8eb9">&#9670;&nbsp;</a></span>insert() <span class="overload">[11/11]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a78ba3602c4fc736208a8683786082238">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::insert </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a55f1fc447db44f3a1b9386d01bdc16dd">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::insert </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
           <td></td>
         </tr>
@@ -563,21 +563,21 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 
 </div>
 </div>
-<a id="ab70449311671818f72d876af7d79fba7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab70449311671818f72d876af7d79fba7">&#9670;&nbsp;</a></span>operator=()</h2>
+<a id="a7189992f24dc35896c22d10ab346f9a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7189992f24dc35896c22d10ab346f9a0">&#9670;&nbsp;</a></span>operator=()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a>&amp; <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt;::operator= </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a>&amp; <a class="el" href="classmomo_1_1stdish_1_1multiset.html">momo::stdish::multiset</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt;::operator= </td>
           <td>(</td>
-          <td class="paramtype">std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#a69adefc71cef85c2653bf8592f564639">value_type</a> &gt;&#160;</td>
+          <td class="paramtype">std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multiset.html#ac3e99379473df08397626f13c53f664e">value_type</a> &gt;&#160;</td>
           <td class="paramname"><em>values</em></td><td>)</td>
           <td></td>
         </tr>
@@ -598,7 +598,7 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename ValueFilter &gt; </div>
 <table class="mlabels">
@@ -606,9 +606,9 @@ template&lt;typename ValueFilter &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#abc6e5104fec5a0ed878e7108169c88a9">size_type</a> erase_if </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multiset.html#a824f3fb8411e9ae3e3cf8b1f6ec2265a">size_type</a> erase_if </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt; &amp;&#160;</td>
           <td class="paramname"><em>cont</em>, </td>
         </tr>
         <tr>
@@ -638,7 +638,7 @@ template&lt;typename ValueFilter &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;TKey&gt;, typename TTreeSet  = TreeSet&lt;TKey, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -646,13 +646,13 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, typenam
         <tr>
           <td class="memname">void swap </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt; &amp;&#160;</td>
           <td class="paramname"><em>left</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a>&lt; TKey, TLessFunc, TAllocator, TTreeSet &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multiset.html">multiset</a>&lt; TKey, TLessComparer, TAllocator, TTreeSet &gt; &amp;&#160;</td>
           <td class="paramname"><em>right</em>&#160;</td>
         </tr>
         <tr>

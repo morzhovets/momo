@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -112,9 +112,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a51ec21acf49454e7393a7bdd030ef40e"><td class="memTemplParams" colspan="2">template&lt;typename Item &gt; </td></tr>
 <tr class="memitem:a51ec21acf49454e7393a7bdd030ef40e"><td class="memTemplItemLeft" align="right" valign="top">static int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_traits.html#a51ec21acf49454e7393a7bdd030ef40e">Compare</a> (const Item &amp;item1, const Item &amp;item2)</td></tr>
 <tr class="separator:a51ec21acf49454e7393a7bdd030ef40e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18c65ea4e637852c3f13072ca424d4a9"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename LessFunc , typename MemManager &gt; </td></tr>
-<tr class="memitem:a18c65ea4e637852c3f13072ca424d4a9"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_traits.html#a18c65ea4e637852c3f13072ca424d4a9">Sort</a> (Iterator begin, size_t count, const LessFunc &amp;lessFunc, MemManager &amp;)</td></tr>
-<tr class="separator:a18c65ea4e637852c3f13072ca424d4a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4322f9be72e406eaeb0c2740b1cfd59c"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename LessComparer , typename MemManager &gt; </td></tr>
+<tr class="memitem:a4322f9be72e406eaeb0c2740b1cfd59c"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_data_traits.html#a4322f9be72e406eaeb0c2740b1cfd59c">Sort</a> (Iterator begin, size_t count, const LessComparer &amp;lessComp, MemManager &amp;)</td></tr>
+<tr class="separator:a4322f9be72e406eaeb0c2740b1cfd59c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -271,13 +271,13 @@ template&lt;typename Item &gt; </div>
 
 </div>
 </div>
-<a id="a18c65ea4e637852c3f13072ca424d4a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a18c65ea4e637852c3f13072ca424d4a9">&#9670;&nbsp;</a></span>Sort()</h2>
+<a id="a4322f9be72e406eaeb0c2740b1cfd59c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4322f9be72e406eaeb0c2740b1cfd59c">&#9670;&nbsp;</a></span>Sort()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Iterator , typename LessFunc , typename MemManager &gt; </div>
+template&lt;typename Iterator , typename LessComparer , typename MemManager &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -297,8 +297,8 @@ template&lt;typename Iterator , typename LessFunc , typename MemManager &gt; </d
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const LessFunc &amp;&#160;</td>
-          <td class="paramname"><em>lessFunc</em>, </td>
+          <td class="paramtype">const LessComparer &amp;&#160;</td>
+          <td class="paramname"><em>lessComp</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

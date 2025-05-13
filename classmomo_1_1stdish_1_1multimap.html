@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::stdish::multimap&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt; Class Template Reference</title>
+<title>momo: momo::stdish::multimap&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1stdish_1_1multimap.html',
 <a href="#friends">Friends</a> &#124;
 <a href="classmomo_1_1stdish_1_1multimap-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::stdish::multimap&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt; Class Template Reference</div>  </div>
+<div class="title">momo::stdish::multimap&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -97,7 +97,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1stdish_1_1multimap.html',
 
 <p><code>#include &lt;<a class="el" href="map_8h_source.html">map.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for momo::stdish::multimap&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;:</div>
+Inheritance diagram for momo::stdish::multimap&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="classmomo_1_1stdish_1_1multimap.png" alt=""/>
@@ -105,59 +105,59 @@ Inheritance diagram for momo::stdish::multimap&lt; TKey, TMapped, TLessFunc, TAl
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a0f62bbe9662793c250cadd63ce9f31c4"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a0f62bbe9662793c250cadd63ce9f31c4">insert_return_type</a></td></tr>
-<tr class="separator:a0f62bbe9662793c250cadd63ce9f31c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a6d06f26af8dbd86c355fd267891903"><td class="memItemLeft" align="right" valign="top">typedef TKey&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a></td></tr>
-<tr class="separator:a8a6d06f26af8dbd86c355fd267891903"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a661c8c88a2b8e09625af0548a568d1ad"><td class="memItemLeft" align="right" valign="top">typedef TMapped&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a661c8c88a2b8e09625af0548a568d1ad">mapped_type</a></td></tr>
-<tr class="separator:a661c8c88a2b8e09625af0548a568d1ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af14762948a531a94dc09ac9c63277c8d"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#af14762948a531a94dc09ac9c63277c8d">size_type</a></td></tr>
-<tr class="separator:af14762948a531a94dc09ac9c63277c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a007a3344c7365612b3e93681bb94638e"><td class="memItemLeft" align="right" valign="top">typedef std::pair&lt; const <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a>, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a661c8c88a2b8e09625af0548a568d1ad">mapped_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a></td></tr>
-<tr class="separator:a007a3344c7365612b3e93681bb94638e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf83e9c882ce3a053efd4f2dd427dc6a"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html">momo::internal::TreeDerivedIterator</a>&lt; TreeMapIterator, <a class="el" href="classmomo_1_1internal_1_1_map_reference_std.html">momo::internal::MapReferenceStd</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a></td></tr>
-<tr class="separator:acf83e9c882ce3a053efd4f2dd427dc6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c3ec634db46b0aeeb6c999b3842c0ac"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab1bc9afc8de38043a1d0206bceaeff90">const_iterator::Reference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a4c3ec634db46b0aeeb6c999b3842c0ac">const_reference</a></td></tr>
-<tr class="separator:a4c3ec634db46b0aeeb6c999b3842c0ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f73c7e649e498f16c9122e58f9a9857"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab687b79124cace843d2609c5110d9ab5">iterator::ConstIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a></td></tr>
-<tr class="separator:a7f73c7e649e498f16c9122e58f9a9857"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6801ef6e2a923ee86c487277a4d86d28"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__node__handle.html">internal::map_node_handle</a>&lt; typename <a class="el" href="classmomo_1_1_tree_map.html#a715e57b8261da574300dd995093962e7">TreeMap::ExtractedPair</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a6801ef6e2a923ee86c487277a4d86d28">node_type</a></td></tr>
-<tr class="separator:a6801ef6e2a923ee86c487277a4d86d28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa450bee76d00d5910d6c777907060eae"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#aa450bee76d00d5910d6c777907060eae">insert_return_type</a></td></tr>
+<tr class="separator:aa450bee76d00d5910d6c777907060eae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d4a61bb32619cb97e0d5f2cf38a1d04"><td class="memItemLeft" align="right" valign="top">typedef TKey&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a4d4a61bb32619cb97e0d5f2cf38a1d04">key_type</a></td></tr>
+<tr class="separator:a4d4a61bb32619cb97e0d5f2cf38a1d04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1d065ea6e715a17afc6e362560e3de9"><td class="memItemLeft" align="right" valign="top">typedef TMapped&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#aa1d065ea6e715a17afc6e362560e3de9">mapped_type</a></td></tr>
+<tr class="separator:aa1d065ea6e715a17afc6e362560e3de9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acffc8f767920c9c724cdf3be8ff0a437"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acffc8f767920c9c724cdf3be8ff0a437">size_type</a></td></tr>
+<tr class="separator:acffc8f767920c9c724cdf3be8ff0a437"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2526a2dcbf51dd8fff774999c1fc3ed1"><td class="memItemLeft" align="right" valign="top">typedef std::pair&lt; const <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a4d4a61bb32619cb97e0d5f2cf38a1d04">key_type</a>, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#aa1d065ea6e715a17afc6e362560e3de9">mapped_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a></td></tr>
+<tr class="separator:a2526a2dcbf51dd8fff774999c1fc3ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a442cb7b759a360dce600404917c28584"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html">momo::internal::TreeDerivedIterator</a>&lt; TreeMapIterator, <a class="el" href="classmomo_1_1internal_1_1_map_reference_std.html">momo::internal::MapReferenceStd</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a></td></tr>
+<tr class="separator:a442cb7b759a360dce600404917c28584"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa63a94e76646d92d74a0e4c750ada65"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab1bc9afc8de38043a1d0206bceaeff90">const_iterator::Reference</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#aaa63a94e76646d92d74a0e4c750ada65">const_reference</a></td></tr>
+<tr class="separator:aaa63a94e76646d92d74a0e4c750ada65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2df56f114ba6a1234e74185950656187"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab687b79124cace843d2609c5110d9ab5">iterator::ConstIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2df56f114ba6a1234e74185950656187">const_iterator</a></td></tr>
+<tr class="separator:a2df56f114ba6a1234e74185950656187"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a131e41bb66f0bd16c172c32f9635c187"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__node__handle.html">internal::map_node_handle</a>&lt; typename <a class="el" href="classmomo_1_1_tree_map.html#a715e57b8261da574300dd995093962e7">TreeMap::ExtractedPair</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a131e41bb66f0bd16c172c32f9635c187">node_type</a></td></tr>
+<tr class="separator:a131e41bb66f0bd16c172c32f9635c187"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a38cc6a728af26e00424fed51f610b6b0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a38cc6a728af26e00424fed51f610b6b0">operator=</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a> &gt; values)</td></tr>
-<tr class="separator:a38cc6a728af26e00424fed51f610b6b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ffb0636220263b98e33793cc07348b9"><td class="memTemplParams" colspan="2">template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </td></tr>
-<tr class="memitem:a7ffb0636220263b98e33793cc07348b9"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a>&lt; std::is_constructible&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a>, ValueArg &amp;&amp; &gt;::value, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a7ffb0636220263b98e33793cc07348b9">insert</a> (ValueArg &amp;&amp;valueArg)</td></tr>
-<tr class="separator:a7ffb0636220263b98e33793cc07348b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13a98f212219915d3f75cc1e50701d8f"><td class="memTemplParams" colspan="2">template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </td></tr>
-<tr class="memitem:a13a98f212219915d3f75cc1e50701d8f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a>&lt; std::is_constructible&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a>, ValueArg &amp;&amp; &gt;::value, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a13a98f212219915d3f75cc1e50701d8f">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, ValueArg &amp;&amp;valueArg)</td></tr>
-<tr class="separator:a13a98f212219915d3f75cc1e50701d8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29f9e1fe856fd90dee11be6a6975a9c2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a29f9e1fe856fd90dee11be6a6975a9c2">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a6801ef6e2a923ee86c487277a4d86d28">node_type</a> &amp;&amp;node)</td></tr>
-<tr class="separator:a29f9e1fe856fd90dee11be6a6975a9c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ffa7994bbe37a1d045b3d05dffc1de7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a0ffa7994bbe37a1d045b3d05dffc1de7">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a> hint, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a6801ef6e2a923ee86c487277a4d86d28">node_type</a> &amp;&amp;node)</td></tr>
-<tr class="separator:a0ffa7994bbe37a1d045b3d05dffc1de7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade29ab37c08e0f9cdb28d58be98b0804"><td class="memTemplParams" colspan="2">template&lt;typename Iterator &gt; </td></tr>
-<tr class="memitem:ade29ab37c08e0f9cdb28d58be98b0804"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#ade29ab37c08e0f9cdb28d58be98b0804">insert</a> (Iterator first, Iterator last)</td></tr>
-<tr class="separator:ade29ab37c08e0f9cdb28d58be98b0804"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fb7afdaaffbbc6ef7d53bd5694beb9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a9fb7afdaaffbbc6ef7d53bd5694beb9a">insert</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a> &gt; values)</td></tr>
-<tr class="separator:a9fb7afdaaffbbc6ef7d53bd5694beb9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02c1257af7ea3182adc4a5d53d2aff1c"><td class="memTemplParams" colspan="2">template&lt;typename... ValueArgs&gt; </td></tr>
-<tr class="memitem:a02c1257af7ea3182adc4a5d53d2aff1c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a02c1257af7ea3182adc4a5d53d2aff1c">emplace</a> (ValueArgs &amp;&amp;... valueArgs)</td></tr>
-<tr class="separator:a02c1257af7ea3182adc4a5d53d2aff1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ccfc848c2dbf3340eecb26a2a2e6f0c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a1ccfc848c2dbf3340eecb26a2a2e6f0c">operator=</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a> &gt; values)</td></tr>
+<tr class="separator:a1ccfc848c2dbf3340eecb26a2a2e6f0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac784b0aea12e011e6040b6f3b1916088"><td class="memTemplParams" colspan="2">template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </td></tr>
+<tr class="memitem:ac784b0aea12e011e6040b6f3b1916088"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a>&lt; std::is_constructible&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a>, ValueArg &amp;&amp; &gt;::value, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#ac784b0aea12e011e6040b6f3b1916088">insert</a> (ValueArg &amp;&amp;valueArg)</td></tr>
+<tr class="separator:ac784b0aea12e011e6040b6f3b1916088"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26c61f6c04e93bc925104f2aa9a0d29d"><td class="memTemplParams" colspan="2">template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </td></tr>
+<tr class="memitem:a26c61f6c04e93bc925104f2aa9a0d29d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a>&lt; std::is_constructible&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a>, ValueArg &amp;&amp; &gt;::value, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a26c61f6c04e93bc925104f2aa9a0d29d">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2df56f114ba6a1234e74185950656187">const_iterator</a> hint, ValueArg &amp;&amp;valueArg)</td></tr>
+<tr class="separator:a26c61f6c04e93bc925104f2aa9a0d29d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaad0163dde5d4f0b2a60f2154e755daf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#aaad0163dde5d4f0b2a60f2154e755daf">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a131e41bb66f0bd16c172c32f9635c187">node_type</a> &amp;&amp;node)</td></tr>
+<tr class="separator:aaad0163dde5d4f0b2a60f2154e755daf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af98b644d2b37d44f3048bad44116c844"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#af98b644d2b37d44f3048bad44116c844">insert</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2df56f114ba6a1234e74185950656187">const_iterator</a> hint, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a131e41bb66f0bd16c172c32f9635c187">node_type</a> &amp;&amp;node)</td></tr>
+<tr class="separator:af98b644d2b37d44f3048bad44116c844"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad00e7cacfce9de9d9ee15e44e54a6fac"><td class="memTemplParams" colspan="2">template&lt;typename Iterator &gt; </td></tr>
+<tr class="memitem:ad00e7cacfce9de9d9ee15e44e54a6fac"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#ad00e7cacfce9de9d9ee15e44e54a6fac">insert</a> (Iterator first, Iterator last)</td></tr>
+<tr class="separator:ad00e7cacfce9de9d9ee15e44e54a6fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a660f961a04ad0efa5a43924b4a6e9153"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a660f961a04ad0efa5a43924b4a6e9153">insert</a> (std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a> &gt; values)</td></tr>
+<tr class="separator:a660f961a04ad0efa5a43924b4a6e9153"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fc97a7081a2dcc223190d4fe39eb70f"><td class="memTemplParams" colspan="2">template&lt;typename... ValueArgs&gt; </td></tr>
+<tr class="memitem:a9fc97a7081a2dcc223190d4fe39eb70f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a9fc97a7081a2dcc223190d4fe39eb70f">emplace</a> (ValueArgs &amp;&amp;... valueArgs)</td></tr>
+<tr class="separator:a9fc97a7081a2dcc223190d4fe39eb70f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:a70af449e9626e700b4ce0cc0bcab0b54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a70af449e9626e700b4ce0cc0bcab0b54">swap</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;left, <a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;right) noexcept</td></tr>
 <tr class="separator:a70af449e9626e700b4ce0cc0bcab0b54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15fdf92d3ebf71593a90465466da0609"><td class="memTemplParams" colspan="2">template&lt;typename ValueFilter &gt; </td></tr>
-<tr class="memitem:a15fdf92d3ebf71593a90465466da0609"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#af14762948a531a94dc09ac9c63277c8d">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a15fdf92d3ebf71593a90465466da0609">erase_if</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;cont, const ValueFilter &amp;valueFilter)</td></tr>
+<tr class="memitem:a15fdf92d3ebf71593a90465466da0609"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acffc8f767920c9c724cdf3be8ff0a437">size_type</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a15fdf92d3ebf71593a90465466da0609">erase_if</a> (<a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a> &amp;cont, const ValueFilter &amp;valueFilter)</td></tr>
 <tr class="separator:a15fdf92d3ebf71593a90465466da0609"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename TKey, typename TMapped, typename TLessFunc = std::less&lt;TKey&gt;, typename TAllocator = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt;<br />
-class momo::stdish::multimap&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;</h3>
+<div class="textblock"><h3>template&lt;typename TKey, typename TMapped, typename TLessComparer = std::less&lt;TKey&gt;, typename TAllocator = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt;<br />
+class momo::stdish::multimap&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;</h3>
 
 <p><code><a class="el" href="classmomo_1_1stdish_1_1multimap.html" title="momo::stdish::multimap is similar to std::multimap, but much more efficient in memory usage....">momo::stdish::multimap</a></code> is similar to <code>std::multimap</code>, but much more efficient in memory usage. The implementation is based on a B-tree. </p>
 <p>Deviations from standard class:</p><ol type="1">
@@ -166,149 +166,149 @@ class momo::stdish::multimap&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap 
 <li>Type <code>reference</code> is not the same as <code>value_type&amp;</code>, so <code>for (auto&amp; p : map)</code> is illegal, but <code>for (auto p : map)</code> or <code>for (const auto&amp; p : map)</code> or <code>for (auto&amp;&amp; p : map)</code> is allowed.</li>
 <li>Functions <code>begin</code>, <code>cbegin</code>, <code>rend</code> and <code>crend</code> have logarithmic complexity.</li>
 <li>If <code>ObjectManager&lt;key_type&gt;::isNothrowAnywayAssignable</code> is false or <code>ObjectManager&lt;mapped_type&gt;::isNothrowAnywayAssignable</code> is false, functions <code>erase</code> can throw exceptions.</li>
-<li>Functions <code>merge</code>, <code>extract</code> and <code><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a29f9e1fe856fd90dee11be6a6975a9c2">insert(node_type&amp;&amp;)</a></code> move items.</li>
+<li>Functions <code>merge</code>, <code>extract</code> and <code><a class="el" href="classmomo_1_1stdish_1_1multimap.html#aaad0163dde5d4f0b2a60f2154e755daf">insert(node_type&amp;&amp;)</a></code> move items.</li>
 </ol>
 <p>It is allowed to pass to functions <code>insert</code> and <code>emplace</code> references to items within the container.</p>
 <p>Function <code>merge</code> can work fast, if container types are same and each key from one container is less than each key from other container. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a7f73c7e649e498f16c9122e58f9a9857"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7f73c7e649e498f16c9122e58f9a9857">&#9670;&nbsp;</a></span>const_iterator</h2>
+<a id="a2df56f114ba6a1234e74185950656187"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2df56f114ba6a1234e74185950656187">&#9670;&nbsp;</a></span>const_iterator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab687b79124cace843d2609c5110d9ab5">iterator::ConstIterator</a> <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab687b79124cace843d2609c5110d9ab5">iterator::ConstIterator</a> <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2df56f114ba6a1234e74185950656187">const_iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a4c3ec634db46b0aeeb6c999b3842c0ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c3ec634db46b0aeeb6c999b3842c0ac">&#9670;&nbsp;</a></span>const_reference</h2>
+<a id="aaa63a94e76646d92d74a0e4c750ada65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa63a94e76646d92d74a0e4c750ada65">&#9670;&nbsp;</a></span>const_reference</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab1bc9afc8de38043a1d0206bceaeff90">const_iterator::Reference</a> <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a4c3ec634db46b0aeeb6c999b3842c0ac">const_reference</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html#ab1bc9afc8de38043a1d0206bceaeff90">const_iterator::Reference</a> <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#aaa63a94e76646d92d74a0e4c750ada65">const_reference</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a0f62bbe9662793c250cadd63ce9f31c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f62bbe9662793c250cadd63ce9f31c4">&#9670;&nbsp;</a></span>insert_return_type</h2>
+<a id="aa450bee76d00d5910d6c777907060eae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa450bee76d00d5910d6c777907060eae">&#9670;&nbsp;</a></span>insert_return_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a0f62bbe9662793c250cadd63ce9f31c4">insert_return_type</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#aa450bee76d00d5910d6c777907060eae">insert_return_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="acf83e9c882ce3a053efd4f2dd427dc6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf83e9c882ce3a053efd4f2dd427dc6a">&#9670;&nbsp;</a></span>iterator</h2>
+<a id="a442cb7b759a360dce600404917c28584"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a442cb7b759a360dce600404917c28584">&#9670;&nbsp;</a></span>iterator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html">momo::internal::TreeDerivedIterator</a>&lt;TreeMapIterator, <a class="el" href="classmomo_1_1internal_1_1_map_reference_std.html">momo::internal::MapReferenceStd</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_tree_derived_iterator.html">momo::internal::TreeDerivedIterator</a>&lt;TreeMapIterator, <a class="el" href="classmomo_1_1internal_1_1_map_reference_std.html">momo::internal::MapReferenceStd</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a8a6d06f26af8dbd86c355fd267891903"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a6d06f26af8dbd86c355fd267891903">&#9670;&nbsp;</a></span>key_type</h2>
+<a id="a4d4a61bb32619cb97e0d5f2cf38a1d04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d4a61bb32619cb97e0d5f2cf38a1d04">&#9670;&nbsp;</a></span>key_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TKey <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a></td>
+          <td class="memname">typedef TKey <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a4d4a61bb32619cb97e0d5f2cf38a1d04">key_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a661c8c88a2b8e09625af0548a568d1ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a661c8c88a2b8e09625af0548a568d1ad">&#9670;&nbsp;</a></span>mapped_type</h2>
+<a id="aa1d065ea6e715a17afc6e362560e3de9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1d065ea6e715a17afc6e362560e3de9">&#9670;&nbsp;</a></span>mapped_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TMapped <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a661c8c88a2b8e09625af0548a568d1ad">mapped_type</a></td>
+          <td class="memname">typedef TMapped <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#aa1d065ea6e715a17afc6e362560e3de9">mapped_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a6801ef6e2a923ee86c487277a4d86d28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6801ef6e2a923ee86c487277a4d86d28">&#9670;&nbsp;</a></span>node_type</h2>
+<a id="a131e41bb66f0bd16c172c32f9635c187"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a131e41bb66f0bd16c172c32f9635c187">&#9670;&nbsp;</a></span>node_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__node__handle.html">internal::map_node_handle</a>&lt;typename <a class="el" href="classmomo_1_1_tree_map.html#a715e57b8261da574300dd995093962e7">TreeMap::ExtractedPair</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a6801ef6e2a923ee86c487277a4d86d28">node_type</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__node__handle.html">internal::map_node_handle</a>&lt;typename <a class="el" href="classmomo_1_1_tree_map.html#a715e57b8261da574300dd995093962e7">TreeMap::ExtractedPair</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a131e41bb66f0bd16c172c32f9635c187">node_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="af14762948a531a94dc09ac9c63277c8d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af14762948a531a94dc09ac9c63277c8d">&#9670;&nbsp;</a></span>size_type</h2>
+<a id="acffc8f767920c9c724cdf3be8ff0a437"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acffc8f767920c9c724cdf3be8ff0a437">&#9670;&nbsp;</a></span>size_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef size_t <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#af14762948a531a94dc09ac9c63277c8d">size_type</a></td>
+          <td class="memname">typedef size_t <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#acffc8f767920c9c724cdf3be8ff0a437">size_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a007a3344c7365612b3e93681bb94638e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a007a3344c7365612b3e93681bb94638e">&#9670;&nbsp;</a></span>value_type</h2>
+<a id="a2526a2dcbf51dd8fff774999c1fc3ed1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2526a2dcbf51dd8fff774999c1fc3ed1">&#9670;&nbsp;</a></span>value_type</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::pair&lt;const <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a8a6d06f26af8dbd86c355fd267891903">key_type</a>, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a661c8c88a2b8e09625af0548a568d1ad">mapped_type</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a></td>
+          <td class="memname">typedef std::pair&lt;const <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a4d4a61bb32619cb97e0d5f2cf38a1d04">key_type</a>, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#aa1d065ea6e715a17afc6e362560e3de9">mapped_type</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1internal_1_1map__base.html">momo::stdish::internal::map_base</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -316,13 +316,13 @@ template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&l
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a02c1257af7ea3182adc4a5d53d2aff1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02c1257af7ea3182adc4a5d53d2aff1c">&#9670;&nbsp;</a></span>emplace()</h2>
+<a id="a9fc97a7081a2dcc223190d4fe39eb70f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fc97a7081a2dcc223190d4fe39eb70f">&#9670;&nbsp;</a></span>emplace()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename... ValueArgs&gt; </div>
 <table class="mlabels">
@@ -330,7 +330,7 @@ template&lt;typename... ValueArgs&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::emplace </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::emplace </td>
           <td>(</td>
           <td class="paramtype">ValueArgs &amp;&amp;...&#160;</td>
           <td class="paramname"><em>valueArgs</em></td><td>)</td>
@@ -346,27 +346,27 @@ template&lt;typename... ValueArgs&gt; </div>
 
 </div>
 </div>
-<a id="a0ffa7994bbe37a1d045b3d05dffc1de7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ffa7994bbe37a1d045b3d05dffc1de7">&#9670;&nbsp;</a></span>insert() <span class="overload">[1/6]</span></h2>
+<a id="af98b644d2b37d44f3048bad44116c844"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af98b644d2b37d44f3048bad44116c844">&#9670;&nbsp;</a></span>insert() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::insert </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2df56f114ba6a1234e74185950656187">const_iterator</a>&#160;</td>
           <td class="paramname"><em>hint</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a6801ef6e2a923ee86c487277a4d86d28">node_type</a> &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a131e41bb66f0bd16c172c32f9635c187">node_type</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>node</em>&#160;</td>
         </tr>
         <tr>
@@ -384,13 +384,13 @@ template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&l
 
 </div>
 </div>
-<a id="a13a98f212219915d3f75cc1e50701d8f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13a98f212219915d3f75cc1e50701d8f">&#9670;&nbsp;</a></span>insert() <span class="overload">[2/6]</span></h2>
+<a id="a26c61f6c04e93bc925104f2aa9a0d29d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26c61f6c04e93bc925104f2aa9a0d29d">&#9670;&nbsp;</a></span>insert() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </div>
 <table class="mlabels">
@@ -398,9 +398,9 @@ template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </di
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a>&lt;std::is_constructible&lt;<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a>, ValueArg&amp;&amp;&gt;::value, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert </td>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a>&lt;std::is_constructible&lt;<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a>, ValueArg&amp;&amp;&gt;::value, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::insert </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a7f73c7e649e498f16c9122e58f9a9857">const_iterator</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2df56f114ba6a1234e74185950656187">const_iterator</a>&#160;</td>
           <td class="paramname"><em>hint</em>, </td>
         </tr>
         <tr>
@@ -424,13 +424,13 @@ template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </di
 
 </div>
 </div>
-<a id="ade29ab37c08e0f9cdb28d58be98b0804"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade29ab37c08e0f9cdb28d58be98b0804">&#9670;&nbsp;</a></span>insert() <span class="overload">[3/6]</span></h2>
+<a id="ad00e7cacfce9de9d9ee15e44e54a6fac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad00e7cacfce9de9d9ee15e44e54a6fac">&#9670;&nbsp;</a></span>insert() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename Iterator &gt; </div>
 <table class="mlabels">
@@ -438,7 +438,7 @@ template&lt;typename Iterator &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::insert </td>
           <td>(</td>
           <td class="paramtype">Iterator&#160;</td>
           <td class="paramname"><em>first</em>, </td>
@@ -464,21 +464,21 @@ template&lt;typename Iterator &gt; </div>
 
 </div>
 </div>
-<a id="a29f9e1fe856fd90dee11be6a6975a9c2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a29f9e1fe856fd90dee11be6a6975a9c2">&#9670;&nbsp;</a></span>insert() <span class="overload">[4/6]</span></h2>
+<a id="aaad0163dde5d4f0b2a60f2154e755daf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaad0163dde5d4f0b2a60f2154e755daf">&#9670;&nbsp;</a></span>insert() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a> <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::insert </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a6801ef6e2a923ee86c487277a4d86d28">node_type</a> &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#a131e41bb66f0bd16c172c32f9635c187">node_type</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>node</em></td><td>)</td>
           <td></td>
         </tr>
@@ -492,21 +492,21 @@ template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&l
 
 </div>
 </div>
-<a id="a9fb7afdaaffbbc6ef7d53bd5694beb9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9fb7afdaaffbbc6ef7d53bd5694beb9a">&#9670;&nbsp;</a></span>insert() <span class="overload">[5/6]</span></h2>
+<a id="a660f961a04ad0efa5a43924b4a6e9153"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a660f961a04ad0efa5a43924b4a6e9153">&#9670;&nbsp;</a></span>insert() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert </td>
+          <td class="memname">void <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::insert </td>
           <td>(</td>
-          <td class="paramtype">std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a> &gt;&#160;</td>
+          <td class="paramtype">std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a> &gt;&#160;</td>
           <td class="paramname"><em>values</em></td><td>)</td>
           <td></td>
         </tr>
@@ -520,13 +520,13 @@ template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&l
 
 </div>
 </div>
-<a id="a7ffb0636220263b98e33793cc07348b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ffb0636220263b98e33793cc07348b9">&#9670;&nbsp;</a></span>insert() <span class="overload">[6/6]</span></h2>
+<a id="ac784b0aea12e011e6040b6f3b1916088"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac784b0aea12e011e6040b6f3b1916088">&#9670;&nbsp;</a></span>insert() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </div>
 <table class="mlabels">
@@ -534,7 +534,7 @@ template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </di
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a>&lt;std::is_constructible&lt;<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a>, ValueArg&amp;&amp;&gt;::value, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#acf83e9c882ce3a053efd4f2dd427dc6a">iterator</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::insert </td>
+          <td class="memname"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a>&lt;std::is_constructible&lt;<a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a>, ValueArg&amp;&amp;&gt;::value, <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a442cb7b759a360dce600404917c28584">iterator</a>&gt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::insert </td>
           <td>(</td>
           <td class="paramtype">ValueArg &amp;&amp;&#160;</td>
           <td class="paramname"><em>valueArg</em></td><td>)</td>
@@ -550,21 +550,21 @@ template&lt;typename ValueArg  = std::pair&lt;key_type, mapped_type&gt;&gt; </di
 
 </div>
 </div>
-<a id="a38cc6a728af26e00424fed51f610b6b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38cc6a728af26e00424fed51f610b6b0">&#9670;&nbsp;</a></span>operator=()</h2>
+<a id="a1ccfc848c2dbf3340eecb26a2a2e6f0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ccfc848c2dbf3340eecb26a2a2e6f0c">&#9670;&nbsp;</a></span>operator=()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a>&amp; <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt;::operator= </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a>&amp; <a class="el" href="classmomo_1_1stdish_1_1multimap.html">momo::stdish::multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt;::operator= </td>
           <td>(</td>
-          <td class="paramtype">std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a007a3344c7365612b3e93681bb94638e">value_type</a> &gt;&#160;</td>
+          <td class="paramtype">std::initializer_list&lt; <a class="el" href="classmomo_1_1stdish_1_1multimap.html#a2526a2dcbf51dd8fff774999c1fc3ed1">value_type</a> &gt;&#160;</td>
           <td class="paramname"><em>values</em></td><td>)</td>
           <td></td>
         </tr>
@@ -585,7 +585,7 @@ template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&l
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;typename ValueFilter &gt; </div>
 <table class="mlabels">
@@ -593,9 +593,9 @@ template&lt;typename ValueFilter &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#af14762948a531a94dc09ac9c63277c8d">size_type</a> erase_if </td>
+          <td class="memname"><a class="el" href="classmomo_1_1stdish_1_1multimap.html#acffc8f767920c9c724cdf3be8ff0a437">size_type</a> erase_if </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt; &amp;&#160;</td>
           <td class="paramname"><em>cont</em>, </td>
         </tr>
         <tr>
@@ -625,7 +625,7 @@ template&lt;typename ValueFilter &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessFunc, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
+template&lt;typename TKey , typename TMapped , typename TLessComparer  = std::less&lt;TKey&gt;, typename TAllocator  = std::allocator&lt;std::pair&lt;const TKey, TMapped&gt;&gt;, typename TTreeMap  = TreeMap&lt;TKey, TMapped, TreeTraitsStd&lt;TKey, TLessComparer, true&gt;,		MemManagerStd&lt;TAllocator&gt;&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -633,13 +633,13 @@ template&lt;typename TKey , typename TMapped , typename TLessFunc  = std::less&l
         <tr>
           <td class="memname">void swap </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt; &amp;&#160;</td>
           <td class="paramname"><em>left</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a>&lt; TKey, TMapped, TLessFunc, TAllocator, TTreeMap &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1stdish_1_1multimap.html">multimap</a>&lt; TKey, TMapped, TLessComparer, TAllocator, TTreeMap &gt; &amp;&#160;</td>
           <td class="paramname"><em>right</em>&#160;</td>
         </tr>
         <tr>

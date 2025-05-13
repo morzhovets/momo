@@ -29,7 +29,6 @@ var namespacemomo =
     [ "HashBucketOpenN1", "classmomo_1_1_hash_bucket_open_n1.html", "classmomo_1_1_hash_bucket_open_n1" ],
     [ "HashBucketUnlimP", "classmomo_1_1_hash_bucket_unlim_p.html", "classmomo_1_1_hash_bucket_unlim_p" ],
     [ "HashCoder", "structmomo_1_1_hash_coder.html", "structmomo_1_1_hash_coder" ],
-    [ "HashCoder< DataColumnCodeOffset, size_t >", "structmomo_1_1_hash_coder_3_01_data_column_code_offset_00_01size__t_01_4.html", "structmomo_1_1_hash_coder_3_01_data_column_code_offset_00_01size__t_01_4" ],
     [ "HashMap", "classmomo_1_1_hash_map.html", "classmomo_1_1_hash_map" ],
     [ "HashMapKeyValueTraits", "classmomo_1_1_hash_map_key_value_traits.html", null ],
     [ "HashMapSettings", "classmomo_1_1_hash_map_settings.html", null ],

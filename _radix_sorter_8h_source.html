@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -152,24 +152,24 @@ $(document).ready(function(){initNavTree('_radix_sorter_8h_source.html',''); ini
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        {</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keyword">auto</span> iterSwapper = [] (Iterator iter1, Iterator iter2)</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                { std::iter_swap(iter1, iter2); };</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            <span class="keyword">auto</span> groupFunc = [] (Iterator, size_t) noexcept {};</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            <a class="code" href="classmomo_1_1internal_1_1_radix_sorter.html#a8f20a759bb19c5e124992c87a8496a4d">Sort</a>(begin, count, codeGetter, iterSwapper, groupFunc);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            <span class="keyword">auto</span> itemsGrouper = [] (Iterator, size_t) noexcept {};</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            <a class="code" href="classmomo_1_1internal_1_1_radix_sorter.html#a8f20a759bb19c5e124992c87a8496a4d">Sort</a>(begin, count, codeGetter, iterSwapper, itemsGrouper);</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        }</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iterator, <span class="keyword">typename</span> CodeGetter, <span class="keyword">typename</span> IterSwapper, <span class="keyword">typename</span> GroupFunc&gt;</div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_radix_sorter.html#aa8c4406c8b3875ec916cb9347159f4e6">   72</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classmomo_1_1internal_1_1_radix_sorter.html#aa8c4406c8b3875ec916cb9347159f4e6">Sort</a>(Iterator begin, <span class="keywordtype">size_t</span> count, <span class="keyword">const</span> CodeGetter&amp; codeGetter,</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keyword">const</span> IterSwapper&amp; iterSwapper, <span class="keyword">const</span> GroupFunc&amp; groupFunc)</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Iterator, <span class="keyword">typename</span> CodeGetter, <span class="keyword">typename</span> IterSwapper, <span class="keyword">typename</span> ItemsGrouper&gt;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classmomo_1_1internal_1_1_radix_sorter.html#a06c29289bba6239af475430a9ff8180e">   72</a></span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classmomo_1_1internal_1_1_radix_sorter.html#a06c29289bba6239af475430a9ff8180e">Sort</a>(Iterator begin, <span class="keywordtype">size_t</span> count, <span class="keyword">const</span> CodeGetter&amp; codeGetter,</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keyword">const</span> IterSwapper&amp; iterSwapper, <span class="keyword">const</span> ItemsGrouper&amp; itemsGrouper)</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        {</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="keyword">typedef</span> decltype(codeGetter(begin)) Code;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            pvSort&lt;Code&gt;(begin, count, codeGetter, iterSwapper, groupFunc,</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            pvSort&lt;Code&gt;(begin, count, codeGetter, iterSwapper, itemsGrouper,</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                8 * <span class="keyword">sizeof</span>(Code) - <a class="code" href="classmomo_1_1internal_1_1_radix_sorter.html#adb2fda677859aa3d5e8b7fd1268b778a">radixSize</a>);</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Code, <span class="keyword">typename</span> Iterator, <span class="keyword">typename</span> CodeGetter,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keyword">typename</span> IterSwapper, <span class="keyword">typename</span> GroupFunc&gt;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keyword">typename</span> IterSwapper, <span class="keyword">typename</span> ItemsGrouper&gt;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> pvSort(Iterator begin, <span class="keywordtype">size_t</span> count, <span class="keyword">const</span> CodeGetter&amp; codeGetter,</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <span class="keyword">const</span> IterSwapper&amp; iterSwapper, <span class="keyword">const</span> GroupFunc&amp; groupFunc, <span class="keywordtype">size_t</span> shift)</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <span class="keyword">const</span> IterSwapper&amp; iterSwapper, <span class="keyword">const</span> ItemsGrouper&amp; itemsGrouper, <span class="keywordtype">size_t</span> shift)</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        {</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <span class="keywordflow">if</span> (count &lt; 2)</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                <span class="keywordflow">return</span>;</div>
@@ -180,15 +180,15 @@ $(document).ready(function(){initNavTree('_radix_sorter_8h_source.html',''); ini
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            }</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            <span class="keywordflow">if</span> (count &lt;= selectionSortMaxCount)</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                pvSelectionSort&lt;Code&gt;(begin, count, codeGetter, iterSwapper, groupFunc);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                pvSelectionSort&lt;Code&gt;(begin, count, codeGetter, iterSwapper, itemsGrouper);</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                pvRadixSort&lt;Code&gt;(begin, count, codeGetter, iterSwapper, groupFunc, shift);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                pvRadixSort&lt;Code&gt;(begin, count, codeGetter, iterSwapper, itemsGrouper, shift);</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        }</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Code, <span class="keyword">typename</span> Iterator, <span class="keyword">typename</span> CodeGetter,</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keyword">typename</span> IterSwapper, <span class="keyword">typename</span> GroupFunc&gt;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keyword">typename</span> IterSwapper, <span class="keyword">typename</span> ItemsGrouper&gt;</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> pvSelectionSort(Iterator begin, <span class="keywordtype">size_t</span> count, <span class="keyword">const</span> CodeGetter&amp; codeGetter,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <span class="keyword">const</span> IterSwapper&amp; iterSwapper, <span class="keyword">const</span> GroupFunc&amp; groupFunc)</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <span class="keyword">const</span> IterSwapper&amp; iterSwapper, <span class="keyword">const</span> ItemsGrouper&amp; itemsGrouper)</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        {</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            <a class="code" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(count &gt; 0);</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            std::array&lt;Code, selectionSortMaxCount&gt; codes;  <span class="comment">//?</span></div>
@@ -209,17 +209,17 @@ $(document).ready(function(){initNavTree('_radix_sorter_8h_source.html',''); ini
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            {</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                <span class="keywordflow">if</span> (codes[i] != codes[prevIndex])</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                    groupFunc(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">UIntMath&lt;&gt;::Next</a>(begin, prevIndex), i - prevIndex);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                    itemsGrouper(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">UIntMath&lt;&gt;::Next</a>(begin, prevIndex), i - prevIndex);</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                    prevIndex = i;</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                }</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            }</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            groupFunc(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">UIntMath&lt;&gt;::Next</a>(begin, prevIndex), count - prevIndex);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            itemsGrouper(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">UIntMath&lt;&gt;::Next</a>(begin, prevIndex), count - prevIndex);</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        }</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Code, <span class="keyword">typename</span> Iterator, <span class="keyword">typename</span> CodeGetter,</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            <span class="keyword">typename</span> IterSwapper, <span class="keyword">typename</span> GroupFunc&gt;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            <span class="keyword">typename</span> IterSwapper, <span class="keyword">typename</span> ItemsGrouper&gt;</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">void</span> pvRadixSort(Iterator begin, <span class="keywordtype">size_t</span> count, <span class="keyword">const</span> CodeGetter&amp; codeGetter,</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <span class="keyword">const</span> IterSwapper&amp; iterSwapper, <span class="keyword">const</span> GroupFunc&amp; groupFunc, <span class="keywordtype">size_t</span> shift)</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <span class="keyword">const</span> IterSwapper&amp; iterSwapper, <span class="keyword">const</span> ItemsGrouper&amp; itemsGrouper, <span class="keywordtype">size_t</span> shift)</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        {</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <a class="code" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(count &gt; 0);</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            std::array&lt;size_t, radixCount&gt; endIndexes;</div>
@@ -238,13 +238,13 @@ $(document).ready(function(){initNavTree('_radix_sorter_8h_source.html',''); ini
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;                singleRadix &amp;= (radix == radix0);</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            }</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <span class="keywordflow">if</span> (singleCode)</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                <span class="keywordflow">return</span> groupFunc(begin, count);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                <span class="keywordflow">return</span> itemsGrouper(begin, count);</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            <span class="keywordtype">size_t</span> nextShift = (shift &gt; <a class="code" href="classmomo_1_1internal_1_1_radix_sorter.html#adb2fda677859aa3d5e8b7fd1268b778a">radixSize</a>) ? shift - <a class="code" href="classmomo_1_1internal_1_1_radix_sorter.html#adb2fda677859aa3d5e8b7fd1268b778a">radixSize</a> : 0;</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            <span class="keywordflow">if</span> (singleRadix)</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            {</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                <a class="code" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(shift &gt; 0);</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;                <span class="keywordflow">return</span> pvRadixSort&lt;Code&gt;(begin, count,</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                    codeGetter, iterSwapper, groupFunc, nextShift);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                    codeGetter, iterSwapper, itemsGrouper, nextShift);</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            }</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> r = 1; r &lt; radixCount; ++r)</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                endIndexes[r] += endIndexes[r - 1];</div>
@@ -255,7 +255,7 @@ $(document).ready(function(){initNavTree('_radix_sorter_8h_source.html',''); ini
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> e : endIndexes)</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                {</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                    pvSort&lt;Code&gt;(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">UIntMath&lt;&gt;::Next</a>(begin, beginIndex), e - beginIndex, codeGetter,</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                        iterSwapper, groupFunc, nextShift);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                        iterSwapper, itemsGrouper, nextShift);</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                    beginIndex = e;</div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                }</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;            }</div>
@@ -263,7 +263,7 @@ $(document).ready(function(){initNavTree('_radix_sorter_8h_source.html',''); ini
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;            {</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> e : endIndexes)</div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                {</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                    groupFunc(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">UIntMath&lt;&gt;::Next</a>(begin, beginIndex), e - beginIndex);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;                    itemsGrouper(<a class="code" href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">UIntMath&lt;&gt;::Next</a>(begin, beginIndex), e - beginIndex);</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                    beginIndex = e;</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;                }</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;            }</div>
@@ -308,24 +308,24 @@ $(document).ready(function(){initNavTree('_radix_sorter_8h_source.html',''); ini
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="preprocessor">#endif // MOMO_INCLUDE_GUARD_RADIX_SORTER</span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector.html">momo::internal::UIntSelector</a></div><div class="ttdef"><b>Definition:</b> Utility.h:209</div></div>
+<div class="ttc" id="astructmomo_1_1internal_1_1_u_int_selector_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_u_int_selector.html">momo::internal::UIntSelector</a></div><div class="ttdef"><b>Definition:</b> Utility.h:220</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_radix_sorter_html_adb2fda677859aa3d5e8b7fd1268b778a"><div class="ttname"><a href="classmomo_1_1internal_1_1_radix_sorter.html#adb2fda677859aa3d5e8b7fd1268b778a">momo::internal::RadixSorter::radixSize</a></div><div class="ttdeci">static const size_t radixSize</div><div class="ttdef"><b>Definition:</b> RadixSorter.h:53</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_radix_sorter_html"><div class="ttname"><a href="classmomo_1_1internal_1_1_radix_sorter.html">momo::internal::RadixSorter</a></div><div class="ttdef"><b>Definition:</b> RadixSorter.h:51</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html_ad6de9d89802d2d68dc09fe1c7e966ab5"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">momo::internal::PtrCaster::ToUInt</a></div><div class="ttdeci">static uintptr_t ToUInt(Object *ptr) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:260</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_abb8c39b71f349f1c5159bb9ad1ee3502"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#abb8c39b71f349f1c5159bb9ad1ee3502">momo::internal::UIntMath::Dist</a></div><div class="ttdeci">static UInt Dist(Iterator begin, Iterator end)</div><div class="ttdef"><b>Definition:</b> Utility.h:332</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_ptr_caster_html_ad6de9d89802d2d68dc09fe1c7e966ab5"><div class="ttname"><a href="classmomo_1_1internal_1_1_ptr_caster.html#ad6de9d89802d2d68dc09fe1c7e966ab5">momo::internal::PtrCaster::ToUInt</a></div><div class="ttdeci">static uintptr_t ToUInt(Object *ptr) noexcept</div><div class="ttdef"><b>Definition:</b> Utility.h:271</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_abb8c39b71f349f1c5159bb9ad1ee3502"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#abb8c39b71f349f1c5159bb9ad1ee3502">momo::internal::UIntMath::Dist</a></div><div class="ttdeci">static UInt Dist(Iterator begin, Iterator end)</div><div class="ttdef"><b>Definition:</b> Utility.h:342</div></div>
 <div class="ttc" id="astructmomo_1_1internal_1_1_radix_sorter_code_getter_3_01_iterator_00_01_enable_if_3_01std_1_1is_25542f20722eda169422afa5733df5a7_html_a198007214caea9e54640106f0556ea2a"><div class="ttname"><a href="structmomo_1_1internal_1_1_radix_sorter_code_getter_3_01_iterator_00_01_enable_if_3_01std_1_1is_25542f20722eda169422afa5733df5a7.html#a198007214caea9e54640106f0556ea2a">momo::internal::RadixSorterCodeGetter&lt; Iterator, EnableIf&lt; std::is_integral&lt; typename std::iterator_traits&lt; Iterator &gt;::value_type &gt;::value &gt; &gt;::operator()</a></div><div class="ttdeci">Code operator()(Iterator iter) const noexcept</div><div class="ttdef"><b>Definition:</b> RadixSorter.h:33</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_radix_sorter_html_a8f20a759bb19c5e124992c87a8496a4d"><div class="ttname"><a href="classmomo_1_1internal_1_1_radix_sorter.html#a8f20a759bb19c5e124992c87a8496a4d">momo::internal::RadixSorter::Sort</a></div><div class="ttdeci">static void Sort(Iterator begin, size_t count, const CodeGetter &amp;codeGetter=CodeGetter())</div><div class="ttdef"><b>Definition:</b> RadixSorter.h:63</div></div>
-<div class="ttc" id="anamespacemomo_1_1internal_html_a3240c94f5aacdf8b48d58980f85348f0"><div class="ttname"><a href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a></div><div class="ttdeci">typename std::enable_if&lt; value, Type &gt;::type EnableIf</div><div class="ttdef"><b>Definition:</b> Utility.h:198</div></div>
+<div class="ttc" id="anamespacemomo_1_1internal_html_a3240c94f5aacdf8b48d58980f85348f0"><div class="ttname"><a href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">momo::internal::EnableIf</a></div><div class="ttdeci">typename std::enable_if&lt; value, Type &gt;::type EnableIf</div><div class="ttdef"><b>Definition:</b> Utility.h:209</div></div>
 <div class="ttc" id="anamespacemomo_html"><div class="ttname"><a href="namespacemomo.html">momo</a></div><div class="ttdef"><b>Definition:</b> Array.h:26</div></div>
 <div class="ttc" id="astructmomo_1_1internal_1_1_radix_sorter_code_getter_3_01_iterator_00_01_enable_if_3_01std_1_1is_5015e506b17b3ef64780bce5a9043401_html_a827b004e8ef9354ccfe9d3d3a9f81b24"><div class="ttname"><a href="structmomo_1_1internal_1_1_radix_sorter_code_getter_3_01_iterator_00_01_enable_if_3_01std_1_1is_5015e506b17b3ef64780bce5a9043401.html#a827b004e8ef9354ccfe9d3d3a9f81b24">momo::internal::RadixSorterCodeGetter&lt; Iterator, EnableIf&lt; std::is_pointer&lt; typename std::iterator_traits&lt; Iterator &gt;::value_type &gt;::value &gt; &gt;::operator()</a></div><div class="ttdeci">uintptr_t operator()(Iterator iter) const noexcept</div><div class="ttdef"><b>Definition:</b> RadixSorter.h:43</div></div>
 <div class="ttc" id="astructmomo_1_1internal_1_1_radix_sorter_code_getter_html"><div class="ttname"><a href="structmomo_1_1internal_1_1_radix_sorter_code_getter.html">momo::internal::RadixSorterCodeGetter</a></div><div class="ttdef"><b>Definition:</b> RadixSorter.h:25</div></div>
 <div class="ttc" id="astructmomo_1_1internal_1_1_radix_sorter_code_getter_3_01_iterator_00_01_enable_if_3_01std_1_1is_25542f20722eda169422afa5733df5a7_html_adabe1c148d8148fbdce1242884a80582"><div class="ttname"><a href="structmomo_1_1internal_1_1_radix_sorter_code_getter_3_01_iterator_00_01_enable_if_3_01std_1_1is_25542f20722eda169422afa5733df5a7.html#adabe1c148d8148fbdce1242884a80582">momo::internal::RadixSorterCodeGetter&lt; Iterator, EnableIf&lt; std::is_integral&lt; typename std::iterator_traits&lt; Iterator &gt;::value_type &gt;::value &gt; &gt;::Code</a></div><div class="ttdeci">UIntSelector&lt; sizeof(typename std::iterator_traits&lt; Iterator &gt;::value_type)&gt;::UInt Code</div><div class="ttdef"><b>Definition:</b> RadixSorter.h:31</div></div>
 <div class="ttc" id="aclassmomo_1_1internal_1_1_radix_sorter_html_a4c2581f94b4defa78693622565289301"><div class="ttname"><a href="classmomo_1_1internal_1_1_radix_sorter.html#a4c2581f94b4defa78693622565289301">momo::internal::RadixSorter::MOMO_STATIC_ASSERT</a></div><div class="ttdeci">MOMO_STATIC_ASSERT(0&lt; radixSize &amp;&amp;radixSize&lt;=16)</div></div>
-<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition:</b> ArrayUtility.h:308</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_radix_sorter_html_aa8c4406c8b3875ec916cb9347159f4e6"><div class="ttname"><a href="classmomo_1_1internal_1_1_radix_sorter.html#aa8c4406c8b3875ec916cb9347159f4e6">momo::internal::RadixSorter::Sort</a></div><div class="ttdeci">static void Sort(Iterator begin, size_t count, const CodeGetter &amp;codeGetter, const IterSwapper &amp;iterSwapper, const GroupFunc &amp;groupFunc)</div><div class="ttdef"><b>Definition:</b> RadixSorter.h:72</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a441313bfbaffcb9aab257943125b3db5"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">momo::internal::UIntMath::Next</a></div><div class="ttdeci">static Iterator Next(Iterator iter, UInt dist)</div><div class="ttdef"><b>Definition:</b> Utility.h:339</div></div>
+<div class="ttc" id="anamespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition:</b> Array.h:1173</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_radix_sorter_html_a06c29289bba6239af475430a9ff8180e"><div class="ttname"><a href="classmomo_1_1internal_1_1_radix_sorter.html#a06c29289bba6239af475430a9ff8180e">momo::internal::RadixSorter::Sort</a></div><div class="ttdeci">static void Sort(Iterator begin, size_t count, const CodeGetter &amp;codeGetter, const IterSwapper &amp;iterSwapper, const ItemsGrouper &amp;itemsGrouper)</div><div class="ttdef"><b>Definition:</b> RadixSorter.h:72</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_u_int_math_html_a441313bfbaffcb9aab257943125b3db5"><div class="ttname"><a href="classmomo_1_1internal_1_1_u_int_math.html#a441313bfbaffcb9aab257943125b3db5">momo::internal::UIntMath::Next</a></div><div class="ttdeci">static Iterator Next(Iterator iter, UInt dist)</div><div class="ttdef"><b>Definition:</b> Utility.h:349</div></div>
 <div class="ttc" id="a_utility_8h_html"><div class="ttname"><a href="_utility_8h.html">Utility.h</a></div></div>
-<div class="ttc" id="a_user_settings_8h_html_a21cff6113294cd25e6ca42966fdc465f"><div class="ttname"><a href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a></div><div class="ttdeci">#define MOMO_ASSERT(expr)</div><div class="ttdef"><b>Definition:</b> UserSettings.h:162</div></div>
+<div class="ttc" id="a_user_settings_8h_html_a21cff6113294cd25e6ca42966fdc465f"><div class="ttname"><a href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a></div><div class="ttdeci">#define MOMO_ASSERT(expr)</div><div class="ttdef"><b>Definition:</b> UserSettings.h:174</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

@@ -52,7 +52,7 @@ var classmomo_1_1internal_1_1_data_selection =
     [ "Set", "classmomo_1_1internal_1_1_data_selection.html#aad81ba69538e4c46a37967624eae6212", null ],
     [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#a5ace9d5cbec470c47a4f090a7e010771", null ],
     [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#a87f493c7dadecf14dbcbf363b8ecbb5f", null ],
-    [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#a95ce376ccbde8c8b963795668715c974", null ],
-    [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#a375600679b1bbab7858e25f6339318b3", null ],
+    [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#adaff155935502eabb40bab854edad81c", null ],
+    [ "Sort", "classmomo_1_1internal_1_1_data_selection.html#a47c97c2439794c9508d90d39b19bb5da", null ],
     [ "Swap", "classmomo_1_1internal_1_1_data_selection.html#a3e165cd0ffacb2e9238c9c747d0b4d14", null ]
 ];

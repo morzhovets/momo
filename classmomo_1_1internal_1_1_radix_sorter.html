@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -104,9 +104,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a8f20a759bb19c5e124992c87a8496a4d"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename CodeGetter  = RadixSorterCodeGetter&lt;Iterator&gt;&gt; </td></tr>
 <tr class="memitem:a8f20a759bb19c5e124992c87a8496a4d"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_radix_sorter.html#a8f20a759bb19c5e124992c87a8496a4d">Sort</a> (Iterator begin, size_t count, const CodeGetter &amp;codeGetter=CodeGetter())</td></tr>
 <tr class="separator:a8f20a759bb19c5e124992c87a8496a4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8c4406c8b3875ec916cb9347159f4e6"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename CodeGetter , typename IterSwapper , typename GroupFunc &gt; </td></tr>
-<tr class="memitem:aa8c4406c8b3875ec916cb9347159f4e6"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_radix_sorter.html#aa8c4406c8b3875ec916cb9347159f4e6">Sort</a> (Iterator begin, size_t count, const CodeGetter &amp;codeGetter, const IterSwapper &amp;iterSwapper, const GroupFunc &amp;groupFunc)</td></tr>
-<tr class="separator:aa8c4406c8b3875ec916cb9347159f4e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06c29289bba6239af475430a9ff8180e"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename CodeGetter , typename IterSwapper , typename ItemsGrouper &gt; </td></tr>
+<tr class="memitem:a06c29289bba6239af475430a9ff8180e"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_radix_sorter.html#a06c29289bba6239af475430a9ff8180e">Sort</a> (Iterator begin, size_t count, const CodeGetter &amp;codeGetter, const IterSwapper &amp;iterSwapper, const ItemsGrouper &amp;itemsGrouper)</td></tr>
+<tr class="separator:a06c29289bba6239af475430a9ff8180e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -133,15 +133,15 @@ template&lt;size_t tRadixSize = 8&gt; </div>
 
 </div>
 </div>
-<a id="aa8c4406c8b3875ec916cb9347159f4e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8c4406c8b3875ec916cb9347159f4e6">&#9670;&nbsp;</a></span>Sort() <span class="overload">[1/2]</span></h2>
+<a id="a06c29289bba6239af475430a9ff8180e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06c29289bba6239af475430a9ff8180e">&#9670;&nbsp;</a></span>Sort() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;size_t tRadixSize = 8&gt; </div>
 <div class="memtemplate">
-template&lt;typename Iterator , typename CodeGetter , typename IterSwapper , typename GroupFunc &gt; </div>
+template&lt;typename Iterator , typename CodeGetter , typename IterSwapper , typename ItemsGrouper &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -173,8 +173,8 @@ template&lt;typename Iterator , typename CodeGetter , typename IterSwapper , typ
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const GroupFunc &amp;&#160;</td>
-          <td class="paramname"><em>groupFunc</em>&#160;</td>
+          <td class="paramtype">const ItemsGrouper &amp;&#160;</td>
+          <td class="paramname"><em>itemsGrouper</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

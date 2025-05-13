@@ -12,6 +12,7 @@ var classmomo_1_1_tree_set =
     [ "TreeTraits", "classmomo_1_1_tree_set.html#a7fdd4ad4f9cb5503886da9cb98323801", null ],
     [ "TreeSet", "classmomo_1_1_tree_set.html#afe51068f9bd926139969ead7e4a0642c", null ],
     [ "TreeSet", "classmomo_1_1_tree_set.html#a91add866113f905f83ded86a6c04ba77", null ],
+    [ "TreeSet", "classmomo_1_1_tree_set.html#a16fa8c56d9fbd6e3e4b5386265326e7b", null ],
     [ "TreeSet", "classmomo_1_1_tree_set.html#a7879cc73cbd792240d0ec9069cdeda36", null ],
     [ "TreeSet", "classmomo_1_1_tree_set.html#ad1ffe90d55de2b0591f6e30a01200d98", null ],
     [ "TreeSet", "classmomo_1_1_tree_set.html#a3920ddf515752d967edd967e7d988782", null ],

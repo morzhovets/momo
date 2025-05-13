@@ -1,6 +1,5 @@
 var _data_column_8h =
 [
-    [ "HashCoder< DataColumnCodeOffset, size_t >", "structmomo_1_1_hash_coder_3_01_data_column_code_offset_00_01size__t_01_4.html", "structmomo_1_1_hash_coder_3_01_data_column_code_offset_00_01size__t_01_4" ],
     [ "StrHasher", "classmomo_1_1internal_1_1_str_hasher.html", null ],
     [ "DataMutable", "structmomo_1_1internal_1_1_data_mutable.html", null ],
     [ "DataColumnCodeSelector", "structmomo_1_1internal_1_1_data_column_code_selector.html", "structmomo_1_1internal_1_1_data_column_code_selector" ],

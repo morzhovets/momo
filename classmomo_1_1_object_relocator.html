@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -103,8 +103,11 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aaf94167adcdd31b3826a87a73f77ab0c"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_object_relocator.html#aaf94167adcdd31b3826a87a73f77ab0c">Relocate</a> (<a class="el" href="classmomo_1_1_object_relocator.html#a1c760d1e86f00528e3dce80fdcd63124">MemManager</a> *memManager, <a class="el" href="classmomo_1_1_object_relocator.html#ad4236bfafdc0d0a5e55c912ac3beaaac">Object</a> &amp;srcObject, <a class="el" href="classmomo_1_1_object_relocator.html#ad4236bfafdc0d0a5e55c912ac3beaaac">Object</a> *dstObject) noexcept(<a class="el" href="classmomo_1_1_object_relocator.html#a64332dc5d267d00b2e9fe7ee6163d176">isNothrowRelocatable</a>)</td></tr>
-<tr class="separator:aaf94167adcdd31b3826a87a73f77ab0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67a2d8ffe7a9488f368fd150e99d992e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_object_relocator.html#a67a2d8ffe7a9488f368fd150e99d992e">Relocate</a> (<a class="el" href="classmomo_1_1_object_relocator.html#a1c760d1e86f00528e3dce80fdcd63124">MemManager</a> *, <a class="el" href="classmomo_1_1_object_relocator.html#ad4236bfafdc0d0a5e55c912ac3beaaac">Object</a> &amp;srcObject, <a class="el" href="classmomo_1_1_object_relocator.html#ad4236bfafdc0d0a5e55c912ac3beaaac">Object</a> *dstObject) noexcept(<a class="el" href="classmomo_1_1_object_relocator.html#a64332dc5d267d00b2e9fe7ee6163d176">isNothrowRelocatable</a>)</td></tr>
+<tr class="separator:a67a2d8ffe7a9488f368fd150e99d992e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00dc8c1c7db58c90deb8de626838352c"><td class="memTemplParams" colspan="2">template&lt;bool enable = isTriviallyRelocatable&gt; </td></tr>
+<tr class="memitem:a00dc8c1c7db58c90deb8de626838352c"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; enable &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_object_relocator.html#a00dc8c1c7db58c90deb8de626838352c">RelocateNothrow</a> (<a class="el" href="classmomo_1_1_object_relocator.html#a1c760d1e86f00528e3dce80fdcd63124">MemManager</a> &amp;, <a class="el" href="classmomo_1_1_object_relocator.html#ad4236bfafdc0d0a5e55c912ac3beaaac">Object</a> *srcObjects, <a class="el" href="classmomo_1_1_object_relocator.html#ad4236bfafdc0d0a5e55c912ac3beaaac">Object</a> *dstObjects, size_t count) noexcept</td></tr>
+<tr class="separator:a00dc8c1c7db58c90deb8de626838352c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -147,8 +150,8 @@ template&lt;typename TObject , typename TMemManager &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aaf94167adcdd31b3826a87a73f77ab0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf94167adcdd31b3826a87a73f77ab0c">&#9670;&nbsp;</a></span>Relocate()</h2>
+<a id="a67a2d8ffe7a9488f368fd150e99d992e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67a2d8ffe7a9488f368fd150e99d992e">&#9670;&nbsp;</a></span>Relocate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -162,7 +165,7 @@ template&lt;typename TObject , typename TMemManager &gt; </div>
           <td class="memname">static void <a class="el" href="classmomo_1_1_object_relocator.html">momo::ObjectRelocator</a>&lt; TObject, TMemManager &gt;::Relocate </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classmomo_1_1_object_relocator.html#a1c760d1e86f00528e3dce80fdcd63124">MemManager</a> *&#160;</td>
-          <td class="paramname"><em>memManager</em>, </td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -175,6 +178,58 @@ template&lt;typename TObject , typename TMemManager &gt; </div>
           <td></td>
           <td class="paramtype"><a class="el" href="classmomo_1_1_object_relocator.html#ad4236bfafdc0d0a5e55c912ac3beaaac">Object</a> *&#160;</td>
           <td class="paramname"><em>dstObject</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a00dc8c1c7db58c90deb8de626838352c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00dc8c1c7db58c90deb8de626838352c">&#9670;&nbsp;</a></span>RelocateNothrow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TObject , typename TMemManager &gt; </div>
+<div class="memtemplate">
+template&lt;bool enable = isTriviallyRelocatable&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt;enable&gt; <a class="el" href="classmomo_1_1_object_relocator.html">momo::ObjectRelocator</a>&lt; TObject, TMemManager &gt;::RelocateNothrow </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_object_relocator.html#a1c760d1e86f00528e3dce80fdcd63124">MemManager</a> &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_object_relocator.html#ad4236bfafdc0d0a5e55c912ac3beaaac">Object</a> *&#160;</td>
+          <td class="paramname"><em>srcObjects</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_object_relocator.html#ad4236bfafdc0d0a5e55c912ac3beaaac">Object</a> *&#160;</td>
+          <td class="paramname"><em>dstObjects</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>count</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

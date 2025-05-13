@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::TreeTraitsStd&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt; Class Template Reference</title>
+<title>momo: momo::TreeTraitsStd&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -88,7 +88,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1_tree_traits_std.html',''
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classmomo_1_1_tree_traits_std-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::TreeTraitsStd&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt; Class Template Reference</div>  </div>
+<div class="title">momo::TreeTraitsStd&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -96,117 +96,117 @@ $(document).ready(function(){initNavTree('classmomo_1_1_tree_traits_std.html',''
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a051012fe72acdf7ffece35f13c019994"><td class="memItemLeft" align="right" valign="top">typedef TKey&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a051012fe72acdf7ffece35f13c019994">Key</a></td></tr>
-<tr class="separator:a051012fe72acdf7ffece35f13c019994"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae35647d09083542336711d9d38269839"><td class="memItemLeft" align="right" valign="top">typedef TLessFunc&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a></td></tr>
-<tr class="separator:ae35647d09083542336711d9d38269839"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31f0467b44c90c352293762cf71b571a"><td class="memItemLeft" align="right" valign="top">typedef TTreeNode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a31f0467b44c90c352293762cf71b571a">TreeNode</a></td></tr>
-<tr class="separator:a31f0467b44c90c352293762cf71b571a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a695328f62e5844d1a4cebc8c76344e7d"><td class="memTemplParams" colspan="2">template&lt;typename ItemTraits &gt; </td></tr>
-<tr class="memitem:a695328f62e5844d1a4cebc8c76344e7d"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a695328f62e5844d1a4cebc8c76344e7d">Node</a> = typename TreeNode::template <a class="el" href="classmomo_1_1_tree_traits_std.html#a695328f62e5844d1a4cebc8c76344e7d">Node</a>&lt; ItemTraits &gt;</td></tr>
-<tr class="separator:a695328f62e5844d1a4cebc8c76344e7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15e2cc7f07c3674ff6b4676b1a8396e6"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
-<tr class="memitem:a15e2cc7f07c3674ff6b4676b1a8396e6"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a15e2cc7f07c3674ff6b4676b1a8396e6">IsValidKeyArg</a> = <a class="el" href="structmomo_1_1internal_1_1_tree_traits_std_is_valid_key_arg.html">internal::TreeTraitsStdIsValidKeyArg</a>&lt; <a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a> &gt;</td></tr>
-<tr class="separator:a15e2cc7f07c3674ff6b4676b1a8396e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac3ed4772cf46d1121daaa8189ed46bf"><td class="memItemLeft" align="right" valign="top">typedef TKey&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#aac3ed4772cf46d1121daaa8189ed46bf">Key</a></td></tr>
+<tr class="separator:aac3ed4772cf46d1121daaa8189ed46bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a211527835a7b9621b3c2f793fcf806bb"><td class="memItemLeft" align="right" valign="top">typedef TLessComparer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a></td></tr>
+<tr class="separator:a211527835a7b9621b3c2f793fcf806bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa68339ad2b64b6c8a153cbe1cdccc51f"><td class="memItemLeft" align="right" valign="top">typedef TTreeNode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#aa68339ad2b64b6c8a153cbe1cdccc51f">TreeNode</a></td></tr>
+<tr class="separator:aa68339ad2b64b6c8a153cbe1cdccc51f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aedf7fea23d1561ed031d518654de5b65"><td class="memTemplParams" colspan="2">template&lt;typename ItemTraits &gt; </td></tr>
+<tr class="memitem:aedf7fea23d1561ed031d518654de5b65"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#aedf7fea23d1561ed031d518654de5b65">Node</a> = typename TreeNode::template <a class="el" href="classmomo_1_1_tree_traits_std.html#aedf7fea23d1561ed031d518654de5b65">Node</a>&lt; ItemTraits &gt;</td></tr>
+<tr class="separator:aedf7fea23d1561ed031d518654de5b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99a1e30dd87d13a3e1c680587bfa6029"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
+<tr class="memitem:a99a1e30dd87d13a3e1c680587bfa6029"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a99a1e30dd87d13a3e1c680587bfa6029">IsValidKeyArg</a> = <a class="el" href="structmomo_1_1internal_1_1_tree_traits_std_is_valid_key_arg.html">internal::TreeTraitsStdIsValidKeyArg</a>&lt; <a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a> &gt;</td></tr>
+<tr class="separator:a99a1e30dd87d13a3e1c680587bfa6029"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a263c4e50c598ba9647c5694322cd38bc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a263c4e50c598ba9647c5694322cd38bc">TreeTraitsStd</a> (const <a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a> &amp;lessFunc=<a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a>())</td></tr>
-<tr class="separator:a263c4e50c598ba9647c5694322cd38bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc87bdaf5eda25ea821dad57e40ab99d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#adc87bdaf5eda25ea821dad57e40ab99d">GetSplitItemIndex</a> (size_t itemCount, size_t newItemIndex) const noexcept</td></tr>
-<tr class="separator:adc87bdaf5eda25ea821dad57e40ab99d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8c48caee38a92e2b16ade470abe1913"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg1 , typename KeyArg2 &gt; </td></tr>
-<tr class="memitem:ad8c48caee38a92e2b16ade470abe1913"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#ad8c48caee38a92e2b16ade470abe1913">IsLess</a> (const KeyArg1 &amp;key1, const KeyArg2 &amp;key2) const</td></tr>
-<tr class="separator:ad8c48caee38a92e2b16ade470abe1913"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2845e17bc8aeb4caa46b62894ac9f8a"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#ad2845e17bc8aeb4caa46b62894ac9f8a">GetLessFunc</a> () const noexcept</td></tr>
-<tr class="separator:ad2845e17bc8aeb4caa46b62894ac9f8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f0c374b162cfe33ed4e04709b451372"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a8f0c374b162cfe33ed4e04709b451372">TreeTraitsStd</a> (const <a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a> &amp;lessComp=<a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a>())</td></tr>
+<tr class="separator:a8f0c374b162cfe33ed4e04709b451372"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28a510bbc957347e3fbf6deb54561032"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a28a510bbc957347e3fbf6deb54561032">GetSplitItemIndex</a> (size_t itemCount, size_t newItemIndex) const noexcept</td></tr>
+<tr class="separator:a28a510bbc957347e3fbf6deb54561032"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75aecedce27d64acef6cad010354dbac"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg1 , typename KeyArg2 &gt; </td></tr>
+<tr class="memitem:a75aecedce27d64acef6cad010354dbac"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a75aecedce27d64acef6cad010354dbac">IsLess</a> (const KeyArg1 &amp;key1, const KeyArg2 &amp;key2) const</td></tr>
+<tr class="separator:a75aecedce27d64acef6cad010354dbac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4194b47566b3026ba11b321f48584055"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a4194b47566b3026ba11b321f48584055">GetLessComparer</a> () const noexcept</td></tr>
+<tr class="separator:a4194b47566b3026ba11b321f48584055"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a480dea9848f0a5fb1868b1602ef55fa2"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a480dea9848f0a5fb1868b1602ef55fa2">multiKey</a> = tMultiKey</td></tr>
-<tr class="separator:a480dea9848f0a5fb1868b1602ef55fa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a009acc3e4f743a1b17ba277cb45eafc6"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a009acc3e4f743a1b17ba277cb45eafc6">useLinearSearch</a></td></tr>
-<tr class="separator:a009acc3e4f743a1b17ba277cb45eafc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0093bde9b85e14ebbbed1e6e0b9e6ef3"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a0093bde9b85e14ebbbed1e6e0b9e6ef3">multiKey</a> = tMultiKey</td></tr>
+<tr class="separator:a0093bde9b85e14ebbbed1e6e0b9e6ef3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09b99046eb703aa42e12f51dc0782959"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_traits_std.html#a09b99046eb703aa42e12f51dc0782959">useLinearSearch</a></td></tr>
+<tr class="separator:a09b99046eb703aa42e12f51dc0782959"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a15e2cc7f07c3674ff6b4676b1a8396e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a15e2cc7f07c3674ff6b4676b1a8396e6">&#9670;&nbsp;</a></span>IsValidKeyArg</h2>
+<a id="a99a1e30dd87d13a3e1c680587bfa6029"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99a1e30dd87d13a3e1c680587bfa6029">&#9670;&nbsp;</a></span>IsValidKeyArg</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename KeyArg &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#a15e2cc7f07c3674ff6b4676b1a8396e6">IsValidKeyArg</a> =  <a class="el" href="structmomo_1_1internal_1_1_tree_traits_std_is_valid_key_arg.html">internal::TreeTraitsStdIsValidKeyArg</a>&lt;<a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a>&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#a99a1e30dd87d13a3e1c680587bfa6029">IsValidKeyArg</a> =  <a class="el" href="structmomo_1_1internal_1_1_tree_traits_std_is_valid_key_arg.html">internal::TreeTraitsStdIsValidKeyArg</a>&lt;<a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a>&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a051012fe72acdf7ffece35f13c019994"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a051012fe72acdf7ffece35f13c019994">&#9670;&nbsp;</a></span>Key</h2>
+<a id="aac3ed4772cf46d1121daaa8189ed46bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac3ed4772cf46d1121daaa8189ed46bf">&#9670;&nbsp;</a></span>Key</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TKey <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#a051012fe72acdf7ffece35f13c019994">Key</a></td>
+          <td class="memname">typedef TKey <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#aac3ed4772cf46d1121daaa8189ed46bf">Key</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ae35647d09083542336711d9d38269839"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae35647d09083542336711d9d38269839">&#9670;&nbsp;</a></span>LessFunc</h2>
+<a id="a211527835a7b9621b3c2f793fcf806bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a211527835a7b9621b3c2f793fcf806bb">&#9670;&nbsp;</a></span>LessComparer</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TLessFunc <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a></td>
+          <td class="memname">typedef TLessComparer <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a695328f62e5844d1a4cebc8c76344e7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a695328f62e5844d1a4cebc8c76344e7d">&#9670;&nbsp;</a></span>Node</h2>
+<a id="aedf7fea23d1561ed031d518654de5b65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedf7fea23d1561ed031d518654de5b65">&#9670;&nbsp;</a></span>Node</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename ItemTraits &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#a695328f62e5844d1a4cebc8c76344e7d">Node</a> =  typename TreeNode::template <a class="el" href="classmomo_1_1_tree_traits_std.html#a695328f62e5844d1a4cebc8c76344e7d">Node</a>&lt;ItemTraits&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#aedf7fea23d1561ed031d518654de5b65">Node</a> =  typename TreeNode::template <a class="el" href="classmomo_1_1_tree_traits_std.html#aedf7fea23d1561ed031d518654de5b65">Node</a>&lt;ItemTraits&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a31f0467b44c90c352293762cf71b571a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31f0467b44c90c352293762cf71b571a">&#9670;&nbsp;</a></span>TreeNode</h2>
+<a id="aa68339ad2b64b6c8a153cbe1cdccc51f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa68339ad2b64b6c8a153cbe1cdccc51f">&#9670;&nbsp;</a></span>TreeNode</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef TTreeNode <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#a31f0467b44c90c352293762cf71b571a">TreeNode</a></td>
+          <td class="memname">typedef TTreeNode <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html#aa68339ad2b64b6c8a153cbe1cdccc51f">TreeNode</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -214,22 +214,22 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tM
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a263c4e50c598ba9647c5694322cd38bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a263c4e50c598ba9647c5694322cd38bc">&#9670;&nbsp;</a></span>TreeTraitsStd()</h2>
+<a id="a8f0c374b162cfe33ed4e04709b451372"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f0c374b162cfe33ed4e04709b451372">&#9670;&nbsp;</a></span>TreeTraitsStd()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html">TreeTraitsStd</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::<a class="el" href="classmomo_1_1_tree_traits_std.html">TreeTraitsStd</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a> &amp;&#160;</td>
-          <td class="paramname"><em>lessFunc</em> = <code><a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a>()</code></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a> &amp;&#160;</td>
+          <td class="paramname"><em>lessComp</em> = <code><a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a>()</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -243,19 +243,19 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tM
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad2845e17bc8aeb4caa46b62894ac9f8a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad2845e17bc8aeb4caa46b62894ac9f8a">&#9670;&nbsp;</a></span>GetLessFunc()</h2>
+<a id="a4194b47566b3026ba11b321f48584055"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4194b47566b3026ba11b321f48584055">&#9670;&nbsp;</a></span>GetLessComparer()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classmomo_1_1_tree_traits_std.html#ae35647d09083542336711d9d38269839">LessFunc</a>&amp; <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::GetLessFunc </td>
+          <td class="memname">const <a class="el" href="classmomo_1_1_tree_traits_std.html#a211527835a7b9621b3c2f793fcf806bb">LessComparer</a>&amp; <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::GetLessComparer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -270,19 +270,19 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tM
 
 </div>
 </div>
-<a id="adc87bdaf5eda25ea821dad57e40ab99d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adc87bdaf5eda25ea821dad57e40ab99d">&#9670;&nbsp;</a></span>GetSplitItemIndex()</h2>
+<a id="a28a510bbc957347e3fbf6deb54561032"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28a510bbc957347e3fbf6deb54561032">&#9670;&nbsp;</a></span>GetSplitItemIndex()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::GetSplitItemIndex </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::GetSplitItemIndex </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>itemCount</em>, </td>
@@ -308,13 +308,13 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tM
 
 </div>
 </div>
-<a id="ad8c48caee38a92e2b16ade470abe1913"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8c48caee38a92e2b16ade470abe1913">&#9670;&nbsp;</a></span>IsLess()</h2>
+<a id="a75aecedce27d64acef6cad010354dbac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75aecedce27d64acef6cad010354dbac">&#9670;&nbsp;</a></span>IsLess()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename KeyArg1 , typename KeyArg2 &gt; </div>
 <table class="mlabels">
@@ -322,7 +322,7 @@ template&lt;typename KeyArg1 , typename KeyArg2 &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::IsLess </td>
+          <td class="memname">bool <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::IsLess </td>
           <td>(</td>
           <td class="paramtype">const KeyArg1 &amp;&#160;</td>
           <td class="paramname"><em>key1</em>, </td>
@@ -349,19 +349,19 @@ template&lt;typename KeyArg1 , typename KeyArg2 &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a480dea9848f0a5fb1868b1602ef55fa2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a480dea9848f0a5fb1868b1602ef55fa2">&#9670;&nbsp;</a></span>multiKey</h2>
+<a id="a0093bde9b85e14ebbbed1e6e0b9e6ef3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0093bde9b85e14ebbbed1e6e0b9e6ef3">&#9670;&nbsp;</a></span>multiKey</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::multiKey = tMultiKey</td>
+          <td class="memname">const bool <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::multiKey = tMultiKey</td>
         </tr>
       </table>
   </td>
@@ -373,19 +373,19 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tM
 
 </div>
 </div>
-<a id="a009acc3e4f743a1b17ba277cb45eafc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a009acc3e4f743a1b17ba277cb45eafc6">&#9670;&nbsp;</a></span>useLinearSearch</h2>
+<a id="a09b99046eb703aa42e12f51dc0782959"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09b99046eb703aa42e12f51dc0782959">&#9670;&nbsp;</a></span>useLinearSearch</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
+template&lt;typename TKey , typename TLessComparer  = std::less&lt;TKey&gt;, bool tMultiKey = false, typename TTreeNode  = TreeNodeDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessFunc, tMultiKey, TTreeNode &gt;::useLinearSearch</td>
+          <td class="memname">const bool <a class="el" href="classmomo_1_1_tree_traits_std.html">momo::TreeTraitsStd</a>&lt; TKey, TLessComparer, tMultiKey, TTreeNode &gt;::useLinearSearch</td>
         </tr>
       </table>
   </td>
@@ -395,7 +395,7 @@ template&lt;typename TKey , typename TLessFunc  = std::less&lt;TKey&gt;, bool tM
 </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
-<div class="line">        std::is_same&lt;LessFunc, std::less&lt;Key&gt;&gt;::value &amp;&amp; IsFastComparable&lt;Key&gt;::value</div>
+<div class="line">        std::is_same&lt;LessComparer, std::less&lt;Key&gt;&gt;::value &amp;&amp; IsFastComparable&lt;Key&gt;::value</div>
 </div><!-- fragment -->
 </div>
 </div>

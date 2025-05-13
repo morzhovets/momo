@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -131,6 +131,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a32184d49fb57956d45d13cdef5e488c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49d59a338f1d39bcf21140e6aabe4241"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a49d59a338f1d39bcf21140e6aabe4241">HashMultiMap</a> (const <a class="el" href="classmomo_1_1_hash_multi_map.html#a4c9c8dc5531010d3254cd49f4c201822">HashTraits</a> &amp;hashTraits, <a class="el" href="classmomo_1_1_hash_multi_map.html#ae0fc3047de24379f19d603dca20f2cf4">MemManager</a> memManager=<a class="el" href="classmomo_1_1_hash_multi_map.html#ae0fc3047de24379f19d603dca20f2cf4">MemManager</a>())</td></tr>
 <tr class="separator:a49d59a338f1d39bcf21140e6aabe4241"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a090ce208ad195bb5742056a9adea6932"><td class="memTemplParams" colspan="2">template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </td></tr>
+<tr class="memitem:a090ce208ad195bb5742056a9adea6932"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#a090ce208ad195bb5742056a9adea6932">HashMultiMap</a> (ArgIterator begin, ArgSentinel end, const <a class="el" href="classmomo_1_1_hash_multi_map.html#a4c9c8dc5531010d3254cd49f4c201822">HashTraits</a> &amp;hashTraits=<a class="el" href="classmomo_1_1_hash_multi_map.html#a4c9c8dc5531010d3254cd49f4c201822">HashTraits</a>(), <a class="el" href="classmomo_1_1_hash_multi_map.html#ae0fc3047de24379f19d603dca20f2cf4">MemManager</a> memManager=<a class="el" href="classmomo_1_1_hash_multi_map.html#ae0fc3047de24379f19d603dca20f2cf4">MemManager</a>())</td></tr>
+<tr class="separator:a090ce208ad195bb5742056a9adea6932"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc643d14a2fb70a00bf3bf0334f950d9"><td class="memTemplParams" colspan="2">template&lt;typename Pair  = std::pair&lt;Key, Value&gt;&gt; </td></tr>
 <tr class="memitem:acc643d14a2fb70a00bf3bf0334f950d9"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html#acc643d14a2fb70a00bf3bf0334f950d9">HashMultiMap</a> (std::initializer_list&lt; Pair &gt; pairs)</td></tr>
 <tr class="separator:acc643d14a2fb70a00bf3bf0334f950d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -470,7 +473,7 @@ template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a32184d49fb57956d45d13cdef5e488c2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a32184d49fb57956d45d13cdef5e488c2">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[1/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a32184d49fb57956d45d13cdef5e488c2">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[1/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -497,7 +500,7 @@ template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits
 </div>
 </div>
 <a id="a49d59a338f1d39bcf21140e6aabe4241"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a49d59a338f1d39bcf21140e6aabe4241">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[2/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a49d59a338f1d39bcf21140e6aabe4241">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[2/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -534,8 +537,60 @@ template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits
 
 </div>
 </div>
+<a id="a090ce208ad195bb5742056a9adea6932"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a090ce208ad195bb5742056a9adea6932">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[3/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault, typename TKeyValueTraits  = HashMultiMapKeyValueTraits&lt;TKey, TValue, TMemManager&gt;, typename TSettings  = HashMultiMapSettings&gt; </div>
+<div class="memtemplate">
+template&lt;typename ArgIterator , typename ArgSentinel , typename  = decltype(internal::MapPairConverter&lt;ArgIterator&gt;::Convert(*std::declval&lt;ArgIterator&gt;()))&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmomo_1_1_hash_multi_map.html">momo::HashMultiMap</a>&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;::<a class="el" href="classmomo_1_1_hash_multi_map.html">HashMultiMap</a> </td>
+          <td>(</td>
+          <td class="paramtype">ArgIterator&#160;</td>
+          <td class="paramname"><em>begin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ArgSentinel&#160;</td>
+          <td class="paramname"><em>end</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classmomo_1_1_hash_multi_map.html#a4c9c8dc5531010d3254cd49f4c201822">HashTraits</a> &amp;&#160;</td>
+          <td class="paramname"><em>hashTraits</em> = <code><a class="el" href="classmomo_1_1_hash_multi_map.html#a4c9c8dc5531010d3254cd49f4c201822">HashTraits</a>()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1_hash_multi_map.html#ae0fc3047de24379f19d603dca20f2cf4">MemManager</a>&#160;</td>
+          <td class="paramname"><em>memManager</em> = <code><a class="el" href="classmomo_1_1_hash_multi_map.html#ae0fc3047de24379f19d603dca20f2cf4">MemManager</a>()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="acc643d14a2fb70a00bf3bf0334f950d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc643d14a2fb70a00bf3bf0334f950d9">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[3/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#acc643d14a2fb70a00bf3bf0334f950d9">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[4/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -565,7 +620,7 @@ template&lt;typename Pair  = std::pair&lt;Key, Value&gt;&gt; </div>
 </div>
 </div>
 <a id="acf529ecbd7a48498f4bef412381c3b03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf529ecbd7a48498f4bef412381c3b03">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[4/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#acf529ecbd7a48498f4bef412381c3b03">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[5/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -611,7 +666,7 @@ template&lt;typename Pair  = std::pair&lt;Key, Value&gt;&gt; </div>
 </div>
 </div>
 <a id="ab3610769049aac50051eefd8c7f37081"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3610769049aac50051eefd8c7f37081">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[5/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3610769049aac50051eefd8c7f37081">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[6/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -639,7 +694,7 @@ template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits
 </div>
 </div>
 <a id="aa9d6a5ba75e103a8caec1900c5b7e4c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9d6a5ba75e103a8caec1900c5b7e4c1">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[6/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9d6a5ba75e103a8caec1900c5b7e4c1">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[7/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -667,7 +722,7 @@ template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits
 </div>
 </div>
 <a id="a4cea93cff1cbc875165d645b964c9d92"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4cea93cff1cbc875165d645b964c9d92">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[7/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cea93cff1cbc875165d645b964c9d92">&#9670;&nbsp;</a></span>HashMultiMap() <span class="overload">[8/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.10</span>
+   &#160;<span id="projectnumber">3.11</span>
    </div>
   </td>
  </tr>
@@ -233,12 +233,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af5ed2c4aec23a73a945e134639267817"><td class="memTemplParams" colspan="2">template&lt;typename ItemFilter &gt; </td></tr>
 <tr class="memitem:af5ed2c4aec23a73a945e134639267817"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo_1_1internal.html#a3240c94f5aacdf8b48d58980f85348f0">internal::EnableIf</a>&lt; <a class="el" href="structmomo_1_1internal_1_1_is_invocable.html">internal::IsInvocable</a>&lt; const ItemFilter &amp;, bool, const <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &amp; &gt;::value, size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#af5ed2c4aec23a73a945e134639267817">Remove</a> (const ItemFilter &amp;itemFilter)</td></tr>
 <tr class="separator:af5ed2c4aec23a73a945e134639267817"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade3c47b4ab00b5946b538b2a01d8cc37"><td class="memTemplParams" colspan="2">template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </td></tr>
-<tr class="memitem:ade3c47b4ab00b5946b538b2a01d8cc37"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#ade3c47b4ab00b5946b538b2a01d8cc37">Contains</a> (const <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &amp;item, const EqualFunc &amp;equalFunc=EqualFunc()) const</td></tr>
-<tr class="separator:ade3c47b4ab00b5946b538b2a01d8cc37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac6302447a505ac66b35e6b6a670c7b1"><td class="memTemplParams" colspan="2">template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </td></tr>
-<tr class="memitem:aac6302447a505ac66b35e6b6a670c7b1"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#aac6302447a505ac66b35e6b6a670c7b1">IsEqual</a> (const <a class="el" href="classmomo_1_1_array.html">Array</a> &amp;array, const EqualFunc &amp;equalFunc=EqualFunc()) const</td></tr>
-<tr class="separator:aac6302447a505ac66b35e6b6a670c7b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00c8f4cb43e7694e268cecfed4a7f5f2"><td class="memTemplParams" colspan="2">template&lt;typename ItemEqualComparer  = std::equal_to&lt;Item&gt;&gt; </td></tr>
+<tr class="memitem:a00c8f4cb43e7694e268cecfed4a7f5f2"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#a00c8f4cb43e7694e268cecfed4a7f5f2">Contains</a> (const <a class="el" href="classmomo_1_1_array.html#a3a51b5e4c45b7e293883b738e07e1ae2">Item</a> &amp;item, const ItemEqualComparer &amp;itemEqualComp=ItemEqualComparer()) const</td></tr>
+<tr class="separator:a00c8f4cb43e7694e268cecfed4a7f5f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc91119eb4b9d31e9cb2e7a8419c50ef"><td class="memTemplParams" colspan="2">template&lt;typename ItemEqualComparer  = std::equal_to&lt;Item&gt;&gt; </td></tr>
+<tr class="memitem:afc91119eb4b9d31e9cb2e7a8419c50ef"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html#afc91119eb4b9d31e9cb2e7a8419c50ef">IsEqual</a> (const <a class="el" href="classmomo_1_1_array.html">Array</a> &amp;array, const ItemEqualComparer &amp;itemEqualComp=ItemEqualComparer()) const</td></tr>
+<tr class="separator:afc91119eb4b9d31e9cb2e7a8419c50ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -1027,15 +1027,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="ade3c47b4ab00b5946b538b2a01d8cc37"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade3c47b4ab00b5946b538b2a01d8cc37">&#9670;&nbsp;</a></span>Contains()</h2>
+<a id="a00c8f4cb43e7694e268cecfed4a7f5f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00c8f4cb43e7694e268cecfed4a7f5f2">&#9670;&nbsp;</a></span>Contains()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </div>
+template&lt;typename ItemEqualComparer  = std::equal_to&lt;Item&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1049,8 +1049,8 @@ template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const EqualFunc &amp;&#160;</td>
-          <td class="paramname"><em>equalFunc</em> = <code>EqualFunc()</code>&#160;</td>
+          <td class="paramtype">const ItemEqualComparer &amp;&#160;</td>
+          <td class="paramname"><em>itemEqualComp</em> = <code>ItemEqualComparer()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1786,15 +1786,15 @@ template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename
 
 </div>
 </div>
-<a id="aac6302447a505ac66b35e6b6a670c7b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac6302447a505ac66b35e6b6a670c7b1">&#9670;&nbsp;</a></span>IsEqual()</h2>
+<a id="afc91119eb4b9d31e9cb2e7a8419c50ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc91119eb4b9d31e9cb2e7a8419c50ef">&#9670;&nbsp;</a></span>IsEqual()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;, typename TSettings  = ArraySettings&lt;&gt;&gt; </div>
 <div class="memtemplate">
-template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </div>
+template&lt;typename ItemEqualComparer  = std::equal_to&lt;Item&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -1808,8 +1808,8 @@ template&lt;typename EqualFunc  = std::equal_to&lt;Item&gt;&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const EqualFunc &amp;&#160;</td>
-          <td class="paramname"><em>equalFunc</em> = <code>EqualFunc()</code>&#160;</td>
+          <td class="paramtype">const ItemEqualComparer &amp;&#160;</td>
+          <td class="paramname"><em>itemEqualComp</em> = <code>ItemEqualComparer()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
