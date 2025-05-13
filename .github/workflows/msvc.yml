@@ -15,7 +15,7 @@ jobs:
           test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '/WX'
-          win_ver: '2025'
+          win_ver: '2022'
 
         - toolset: '14.0'
           arch: 'x64'
@@ -23,7 +23,7 @@ jobs:
           test_libcxx_new: 'Off'
           test_extra: 'On'
           flags: '/WX'
-          win_ver: '2025'
+          win_ver: '2022'
 
         - toolset: '14.0'
           arch: 'x64_x86'
@@ -31,7 +31,7 @@ jobs:
           test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '/WX'
-          win_ver: '2025'
+          win_ver: '2022'
 
         - toolset: '14.0'
           arch: 'x64_x86'
@@ -39,7 +39,7 @@ jobs:
           test_libcxx_new: 'Off'
           test_extra: 'On'
           flags: '/WX'
-          win_ver: '2025'
+          win_ver: '2022'
 
         # Visual Studio 2017
         - toolset: '14.1'
@@ -48,7 +48,7 @@ jobs:
           test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '/std:c++17 /WX'
-          win_ver: '2025'
+          win_ver: '2022'
 
         # Visual Studio 2019
         - toolset: '14.2'
