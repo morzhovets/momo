@@ -8,8 +8,8 @@ jobs:
       matrix:
         include:
 
-        # Visual Studio 2019
-        - win_ver: '2019'
+        # Visual Studio 2022
+        - win_ver: '2025'
           build_type: 'Release'
           flags: '/std:c++17 /WX'
 
