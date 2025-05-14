@@ -180,7 +180,7 @@ jobs:
     - name: Install Ninja
       run: choco install ninja
     - name: Setup MSVC
-      uses: TheMrMilchmann/setup-msvc-dev@v3
+      uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: ${{ matrix.arch }}
         toolset: ${{ matrix.toolset }}
