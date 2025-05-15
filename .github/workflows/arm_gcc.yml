@@ -1,0 +1,41 @@
+name: ARM64 GCC
+
+on: [push, pull_request]
+
+jobs:
+  momo-test:
+    strategy:
+      matrix:
+        include:
+
+        - gcc_ver: '14'
+          build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++26'
+
+        - gcc_ver: '14'
+          build_type: 'Debug'
+          test_extra: 'Off'
+          flags: '-std=c++26'
+
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Install Ninja
+      run: sudo apt-get install ninja-build
+    - name: Install GCC
+      run: sudo apt install g++-${{ matrix.gcc_ver }}
+    - name: Build
+      env:
+        CXX: g++-${{ matrix.gcc_ver }}
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+        cmake --build . -v
+    - name: Test
+      run: test/build/momo_test

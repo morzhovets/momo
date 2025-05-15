@@ -1,0 +1,36 @@
+name: ARM64 MSVC
+
+on: [push, pull_request]
+
+jobs:
+  momo-test:
+    strategy:
+      matrix:
+        include:
+
+        - build_type: 'Release'
+          test_extra: 'Off'
+          flags: '/std:c++latest'
+
+        - build_type: 'Debug'
+          test_extra: 'Off'
+          flags: '/std:c++latest'
+
+    runs-on: windows-11-arm
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Install Ninja
+      run: choco install ninja
+    - name: Build
+      env:
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+        cmake --build . -v
+    - name: Test
+      run: test/build/momo_test.exe
