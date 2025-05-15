@@ -5,15 +5,11 @@ project(momo_test
 
 option(MOMO_TEST_EXTRA "Test extra settings" OFF)
 
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-msse2" HAS_SSE2_FLAG)
-
 message(STATUS "CMAKE_CXX_COMPILER_ID: " ${CMAKE_CXX_COMPILER_ID})
 message(STATUS "CMAKE_CXX_COMPILER_FRONTEND_VARIANT: " ${CMAKE_CXX_COMPILER_FRONTEND_VARIANT})
 message(STATUS "CMAKE_CXX_STANDARD: " ${CMAKE_CXX_STANDARD})
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 message(STATUS "MOMO_TEST_EXTRA: " ${MOMO_TEST_EXTRA})
-message(STATUS "HAS_SSE2_FLAG: " ${HAS_SSE2_FLAG})
 
 file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
 add_executable(momo_test ${MOMO_TEST_SOURCES})
@@ -38,6 +34,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Intel")
+
+  include(CheckCXXCompilerFlag)
+  check_cxx_compiler_flag("-msse2" HAS_SSE2_FLAG)
 
   if(HAS_SSE2_FLAG AND NOT MOMO_TEST_EXTRA)
     target_compile_options(momo_test PRIVATE -msse2)
