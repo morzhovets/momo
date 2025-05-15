@@ -25,6 +25,8 @@ jobs:
       run: choco install ninja
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: arm64
     - name: Build
       env:
         CXXFLAGS: ${{ matrix.flags }}
