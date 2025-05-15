@@ -25,6 +25,7 @@ jobs:
       run: choco install ninja
     - name: Build
       env:
+        CXX: cl
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
