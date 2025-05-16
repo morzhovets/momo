@@ -10,77 +10,77 @@ jobs:
 
         # x64
         - clang_ver: '18'
+          ubuntu_ver: '24.04'
           build_type: 'Release'
           test_extra: 'Off'
           flags: '-std=c++23 -Werror'
-          ubuntu_ver: '24.04'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04'
           build_type: 'Release'
           test_extra: 'On'
           flags: '-std=c++23 -Werror'
-          ubuntu_ver: '24.04'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04'
           build_type: 'Release'
           test_extra: 'Off'
           flags: '-std=c++26 -Werror'
-          ubuntu_ver: '24.04'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04'
           build_type: 'Release'
           test_extra: 'On'
           flags: '-std=c++26 -Werror'
-          ubuntu_ver: '24.04'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04'
           build_type: 'Debug'
           test_extra: 'Off'
           flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-          ubuntu_ver: '24.04'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04'
           build_type: 'Debug'
           test_extra: 'On'
           flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-          ubuntu_ver: '24.04'
 
         # ARM64
         - clang_ver: '18'
+          ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_extra: 'Off'
           flags: '-std=c++23 -Werror'
-          ubuntu_ver: '24.04-arm'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_extra: 'On'
           flags: '-std=c++23 -Werror'
-          ubuntu_ver: '24.04-arm'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_extra: 'Off'
           flags: '-std=c++26 -Werror'
-          ubuntu_ver: '24.04-arm'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_extra: 'On'
           flags: '-std=c++26 -Werror'
-          ubuntu_ver: '24.04-arm'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04-arm'
           build_type: 'Debug'
           test_extra: 'Off'
           flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-          ubuntu_ver: '24.04-arm'
 
         - clang_ver: '18'
+          ubuntu_ver: '24.04-arm'
           build_type: 'Debug'
           test_extra: 'On'
           flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-          ubuntu_ver: '24.04-arm'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
 

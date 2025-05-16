@@ -101,6 +101,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Install Ninja
+      if: matrix.win_ver == '11-arm'
       run: choco install ninja
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1

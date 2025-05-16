@@ -51,8 +51,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install Ninja
-      run: choco install ninja
+#    - name: Install Ninja
+#      run: choco install ninja
     - name: Setup Clang
       uses: egor-tensin/setup-clang@v1
     - name: Build
