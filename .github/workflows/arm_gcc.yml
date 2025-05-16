@@ -39,14 +39,18 @@ jobs:
           flags: '-std=c++26 -Werror -Wno-psabi'
 
     runs-on: ubuntu-24.04-arm
+    container: ubuntu:24.04
 
     steps:
+    - name: Install tools
+      run: |
+        apt-get update
+        apt-get install -y cmake
+        apt-get install -y ninja-build
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install Ninja
-      run: sudo apt-get install ninja-build
     - name: Install GCC
-      run: sudo apt install g++-${{ matrix.gcc_ver }}
+      run: apt-get install -y g++-${{ matrix.gcc_ver }}
     - name: Build
       env:
         CXX: g++-${{ matrix.gcc_ver }}

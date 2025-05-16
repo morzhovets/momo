@@ -8,64 +8,45 @@ jobs:
       matrix:
         include:
 
-        - build_type: 'Release'
-          test_extra: 'Off'
-          flags: '-std=c++26'
-          win_ver: '11-arm'
-
-        - build_type: 'Debug'
-          test_extra: 'Off'
-          flags: '-std=c++26'
-          win_ver: '11-arm'
-
         # x64
         - build_type: 'Release'
           test_extra: 'Off'
           flags: '-std=c++23 -Werror'
-          win_ver: '2025'
 
         - build_type: 'Release'
           test_extra: 'Off'
           flags: '-std=c++26 -Werror'
-          win_ver: '2025'
 
         - build_type: 'Debug'
           test_extra: 'Off'
           flags: '-std=c++26 -Werror'
-          win_ver: '2025'
 
         # x86
         - build_type: 'Release'
           test_extra: 'Off'
           flags: '-m32 -std=c++23 -Werror'
-          win_ver: '2025'
 
         - build_type: 'Release'
           test_extra: 'On'
           flags: '-m32 -std=c++23 -Werror'
-          win_ver: '2025'
 
         - build_type: 'Release'
           test_extra: 'Off'
           flags: '-m32 -std=c++26 -Werror'
-          win_ver: '2025'
 
         - build_type: 'Release'
           test_extra: 'On'
           flags: '-m32 -std=c++26 -Werror'
-          win_ver: '2025'
 
         - build_type: 'Debug'
           test_extra: 'Off'
           flags: '-m32 -std=c++26 -Werror'
-          win_ver: '2025'
 
         - build_type: 'Debug'
           test_extra: 'On'
           flags: '-m32 -std=c++26 -Werror'
-          win_ver: '2025'
 
-    runs-on: windows-${{ matrix.win_ver }}
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
