@@ -8,14 +8,13 @@ jobs:
       matrix:
         include:
 
-        # Apple Clang 15.0.0
+        # AppleClang 15.0.0 x64
         - macos_ver: '13'
           build_type: 'Release'
           test_extra: 'Off'
           flags: '-std=c++20 -Werror'
 
-        # macOS-14-arm64
-        # Apple Clang 15.0.0
+        # AppleClang 15.0.0 ARM64
         - macos_ver: '14'
           build_type: 'Release'
           test_extra: 'Off'
@@ -31,8 +30,7 @@ jobs:
           test_extra: 'Off'
           flags: '-std=c++20 -Werror'
 
-        # macOS-15-arm64
-        # Apple Clang 16.0.0
+        # AppleClang 16.0.0 ARM64
         - macos_ver: '15'
           build_type: 'Release'
           test_extra: 'Off'

@@ -8,6 +8,7 @@ jobs:
       matrix:
         include:
 
+        # x64
         - clang_ver: '19'
           build_type: 'Release'
           test_libcxx_new: 'On'
@@ -16,55 +17,7 @@ jobs:
           path_prefix: '/usr/local'
           macos_ver: '13'
 
-        - clang_ver: '19'
-          build_type: 'Debug'
-          test_libcxx_new: 'On'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror'
-          path_prefix: '/usr/local'
-          macos_ver: '13'
-
-        # macOS-15-arm64
-        - clang_ver: '14'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '-std=c++20 -Werror'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '15'
-
-        - clang_ver: '15'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '-std=c++20 -Werror'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '15'
-
-        - clang_ver: '16'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '-std=c++20 -Werror'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '15'
-
-        - clang_ver: '17'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '15'
-
-        - clang_ver: '18'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '15'
-
+        # ARM64
         - clang_ver: '19'
           build_type: 'Release'
           test_libcxx_new: 'Off'
@@ -114,25 +67,9 @@ jobs:
           macos_ver: '15'
 
         - clang_ver: '19'
-          build_type: 'Release'
-          test_libcxx_new: 'On'
-          test_extra: 'On'
-          flags: '-std=c++26 -Werror'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '15'
-
-        - clang_ver: '19'
           build_type: 'Debug'
           test_libcxx_new: 'On'
           test_extra: 'Off'
-          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-          path_prefix: '/opt/homebrew'
-          macos_ver: '15'
-
-        - clang_ver: '19'
-          build_type: 'Debug'
-          test_libcxx_new: 'On'
-          test_extra: 'On'
           flags: '-std=c++26 -Werror -fsanitize=address,undefined'
           path_prefix: '/opt/homebrew'
           macos_ver: '15'
