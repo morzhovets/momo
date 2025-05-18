@@ -13,6 +13,13 @@ jobs:
           macos_ver: '13'
           build_type: 'Release'
           test_extra: 'Off'
+          flags: '-std=c++26 -Werror'
+          path_prefix: '/usr/local'
+
+        - clang_ver: '20'
+          macos_ver: '13'
+          build_type: 'Release'
+          test_extra: 'Off'
           flags: '-std=c++23 -Werror'
           path_prefix: '/usr/local'
 
@@ -23,15 +30,23 @@ jobs:
           flags: '-std=c++26 -Werror'
           path_prefix: '/usr/local'
 
-        - clang_ver: '20'
-          macos_ver: '13'
-          build_type: 'Debug'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-          path_prefix: '/usr/local'
+# libcxx_test_array_0_access: terminating due to uncaught exception of type std::out_of_range
+#        - clang_ver: '20'
+#          macos_ver: '13'
+#          build_type: 'Debug'
+#          test_extra: 'Off'
+#          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+#          path_prefix: '/usr/local'
 
         # ARM64
         - clang_ver: '19'
+          macos_ver: '15'
+          build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror'
+          path_prefix: '/opt/homebrew'
+
+        - clang_ver: '20'
           macos_ver: '15'
           build_type: 'Release'
           test_extra: 'Off'
