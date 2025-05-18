@@ -55,7 +55,7 @@ public:
 
 private:
 	typedef MemManagerStd<base_allocator_type> MemManager;
-	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+	typedef momo::internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	typedef mem_pool_params MemPoolParams;
 	typedef momo::MemPool<MemPoolParams, MemManager> MemPool;
@@ -158,7 +158,7 @@ private:
 	static MemPoolParams pvGetMemPoolParams() noexcept
 	{
 		return MemPoolParams(sizeof(value_type),
-			internal::ObjectAlignmenter<value_type>::alignment);
+			momo::internal::ObjectAlignmenter<value_type>::alignment);
 	}
 
 	static bool pvIsEqual(const MemPoolParams& memPoolParams1,
