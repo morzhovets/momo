@@ -35,12 +35,14 @@ struct increasing_allocator {
       : min_elements(other.min_elements) {}
 
 #if TEST_STD_VER >= 23
+#if defined(__cpp_lib_allocate_at_least)
   TEST_CONSTEXPR_CXX23 std::allocation_result<T*> allocate_at_least(std::size_t n) {
     if (n < min_elements)
       n = min_elements;
     min_elements += 1000;
     return std::allocator<T>{}.allocate_at_least(n);
   }
+#endif
 #endif // TEST_STD_VER >= 23
 
   TEST_CONSTEXPR_CXX20 T* allocate(std::size_t n) { return std::allocator<T>().allocate(n); }
