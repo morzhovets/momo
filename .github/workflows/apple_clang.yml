@@ -11,92 +11,107 @@ jobs:
         # AppleClang 15.0.0 x64
         - macos_ver: '13'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++11 -Werror'
 
         - macos_ver: '13'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'On'
           flags: '-std=c++11 -Werror'
 
         - macos_ver: '13'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++14 -Werror'
 
         - macos_ver: '13'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++17 -Werror'
 
         - macos_ver: '13'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '13'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'On'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '13'
           build_type: 'Debug'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '13'
           build_type: 'Debug'
+          test_libcxx_new: 'Off'
           test_extra: 'On'
           flags: '-std=c++20 -Werror'
 
         # AppleClang 15.0.0 ARM64
         - macos_ver: '14'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++20 -Werror'
 
         # AppleClang 16.0.0 ARM64
         - macos_ver: '15'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++11 -Werror'
 
         - macos_ver: '15'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'On'
           flags: '-std=c++11 -Werror'
 
         - macos_ver: '15'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++14 -Werror'
 
         - macos_ver: '15'
           build_type: 'Release'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++17 -Werror'
 
         - macos_ver: '15'
           build_type: 'Release'
+          test_libcxx_new: 'On'
           test_extra: 'Off'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '15'
           build_type: 'Release'
+          test_libcxx_new: 'On'
           test_extra: 'On'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '15'
           build_type: 'Debug'
+          test_libcxx_new: 'On'
           test_extra: 'Off'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '15'
           build_type: 'Debug'
+          test_libcxx_new: 'On'
           test_extra: 'On'
           flags: '-std=c++20 -Werror'
-
-        # MOMO_TEST_LIBCXX_NEW
 
     runs-on: macos-${{ matrix.macos_ver }}
 
@@ -114,7 +129,7 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_LIBCXX_NEW=${{ matrix.test_libcxx_new }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test
