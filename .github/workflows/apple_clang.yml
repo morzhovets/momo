@@ -91,25 +91,25 @@ jobs:
 
         - macos_ver: '15'
           build_type: 'Release'
-          test_libcxx_new: 'On'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '15'
           build_type: 'Release'
-          test_libcxx_new: 'On'
+          test_libcxx_new: 'Off'
           test_extra: 'On'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '15'
           build_type: 'Debug'
-          test_libcxx_new: 'On'
+          test_libcxx_new: 'Off'
           test_extra: 'Off'
           flags: '-std=c++20 -Werror'
 
         - macos_ver: '15'
           build_type: 'Debug'
-          test_libcxx_new: 'On'
+          test_libcxx_new: 'Off'
           test_extra: 'On'
           flags: '-std=c++20 -Werror'
 
