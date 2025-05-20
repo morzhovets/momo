@@ -1,0 +1,70 @@
+name: AppleClang
+
+on: [push, pull_request]
+
+jobs:
+  momo-test:
+    strategy:
+      matrix:
+        include:
+
+        # AppleClang 17.0.0 ARM64
+        - xcode_ver: '16.3'
+          macos_ver: '15'
+          build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++23 -Werror'
+
+        - xcode_ver: '16.3'
+          macos_ver: '15'
+          build_type: 'Release'
+          test_extra: 'On'
+          flags: '-std=c++23 -Werror'
+
+        - xcode_ver: '16.3'
+          macos_ver: '15'
+          build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '16.3'
+          macos_ver: '15'
+          build_type: 'Release'
+          test_extra: 'On'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '16.3'
+          macos_ver: '15'
+          build_type: 'Debug'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '16.3'
+          macos_ver: '15'
+          build_type: 'Debug'
+          test_extra: 'On'
+          flags: '-std=c++26 -Werror'
+
+    runs-on: macos-${{ matrix.macos_ver }}
+
+    steps:
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: ${{ matrix.xcode_ver }}
+    - name: Checkout
+      uses: actions/checkout@v4
+#    - name: Install Ninja
+#      run: brew install ninja
+    - name: Build
+      env:
+        CXX: clang++
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+        cmake --build . -v
+    - name: Test
+      run: test/build/momo_test
