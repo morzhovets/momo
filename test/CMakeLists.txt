@@ -36,6 +36,11 @@ endif()
 
 if(MOMO_TEST_EXTRA)
   target_compile_definitions(momo_test PRIVATE TEST_EXTRA_SETTINGS)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+    target_compile_options(momo_test PRIVATE /GR-)
+  else()
+    target_compile_options(momo_test PRIVATE -fno-rtti)
+  endif()
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
@@ -66,17 +71,13 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
 
   include(CheckCXXCompilerFlag)
   check_cxx_compiler_flag("-msse2" HAS_SSE2_FLAG)
-
-  if(HAS_SSE2_FLAG AND NOT MOMO_TEST_EXTRA)
+  if(HAS_SSE2_FLAG)
     target_compile_options(momo_test PRIVATE -msse2)
   endif()
 
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+  if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
     target_compile_options(momo_test PRIVATE /W4)
   else()
-    if(MOMO_TEST_EXTRA)
-      target_compile_options(momo_test PRIVATE -fno-rtti)
-    endif()
     target_compile_options(momo_test PRIVATE -Wall -Wextra -pedantic)
   endif()
 
