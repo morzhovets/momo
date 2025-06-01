@@ -147,7 +147,7 @@ namespace internal
 			return mItemBuffer.Get();
 		}
 
-		void Release() noexcept
+		void Detach() noexcept
 		{
 			mMemManager = nullptr;
 		}

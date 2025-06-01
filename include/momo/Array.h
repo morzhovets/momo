@@ -753,7 +753,7 @@ public:
 			pvGrow(newCount, ArrayGrowCause::add);
 			ItemTraits::Relocate(memManager, std::addressof(itemHandler.Get()),
 				GetItems() + initCount, 1);
-			itemHandler.Release();
+			itemHandler.Detach();
 			mData.SetCount(newCount);
 		}
 		else
