@@ -219,19 +219,13 @@ public:
 	explicit SegmentedArray(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		try
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 		{
 			typedef typename ItemTraits::template Creator<
 				std::iter_reference_t<ArgIterator>> IterCreator;
 			MemManager& thisMemManager = GetMemManager();
 			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 				pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
-		}
-		catch (...)
-		{
-			pvDecCount(0);
-			pvDecCapacity(0);
-			throw;
 		}
 	}
 
@@ -260,16 +254,10 @@ public:
 		: SegmentedArray(MemManager(array.GetMemManager()))
 	{
 		pvIncCapacity(0, shrink ? array.GetCount() : array.GetCapacity());
-		try
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 		{
 			for (const Item& item : array)
 				this->AddBackNogrow(item);
-		}
-		catch (...)
-		{
-			pvDecCount(0);
-			pvDecCapacity(0);
-			throw;
 		}
 	}
 
@@ -296,8 +284,7 @@ public:
 
 	~SegmentedArray() noexcept
 	{
-		pvDecCount(0);
-		pvDecCapacity(0);
+		pvDestroy();
 	}
 
 	SegmentedArray& operator=(SegmentedArray&& array) noexcept
@@ -509,6 +496,12 @@ private:
 		MemManagerProxy::Deallocate(GetMemManager(), segment, segItemCount * sizeof(Item));
 	}
 
+	void pvDestroy() noexcept
+	{
+		pvDecCount(0);
+		pvDecCapacity(0);
+	}
+
 	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>
 	void pvSetCount(size_t count, FastCopyableFunctor<ItemMultiCreator> itemMultiCreator)
 	{
@@ -543,14 +536,10 @@ private:
 			MOMO_ASSERT(segItemIndex == 0);
 			mSegments.Reserve(segCount + 1);
 			Item* segment = pvAllocateSegment(segCount);
-			try
+			for (internal::Finalizer fin =
+				[this, segCount, segment] { pvDeallocateSegment(segCount, segment); }; fin; fin.Detach())
 			{
 				std::move(itemCreator)(segment);
-			}
-			catch (...)
-			{
-				pvDeallocateSegment(segCount, segment);
-				throw;
 			}
 			mSegments.AddBackNogrow(segment);
 		}
@@ -565,7 +554,12 @@ private:
 		size_t initCount = mCount;
 		if (count > initCapacity)
 			pvIncCapacity(initCapacity, count);
-		try
+		auto incReverter = [this, initCount, initCapacity] () noexcept
+		{
+			pvDecCount(initCount);
+			pvDecCapacity(initCapacity);
+		};
+		for (internal::Finalizer fin = incReverter; fin; fin.Detach())
 		{
 			size_t segIndex, segItemIndex;
 			Settings::GetSegmentItemIndexes(mCount, segIndex, segItemIndex);
@@ -581,12 +575,6 @@ private:
 					segItemIndex = 0;
 				}
 			}
-		}
-		catch (...)
-		{
-			pvDecCount(initCount);
-			pvDecCapacity(initCapacity);
-			throw;
 		}
 	}
 
@@ -617,7 +605,8 @@ private:
 		Settings::GetSegmentItemIndexes(capacity, segIndex, segItemIndex);
 		if (segItemIndex > 0)
 			++segIndex;
-		try
+		for (internal::Finalizer fin = [this, initCapacity] { pvDecCapacity(initCapacity); };
+			fin; fin.Detach())
 		{
 			for (size_t segCount = mSegments.GetCount(); segCount < segIndex; ++segCount)
 			{
@@ -625,11 +614,6 @@ private:
 				Item* segment = pvAllocateSegment(segCount);
 				mSegments.AddBackNogrow(segment);
 			}
-		}
-		catch (...)
-		{
-			pvDecCapacity(initCapacity);
-			throw;
 		}
 	}
 

@@ -342,14 +342,10 @@ private:
 			if (grow || capacity > internalCapacity)
 			{
 				Item* items = pvAllocate(capacity);
-				try
+				for (internal::Finalizer fin = [this, items, capacity] { pvDeallocate(items, capacity); };
+					fin; fin.Detach())
 				{
 					std::move(itemsCreator)(items);
-				}
-				catch (...)
-				{
-					pvDeallocate(items, capacity);
-					throw;
 				}
 				if (!pvIsInternal() && mCapacity > 0)
 					pvDeallocate(mItems, mCapacity);
@@ -369,14 +365,10 @@ private:
 				MOMO_ASSERT(!pvIsInternal());
 				size_t initCapacity = mCapacity;
 				Item* items = pvActivateInternalItems();
-				try
+				for (internal::Finalizer fin = [this, initCapacity] { mCapacity = initCapacity; };
+					fin; fin.Detach())
 				{
 					std::move(itemsCreator)(items);
-				}
-				catch (...)
-				{
-					mCapacity = initCapacity;	// deactivate mInternalItems
-					throw;
 				}
 				pvDeallocate(mItems, initCapacity);
 				mItems = items;
@@ -919,15 +911,12 @@ private:
 		{
 			Item* items = GetItems();
 			size_t index = initCount;
-			try
+			auto itemsDestroyer = [this, items, initCount, &index] () noexcept
+				{ ItemTraits::Destroy(GetMemManager(), items + initCount, index - initCount); };
+			for (internal::Finalizer fin = itemsDestroyer; fin; fin.Detach())
 			{
 				for (; index < newCount; ++index)
 					itemMultiCreator(items + index);
-			}
-			catch (...)
-			{
-				ItemTraits::Destroy(GetMemManager(), items + initCount, index - initCount);
-				throw;
 			}
 			mData.SetCount(newCount);
 		}
@@ -937,16 +926,13 @@ private:
 			auto itemsCreator = [this, initCount, newCount, itemMultiCreator] (Item* newItems)
 			{
 				size_t index = initCount;
-				try
+				auto itemsDestroyer = [this, newItems, initCount, &index] () noexcept
+					{ ItemTraits::Destroy(GetMemManager(), newItems + initCount, index - initCount); };
+				for (internal::Finalizer fin = itemsDestroyer; fin; fin.Detach())
 				{
 					for (; index < newCount; ++index)
 						itemMultiCreator(newItems + index);
 					ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, initCount);
-				}
-				catch (...)
-				{
-					ItemTraits::Destroy(GetMemManager(), newItems + initCount, index - initCount);
-					throw;
 				}
 			};
 			mData.template Reset<true>(newCapacity, newCount,

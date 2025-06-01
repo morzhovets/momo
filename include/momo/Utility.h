@@ -353,6 +353,44 @@ namespace internal
 		}
 	};
 
+	template<conceptExecutor TExecutor>
+	class Finalizer
+	{
+	public:
+		typedef TExecutor Executor;
+
+	public:
+		Finalizer(Executor exec)
+			: mExecutor(std::forward<Executor>(exec)),
+			mIsEmpty(false)
+		{
+		}
+
+		Finalizer(const Finalizer&) = delete;
+
+		~Finalizer() noexcept
+		{
+			if (!mIsEmpty)
+				std::forward<Executor>(mExecutor)();
+		}
+
+		Finalizer& operator=(const Finalizer&) = delete;
+
+		explicit operator bool() const noexcept
+		{
+			return !mIsEmpty;
+		}
+
+		void Detach() noexcept
+		{
+			mIsEmpty = true;
+		}
+
+	private:
+		Executor mExecutor;
+		bool mIsEmpty;
+	};
+
 	class ContainerAssigner
 	{
 	public:

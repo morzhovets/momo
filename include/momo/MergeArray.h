@@ -146,15 +146,10 @@ public:
 		: MergeArray(std::move(memManager))
 	{
 		pvInitCapacity(count);
-		try
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 		{
 			for (size_t i = 0; i < count; ++i)
 				this->AddBackNogrowVar();
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
 		}
 	}
 
@@ -162,15 +157,10 @@ public:
 		: MergeArray(std::move(memManager))
 	{
 		pvInitCapacity(count);
-		try
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 		{
 			for (size_t i = 0; i < count; ++i)
 				this->AddBackNogrow(item);
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
 		}
 	}
 
@@ -182,7 +172,7 @@ public:
 		MemManager& thisMemManager = GetMemManager();
 		if constexpr (std::forward_iterator<ArgIterator>)
 			pvInitCapacity(internal::UIntMath<>::Dist(begin, end));
-		try
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 		{
 			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 			{
@@ -191,11 +181,6 @@ public:
 				else
 					pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 			}
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
 		}
 	}
 
@@ -225,15 +210,10 @@ public:
 		: MergeArray(MemManager(array.GetMemManager()))
 	{
 		pvInitCapacity(shrink ? array.GetCount() : array.GetCapacity());
-		try
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 		{
 			for (const Item& item : array)
 				this->AddBackNogrow(item);
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
 		}
 	}
 
@@ -355,28 +335,20 @@ public:
 		if (mSegments.GetCount() <= segIndex)
 			mSegments.SetCount(segIndex + 1, nullptr);
 		mSegments[segIndex] = pvAllocateSegment(segIndex);
-		try
+		internal::Finalizer deallocerFin = [this] { pvDeallocateSegments(); };
+		for (size_t i = 1; i < segIndex; ++i)
 		{
-			for (size_t i = 1; i < segIndex; ++i)
-			{
-				if (mSegments[i] == nullptr && pvHasSegment(i, capacity))
-					mSegments[i] = pvAllocateSegment(i);
-			}
-			if (mCount >> (segIndex + logInitialItemCount) ==
-				mCapacity >> (segIndex + logInitialItemCount))
-			{
-				size_t segItemCount = mCount & ((initialItemCount << segIndex) - 1);
-				ItemTraits::Relocate(GetMemManager(), pvMakeIterator(mCount - segItemCount),
-					mSegments[segIndex], segItemCount);
-			}
+			if (mSegments[i] == nullptr && pvHasSegment(i, capacity))
+				mSegments[i] = pvAllocateSegment(i);
 		}
-		catch (...)
+		if (mCount >> (segIndex + logInitialItemCount) ==
+			mCapacity >> (segIndex + logInitialItemCount))
 		{
-			pvDeallocateSegments();
-			throw;
+			size_t segItemCount = mCount & ((initialItemCount << segIndex) - 1);
+			ItemTraits::Relocate(GetMemManager(), pvMakeIterator(mCount - segItemCount),
+				mSegments[segIndex], segItemCount);
 		}
 		mCapacity = capacity;
-		pvDeallocateSegments();
 	}
 
 	//void Shrink()
@@ -394,7 +366,9 @@ public:
 		size_t initCapacity = mCapacity;
 		mCapacity = capacity;
 		size_t segIndex = pvGetSegmentIndex(mCapacity - 1, initCapacity);
-		try
+		internal::Finalizer deallocerFin = [this] { pvDeallocateSegments(); };
+		for (internal::Finalizer fin = [this, initCapacity] { mCapacity = initCapacity; };
+			fin; fin.Detach())
 		{
 			for (size_t i = 1; i < segIndex; ++i)
 			{
@@ -409,13 +383,6 @@ public:
 					pvMakeIterator(mCount - segItemCount), segItemCount);
 			}
 		}
-		catch (...)
-		{
-			mCapacity = initCapacity;
-			pvDeallocateSegments();
-			throw;
-		}
-		pvDeallocateSegments();
 	}
 
 	//const Item& operator[](size_t index) const
@@ -579,18 +546,13 @@ private:
 		capacity = pvCeilCapacity(capacity);
 		size_t segCount = pvGetSegmentIndex(0, capacity) + 1;
 		mSegments.SetCount(segCount, nullptr);
-		try
+		for (internal::Finalizer fin = [this] { pvDeallocateSegments(); }; fin; fin.Detach())
 		{
 			for (size_t i = 0; i < segCount; ++i)
 			{
 				if (pvHasSegment(i, capacity))
 					mSegments[i] = pvAllocateSegment(i);
 			}
-		}
-		catch (...)
-		{
-			pvDeallocateSegments();
-			throw;
 		}
 		mCapacity = capacity;
 	}
@@ -611,15 +573,11 @@ private:
 		{
 			Reserve(count);	//?
 			size_t initCount = mCount;
-			try
+			for (internal::Finalizer fin = [this, initCount] { pvRemoveBack(mCount - initCount); };
+				fin; fin.Detach())
 			{
 				for (size_t i = initCount; i < count; ++i)
 					pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(itemMultiCreator)));
-			}
-			catch (...)
-			{
-				pvRemoveBack(mCount - initCount);
-				throw;
 			}
 		}
 	}
@@ -650,14 +608,10 @@ private:
 			if (mSegments.GetCount() <= 1)
 				mSegments.SetCount(2, nullptr);
 			Item* segment0 = pvAllocateSegment(0);
-			try
+			for (internal::Finalizer fin = [this, segment0] { pvDeallocateSegment(0, segment0); };
+				fin; fin.Detach())
 			{
 				std::move(itemCreator)(segment0);
-			}
-			catch (...)
-			{
-				pvDeallocateSegment(0, segment0);
-				throw;
 			}
 			mCapacity += initialItemCount;
 			mSegments[1] = mSegments[0];
@@ -669,18 +623,17 @@ private:
 			if (mSegments.GetCount() <= segIndex)
 				mSegments.SetCount(segIndex + 1, nullptr);
 			Item* segment0 = pvAllocateSegment(0);
-			try
+			auto allocReverter = [this, segment0] () noexcept
+			{
+				pvDeallocateSegments();
+				pvDeallocateSegment(0, segment0);
+			};
+			for (internal::Finalizer fin = allocReverter; fin; fin.Detach())
 			{
 				mSegments[segIndex] = pvAllocateSegment(segIndex);
 				size_t segItemCount = pvGetSegmentItemCount(segIndex);
 				ItemTraits::RelocateCreate(GetMemManager(), pvMakeIterator(mCount - segItemCount),
 					mSegments[segIndex], segItemCount, std::move(itemCreator), segment0);
-			}
-			catch (...)
-			{
-				pvDeallocateSegments();
-				pvDeallocateSegment(0, segment0);
-				throw;
 			}
 			mCapacity += initialItemCount;
 			pvDeallocateSegments();
