@@ -8,7 +8,6 @@ jobs:
       matrix:
         include:
 
-        # Clang 19 with MSVC-like command-line
         - win_ver: '2025'
           build_type: 'Release'
           flags: '-std:c++latest /WX'
