@@ -342,7 +342,8 @@ private:
 			if (grow || capacity > internalCapacity)
 			{
 				Item* items = pvAllocate(capacity);
-				for (internal::Finalizer fin = [this, items, capacity] { pvDeallocate(items, capacity); };
+				for (internal::Finalizer fin = [this, items, capacity] () noexcept
+						{ pvDeallocate(items, capacity); };
 					fin; fin.Detach())
 				{
 					std::move(itemsCreator)(items);
@@ -365,7 +366,8 @@ private:
 				MOMO_ASSERT(!pvIsInternal());
 				size_t initCapacity = mCapacity;
 				Item* items = pvActivateInternalItems();
-				for (internal::Finalizer fin = [this, initCapacity] { mCapacity = initCapacity; };
+				for (internal::Finalizer fin = [this, initCapacity] () noexcept
+						{ mCapacity = initCapacity; };
 					fin; fin.Detach())
 				{
 					std::move(itemsCreator)(items);
@@ -911,9 +913,9 @@ private:
 		{
 			Item* items = GetItems();
 			size_t index = initCount;
-			auto itemsDestroyer = [this, items, initCount, &index] () noexcept
-				{ ItemTraits::Destroy(GetMemManager(), items + initCount, index - initCount); };
-			for (internal::Finalizer fin = itemsDestroyer; fin; fin.Detach())
+			for (internal::Finalizer fin = [this, items, initCount, &index] () noexcept
+					{ ItemTraits::Destroy(GetMemManager(), items + initCount, index - initCount); };
+				fin; fin.Detach())
 			{
 				for (; index < newCount; ++index)
 					itemMultiCreator(items + index);
@@ -926,9 +928,9 @@ private:
 			auto itemsCreator = [this, initCount, newCount, itemMultiCreator] (Item* newItems)
 			{
 				size_t index = initCount;
-				auto itemsDestroyer = [this, newItems, initCount, &index] () noexcept
-					{ ItemTraits::Destroy(GetMemManager(), newItems + initCount, index - initCount); };
-				for (internal::Finalizer fin = itemsDestroyer; fin; fin.Detach())
+				for (internal::Finalizer fin = [this, newItems, initCount, &index] () noexcept
+						{ ItemTraits::Destroy(GetMemManager(), newItems + initCount, index - initCount); };
+					fin; fin.Detach())
 				{
 					for (; index < newCount; ++index)
 						itemMultiCreator(newItems + index);
