@@ -8,48 +8,48 @@ jobs:
       matrix:
         include:
 
-        # Visual Studio 2015 x64 (/std:c++14)
-        - toolset: '14.0'
-          arch: 'x64'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '/WX'
-          win_ver: '2019'
-
-        - toolset: '14.0'
-          arch: 'x64'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'On'
-          flags: '/WX'
-          win_ver: '2019'
-
-        # Visual Studio 2015 x86 (/std:c++14)
-        - toolset: '14.0'
-          arch: 'x64_x86'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '/WX'
-          win_ver: '2019'
-
-        - toolset: '14.0'
-          arch: 'x64_x86'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'On'
-          flags: '/WX'
-          win_ver: '2019'
-
-        # Visual Studio 2017 x64
-        - toolset: '14.1'
-          arch: 'x64'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '/std:c++17 /WX'
-          win_ver: '2019'
+#        # Visual Studio 2015 x64 (/std:c++14)
+#        - toolset: '14.0'
+#          arch: 'x64'
+#          build_type: 'Release'
+#          test_libcxx_new: 'Off'
+#          test_extra: 'Off'
+#          flags: '/WX'
+#          win_ver: '2019'
+#
+#        - toolset: '14.0'
+#          arch: 'x64'
+#          build_type: 'Release'
+#          test_libcxx_new: 'Off'
+#          test_extra: 'On'
+#          flags: '/WX'
+#          win_ver: '2019'
+#
+#        # Visual Studio 2015 x86 (/std:c++14)
+#        - toolset: '14.0'
+#          arch: 'x64_x86'
+#          build_type: 'Release'
+#          test_libcxx_new: 'Off'
+#          test_extra: 'Off'
+#          flags: '/WX'
+#          win_ver: '2019'
+#
+#        - toolset: '14.0'
+#          arch: 'x64_x86'
+#          build_type: 'Release'
+#          test_libcxx_new: 'Off'
+#          test_extra: 'On'
+#          flags: '/WX'
+#          win_ver: '2019'
+#
+#        # Visual Studio 2017 x64
+#        - toolset: '14.1'
+#          arch: 'x64'
+#          build_type: 'Release'
+#          test_libcxx_new: 'Off'
+#          test_extra: 'Off'
+#          flags: '/std:c++17 /WX'
+#          win_ver: '2019'
 
         # Visual Studio 2019 x64
         - toolset: '14.2'

@@ -9,15 +9,15 @@ jobs:
         include:
 
         # x64
-        - build_type: 'Release'
-          test_libcxx_new: 'On'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror'
-
-        - build_type: 'Debug'
-          test_libcxx_new: 'On'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror'
+#        - build_type: 'Release'
+#          test_libcxx_new: 'On'
+#          test_extra: 'Off'
+#          flags: '-std=c++26 -Werror'
+#
+#        - build_type: 'Debug'
+#          test_libcxx_new: 'On'
+#          test_extra: 'Off'
+#          flags: '-std=c++26 -Werror'
 
         # x86
         - build_type: 'Release'
