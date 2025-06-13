@@ -1,0 +1,52 @@
+# The main test runs are done in GitHub Actions.
+# Only some old compilers are tested here.
+
+environment:
+  matrix:
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      ARCH: x64
+      BUILD_TYPE: Release
+      TEST_EXTRA: Off
+      FLAGS: "/WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      ARCH: x64
+      BUILD_TYPE: Release
+      TEST_EXTRA: On
+      FLAGS: "/WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      ARCH: x86
+      BUILD_TYPE: Release
+      TEST_EXTRA: Off
+      FLAGS: "/WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      ARCH: x86
+      BUILD_TYPE: Release
+      TEST_EXTRA: On
+      FLAGS: "/WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      ARCH: x64
+      BUILD_TYPE: Release
+      TEST_EXTRA: Off
+      FLAGS: "/std:c++17 /WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"
+
+build_script:
+  - set CXXFLAGS=%FLAGS%
+  - call "%VCVARS_BAT%" %ARCH%
+  - cd test
+  - mkdir build
+  - cd build
+  - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DMOMO_TEST_EXTRA=%TEST_EXTRA%
+  - cmake --build . -v
+
+test_script:
+  - momo_test.exe
