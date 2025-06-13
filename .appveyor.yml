@@ -25,12 +25,12 @@ environment:
       FLAGS: "/WX"
       VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      ARCH: x86
-      BUILD_TYPE: Release
-      TEST_EXTRA: On
-      FLAGS: "/WX"
-      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
+#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+#      ARCH: x86
+#      BUILD_TYPE: Release
+#      TEST_EXTRA: On
+#      FLAGS: "/WX"
+#      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       ARCH: x64

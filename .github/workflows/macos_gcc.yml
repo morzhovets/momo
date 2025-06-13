@@ -35,7 +35,7 @@ jobs:
 
         # ARM64
         - gcc_ver: '14'
-          macos_ver: '15'
+          macos_ver: '14'
           build_type: 'Release'
           test_libcxx_new: 'Off'
           test_extra: 'Off'
@@ -43,7 +43,7 @@ jobs:
           path_prefix: '/opt/homebrew'
 
         - gcc_ver: '14'
-          macos_ver: '15'
+          macos_ver: '14'
           build_type: 'Release'
           test_libcxx_new: 'On'
           test_extra: 'Off'
@@ -51,7 +51,7 @@ jobs:
           path_prefix: '/opt/homebrew'
 
         - gcc_ver: '14'
-          macos_ver: '15'
+          macos_ver: '14'
           build_type: 'Debug'
           test_libcxx_new: 'On'
           test_extra: 'Off'
