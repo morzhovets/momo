@@ -673,19 +673,9 @@ private:
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPtr());
-		iterator resIter;
-		try
-		{
-			resIter = pvInsert(std::forward_as_tuple(
-				std::move(keyBuffer.Get())), std::move(mappedCreator));
-		}
-		catch (...)
-		{
-			KeyManager::Destroy(&memManager, keyBuffer.Get());
-			throw;
-		}
-		KeyManager::Destroy(&memManager, keyBuffer.Get());
-		return resIter;
+		typename KeyManager::FinalDestroyer keyFin(memManager, keyBuffer.template GetPtr<true>());
+		return pvInsert(std::forward_as_tuple(std::move(keyBuffer.Get())),
+			std::move(mappedCreator));
 	}
 
 	template<typename RKey, momo::internal::conceptObjectCreator<mapped_type> MappedCreator,

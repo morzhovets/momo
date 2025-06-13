@@ -709,41 +709,21 @@ namespace internal
 			typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 			KeyBuffer keyBuffer;
 			KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPtr());
-			key_type* keyPtr = keyBuffer.template GetPtr<true>();
-			try
+			typename KeyManager::FinalDestroyer keyFin(memManager, keyBuffer.template GetPtr<true>());
+			std::pair<iterator, bool> res = pvFind(hint, std::as_const(keyBuffer.Get()));
+			if (!res.second)
+				return res;
+			auto valueCreator = [mappedCreator = std::move(mappedCreator), keyFin = std::move(keyFin)]
+				(key_type* newKey, mapped_type* newMapped) mutable
 			{
-				std::pair<iterator, bool> res = pvFind(hint, *keyPtr);
-				if (!res.second)
-				{
-					KeyManager::Destroy(&memManager, *keyPtr);
-					keyPtr = nullptr;
-					return res;
-				}
-				auto valueCreator = [&memManager, &keyPtr, mappedCreator = std::move(mappedCreator)]
-					(key_type* newKey, mapped_type* newMapped) mutable
-				{
-					KeyManager::Relocate(memManager, *keyPtr, newKey);
-					keyPtr = nullptr;
-					try
-					{
-						std::move(mappedCreator)(newMapped);
-					}
-					catch (...)
-					{
-						KeyManager::Destroy(&memManager, *newKey);
-						throw;
-					}
-				};
-				TreeMapIterator resIter = mTreeMap.AddCrt(
-					IteratorProxy::GetBaseIterator(res.first), std::move(valueCreator));
-				return { IteratorProxy(resIter), true };
-			}
-			catch (...)
-			{
-				if (keyPtr != nullptr)
-					KeyManager::Destroy(&memManager, *keyPtr);
-				throw;
-			}
+				KeyManager::Relocate(keyFin.GetMemManager(), *keyFin.GetPtr(), newKey);
+				keyFin.ResetPtr(newKey);
+				std::move(mappedCreator)(newMapped);
+				keyFin.ResetPtr();
+			};
+			TreeMapIterator resIter = mTreeMap.AddCrt(
+				IteratorProxy::GetBaseIterator(res.first), std::move(valueCreator));
+			return { IteratorProxy(resIter), true };
 		}
 
 		template<typename Hint, typename RKey,
