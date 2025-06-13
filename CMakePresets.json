@@ -66,6 +66,20 @@
       }
     },
     {
+      "name": "Test-MSVC-x64-std23-Debug-Extra",
+      "inherits": "Test-MSVC-x64-std23-Debug",
+      "cacheVariables": {
+        "MOMO_TEST_EXTRA": "ON"
+      }
+    },
+    {
+      "name": "Test-MSVC-x64-std23-Release-Extra",
+      "inherits": "Test-MSVC-x64-std23-Debug-Extra",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
       "name": "Test-MSVC-x86-std23-Debug",
       "inherits": "Test-MSVC-x64-std23-Debug",
       "architecture": {
@@ -165,6 +179,16 @@
     {
       "name": "MSVC-x64-std23-Release",
       "configurePreset": "Test-MSVC-x64-std23-Release",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC-x64-std23-Debug-Extra",
+      "configurePreset": "Test-MSVC-x64-std23-Debug-Extra",
+      "inherits": "Ninja"
+    },
+    {
+      "name": "MSVC-x64-std23-Release-Extra",
+      "configurePreset": "Test-MSVC-x64-std23-Release-Extra",
       "inherits": "Ninja"
     },
     {
