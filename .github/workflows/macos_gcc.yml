@@ -31,27 +31,26 @@ jobs:
           path_prefix: '/usr/local'
 
         # ARM64
-# /opt/homebrew/Cellar/gcc@14/14.2.0/lib/gcc/14/gcc/aarch64-apple-darwin24/14/include-fixed/_stdio.h:78:10: fatal error: _bounds.h: No such file or directory
-#        - gcc_ver: '14'
-#          macos_ver: '15'
-#          build_type: 'Release'
-#          test_extra: 'Off'
-#          flags: '-std=c++23 -Werror -Wno-psabi'
-#          path_prefix: '/opt/homebrew'
-#
-#        - gcc_ver: '14'
-#          macos_ver: '15'
-#          build_type: 'Release'
-#          test_extra: 'Off'
-#          flags: '-std=c++26 -Werror -Wno-psabi'
-#          path_prefix: '/opt/homebrew'
-#
-#        - gcc_ver: '14'
-#          macos_ver: '15'
-#          build_type: 'Debug'
-#          test_extra: 'Off'
-#          flags: '-std=c++26 -Werror -Wno-psabi'
-#          path_prefix: '/opt/homebrew'
+        - gcc_ver: '14'
+          macos_ver: '14'
+          build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++23 -Werror -Wno-psabi'
+          path_prefix: '/opt/homebrew'
+
+        - gcc_ver: '14'
+          macos_ver: '14'
+          build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror -Wno-psabi'
+          path_prefix: '/opt/homebrew'
+
+        - gcc_ver: '14'
+          macos_ver: '14'
+          build_type: 'Debug'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror -Wno-psabi'
+          path_prefix: '/opt/homebrew'
 
     runs-on: macos-${{ matrix.macos_ver }}
 
