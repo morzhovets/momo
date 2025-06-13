@@ -19,10 +19,11 @@ jobs:
           test_extra: 'Off'
           flags: '-std=c++26'
 
-        - win_ver: '2025'
-          build_type: 'Debug'
-          test_extra: 'Off'
-          flags: '-std=c++26'
+# The specified executable is not a valid application for this OS platform
+#        - win_ver: '2025'
+#          build_type: 'Debug'
+#          test_extra: 'Off'
+#          flags: '-std=c++26'
 
     runs-on: windows-${{ matrix.win_ver }}
 
