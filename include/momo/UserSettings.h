@@ -139,8 +139,10 @@
 
 #define MOMO_ASSERT(expr) assert(expr)
 
+#define MOMO_THROW(exception) throw exception
+
 #define MOMO_CHECK_EXCEPTION(expr) \
-	do { if (!(expr)) throw std::invalid_argument(#expr); } while (false)
+	do { if (!(expr)) MOMO_THROW(std::invalid_argument(#expr)); } while (false)
 
 #define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
 	((isWithinLifetime) ? std::launder(reinterpret_cast<ResObject*>(ptr)) : reinterpret_cast<ResObject*>(ptr))

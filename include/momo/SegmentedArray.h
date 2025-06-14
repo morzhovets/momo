@@ -484,7 +484,7 @@ private:
 	{
 		size_t segItemCount = Settings::GetSegmentItemCount(segIndex);
 		if (segItemCount > internal::UIntConst::maxSize / sizeof(Item))
-			throw std::bad_array_new_length();
+			MOMO_THROW(std::bad_array_new_length());
 		static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 			segItemCount * sizeof(Item));

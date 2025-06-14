@@ -52,7 +52,7 @@ namespace internal
 	private:
 		[[noreturn]] static void pvVisitError()
 		{
-			throw std::logic_error("Visit unknown type");
+			MOMO_THROW(std::logic_error("Visit unknown type"));
 		}
 
 	private:

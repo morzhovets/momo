@@ -53,7 +53,7 @@ namespace internal
 		{
 			size_t bucketCount = size_t{1} << logBucketCount;
 			if (bucketCount > maxBucketCount)
-				throw std::bad_array_new_length();
+				MOMO_THROW(std::bad_array_new_length());
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
 			void* buffer = MemManagerProxy::Allocate(memManager, bufferSize);
 			HashSetBuckets* resBuckets = ::new(buffer) HashSetBuckets(logBucketCount);
@@ -1182,7 +1182,7 @@ private:
 		{
 			++probe;
 			if (probe >= bucketCount)
-				throw std::runtime_error("Hash table is full");
+				MOMO_THROW(std::runtime_error("Hash table is full"));
 			bucketIndex = Bucket::GetNextBucketIndex(bucketIndex, hashCode, bucketCount, probe);
 			bucket = &buckets[bucketIndex];
 		}

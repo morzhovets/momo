@@ -844,7 +844,7 @@ public:
 	{
 		const_iterator iter = MapBase::find(key);
 		if (iter == MapBase::end())
-			throw std::out_of_range("invalid map key");
+			MOMO_THROW(std::out_of_range("invalid map key"));
 		return iter->second;
 	}
 
@@ -852,7 +852,7 @@ public:
 	{
 		iterator iter = MapBase::find(key);
 		if (iter == MapBase::end())
-			throw std::out_of_range("invalid map key");
+			MOMO_THROW(std::out_of_range("invalid map key"));
 		return iter->second;
 	}
 

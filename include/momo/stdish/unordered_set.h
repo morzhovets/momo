@@ -320,7 +320,7 @@ public:
 		if (maxLoadFactor == max_load_factor())
 			return;
 		if (maxLoadFactor <= 0.0 || maxLoadFactor > static_cast<float>(HashSet::bucketMaxItemCount))
-			throw std::out_of_range("invalid load factor");
+			MOMO_THROW(std::out_of_range("invalid load factor"));
 		HashTraits hashTraits(mHashSet.GetHashTraits(), maxLoadFactor);
 		HashSet hashSet(hashTraits, MemManager(get_allocator()));
 		hashSet.Reserve(size());
@@ -552,7 +552,7 @@ public:
 			return first;
 		if (first != end() && std::next(first) == last)
 			return erase(first);
-		throw std::invalid_argument("invalid unordered_set erase arguments");
+		MOMO_THROW(std::invalid_argument("invalid unordered_set erase arguments"));
 	}
 
 	size_type erase(const key_type& key)

@@ -359,7 +359,7 @@ public:
 		if (maxLoadFactor == max_load_factor())
 			return;
 		if (maxLoadFactor <= 0.0 || maxLoadFactor > static_cast<float>(HashMap::bucketMaxItemCount))
-			throw std::out_of_range("invalid load factor");
+			MOMO_THROW(std::out_of_range("invalid load factor"));
 		HashTraits hashTraits(mHashMap.GetHashTraits(), maxLoadFactor);
 		HashMap hashMap(hashTraits, MemManager(get_allocator()));
 		hashMap.Reserve(size());
@@ -618,7 +618,7 @@ public:
 		}
 		if (first != end() && std::next(first) == last)
 			return erase(first);
-		throw std::invalid_argument("invalid unordered_map erase arguments");
+		MOMO_THROW(std::invalid_argument("invalid unordered_map erase arguments"));
 	}
 
 	size_type erase(const key_type& key)
@@ -661,7 +661,7 @@ public:
 	{
 		const_iterator iter = find(key);
 		if (iter == end())
-			throw std::out_of_range("invalid unordered_map key");
+			MOMO_THROW(std::out_of_range("invalid unordered_map key"));
 		return iter->second;
 	}
 
@@ -669,7 +669,7 @@ public:
 	{
 		iterator iter = find(key);
 		if (iter == end())
-			throw std::out_of_range("invalid unordered_map key");
+			MOMO_THROW(std::out_of_range("invalid unordered_map key"));
 		return iter->second;
 	}
 
