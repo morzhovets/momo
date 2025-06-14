@@ -827,19 +827,22 @@ namespace internal
 			};
 			Array<size_t, MemManagerPtr<MemManager>> hashCodes(
 				(MemManagerPtr<MemManager>(GetMemManager())));
-			try
+			Catcher::Catch<std::bad_alloc>(
+				[this, &hashCodes] ()
+				{
+					hashCodes.Reserve(mRaws.GetCount());
+				},
+				[this, rawHasher, rawEqualComp] (const std::bad_alloc&)
+				{
+					HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawHasher, rawEqualComp);
+				});
+			if (hashCodes.GetCapacity() >= mRaws.GetCount())
 			{
-				hashCodes.Reserve(mRaws.GetCount());
+				for (Raw* raw : mRaws)
+					hashCodes.AddBackNogrow(rawHasher(raw));
+				HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
+					hashCodes.GetBegin(), rawEqualComp);
 			}
-			catch (const std::bad_alloc&)
-			{
-				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawHasher, rawEqualComp);
-				return;
-			}
-			for (Raw* raw : mRaws)
-				hashCodes.AddBackNogrow(rawHasher(raw));
-			HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
-				hashCodes.GetBegin(), rawEqualComp);
 		}
 
 		template<typename Item>

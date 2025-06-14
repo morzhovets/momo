@@ -407,6 +407,20 @@ namespace internal
 			{
 			}
 		}
+
+		template<typename Exception, conceptExecutor Executor,
+			conceptMoveFunctor<void, const Exception&> CatchExecutor>
+		static void Catch(Executor&& exec, CatchExecutor&& catchExec)
+		{
+			try
+			{
+				std::forward<Executor>(exec)();
+			}
+			catch (const Exception& exception)
+			{
+				std::forward<CatchExecutor>(catchExec)(exception);
+			}
+		}
 	};
 
 	class ContainerAssigner

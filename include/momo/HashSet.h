@@ -1205,19 +1205,20 @@ private:
 		size_t newCapacity = hashTraits.CalcCapacity(size_t{1} << newLogBucketCount,
 			bucketMaxItemCount);
 		MOMO_CHECK(newCapacity > mCount);
-		bool hasBuckets = (mBuckets != nullptr);
-		Buckets* newBuckets;
-		try
-		{
-			newBuckets = Buckets::Create(GetMemManager(), newLogBucketCount,
-				hasBuckets ? &mBuckets->GetBucketParams() : nullptr);
-		}
-		catch (const std::bad_alloc& exception)
-		{
-			if (Settings::overloadIfCannotGrow && hasBuckets)
-				return pvAddNogrow<true>(*mBuckets, hashCode, std::move(itemCreator));
-			throw exception;
-		}
+		Buckets* newBuckets = nullptr;
+		internal::Catcher::Catch<std::bad_alloc>(
+			[this, &newBuckets, newLogBucketCount] ()
+			{
+				newBuckets = Buckets::Create(GetMemManager(), newLogBucketCount,
+					(mBuckets != nullptr) ? &mBuckets->GetBucketParams() : nullptr);
+			},
+			[this] (const std::bad_alloc& exception)
+			{
+				if (!Settings::overloadIfCannotGrow || mBuckets == nullptr)
+					MOMO_THROW(exception);
+			});
+		if (newBuckets == nullptr)
+			return pvAddNogrow<true>(*mBuckets, hashCode, std::move(itemCreator));
 		Position resPos;
 		try
 		{
@@ -1225,7 +1226,7 @@ private:
 		}
 		catch (...)
 		{
-			newBuckets->Destroy(GetMemManager(), !hasBuckets);
+			newBuckets->Destroy(GetMemManager(), mBuckets == nullptr);
 			throw;
 		}
 		newBuckets->SetNextBuckets(mBuckets);
