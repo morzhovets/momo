@@ -260,16 +260,13 @@ namespace internal
 			if constexpr (isContinuous)
 			{
 				ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
-				try
-				{
-					std::move(itemRemover)(*GetItemPtr(count - 1));
-				}
-				catch (...)
+				Finalizer shiftReverterFin = [this, &params, count, index] () noexcept
 				{
 					ItemTraits::ShiftNothrow(params.GetMemManager(),
 						std::reverse_iterator<Item*>(GetItemPtr(count)), count - index - 1);
-					throw;
-				}
+				};
+				std::move(itemRemover)(*GetItemPtr(count - 1));
+				shiftReverterFin.Detach();
 			}
 			else
 			{

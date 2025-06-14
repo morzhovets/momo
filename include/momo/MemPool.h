@@ -850,11 +850,7 @@ private:
 
 	MOMO_NOINLINE Byte* pvNewChunk(Byte* delBlock)
 	{
-		try
-		{
-			return Chunker::NewChunk(GetMemManager());
-		}
-		catch (...)
+		internal::Finalizer delBlockFin = [this, delBlock] () noexcept
 		{
 			if (delBlock)
 			{
@@ -862,8 +858,10 @@ private:
 				size_t freeBlockCount;
 				Chunker::DeleteBlock(delBlock, chunk, freeBlockCount);
 			}
-			throw;
-		}
+		};
+		Byte* chunk = Chunker::NewChunk(GetMemManager());
+		delBlockFin.Detach();
+		return chunk;
 	}
 
 	MOMO_NOINLINE void pvDeleteChunk(Byte* chunk) noexcept

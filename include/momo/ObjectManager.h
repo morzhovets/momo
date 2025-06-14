@@ -609,15 +609,8 @@ namespace internal
 			else
 			{
 				Copy(nullptr, midObject, dstObject);
-				try
-				{
+				for (Finalizer fin = [dstObject] { Destroy(nullptr, *dstObject); }; fin; fin.Detach())
 					Replace(memManager, srcObject, midObject);
-				}
-				catch (...)
-				{
-					Destroy(nullptr, *dstObject);
-					throw;
-				}
 			}
 		}
 
@@ -681,18 +674,15 @@ namespace internal
 			else
 			{
 				size_t index = 0;
-				try
+				for (Finalizer fin = [&memManager, dstBegin, &index] () noexcept
+						{ Destroy(memManager, dstBegin, index); };
+					fin; fin.Detach())
 				{
 					SrcIterator srcIter = srcBegin;
 					DstIterator dstIter = dstBegin;
 					for (; index < count; ++index)
 						Copy(&memManager, *srcIter++, std::to_address(dstIter++));
 					std::move(exec)();
-				}
-				catch (...)
-				{
-					Destroy(memManager, dstBegin, index);
-					throw;
 				}
 				Destroy(memManager, srcBegin, count);
 			}

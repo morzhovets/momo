@@ -205,15 +205,12 @@ namespace internal
 				FastMemory memory(params.GetFastMemPool(memPoolIndex));
 				Item* items = pvGetFastItems(memory.Get());
 				size_t index = 0;
-				try
+				for (internal::Finalizer fin = [&memManager, items, &index] () noexcept
+						{ ItemTraits::Destroy(memManager, items, index); };
+					fin; fin.Detach())
 				{
 					for (; index < count; ++index)
 						ItemTraits::Copy(memManager, bounds[index], items + index);
-				}
-				catch (...)
-				{
-					ItemTraits::Destroy(memManager, items, index);
-					throw;
 				}
 				pvSet(memory.Extract(), pvMakeState(memPoolIndex, count));
 			}

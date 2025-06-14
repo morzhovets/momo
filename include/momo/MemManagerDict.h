@@ -86,15 +86,10 @@ public:
 		MOMO_CHECK(size > 0);
 		BaseMemManager& baseMemManager = GetBaseMemManager();
 		void* ptr = baseMemManager.Allocate(size);
-		try
-		{
-			mBlockDict.Insert(ptr, size);
-		}
-		catch (...)
-		{
-			baseMemManager.Deallocate(ptr, size);
-			throw;
-		}
+		internal::Finalizer fin = [&baseMemManager, ptr, size] () noexcept
+			{ baseMemManager.Deallocate(ptr, size); };
+		mBlockDict.Insert(ptr, size);
+		fin.Detach();
 		return ptr;
 	}
 
