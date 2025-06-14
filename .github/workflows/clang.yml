@@ -70,17 +70,18 @@ jobs:
           test_extra: 'On'
           flags: '-std=c++26 -Werror'
 
-        - clang_ver: '18'
-          ubuntu_ver: '24.04-arm'
-          build_type: 'Debug'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-
-        - clang_ver: '18'
-          ubuntu_ver: '24.04-arm'
-          build_type: 'Debug'
-          test_extra: 'On'
-          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+# ninja: build stopped: interrupted by user
+#        - clang_ver: '18'
+#          ubuntu_ver: '24.04-arm'
+#          build_type: 'Debug'
+#          test_extra: 'Off'
+#          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+#
+#        - clang_ver: '18'
+#          ubuntu_ver: '24.04-arm'
+#          build_type: 'Debug'
+#          test_extra: 'On'
+#          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
 
