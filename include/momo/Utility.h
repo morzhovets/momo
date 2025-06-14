@@ -393,6 +393,22 @@ namespace internal
 		std::optional<Executor> mExecutor;
 	};
 
+	class Catcher
+	{
+	public:
+		template<conceptExecutor Executor>
+		static void CatchAll(Executor&& exec) noexcept
+		{
+			try
+			{
+				std::forward<Executor>(exec)();
+			}
+			catch (...)
+			{
+			}
+		}
+	};
+
 	class ContainerAssigner
 	{
 	public:

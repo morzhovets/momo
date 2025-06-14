@@ -332,16 +332,7 @@ namespace internal
 				Array& array = pvGetArray();
 				array.RemoveBack();
 				if (2 < count && count <= array.GetCapacity() / 4)
-				{
-					try
-					{
-						array.Shrink(count * 2);
-					}
-					catch (...)
-					{
-						// no throw!
-					}
-				}
+					Catcher::CatchAll([&array, count] () { array.Shrink(count * 2); });
 			}
 		}
 

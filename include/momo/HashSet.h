@@ -1288,15 +1288,11 @@ private:
 	{
 		Buckets* nextBuckets = mBuckets->GetNextBuckets();
 		MOMO_ASSERT(nextBuckets != nullptr);
-		try
-		{
-			pvRelocateItems(nextBuckets);
-			mBuckets->ExtractNextBuckets();
-		}
-		catch (...)
-		{
-			// no throw!
-		}
+		internal::Catcher::CatchAll([this, nextBuckets] ()
+			{
+				pvRelocateItems(nextBuckets);
+				mBuckets->ExtractNextBuckets();
+			});
 	}
 
 	void pvRelocateItems(Buckets* buckets) noexcept(areItemsNothrowRelocatable)

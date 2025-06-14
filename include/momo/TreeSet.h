@@ -1586,26 +1586,23 @@ private:
 			mRootNode->GetParent()->Destroy(*mNodeParams);
 			mRootNode->SetParent(nullptr);
 		}
-		try
-		{
-			while (true)
+		internal::Catcher::CatchAll([this, node, savedNode, fast] ()
 			{
-				Node* parentNode = node->GetParent();
-				MOMO_ASSERT(parentNode != savedNode);
-				if (parentNode == nullptr)
-					break;
-				size_t index = parentNode->GetChildIndex(node);
-				bool stop = !pvRebalance(parentNode, index + 1, savedNode)
-					&& !pvRebalance(parentNode, index, savedNode) && fast;
-				if (stop)
-					break;
-				node = parentNode;
-			}
-		}
-		catch (...)
-		{
-			// no throw!
-		}
+				Node* curNode = node;
+				while (true)
+				{
+					Node* parentNode = curNode->GetParent();
+					MOMO_ASSERT(parentNode != savedNode);
+					if (parentNode == nullptr)
+						break;
+					size_t index = parentNode->GetChildIndex(curNode);
+					bool stop = !pvRebalance(parentNode, index + 1, savedNode)
+						&& !pvRebalance(parentNode, index, savedNode) && fast;
+					if (stop)
+						break;
+					curNode = parentNode;
+				}
+			});
 	}
 
 	bool pvRebalance(Node* parentNode, size_t index, Node* savedNode)

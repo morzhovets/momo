@@ -381,14 +381,7 @@ public:
 		if (capacity < mCount)
 			capacity = mCount;
 		pvDecCapacity(capacity);
-		try
-		{
-			mSegments.Shrink();
-		}
-		catch (...)
-		{
-			// no throw!
-		}
+		internal::Catcher::CatchAll([this] () { mSegments.Shrink(); });
 	}
 
 	//const Item& operator[](size_t index) const
