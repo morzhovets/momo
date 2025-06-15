@@ -18,7 +18,7 @@
 #include <cassert>
 
 // Disable C++ exceptions. Use this macro when `-fno-exceptions` option is enabled.
-#define MOMO_DISABLE_EXCEPTIONS
+//#define MOMO_DISABLE_EXCEPTIONS
 
 // Disable use of `typeid` operator. Use this macro when `-fno-rtti` option is enabled.
 //#define MOMO_DISABLE_TYPE_INFO
