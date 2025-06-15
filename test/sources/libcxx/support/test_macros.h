@@ -27,7 +27,11 @@
 
 #define TEST_IGNORE_NODISCARD (void)
 
-#define TEST_THROW(...) throw __VA_ARGS__
+#ifdef TEST_HAS_NO_EXCEPTIONS
+# define TEST_THROW(...) std::terminate()
+#else
+# define TEST_THROW(...) throw __VA_ARGS__
+#endif
 
 #define ASSERT_NOEXCEPT(...) \
     static_assert(noexcept(__VA_ARGS__), "Operation must be noexcept")
@@ -47,13 +51,13 @@
 #define TEST_STRINGIZE(x) TEST_STRINGIZE_IMPL(x)
 
 #if defined(TEST_MSVC)
-#define TEST_DIAGNOSTIC_PUSH _Pragma("warning(push)")
-#define TEST_DIAGNOSTIC_POP _Pragma("warning(pop)")
-#define TEST_MSVC_DIAGNOSTIC_IGNORED(num) _Pragma(TEST_STRINGIZE(warning(disable: num)))
+# define TEST_DIAGNOSTIC_PUSH _Pragma("warning(push)")
+# define TEST_DIAGNOSTIC_POP _Pragma("warning(pop)")
+# define TEST_MSVC_DIAGNOSTIC_IGNORED(num) _Pragma(TEST_STRINGIZE(warning(disable: num)))
 #else
-#define TEST_DIAGNOSTIC_PUSH
-#define TEST_DIAGNOSTIC_POP
-#define TEST_MSVC_DIAGNOSTIC_IGNORED(num)
+# define TEST_DIAGNOSTIC_PUSH
+# define TEST_DIAGNOSTIC_POP
+# define TEST_MSVC_DIAGNOSTIC_IGNORED(num)
 #endif
 
 #endif // SUPPORT_TEST_MACROS_HPP

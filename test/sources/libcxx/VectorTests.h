@@ -52,6 +52,8 @@ LIBCXX_TEST_BEGIN(types)
 #include "vector/types.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
+
 LIBCXX_TEST_BEGIN(spec_asan_throw)
 #include "vector/spec/asan_throw.pass.cpp"
 LIBCXX_TEST_END
@@ -116,9 +118,11 @@ LIBCXX_TEST_BEGIN(spec_debug_iterator_subtract)
 #include "vector/spec/debug.iterator.subtract.pass.cpp"
 LIBCXX_TEST_END
 
-#endif
+#endif // LIBCXX_TEST_ARRAY
 
-#endif
+#endif // LIBCXX_TEST_FAILURE
+
+#endif // TEST_HAS_NO_EXCEPTIONS
 
 LIBCXX_TEST_BEGIN(capacity_capacity)
 #include "vector/vector.capacity/capacity.pass.cpp"
@@ -136,40 +140,48 @@ LIBCXX_TEST_BEGIN(capacity_reserve)
 #include "vector/vector.capacity/reserve.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 LIBCXX_TEST_BEGIN(capacity_reserve_exceptions)
 #include "vector/vector.capacity/reserve_exceptions.pass.cpp"
 LIBCXX_TEST_END
+#endif
 #endif
 
 LIBCXX_TEST_BEGIN(capacity_resize_size)
 #include "vector/vector.capacity/resize_size.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 LIBCXX_TEST_BEGIN(capacity_resize_size_exceptions)
 #include "vector/vector.capacity/resize_size_exceptions.pass.cpp"
 LIBCXX_TEST_END
+#endif
 #endif
 
 LIBCXX_TEST_BEGIN(capacity_resize_size_value)
 #include "vector/vector.capacity/resize_size_value.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 LIBCXX_TEST_BEGIN(capacity_resize_size_value_exceptions)
 #include "vector/vector.capacity/resize_size_value_exceptions.pass.cpp"
 LIBCXX_TEST_END
+#endif
 #endif
 
 LIBCXX_TEST_BEGIN(capacity_shrink_to_fit)
 #include "vector/vector.capacity/shrink_to_fit.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 LIBCXX_TEST_BEGIN(capacity_shrink_to_fit_exceptions)
 #include "vector/vector.capacity/shrink_to_fit_exceptions.pass.cpp"
 LIBCXX_TEST_END
+#endif
 #endif
 
 LIBCXX_TEST_BEGIN(capacity_size)
@@ -258,9 +270,11 @@ LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
 #include "vector/vector.cons/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 LIBCXX_TEST_BEGIN(cons_exceptions)
 #include "vector/vector.cons/exceptions.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "vector/vector.cons/initializer_list.pass.cpp"
@@ -300,7 +314,7 @@ LIBCXX_TEST_BEGIN(data_data_const)
 #include "vector/vector.data/data_const.pass.cpp"
 LIBCXX_TEST_END
 
-#endif
+#endif // LIBCXX_TEST_SEGMENTED_ARRAY
 
 LIBCXX_TEST_BEGIN(erasure_erase)
 #include "vector/vector.erasure/erase.pass.cpp"

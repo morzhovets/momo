@@ -60,7 +60,7 @@ CMyClass::~CMyClass() {
     assert(fMagicValue == kFinishedConstructionMagicValue);
 }
 
-bool operator==(const CMyClass &lhs, const CMyClass &rhs) { return lhs.equal(rhs); }
+[[maybe_unused]] bool operator==(const CMyClass &lhs, const CMyClass &rhs) { return lhs.equal(rhs); }
 
 int main(int, char**)
 {
