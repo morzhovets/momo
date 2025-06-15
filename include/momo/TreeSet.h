@@ -1137,19 +1137,13 @@ private:
 
 	bool pvExtraCheck(ConstIterator iter) const noexcept
 	{
-		try
-		{
-			if (iter != GetBegin() && !pvIsOrdered(std::prev(iter), iter))
-				return false;
-			if (iter != std::prev(GetEnd()) && !pvIsOrdered(iter, std::next(iter)))
-				return false;
-			return true;
-		}
-		catch (...)
-		{
-			//?
-			return false;
-		}
+		bool res = false;
+		internal::Catcher::CatchAll([this, &res, iter] ()
+			{
+				res = (iter == GetBegin() || pvIsOrdered(std::prev(iter), iter))
+					&& (iter == std::prev(GetEnd()) || pvIsOrdered(iter, std::next(iter)));
+			});
+		return res;
 	}
 
 	template<typename KeyArg>

@@ -568,13 +568,8 @@ public:
 		MemManager& thisMemManager = GetMemManager();
 		for (const Item& item : mergeSet.mMergeArray)
 			mMergeArray.AddBackNogrowCrt(Creator<const Item&>(thisMemManager, item));
-		try
-		{
-			mBloomFilter.Init(thisMemManager, pvGetFilterLogMaxCount(), mergeSet.mBloomFilter);
-		}
-		catch (...)
-		{
-		}
+		internal::Catcher::CatchAll([this, &mergeSet] ()
+			{ mBloomFilter.Init(GetMemManager(), pvGetFilterLogMaxCount(), mergeSet.mBloomFilter); });
 	}
 
 	~MergeSet() noexcept
@@ -743,15 +738,10 @@ private:
 
 	bool pvExtraCheck(ConstPosition pos) const noexcept
 	{
-		try
-		{
-			return pos == pvFind(ItemTraits::GetKey(*pos));
-		}
-		catch (...)
-		{
-			//?
-			return false;
-		}
+		bool res = false;
+		internal::Catcher::CatchAll([this, &res, pos] ()
+			{ res = (pos == pvFind(ItemTraits::GetKey(*pos))); });
+		return res;
 	}
 
 	Position pvFind(const Key& key) const
@@ -890,30 +880,24 @@ private:
 			if (count < 2 * initialItemCount)
 				return;
 			size_t logCount = static_cast<size_t>(std::bit_width(count) - 1);
-			MemManager& memManager = GetMemManager();
 			if (count == size_t{1} << logCount)
 			{
 				if (!mBloomFilter.IsEmpty())
-					mBloomFilter.Clear(memManager, logCount - 1);
-				try
-				{
-					mBloomFilter.Init(memManager, logCount);
-				}
-				catch (...)
-				{
-				}
+					mBloomFilter.Clear(GetMemManager(), logCount - 1);
+				internal::Catcher::CatchAll([this, logCount] ()
+					{ mBloomFilter.Init(GetMemManager(), logCount); });
 			}
 			if (mBloomFilter.IsEmpty())
 				return;
-			try
-			{
-				size_t hashCode = GetMergeTraits().GetHashCode(key);
-				mBloomFilter.Set(hashCode, logCount);
-			}
-			catch (...)
-			{
-				mBloomFilter.Clear(memManager, logCount);
-			}
+			bool done = false;
+			internal::Catcher::CatchAll([this, &done, &key, logCount] ()
+				{
+					size_t hashCode = GetMergeTraits().GetHashCode(key);
+					mBloomFilter.Set(hashCode, logCount);
+					done = true;
+				});
+			if (!done)
+				mBloomFilter.Clear(GetMemManager(), logCount);
 		}
 	}
 

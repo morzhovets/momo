@@ -1065,15 +1065,10 @@ private:
 
 	bool pvExtraCheck(ConstPosition pos) const noexcept
 	{
-		try
-		{
-			return pos == pvFind(ItemTraits::GetKey(*pos));
-		}
-		catch (...)
-		{
-			//?
-			return false;
-		}
+		bool res = false;
+		internal::Catcher::CatchAll([this, &res, pos] ()
+			{ res = (pos == pvFind(ItemTraits::GetKey(*pos))); });
+		return res;
 	}
 
 	template<typename KeyArg>
