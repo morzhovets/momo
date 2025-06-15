@@ -1212,7 +1212,7 @@ private:
 				newBuckets = Buckets::Create(GetMemManager(), newLogBucketCount,
 					(mBuckets != nullptr) ? &mBuckets->GetBucketParams() : nullptr);
 			},
-			[this] (const std::bad_alloc& exception)
+			[this] ([[maybe_unused]] const std::bad_alloc& exception)
 			{
 				if (!Settings::overloadIfCannotGrow || mBuckets == nullptr)
 					MOMO_THROW(exception);

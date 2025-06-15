@@ -399,27 +399,33 @@ namespace internal
 		template<conceptExecutor Executor>
 		static void CatchAll(Executor&& exec) noexcept
 		{
+#ifndef MOMO_DISABLE_EXCEPTIONS
 			try
+#endif
 			{
 				std::forward<Executor>(exec)();
 			}
-			catch (...)
-			{
-			}
+#ifndef MOMO_DISABLE_EXCEPTIONS
+			MOMO_CATCH_ALL
+#endif
 		}
 
 		template<typename Exception, conceptExecutor Executor,
 			conceptMoveFunctor<void, const Exception&> CatchExecutor>
-		static void Catch(Executor&& exec, CatchExecutor&& catchExec)
+		static void Catch(Executor&& exec, [[maybe_unused]] CatchExecutor&& catchExec)
 		{
+#ifndef MOMO_DISABLE_EXCEPTIONS
 			try
+#endif
 			{
 				std::forward<Executor>(exec)();
 			}
+#ifndef MOMO_DISABLE_EXCEPTIONS
 			catch (const Exception& exception)
 			{
 				std::forward<CatchExecutor>(catchExec)(exception);
 			}
+#endif
 		}
 	};
 

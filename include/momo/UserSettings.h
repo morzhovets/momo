@@ -17,6 +17,12 @@
 //#include <version>	// feature macros
 #include <cassert>
 
+// Disable C++ exceptions. Use this macro when `-fno-exceptions` option is enabled.
+#define MOMO_DISABLE_EXCEPTIONS
+
+// Disable use of `typeid` operator. Use this macro when `-fno-rtti` option is enabled.
+//#define MOMO_DISABLE_TYPE_INFO
+
 // If you activate safe map brackets, in the case of absence in `map` the key `key`
 // the expression `map[key]` can be used only on the left side of an assignment operator.
 // Do not forget that the references to the items may become invalid after each insertion,
@@ -26,9 +32,6 @@
 // Using hint iterators in classes `stdish::unordered_set/map`.
 // As a hint pass an iterator, returned after an unsuccessful search.
 //#define MOMO_USE_UNORDERED_HINT_ITERATORS
-
-// Disable use of `typeid` operator
-//#define MOMO_DISABLE_TYPE_INFO
 
 // This macro controls the move constructor usage when no exceptions should be thrown.
 // By default, we can use the move constructor even if it is not marked as `noexcept`.
@@ -139,7 +142,12 @@
 
 #define MOMO_ASSERT(expr) assert(expr)
 
-#define MOMO_THROW(exception) throw exception
+#ifdef MOMO_DISABLE_EXCEPTIONS
+# define MOMO_THROW(exception) std::terminate()
+#else
+# define MOMO_THROW(exception) throw exception
+# define MOMO_CATCH_ALL catch (...) {}
+#endif
 
 #define MOMO_CHECK_EXCEPTION(expr) \
 	do { if (!(expr)) MOMO_THROW(std::invalid_argument(#expr)); } while (false)
