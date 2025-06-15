@@ -57,17 +57,14 @@ namespace internal
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
 			void* buffer = MemManagerProxy::Allocate(memManager, bufferSize);
 			HashSetBuckets* resBuckets = ::new(buffer) HashSetBuckets(logBucketCount);
-			try
+			for (Finalizer fin = [&memManager, buffer, bufferSize] () noexcept
+					{ MemManagerProxy::Deallocate(memManager, buffer, bufferSize); };
+				fin; fin.Detach())
 			{
 				std::uninitialized_default_construct_n(
 					resBuckets->pvGetBuckets<false>(), bucketCount);
 				resBuckets->mBucketParams = (bucketParams != nullptr) ? bucketParams
 					: MemManagerProxy::template AllocateCreate<BucketParams>(memManager, memManager);
-			}
-			catch (...)
-			{
-				MemManagerProxy::Deallocate(memManager, buffer, bufferSize);
-				throw;
 			}
 			return resBuckets;
 		}
@@ -587,14 +584,9 @@ public:
 		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
 		: HashSet(hashTraits, std::move(memManager))
 	{
-		try
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 		{
 			Insert(std::move(begin), std::move(end));
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
 		}
 	}
 
@@ -638,7 +630,7 @@ public:
 			++logBucketCount;
 		}
 		mBuckets = Buckets::Create(GetMemManager(), logBucketCount, nullptr);
-		try
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 		{
 			for (const Item& item : hashSet)
 			{
@@ -646,11 +638,6 @@ public:
 				pvAddNogrow<false>(*mBuckets, hashCode,
 					FastMovableFunctor(Creator<const Item&>(GetMemManager(), item)));
 			}
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
 		}
 	}
 
@@ -1220,14 +1207,11 @@ private:
 		if (newBuckets == nullptr)
 			return pvAddNogrow<true>(*mBuckets, hashCode, std::move(itemCreator));
 		Position resPos;
-		try
+		for (internal::Finalizer fin = [this, newBuckets] () noexcept
+				{ newBuckets->Destroy(GetMemManager(), mBuckets == nullptr); };
+			fin; fin.Detach())
 		{
 			resPos = pvAddNogrow<true>(*newBuckets, hashCode, std::move(itemCreator));
-		}
-		catch (...)
-		{
-			newBuckets->Destroy(GetMemManager(), mBuckets == nullptr);
-			throw;
 		}
 		newBuckets->SetNextBuckets(mBuckets);
 		mBuckets = newBuckets;
