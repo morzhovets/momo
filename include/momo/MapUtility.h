@@ -455,11 +455,15 @@ namespace internal
 			else
 			{
 				KeyManager::Copy(nullptr, midKey, dstKey);
-				for (KeyFinalDestroyer fin(nullptr, dstKey); fin.GetPtr() != nullptr; fin.ResetPtr())
+				for (KeyFinalDestroyer keyFin(nullptr, dstKey);
+					keyFin.GetPtr() != nullptr; keyFin.ResetPtr())
 				{
 					ValueManager::Copy(nullptr, midValue, dstValue);
-					for (ValueFinalDestroyer fin(nullptr, dstValue); fin.GetPtr() != nullptr; fin.ResetPtr())
+					for (ValueFinalDestroyer valueFin(nullptr, dstValue);
+						valueFin.GetPtr() != nullptr; valueFin.ResetPtr())
+					{
 						pvReplaceUnsafe(memManager, srcKey, srcValue, midKey, midValue);
+					}
 				}
 			}
 		}
