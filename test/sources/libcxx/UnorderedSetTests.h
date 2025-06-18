@@ -236,6 +236,7 @@ LIBCXX_TEST_BEGIN(extra_insert_range_ext)
 LIBCXX_TEST_END
 #endif
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 #ifdef LIBCXX_TEST_FAILURE
 
 LIBCXX_TEST_BEGIN(spec_assert_bucket)
@@ -284,7 +285,8 @@ LIBCXX_TEST_BEGIN(spec_debug_swap)
 #include "unord.set/spec/debug.swap.pass.cpp"
 LIBCXX_TEST_END
 
-#endif
+#endif // LIBCXX_TEST_FAILURE
+#endif // TEST_HAS_NO_EXCEPTIONS
 
 LIBCXX_TEST_BEGIN(cnstr_allocator)
 #include "unord.set/unord.set.cnstr/allocator.pass.cpp"
