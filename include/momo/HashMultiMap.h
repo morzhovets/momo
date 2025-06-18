@@ -765,15 +765,8 @@ public:
 		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
 		: HashMultiMap(hashTraits, std::move(memManager))
 	{
-		try
-		{
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 			Add(std::move(begin), std::move(end));
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
-		}
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
@@ -806,17 +799,12 @@ public:
 		mValueCount(hashMultiMap.mValueCount),
 		mValueCrew(GetMemManager())
 	{
-		try
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 		{
 			ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
 			mHashMap.Reserve(hashMultiMap.mHashMap.GetCount());
 			for (typename HashMap::ConstIterator::Reference ref : hashMultiMap.mHashMap)
 				mHashMap.Insert(ref.key, ValueArray(valueArrayParams, ref.value));
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
 		}
 	}
 
@@ -1117,15 +1105,10 @@ public:
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter));
 		ValueArray& valueArray = hashMapIter->value;
 		ValueArray tempValueArray(std::move(valueArray));
-		try
-		{
+		auto valueArrayReverter = [&valueArray, &tempValueArray] () noexcept
+			{ valueArray = std::move(tempValueArray); };
+		for (internal::Finalizer fin = valueArrayReverter; fin; fin.Detach())
 			hashMapIter = mHashMap.Remove(hashMapIter);
-		}
-		catch (...)
-		{
-			valueArray = std::move(tempValueArray);
-			throw;
-		}
 		pvRemoveValues(tempValueArray);
 		return KeyIteratorProxy(hashMapIter);
 	}

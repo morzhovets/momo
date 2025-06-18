@@ -585,9 +585,7 @@ public:
 		: HashSet(hashTraits, std::move(memManager))
 	{
 		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
-		{
 			Insert(std::move(begin), std::move(end));
-		}
 	}
 
 	HashSet(std::initializer_list<Item> items)

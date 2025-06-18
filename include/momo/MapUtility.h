@@ -517,7 +517,15 @@ namespace internal
 			{
 				size_t keyIndex = 0;
 				size_t valueIndex = 0;
-				try
+				auto keyValueDestroyer = [&memManager, &keyIndex, &valueIndex,
+					dstKeyBegin, dstValueBegin] () noexcept
+				{
+					for (DstKeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex)
+						KeyManager::Destroy(&memManager, *itd++);
+					for (DstValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex)
+						ValueManager::Destroy(&memManager, *itd++);
+				};
+				for (internal::Finalizer fin = keyValueDestroyer; fin; fin.Detach())
 				{
 					SrcKeyIterator srcKeyIter = srcKeyBegin;
 					DstKeyIterator dstKeyIter = dstKeyBegin;
@@ -528,14 +536,6 @@ namespace internal
 					for (; valueIndex < count; ++valueIndex)
 						ValueManager::Copy(&memManager, *srcValueIter++, std::to_address(dstValueIter++));
 					std::move(exec)();
-				}
-				catch (...)
-				{
-					for (DstKeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex)
-						KeyManager::Destroy(&memManager, *itd++);
-					for (DstValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex)
-						ValueManager::Destroy(&memManager, *itd++);
-					throw;
 				}
 				for (SrcKeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex)
 					KeyManager::Destroy(&memManager, *its++);
@@ -704,15 +704,10 @@ namespace internal
 			FastMovableFunctor<PairCreator> pairCreator)
 		{
 			mValuePtr = memManager.GetMemPool().template Allocate<Value>();
-			try
-			{
+			auto allocReverter = [this, &memManager] () noexcept
+				{ memManager.GetMemPool().Deallocate(mValuePtr); };
+			for (internal::Finalizer fin = allocReverter; fin; fin.Detach())
 				std::move(pairCreator)(GetKeyPtr(), mValuePtr);
-			}
-			catch (...)
-			{
-				memManager.GetMemPool().Deallocate(mValuePtr);
-				throw;
-			}
 		}
 
 		MapKeyValuePtrPair(const MapKeyValuePtrPair&) = delete;

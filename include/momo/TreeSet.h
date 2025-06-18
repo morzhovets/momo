@@ -546,15 +546,8 @@ public:
 		const TreeTraits& treeTraits = TreeTraits(), MemManager memManager = MemManager())
 		: TreeSet(treeTraits, std::move(memManager))
 	{
-		try
-		{
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 			Insert(std::move(begin), std::move(end));
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
-		}
 	}
 
 	TreeSet(std::initializer_list<Item> items)
@@ -590,15 +583,8 @@ public:
 		MemManager& thisMemManager = GetMemManager();
 		mNodeParams = MemManagerProxy::template AllocateCreate<NodeParams>(
 			thisMemManager, thisMemManager);
-		try
-		{
+		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
 			mRootNode = pvCopy(treeSet.mRootNode);
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
-		}
 		if (!mRootNode->IsLeaf())
 			pvUpdateParents(mRootNode);
 	}
@@ -1065,14 +1051,23 @@ private:
 
 	Node* pvCopy(Node* srcNode)
 	{
-		MemManager& memManager = GetMemManager();
 		size_t itemCount = srcNode->GetCount();
 		bool isLeaf = srcNode->IsLeaf();
 		Node* dstNode = Node::Create(*mNodeParams, isLeaf, itemCount);
 		size_t itemIndex = 0;
 		size_t childIndex = 0;
-		try
+		auto nodeDestroyer = [this, &itemIndex, &childIndex, dstNode] () noexcept
 		{
+			MemManager& memManager = GetMemManager();
+			for (size_t i = 0; i < itemIndex; ++i)
+				ItemTraits::Destroy(&memManager, *dstNode->GetItemPtr(i));
+			for (size_t i = 0; i < childIndex; ++i)
+				pvDestroy(dstNode->GetChild(i));
+			dstNode->Destroy(*mNodeParams);
+		};
+		for (internal::Finalizer fin = nodeDestroyer; fin; fin.Detach())
+		{
+			MemManager& memManager = GetMemManager();
 			for (; itemIndex < itemCount; ++itemIndex)
 			{
 				Creator<const Item&>(memManager, *srcNode->GetItemPtr(itemIndex))(
@@ -1083,15 +1078,6 @@ private:
 				for (; childIndex <= itemCount; ++childIndex)
 					dstNode->SetChild(childIndex, pvCopy(srcNode->GetChild(childIndex)));
 			}
-		}
-		catch (...)
-		{
-			for (size_t i = 0; i < itemIndex; ++i)
-				ItemTraits::Destroy(&memManager, *dstNode->GetItemPtr(i));
-			for (size_t i = 0; i < childIndex; ++i)
-				pvDestroy(dstNode->GetChild(i));
-			dstNode->Destroy(*mNodeParams);
-			throw;
 		}
 		return dstNode;
 	}
@@ -1286,16 +1272,14 @@ private:
 				memManager, memManager);
 		}
 		mRootNode = Node::Create(*mNodeParams, true, 0);
-		try
-		{
-			return pvAdd<false>(GetEnd(), std::move(itemCreator));
-		}
-		catch (...)
+		internal::Finalizer nodeDestroyerFin = [this] () noexcept
 		{
 			mRootNode->Destroy(*mNodeParams);
 			mRootNode = nullptr;
-			throw;
-		}
+		};
+		Iterator resIter = pvAdd<false>(GetEnd(), std::move(itemCreator));
+		nodeDestroyerFin.Detach();
+		return resIter;
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>
@@ -1696,7 +1680,18 @@ private:
 		Node* node2 = treeSetPtr2->mRootNode;
 		for (size_t i = height1; i < height2; ++i)
 			node2 = node2->GetChild(swap ? node2->GetCount() : 0);
-		try
+		auto nodeDestroyer = [treeSetPtr1] () noexcept
+		{
+			Node* node1 = treeSetPtr1->mRootNode->GetParent();
+			treeSetPtr1->mRootNode->SetParent(nullptr);
+			while (node1 != nullptr)
+			{
+				Node* nextNode1 = node1->GetParent();
+				node1->Destroy(*treeSetPtr1->mNodeParams);
+				node1 = nextNode1;
+			}
+		};
+		for (internal::Finalizer fin = nodeDestroyer; fin; fin.Detach())
 		{
 			while (true)
 			{
@@ -1734,18 +1729,6 @@ private:
 				treeSetPtr1->pvDestroy(node10);
 				node1->SetChild(swap ? 0 : node1->GetCount(), node11);
 			}
-		}
-		catch (...)
-		{
-			Node* node1 = treeSetPtr1->mRootNode->GetParent();
-			treeSetPtr1->mRootNode->SetParent(nullptr);
-			while (node1 != nullptr)
-			{
-				Node* nextNode1 = node1->GetParent();
-				node1->Destroy(*treeSetPtr1->mNodeParams);
-				node1 = nextNode1;
-			}
-			throw;
 		}
 		Node* childNode2 = node2->GetChild(swap ? node2->GetCount() : 0);
 		node2->AcceptBackItem(*treeSetPtr2->mNodeParams, swap ? node2->GetCount() : 0);
