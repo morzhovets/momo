@@ -846,16 +846,17 @@ private:
 		typedef momo::internal::ObjectBuffer<key_type, HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
+		typedef typename KeyManager::template FinalDestroyer<> KeyFinalDestroyer;
 		KeyBuffer keyBuffer;
 		KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPtr());
-		typename KeyManager::FinalDestroyer keyFin(memManager, keyBuffer.template GetPtr<true>());
+		KeyFinalDestroyer keyFin(&memManager, keyBuffer.template GetPtr<true>());
 		typename HashMap::Position pos = mHashMap.Find(std::as_const(keyBuffer.Get()));
 		if (!!pos)
 			return { IteratorProxy(pos), false };
 		auto valueCreator = [mappedCreator = std::move(mappedCreator), keyFin = std::move(keyFin)]
 			(key_type* newKey, mapped_type* newMapped) mutable
 		{
-			KeyManager::Relocate(keyFin.GetMemManager(), *keyFin.GetPtr(), newKey);
+			KeyManager::Relocate(*keyFin.GetMemManager(), *keyFin.GetPtr(), newKey);
 			keyFin.ResetPtr(newKey);
 			std::move(mappedCreator)(newMapped);
 			keyFin.ResetPtr();
@@ -884,12 +885,12 @@ private:
 		MemManager& memManager = mHashMap.GetMemManager();
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
-		typedef typename KeyManager::FinalDestroyer KeyFinalDestroyer;
+		typedef typename KeyManager::template FinalDestroyer<> KeyFinalDestroyer;
 		auto valueCreator = [&memManager, &keyArgs, mappedCreator = std::move(mappedCreator)]
 			(key_type* newKey, mapped_type* newMapped) mutable
 		{
 			KeyCreator(memManager, std::move(keyArgs))(newKey);
-			for (KeyFinalDestroyer fin(memManager, newKey); fin.GetPtr() != nullptr; fin.ResetPtr())
+			for (KeyFinalDestroyer fin(&memManager, newKey); fin.GetPtr() != nullptr; fin.ResetPtr())
 				std::move(mappedCreator)(newMapped);
 		};
 		typename HashMap::Position resPos = mHashMap.AddCrt(

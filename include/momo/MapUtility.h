@@ -357,15 +357,9 @@ namespace internal
 			else
 			{
 				KeyManager::Copy(dstMemManager, srcKey, dstKey);
-				try
-				{
+				typedef typename KeyManager::template FinalDestroyer<DstMemManagerOrNullPtr> KeyFinalDestroyer;
+				for (KeyFinalDestroyer fin(dstMemManager, dstKey); fin.GetPtr() != nullptr; fin.ResetPtr())
 					ValueManager::Relocate(srcMemManager, dstMemManager, srcValue, dstValue);
-				}
-				catch (...)
-				{
-					KeyManager::Destroy(dstMemManager, *dstKey);
-					throw;
-				}
 				KeyManager::Destroy(srcMemManager, srcKey);
 			}
 		}
@@ -432,6 +426,8 @@ namespace internal
 		{
 			MOMO_ASSERT(std::addressof(srcKey) != std::addressof(midKey));
 			MOMO_ASSERT(std::addressof(srcValue) != std::addressof(midValue));
+			typedef typename KeyManager::template FinalDestroyer<std::nullptr_t> KeyFinalDestroyer;
+			typedef typename ValueManager::template FinalDestroyer<std::nullptr_t> ValueFinalDestroyer;
 			if constexpr (isKeyNothrowRelocatable)
 			{
 				ValueManager::ReplaceRelocate(memManager, srcValue, midValue, dstValue);
@@ -445,51 +441,25 @@ namespace internal
 			else if constexpr (KeyManager::isNothrowAnywayAssignable)
 			{
 				KeyManager::Copy(nullptr, midKey, dstKey);
-				try
-				{
+				for (KeyFinalDestroyer fin(nullptr, dstKey); fin.GetPtr() != nullptr; fin.ResetPtr())
 					ValueManager::ReplaceRelocate(memManager, srcValue, midValue, dstValue);
-				}
-				catch (...)
-				{
-					KeyManager::Destroy(nullptr, *dstKey);
-					throw;
-				}
 				KeyManager::Replace(memManager, srcKey, midKey);
 			}
 			else if constexpr (ValueManager::isNothrowAnywayAssignable)
 			{
 				ValueManager::Copy(nullptr, midValue, dstValue);
-				try
-				{
+				for (ValueFinalDestroyer fin(nullptr, dstValue); fin.GetPtr() != nullptr; fin.ResetPtr())
 					KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
-				}
-				catch (...)
-				{
-					ValueManager::Destroy(nullptr, *dstValue);
-					throw;
-				}
 				ValueManager::Replace(memManager, srcValue, midValue);
 			}
 			else
 			{
 				KeyManager::Copy(nullptr, midKey, dstKey);
-				try
+				for (KeyFinalDestroyer fin(nullptr, dstKey); fin.GetPtr() != nullptr; fin.ResetPtr())
 				{
 					ValueManager::Copy(nullptr, midValue, dstValue);
-					try
-					{
+					for (ValueFinalDestroyer fin(nullptr, dstValue); fin.GetPtr() != nullptr; fin.ResetPtr())
 						pvReplaceUnsafe(memManager, srcKey, srcValue, midKey, midValue);
-					}
-					catch (...)
-					{
-						ValueManager::Destroy(nullptr, *dstValue);
-						throw;
-					}
-				}
-				catch (...)
-				{
-					KeyManager::Destroy(nullptr, *dstKey);
-					throw;
 				}
 			}
 		}

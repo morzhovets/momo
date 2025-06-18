@@ -671,9 +671,10 @@ private:
 			HashMultiMap::KeyValueTraits::keyAlignment> KeyBuffer;
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
+		typedef typename KeyManager::template FinalDestroyer<> KeyFinalDestroyer;
 		KeyBuffer keyBuffer;
 		KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPtr());
-		typename KeyManager::FinalDestroyer keyFin(memManager, keyBuffer.template GetPtr<true>());
+		KeyFinalDestroyer keyFin(&memManager, keyBuffer.template GetPtr<true>());
 		return pvInsert(std::forward_as_tuple(std::move(keyBuffer.Get())),
 			std::move(mappedCreator));
 	}

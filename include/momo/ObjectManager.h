@@ -387,15 +387,18 @@ namespace internal
 		}
 	};
 
-	template<conceptObject TObject, conceptMemManager TMemManager>
+	template<conceptObject TObject, conceptMemManager TMemManager,
+		conceptMemManagerOrNullPtr<TMemManager> TMemManagerOrNullPtr>
 	class ObjectFinalDestroyer
 	{
 	public:
 		typedef TObject Object;
 		typedef TMemManager MemManager;
+		typedef TMemManagerOrNullPtr MemManagerOrNullPtr;
 
 	public:
-		[[nodiscard]] explicit ObjectFinalDestroyer(MemManager& memManager, Object* objectPtr) noexcept
+		[[nodiscard]] explicit ObjectFinalDestroyer(MemManagerOrNullPtr memManager,
+			Object* objectPtr) noexcept
 			: mMemManager(memManager),
 			mObjectPtr(objectPtr)
 		{
@@ -412,12 +415,12 @@ namespace internal
 		~ObjectFinalDestroyer() noexcept
 		{
 			if (mObjectPtr != nullptr)
-				ObjectDestroyer<Object, MemManager>::Destroy(&mMemManager, *mObjectPtr);
+				ObjectDestroyer<Object, MemManager>::Destroy(mMemManager, *mObjectPtr);
 		}
 
 		ObjectFinalDestroyer& operator=(const ObjectFinalDestroyer&) = delete;
 
-		MemManager& GetMemManager() const noexcept
+		MemManagerOrNullPtr GetMemManager() const noexcept
 		{
 			return mMemManager;
 		}
@@ -433,7 +436,7 @@ namespace internal
 		}
 
 	private:
-		MemManager& mMemManager;
+		MemManagerOrNullPtr mMemManager;
 		Object* mObjectPtr;
 	};
 
@@ -452,7 +455,8 @@ namespace internal
 		template<typename... Args>
 		using Creator = ObjectCreator<Object, MemManager, std::index_sequence_for<Args...>, Args...>;
 
-		typedef ObjectFinalDestroyer<Object, MemManager> FinalDestroyer;
+		template<conceptMemManagerOrNullPtr<TMemManager> MemManagerOrNullPtr = MemManager*>
+		using FinalDestroyer = ObjectFinalDestroyer<Object, MemManager, MemManagerOrNullPtr>;
 
 		static const bool isTriviallyRelocatable = Relocator::isTriviallyRelocatable;
 
@@ -510,7 +514,7 @@ namespace internal
 			else
 			{
 				Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
-				for (FinalDestroyer fin(memManager, dstObject); fin.GetPtr() != nullptr; fin.ResetPtr())
+				for (FinalDestroyer<> fin(&memManager, dstObject); fin.GetPtr() != nullptr; fin.ResetPtr())
 					std::move(exec)();	//?
 			}
 		}
@@ -520,7 +524,7 @@ namespace internal
 			FastMovableFunctor<Executor> exec) requires isCopyConstructible && isNothrowDestructible
 		{
 			Copy(&memManager, srcObject, dstObject);
-			for (FinalDestroyer fin(memManager, dstObject); fin.GetPtr() != nullptr; fin.ResetPtr())
+			for (FinalDestroyer<> fin(&memManager, dstObject); fin.GetPtr() != nullptr; fin.ResetPtr())
 				std::move(exec)();
 		}
 
@@ -609,8 +613,11 @@ namespace internal
 			else
 			{
 				Copy(nullptr, midObject, dstObject);
-				for (Finalizer fin = [dstObject] { Destroy(nullptr, *dstObject); }; fin; fin.Detach())
+				for (FinalDestroyer<std::nullptr_t> fin(nullptr, dstObject);
+					fin.GetPtr() != nullptr; fin.ResetPtr())
+				{
 					Replace(memManager, srcObject, midObject);
+				}
 			}
 		}
 
