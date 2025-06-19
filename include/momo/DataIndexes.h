@@ -913,7 +913,12 @@ namespace internal
 			MOMO_ASSERT(mUniqueHashes.IsEmpty());
 			MOMO_ASSERT(mMultiHashes.IsEmpty());
 			const MemManagerPtr& memManagerPtr = mUniqueHashes.GetMemManager();
-			try
+			auto indexRemover = [this] () noexcept
+			{
+				RemoveUniqueHashIndexes();
+				RemoveMultiHashIndexes();
+			};
+			for (Finalizer fin = indexRemover; fin; fin.Detach())
 			{
 				mUniqueHashes.Reserve(indexes.mUniqueHashes.GetCount());
 				mMultiHashes.Reserve(indexes.mMultiHashes.GetCount());
@@ -929,12 +934,6 @@ namespace internal
 						HashTraits(multiHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
 						Offsets(multiHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
 				}
-			}
-			catch (...)
-			{
-				RemoveUniqueHashIndexes();
-				RemoveMultiHashIndexes();
-				throw;
 			}
 		}
 
@@ -977,31 +976,23 @@ namespace internal
 
 		Result AddRaw(Raw* raw)
 		{
-			auto rejector = [this] () noexcept
+			auto addRejector = [this] () noexcept
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 					uniqueHash.RejectAdd();
 				for (MultiHash& multiHash : mMultiHashes)
 					multiHash.RejectAdd();
 			};
-			try
+			for (Finalizer fin = addRejector; fin; fin.Detach())
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
 					Raw* resRaw = uniqueHash.Add(raw);
-					if (resRaw != raw)
-					{
-						rejector();
+					if (resRaw != raw)	// addRejector();
 						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
-					}
 				}
 				for (MultiHash& multiHash : mMultiHashes)
 					multiHash.Add(raw);
-			}
-			catch (...)
-			{
-				rejector();
-				throw;
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 				uniqueHash.AcceptAdd();
@@ -1012,20 +1003,19 @@ namespace internal
 
 		void RemoveRaw(Raw* raw)
 		{
-			try
-			{
-				for (UniqueHash& uniqueHash : mUniqueHashes)
-					uniqueHash.PrepareRemove(raw);
-				for (MultiHash& multiHash : mMultiHashes)
-					multiHash.PrepareRemove(raw);
-			}
-			catch (...)
+			auto removeRejector = [this] () noexcept
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 					uniqueHash.RejectRemove();
 				for (MultiHash& multiHash : mMultiHashes)
 					multiHash.RejectRemove();
-				throw;
+			};
+			for (Finalizer fin = removeRejector; fin; fin.Detach())
+			{
+				for (UniqueHash& uniqueHash : mUniqueHashes)
+					uniqueHash.PrepareRemove(raw);
+				for (MultiHash& multiHash : mMultiHashes)
+					multiHash.PrepareRemove(raw);
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 				uniqueHash.AcceptRemove();
@@ -1035,7 +1025,7 @@ namespace internal
 
 		Result UpdateRaw(Raw* oldRaw, Raw* newRaw)
 		{
-			auto rejector = [this, newRaw] () noexcept
+			auto updateRejector = [this, newRaw] () noexcept
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
@@ -1048,16 +1038,13 @@ namespace internal
 					multiHash.RejectRemove();
 				}
 			};
-			try
+			for (Finalizer fin = updateRejector; fin; fin.Detach())
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
 					Raw* resRaw = uniqueHash.Add(newRaw, oldRaw);
-					if (resRaw != newRaw && resRaw != oldRaw)
-					{
-						rejector();
+					if (resRaw != newRaw && resRaw != oldRaw)	// updateRejector();
 						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
-					}
 					if (resRaw == newRaw)
 						uniqueHash.PrepareRemove(oldRaw);
 				}
@@ -1066,11 +1053,6 @@ namespace internal
 					multiHash.Add(newRaw);
 					multiHash.PrepareRemove(oldRaw);
 				}
-			}
-			catch (...)
-			{
-				rejector();
-				throw;
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 			{
@@ -1094,7 +1076,8 @@ namespace internal
 				std::move(itemAssigner)(raw, offset);
 				return { nullptr, UniqueHashIndex::empty };
 			}
-			auto rejector = [this] () noexcept
+			MixedRaw<Item> mixedRaw{ raw, offset, std::addressof(item) };
+			auto updateRejector = [this] () noexcept
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
@@ -1107,19 +1090,15 @@ namespace internal
 					multiHash.RejectRemove();
 				}
 			};
-			MixedRaw<Item> mixedRaw{ raw, offset, std::addressof(item) };
-			try
+			for (Finalizer fin = updateRejector; fin; fin.Detach())
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
 					if (!pvContainsOffset(uniqueHash, offset))
 						continue;
 					Raw* resRaw = uniqueHash.Add(mixedRaw);
-					if (resRaw != raw)
-					{
-						rejector();
+					if (resRaw != raw)	// updateRejector();
 						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
-					}
 					uniqueHash.PrepareRemove(raw);
 				}
 				for (MultiHash& multiHash : mMultiHashes)
@@ -1130,11 +1109,6 @@ namespace internal
 					multiHash.PrepareRemove(raw);
 				}
 				std::move(itemAssigner)(raw, offset);
-			}
-			catch (...)
-			{
-				rejector();
-				throw;
 			}
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 			{

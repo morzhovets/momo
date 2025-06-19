@@ -613,7 +613,7 @@ namespace internal
 		void Add(RowIterator begin, RowSentinel end)
 		{
 			size_t initCount = GetCount();
-			try
+			for (Finalizer fin = [this, initCount] { mRaws.SetCount(initCount); }; fin; fin.Detach())
 			{
 				for (RowIterator iter = std::move(begin); iter != end; ++iter)
 				{
@@ -621,11 +621,6 @@ namespace internal
 					MOMO_CHECK(&rowRef.GetColumnList() == mColumnList);
 					mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
 				}
-			}
-			catch (...)
-			{
-				mRaws.SetCount(initCount);
-				throw;
 			}
 		}
 

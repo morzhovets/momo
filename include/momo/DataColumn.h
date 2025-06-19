@@ -1126,17 +1126,14 @@ private:
 		mColumnRecords.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
 		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
-		try
-		{
-			mColumnCodeSet.Insert(columnCodes.begin(), columnCodes.end());
-		}
-		catch (...)
+		auto codeInsertReverter = [this, &columnCodes] () noexcept
 		{
 			for (ColumnCode columnCode : columnCodes)
 				mColumnCodeSet.Remove(columnCode);	// no throw
 			//mMutableOffsets.SetCount((mTotalSize + 7) / 8);
-			throw;
-		}
+		};
+		for (internal::Finalizer fin = codeInsertReverter; fin; fin.Detach())
+			mColumnCodeSet.Insert(columnCodes.begin(), columnCodes.end());
 		mCodeParam = codeParam;
 		mAddends = addends;
 		mTotalSize = offset;
@@ -1243,15 +1240,10 @@ private:
 			ItemTraits::Copy(memManager, *srcItem, item);
 		if constexpr (sizeof...(Items) > 0)
 		{
-			try
-			{
+			auto itemDestroyer = [&memManager, raw, offset] () noexcept
+				{ ItemTraits::Destroy(&memManager, *pvGetItemPtr<Item, true>(raw, offset)); };	//?
+			for (internal::Finalizer fin = itemDestroyer; fin; fin.Detach())
 				pvCreate<Items...>(memManager, columnRecordPtr + 1, srcColumnList, srcRaw, raw);
-			}
-			catch (...)
-			{
-				ItemTraits::Destroy(&memManager, *pvGetItemPtr<Item, true>(raw, offset));	//?
-				throw;
-			}
 		}
 	}
 
@@ -1267,7 +1259,15 @@ private:
 		const Raw* srcRaw, Raw* raw) const
 	{
 		size_t funcIndex = 0;
-		try
+		auto rawItemsDestroyer = [this, &funcIndex, &memManager, raw] () noexcept
+		{
+			for (size_t i = 0; i < funcIndex; ++i)
+			{
+				const FuncRecord& funcRec = mFuncRecords[i];
+				funcRec.rawItemsDestroyer(&memManager, &mColumnRecords[funcRec.columnIndex], raw);
+			}
+		};
+		for (internal::Finalizer fin = rawItemsDestroyer; fin; fin.Detach())
 		{
 			size_t funcCount = mFuncRecords.GetCount();
 			for (; funcIndex < funcCount; ++funcIndex)
@@ -1276,15 +1276,6 @@ private:
 				funcRec.rawItemsCreator(memManager, &mColumnRecords[funcRec.columnIndex],
 					srcColumnList, srcRaw, raw);
 			}
-		}
-		catch (...)
-		{
-			for (size_t i = 0; i < funcIndex; ++i)
-			{
-				const FuncRecord& funcRec = mFuncRecords[i];
-				funcRec.rawItemsDestroyer(&memManager, &mColumnRecords[funcRec.columnIndex], raw);
-			}
-			throw;
 		}
 	}
 
