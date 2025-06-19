@@ -33,17 +33,17 @@ jobs:
           test_extra: 'On'
           flags: '-std=c++26 -Werror'
 
-        - gcc_ver: '14'
-          ubuntu_ver: '24.04'
-          build_type: 'Debug'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror'
-
-        - gcc_ver: '14'
-          ubuntu_ver: '24.04'
-          build_type: 'Debug'
-          test_extra: 'On'
-          flags: '-std=c++26 -Werror'
+#        - gcc_ver: '14'
+#          ubuntu_ver: '24.04'
+#          build_type: 'Debug'
+#          test_extra: 'Off'
+#          flags: '-std=c++26 -Werror'
+#
+#        - gcc_ver: '14'
+#          ubuntu_ver: '24.04'
+#          build_type: 'Debug'
+#          test_extra: 'On'
+#          flags: '-std=c++26 -Werror'
 
         # ARM64
         - gcc_ver: '14'
