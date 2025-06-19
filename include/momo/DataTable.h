@@ -912,7 +912,7 @@ private:
 		const ColumnList& columnList = GetColumnList();
 		if constexpr (std::is_same_v<RowFilter, EmptyRowFilter>)
 			Reserve(rows.GetCount());
-		for (internal::Finalizer fin = [this] { pvDestroyRaws(); }; fin; fin.Detach())
+		for (internal::Finalizer rawsFin = [this] { pvDestroyRaws(); }; rawsFin; rawsFin.Detach())
 		{
 			for (ConstRowReference rowRef : rows)
 			{
@@ -920,8 +920,11 @@ private:
 					continue;
 				mRaws.Reserve(mRaws.GetCount() + 1);
 				Raw* raw = pvImportRaw(columnList, rowRef.GetRaw());
-				for (internal::Finalizer fin = [this, raw] { pvDestroyRaw(raw); }; fin; fin.Detach())
+				for (internal::Finalizer rawFin = [this, raw] { pvDestroyRaw(raw); };
+					rawFin; rawFin.Detach())
+				{
 					mIndexes.AddRaw(raw);
+				}
 				mRaws.AddBackNogrow(raw);
 			}
 		}
