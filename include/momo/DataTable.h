@@ -540,7 +540,7 @@ public:
 	{
 		TryResult res = TryAdd(std::move(row));
 		if (!res)
-			throw UniqueIndexViolation(res);
+			MOMO_THROW(UniqueIndexViolation(res));
 		return res.rowReference;
 	}
 
@@ -574,7 +574,7 @@ public:
 	{
 		TryResult res = TryInsert(rowNumber, std::move(row));
 		if (!res)
-			throw UniqueIndexViolation(res);
+			MOMO_THROW(UniqueIndexViolation(res));
 		return res.rowReference;
 	}
 
@@ -609,7 +609,7 @@ public:
 	{
 		TryResult res = TryUpdate(rowNumber, std::move(row));
 		if (!res)
-			throw UniqueIndexViolation(res);
+			MOMO_THROW(UniqueIndexViolation(res));
 		return res.rowReference;
 	}
 
@@ -619,7 +619,7 @@ public:
 	{
 		TryResult res = pvTryUpdate(rowRef, column, std::move(newItem));
 		if (!res)
-			throw UniqueIndexViolation(res);
+			MOMO_THROW(UniqueIndexViolation(res));
 		return res.rowReference;
 	}
 
@@ -629,7 +629,7 @@ public:
 	{
 		TryResult res = pvTryUpdate(rowRef, column, newItem);
 		if (!res)
-			throw UniqueIndexViolation(res);
+			MOMO_THROW(UniqueIndexViolation(res));
 		return res.rowReference;
 	}
 
@@ -726,7 +726,7 @@ public:
 		pvCheckImmutable(offsets);
 		auto res = mIndexes.template AddUniqueHashIndex<Item, Items...>(mRaws, offsets);
 		if (res.raw != nullptr)
-			throw UniqueIndexViolation({ pvMakeRowReference(res.raw), UniqueHashIndex::empty });
+			MOMO_THROW(UniqueIndexViolation({ pvMakeRowReference(res.raw), UniqueHashIndex::empty }));
 		return res.uniqueHashIndex;
 	}
 
@@ -1494,7 +1494,7 @@ private:
 	template<typename Result, typename Index, typename RowFilter>
 	Result pvSelectRec(Index, const size_t*, const RowFilter&, OffsetItemTuple<>&&) const
 	{
-		throw std::exception();
+		MOMO_THROW(std::exception());
 	}
 #endif
 

@@ -37,7 +37,7 @@ namespace internal
 		template<typename ColumnInfo>
 		void operator()(const void* /*item*/, const ColumnInfo& /*columnInfo*/) const	//?
 		{
-			throw std::logic_error("Visit unknown type");
+			MOMO_THROW(std::logic_error("Visit unknown type"));
 		}
 
 		template<typename QItem, typename ColumnInfo>

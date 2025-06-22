@@ -350,7 +350,7 @@ private:
 		static void pvCheckCapacity(size_t capacity)
 		{
 			if (capacity > internal::UIntConst::maxSize / sizeof(Item))
-				throw std::bad_array_new_length();
+				MOMO_THROW(std::bad_array_new_length());
 		}
 
 		Item* pvAllocate(size_t capacity)

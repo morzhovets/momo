@@ -446,7 +446,7 @@ private:
 		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize % Params::blockAlignment == 0);
 		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize / Params::blockAlignment >= 2);
 		if (Params::blockSize > internal::UIntConst::maxSize / Params::blockCount)	//?
-			throw std::length_error("Invalid block size");
+			MOMO_THROW(std::length_error("Invalid block size"));
 	}
 
 	void pvDestroy() noexcept
@@ -841,7 +841,7 @@ namespace internal
 		{
 			MOMO_ASSERT(maxTotalBlockCount < size_t{UIntConst::max32});
 			if (mBlockSize > UIntConst::maxSize / blockCount)
-				throw std::length_error("Invalid block size");
+				MOMO_THROW(std::length_error("Invalid block size"));
 		}
 
 		MemPoolUInt32(const MemPoolUInt32&) = delete;
@@ -915,7 +915,7 @@ namespace internal
 		{
 			size_t chunkCount = mChunks.GetCount();
 			if (chunkCount >= mMaxChunkCount)
-				throw std::length_error("Invalid chunk count");
+				MOMO_THROW(std::length_error("Invalid chunk count"));
 			mChunks.Reserve(chunkCount + 1);
 			Byte* chunk = MemManagerProxy::template Allocate<Byte>(GetMemManager(),
 				pvGetChunkSize());

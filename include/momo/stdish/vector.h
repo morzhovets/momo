@@ -326,14 +326,14 @@ public:
 	const_reference at(size_type index) const
 	{
 		if (index >= size())
-			throw std::out_of_range("invalid vector subscript");
+			MOMO_THROW(std::out_of_range("invalid vector subscript"));
 		return mArray[index];
 	}
 
 	reference at(size_type index)
 	{
 		if (index >= size())
-			throw std::out_of_range("invalid vector subscript");
+			MOMO_THROW(std::out_of_range("invalid vector subscript"));
 		return mArray[index];
 	}
 

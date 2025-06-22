@@ -609,7 +609,7 @@ private:
 	{
 		size_t itemCount = Settings::GetItemCount(segIndex);
 		if (itemCount > internal::UIntConst::maxSize / sizeof(Item))
-			throw std::length_error("Invalid item count");
+			MOMO_THROW(std::length_error("Invalid item count"));
 		MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 			itemCount * sizeof(Item));

@@ -107,7 +107,7 @@ public:
 	{
 		void* ptr = std::malloc(size);
 		if (ptr == nullptr)
-			throw std::bad_alloc();
+			MOMO_THROW(std::bad_alloc());
 		return ptr;
 	}
 
@@ -120,7 +120,7 @@ public:
 	{
 		void* newPtr = std::realloc(ptr, newSize);
 		if (newPtr == nullptr)
-			throw std::bad_alloc();
+			MOMO_THROW(std::bad_alloc());
 		return newPtr;
 	}
 };
@@ -146,7 +146,7 @@ public:
 	{
 		void* ptr = HeapAlloc(GetProcessHeap(), 0, size);
 		if (ptr == nullptr)
-			throw std::bad_alloc();
+			MOMO_THROW(std::bad_alloc());
 		return ptr;
 	}
 
@@ -159,7 +159,7 @@ public:
 	{
 		void* newPtr = HeapReAlloc(GetProcessHeap(), 0, ptr, newSize);
 		if (newPtr == nullptr)
-			throw std::bad_alloc();
+			MOMO_THROW(std::bad_alloc());
 		return newPtr;
 	}
 
@@ -541,7 +541,7 @@ namespace internal
 		void* Allocate(size_t /*size*/)
 		{
 			MOMO_ASSERT(false);
-			throw std::bad_alloc();
+			MOMO_THROW(std::bad_alloc());
 		}
 
 		void Deallocate(void* /*ptr*/, size_t /*size*/) noexcept

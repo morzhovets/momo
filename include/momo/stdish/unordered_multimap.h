@@ -585,7 +585,7 @@ public:
 			if (last == ConstIteratorProxy(mHashMultiMap.MakeIterator(keyIter, keyIter->GetCount())))
 				return IteratorProxy(mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
 		}
-		throw std::invalid_argument("invalid unordered_multimap erase arguments");
+		MOMO_THROW(std::invalid_argument("invalid unordered_multimap erase arguments"));
 	}
 
 	size_type erase(const key_type& key)

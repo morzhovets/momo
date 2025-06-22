@@ -1092,7 +1092,7 @@ private:
 		static const size_t columnCount = sizeof...(columns);
 		size_t initColumnCount = GetCount();
 		if (columnCount + initColumnCount > maxColumnCount)
-			throw std::logic_error("Too many columns");
+			MOMO_THROW(std::logic_error("Too many columns"));
 		std::array<ColumnCode, columnCount> columnCodes = {{ ColumnInfo::GetCode(columns)... }};
 		Addends addends;
 		size_t offset;
@@ -1107,7 +1107,7 @@ private:
 				break;
 			++codeParam;
 			if (codeParam > maxCodeParam)
-				throw std::runtime_error("Cannot add columns");
+				MOMO_THROW(std::runtime_error("Cannot add columns"));
 		}
 		FuncRecord funcRec;
 		funcRec.columnIndex = initColumnCount;
@@ -1536,7 +1536,7 @@ private:
 	void pvVisitPointers(QRaw* raw, const PtrVisitor& ptrVisitor) const
 	{
 		if (mColumns.IsEmpty())
-			throw std::logic_error("Not prepared for visitors");
+			MOMO_THROW(std::logic_error("Not prepared for visitors"));
 		for (const ColumnInfo& columnInfo : mColumns)
 			columnInfo.Visit(pvGetBytePtr(raw, pvGetOffset(columnInfo.GetCode())), ptrVisitor);
 	}
