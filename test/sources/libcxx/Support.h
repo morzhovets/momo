@@ -26,6 +26,10 @@
 # define TEST_STD_VER 20
 #endif
 
+#ifdef MOMO_DISABLE_EXCEPTIONS
+# define TEST_HAS_NO_EXCEPTIONS
+#endif
+
 #include "support/test_macros.h"
 
 #include "support/MoveOnly.h"

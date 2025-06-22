@@ -160,6 +160,7 @@ LIBCXX_TEST_BEGIN(extra_emplace_ext)
 #include "unord.map/extra/emplace_ext.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 #ifdef LIBCXX_TEST_FAILURE
 
 LIBCXX_TEST_BEGIN(spec_assert_bucket)
@@ -220,7 +221,8 @@ LIBCXX_TEST_BEGIN(spec_debug_swap)
 #include "unord.map/spec/debug.swap.pass.cpp"
 LIBCXX_TEST_END
 
-#endif
+#endif // LIBCXX_TEST_FAILURE
+#endif // TEST_HAS_NO_EXCEPTIONS
 
 LIBCXX_TEST_BEGIN(cnstr_allocator)
 #include "unord.map/unord.map.cnstr/allocator.pass.cpp"
@@ -256,7 +258,7 @@ LIBCXX_TEST_BEGIN(cnstr_deduct_const)
 #include "unord.map/unord.map.cnstr/deduct_const.pass.cpp"
 LIBCXX_TEST_END
 
-#endif
+#endif // LIBCXX_TEST_DEFAULT_BUCKET
 
 LIBCXX_TEST_BEGIN(cnstr_default)
 #include "unord.map/unord.map.cnstr/default.pass.cpp"
