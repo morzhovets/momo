@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         include:
-        
+
         - type: 'unordered_map'
           gcc_ver: '14'
 
@@ -20,6 +20,7 @@ jobs:
         - type: 'data_table_static'
           gcc_ver: '14'
 
+    # x64
     runs-on: ubuntu-24.04
 
     steps:
