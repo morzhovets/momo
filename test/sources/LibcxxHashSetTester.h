@@ -31,6 +31,21 @@ public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 
+template<typename TKey, typename THasher, typename TEqualComparer>
+class LibcxxHashTraits : public momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>
+{
+private:
+	typedef momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET> HashTraitsBase;
+
+public:
+#ifdef LIBCXX_TEST_HINT_ITERATORS
+	static const bool useHintIterators = true;
+#endif
+
+public:
+	using HashTraitsBase::HashTraitsBase;
+};
+
 namespace std
 {
 	using namespace ::std;
@@ -40,8 +55,7 @@ namespace std
 		typename TEqualComparer = std::equal_to<TKey>,
 		typename TAllocator = std::allocator<TKey>>
 	using unordered_set = momo::stdish::unordered_set<TKey, THasher, TEqualComparer, TAllocator,
-		momo::HashSet<TKey, momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>,
-			momo::MemManagerStd<TAllocator>,
+		momo::HashSet<TKey, LibcxxHashTraits<TKey, THasher, TEqualComparer>, momo::MemManagerStd<TAllocator>,
 			momo::HashSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 			LibcxxHashSetSettings>>;
 }

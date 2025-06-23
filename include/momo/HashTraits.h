@@ -156,6 +156,12 @@ public:
 	using IsValidKeyArg = std::bool_constant<
 		internal::conceptTransparent<Hasher> && internal::conceptTransparent<EqualComparer>>;
 
+#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
+	static const bool useHintIterators = true;
+#else
+	static const bool useHintIterators = false;
+#endif
+
 private:
 	static const bool staticIsEqual = std::is_empty_v<EqualComparer> &&
 		std::is_trivially_default_constructible_v<EqualComparer>;

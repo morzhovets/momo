@@ -442,13 +442,12 @@ public:
 		return { res.position, res.inserted };
 	}
 
-	iterator insert([[maybe_unused]] const_iterator hint, value_type&& value)
+	iterator insert(const_iterator hint, value_type&& value)
 	{
-#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-		return mHashSet.Add(hint, std::move(value));
-#else
-		return insert(std::move(value)).first;
-#endif
+		if constexpr (HashTraits::useHintIterators)
+			return mHashSet.Add(hint, std::move(value));
+		else
+			return insert(std::move(value)).first;
 	}
 
 	std::pair<iterator, bool> insert(const value_type& value)
@@ -457,13 +456,12 @@ public:
 		return { res.position, res.inserted };
 	}
 
-	iterator insert([[maybe_unused]] const_iterator hint, const value_type& value)
+	iterator insert(const_iterator hint, const value_type& value)
 	{
-#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-		return mHashSet.Add(hint, value);
-#else
-		return insert(value).first;
-#endif
+		if constexpr (HashTraits::useHintIterators)
+			return mHashSet.Add(hint, value);
+		else
+			return insert(value).first;
 	}
 
 	insert_return_type insert(node_type&& node)
@@ -475,15 +473,18 @@ public:
 		return { res.position, res.inserted, res.inserted ? node_type() : std::move(node) };
 	}
 
-	iterator insert([[maybe_unused]] const_iterator hint, node_type&& node)
+	iterator insert(const_iterator hint, node_type&& node)
 	{
-#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-		if (node.empty())
-			return end();
-		return mHashSet.Add(hint, std::move(NodeTypeProxy::GetExtractedItem(node)));
-#else
-		return insert(std::move(node)).position;
-#endif
+		if constexpr (HashTraits::useHintIterators)
+		{
+			if (node.empty())
+				return end();
+			return mHashSet.Add(hint, std::move(NodeTypeProxy::GetExtractedItem(node)));
+		}
+		else
+		{
+			return insert(std::move(node)).position;
+		}
 	}
 
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
@@ -525,13 +526,12 @@ public:
 	}
 
 	template<typename... ValueArgs>
-	iterator emplace_hint([[maybe_unused]] const_iterator hint, ValueArgs&&... valueArgs)
+	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
 	{
-#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-		return mHashSet.AddVar(hint, std::forward<ValueArgs>(valueArgs)...);
-#else
-		return emplace(std::forward<ValueArgs>(valueArgs)...).first;
-#endif
+		if constexpr (HashTraits::useHintIterators)
+			return mHashSet.AddVar(hint, std::forward<ValueArgs>(valueArgs)...);
+		else
+			return emplace(std::forward<ValueArgs>(valueArgs)...).first;
 	}
 
 	iterator erase(const_iterator where)

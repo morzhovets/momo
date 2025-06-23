@@ -18,7 +18,7 @@
 // UNSUPPORTED: !libcpp-has-legacy-debug-mode, c++03
 
 int main(int, char**) {
-#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifdef LIBCXX_TEST_HINT_ITERATORS
     typedef std::unordered_set<double> C;
     typedef C::value_type P;
     C c;

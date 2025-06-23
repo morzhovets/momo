@@ -19,6 +19,7 @@
 #define LIBCXX_TEST_BUCKET momo::HashBucketLimP4<>
 #define LIBCXX_TEST_BUCKET_NAME "limp4"
 #define LIBCXX_TEST_DEFAULT_BUCKET
+#define LIBCXX_TEST_HINT_ITERATORS
 
 #include "LibcxxHashMapTester.h"
 
