@@ -46,6 +46,16 @@ public:
 	using HashTraitsBase::HashTraitsBase;
 };
 
+#ifdef LIBCXX_TEST_MAP_VALUE_PTR
+template<typename TKey, typename TMapped, typename TAllocator>
+using LibcxxHashMapKeyValueTraits = momo::HashMapKeyValueTraits<TKey, TMapped,
+	momo::MemManagerStd<TAllocator>, true>;
+#else
+template<typename TKey, typename TMapped, typename TAllocator>
+using LibcxxHashMapKeyValueTraits = momo::HashMapKeyValueTraits<TKey, TMapped,
+	momo::MemManagerStd<TAllocator>, false>;
+#endif
+
 namespace std
 {
 	using namespace ::std;
@@ -56,8 +66,7 @@ namespace std
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 	using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
 		momo::HashMap<TKey, TMapped, LibcxxHashTraits<TKey, THasher, TEqualComparer>,
-			momo::MemManagerStd<TAllocator>,
-			momo::HashMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, false>,
+			momo::MemManagerStd<TAllocator>, LibcxxHashMapKeyValueTraits<TKey, TMapped, TAllocator>,
 			LibcxxHashMapSettings>>;
 }
 
