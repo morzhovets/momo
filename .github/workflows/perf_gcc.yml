@@ -7,7 +7,7 @@ jobs:
     strategy:
       matrix:
         include:
-        
+
         - type: 'unordered_map'
           gcc_ver: '14'
 
