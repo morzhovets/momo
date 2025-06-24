@@ -18,7 +18,7 @@
 #include "../../include/momo/details/HashBucketLimP.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketLimP<>
-#define LIBCXX_TEST_BUCKET_NAME "limp"
+#define LIBCXX_TEST_PREFIX_TAIL "limp"
 
 #include "LibcxxHashMapTester.h"
 

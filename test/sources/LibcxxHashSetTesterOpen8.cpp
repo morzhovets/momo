@@ -17,7 +17,7 @@
 #include "../../include/momo/details/HashBucketOpen8.h"
 
 //#define LIBCXX_TEST_BUCKET momo::HashBucketOpen8
-//#define LIBCXX_TEST_BUCKET_NAME "open8"
+//#define LIBCXX_TEST_PREFIX_TAIL "open8"
 
 //#include "LibcxxHashSetTester.h"
 

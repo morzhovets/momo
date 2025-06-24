@@ -61,7 +61,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_FAILURE
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_" LIBCXX_TEST_BUCKET_NAME
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_" LIBCXX_TEST_PREFIX_TAIL
 #include "libcxx/UnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_FAILURE
