@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/LibcxxHashMapTesterLimP4.cpp
+  test/sources/LibcxxHashMapTesterLimP4_HI.cpp
 
 \**********************************************************/
 
@@ -18,7 +18,7 @@
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketLimP4<>
 #define LIBCXX_TEST_BUCKET_NAME "limp4"
-#define LIBCXX_TEST_DEFAULT_BUCKET
+#define LIBCXX_TEST_HINT_ITERATORS
 
 #include "LibcxxHashMapTester.h"
 
