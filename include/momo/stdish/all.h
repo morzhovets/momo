@@ -21,4 +21,6 @@
 #include "unordered_multimap.h"
 #include "pool_allocator.h"
 
+#include MOMO_PARENT_HEADER(Version)
+
 #endif // MOMO_INCLUDE_GUARD_STDISH_ALL
