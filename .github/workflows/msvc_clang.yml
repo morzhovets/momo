@@ -8,18 +8,18 @@ jobs:
       matrix:
         include:
 
-        # Clang 18 with MSVC-like command-line
-        - win_ver: '2022'
+#        # Clang 18 with MSVC-like command-line
+#        - win_ver: '2022'
+#          build_type: 'Release'
+#          test_libcxx_new: 'On'
+#          flags: '/std:c++latest /WX'
+
+        # Clang 20 with MSVC-like command-line
+        - win_ver: '2025'
           build_type: 'Release'
           test_libcxx_new: 'Off'
           flags: '/std:c++14 /WX'
 
-        - win_ver: '2022'
-          build_type: 'Release'
-          test_libcxx_new: 'On'
-          flags: '/std:c++latest /WX'
-
-        # Clang 20 with MSVC-like command-line
         - win_ver: '2025'
           build_type: 'Release'
           test_libcxx_new: 'On'
