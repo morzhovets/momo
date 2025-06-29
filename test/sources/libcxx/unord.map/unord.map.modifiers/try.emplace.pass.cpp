@@ -145,7 +145,7 @@ int main(int, char**)
         (void)it;
 
         Moveable mv1(3, 3.0);
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
         for (int i=0; i < 20; i += 2)
         {
             r = m.try_emplace(it, i, std::move(mv1));
@@ -175,7 +175,7 @@ int main(int, char**)
 
         Moveable mvkey1(2, 2.0);
         Moveable mv1(4, 4.0);
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
         r = m.try_emplace(it, std::move(mvkey1), std::move(mv1));
         assert(m.size() == 10);
         assert(!mv1.moved());        // was not moved from

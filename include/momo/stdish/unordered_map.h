@@ -526,15 +526,17 @@ public:
 
 	iterator insert(const_iterator hint, node_type&& node)
 	{
-#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-		if (node.empty())
-			return end();
-		return IteratorProxy(mHashMap.Add(ConstIteratorProxy::GetBaseIterator(hint),
-			std::move(NodeTypeProxy::GetExtractedPair(node))));
-#else
-		(void)hint;
-		return insert(std::move(node)).position;
-#endif
+		if (HashTraits::useHintIterators)
+		{
+			if (node.empty())
+				return end();
+			return IteratorProxy(mHashMap.Add(ConstIteratorProxy::GetBaseIterator(hint),
+				std::move(NodeTypeProxy::GetExtractedPair(node))));
+		}
+		else
+		{
+			return insert(std::move(node)).position;
+		}
 	}
 
 	template<typename Iterator>
@@ -837,8 +839,8 @@ private:
 			MappedCreator(mHashMap.GetMemManager(), std::move(mappedArgs)));
 	}
 
-	template<typename Hint, typename... KeyArgs, typename MappedCreator>
-	std::pair<iterator, bool> pvInsert(Hint /*hint*/, std::tuple<KeyArgs...>&& keyArgs,
+	template<typename... KeyArgs, typename MappedCreator>
+	std::pair<iterator, bool> pvInsert(std::nullptr_t /*hint*/, std::tuple<KeyArgs...>&& keyArgs,
 		MappedCreator&& mappedCreator)
 	{
 		MemManager& memManager = mHashMap.GetMemManager();
@@ -883,10 +885,10 @@ private:
 		}
 	}
 
-	template<typename Hint, typename RKey, typename MappedCreator,
+	template<typename RKey, typename MappedCreator,
 		typename Key = typename std::decay<RKey>::type>
 	momo::internal::EnableIf<std::is_same<key_type, Key>::value,
-	std::pair<iterator, bool>> pvInsert(Hint /*hint*/, std::tuple<RKey>&& key,
+	std::pair<iterator, bool>> pvInsert(std::nullptr_t /*hint*/, std::tuple<RKey>&& key,
 		MappedCreator&& mappedCreator)
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertCrt(
@@ -894,11 +896,12 @@ private:
 		return { IteratorProxy(res.position), res.inserted };
 	}
 
-#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
 	template<typename... KeyArgs, typename MappedCreator>
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<KeyArgs...>&& keyArgs,
 		MappedCreator&& mappedCreator)
 	{
+		if (!HashTraits::useHintIterators)
+			return pvInsert(nullptr, std::move(keyArgs), std::move(mappedCreator));
 		MemManager& memManager = mHashMap.GetMemManager();
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
@@ -927,11 +930,12 @@ private:
 	std::pair<iterator, bool>> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
 		MappedCreator&& mappedCreator)
 	{
+		if (!HashTraits::useHintIterators)
+			return pvInsert(nullptr, std::move(key), std::move(mappedCreator));
 		typename HashMap::Position resPos = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
 		return { IteratorProxy(resPos), true };
 	}
-#endif // MOMO_USE_UNORDERED_HINT_ITERATORS
 
 	template<typename Iterator, typename Sentinel>
 	momo::internal::EnableIf<momo::internal::IsMapArgIteratorStd<Iterator, key_type>::value,

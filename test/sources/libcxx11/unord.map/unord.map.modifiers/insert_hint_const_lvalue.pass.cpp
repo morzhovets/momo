@@ -38,7 +38,7 @@ void main()
         assert(r->first == 3.5);
         assert(r->second == 3);
 
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
         P p34(3.5, 4);
         r = c.insert(/*c.end()*/c.find(3.5), p34);
         assert(c.size() == 1);

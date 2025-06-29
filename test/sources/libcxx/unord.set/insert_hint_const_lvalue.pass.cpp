@@ -31,7 +31,7 @@ void do_insert_hint_const_lvalue_test()
     assert(c.size() == 1);
     assert(*r == 3.5);
 
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
     r = c.insert(r, v1);
     assert(c.size() == 1);
     assert(*r == 3.5);

@@ -43,7 +43,7 @@ void main()
         assert(c.size() == 2);
         assert(*r == Emplaceable(5, 6));
 
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
         r = c.emplace_hint(r, 5, 6);
         assert(c.size() == 2);
         assert(*r == Emplaceable(5, 6));

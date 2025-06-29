@@ -115,7 +115,7 @@ void main()
         assert(m.size() == 10);
 
         Moveable mv1(3, 3.0);
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
         M::const_iterator it = m.find(2);
 
         for (int i=0; i < 20; i += 2)
@@ -144,7 +144,7 @@ void main()
         assert(m.size() == 10);
 
         Moveable mv1(4, 4.0);
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
         M::const_iterator it = std::next(m.cbegin());
 
         Moveable mvkey1(2, 2.0);

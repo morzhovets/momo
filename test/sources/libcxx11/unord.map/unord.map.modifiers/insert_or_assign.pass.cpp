@@ -114,7 +114,7 @@ void main()
         for (int i = 0; i < 20; i += 2)
             m.emplace ( i, Moveable(i, static_cast<double>(i)));
         assert(m.size() == 10);
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
         int k2 = 2;
         M::const_iterator it = m.find(k2);
 
@@ -141,7 +141,7 @@ void main()
         for (int i = 0; i < 20; i += 2)
             m.emplace ( Moveable(i, static_cast<double>(i)), Moveable(i+1, static_cast<double>(i+1)));
         assert(m.size() == 10);
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
         M::const_iterator it = std::next(m.cbegin());
 
         Moveable mvkey1(2, 2.0);

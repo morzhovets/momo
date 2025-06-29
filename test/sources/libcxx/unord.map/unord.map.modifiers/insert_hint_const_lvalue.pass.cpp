@@ -32,7 +32,7 @@ void do_insert_hint_const_lvalue_test()
     assert(r->first == 3.5);
     assert(r->second == 3);
 
-#ifndef MOMO_USE_UNORDERED_HINT_ITERATORS
+#ifndef LIBCXX_TEST_HINT_ITERATORS
     const VT v2(3.5, 4);
     r = c.insert(/*r*/c.find(3.5), v2);
     assert(c.size() == 1);

@@ -210,6 +210,12 @@ public:
 	template<typename KeyArg>
 	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<Hasher, EqualComparer>;
 
+#ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
+	static const bool useHintIterators = true;
+#else
+	static const bool useHintIterators = false;
+#endif
+
 public:
 	explicit HashTraitsStd(size_t startBucketCount = size_t{1} << HashBucket::logStartBucketCount,
 		const Hasher& hasher = Hasher(),
