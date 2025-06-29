@@ -18,7 +18,7 @@
 #include "../../include/momo/details/HashBucketOne.h"
 
 #define LIBCXX_TEST_BUCKET momo::HashBucketOne<>
-#define LIBCXX_TEST_BUCKET_NAME "one"
+#define LIBCXX_TEST_PREFIX_TAIL "one"
 
 #include "LibcxxHashMapTester.h"
 

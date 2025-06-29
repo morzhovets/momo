@@ -44,7 +44,7 @@ using unordered_set = momo::stdish::unordered_set<TKey, THasher, TEqualComparer,
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_" LIBCXX_TEST_BUCKET_NAME
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_" LIBCXX_TEST_PREFIX_TAIL
 #include LIBCXX_HEADER(UnorderedSetTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_FAILURE
