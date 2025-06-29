@@ -66,12 +66,6 @@ int main()
 #endif
 	std::cout << std::endl;
 
-	std::cout << "MOMO_PARENT_HEADER_STRING: ";
-#ifdef MOMO_PARENT_HEADER_STRING
-	std::cout << "defined";
-#endif
-	std::cout << std::endl;
-
 	std::cout << "MOMO_MAX_ALIGNMENT: ";
 #ifdef MOMO_MAX_ALIGNMENT
 	std::cout << MOMO_MAX_ALIGNMENT;
@@ -120,6 +114,12 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "MOMO_USE_MEM_MANAGER_WIN: ";
+#ifdef MOMO_USE_MEM_MANAGER_WIN
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
 	std::cout << "MOMO_USE_SAFE_MAP_BRACKETS: ";
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
 	std::cout << "defined";
@@ -128,12 +128,6 @@ int main()
 
 	std::cout << "MOMO_DISABLE_TYPE_INFO: ";
 #ifdef MOMO_DISABLE_TYPE_INFO
-	std::cout << "defined";
-#endif
-	std::cout << std::endl;
-
-	std::cout << "MOMO_USE_MEM_MANAGER_WIN: ";
-#ifdef MOMO_USE_MEM_MANAGER_WIN
 	std::cout << "defined";
 #endif
 	std::cout << std::endl;
