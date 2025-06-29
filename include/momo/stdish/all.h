@@ -20,3 +20,4 @@
 #include "unordered_map.h"
 #include "unordered_multimap.h"
 #include "pool_allocator.h"
+#include "../Version.h"
