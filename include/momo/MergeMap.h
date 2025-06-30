@@ -200,8 +200,8 @@ private:
 	typedef internal::MapValueReferencer<MergeMap, Position> ValueReferencer;
 
 public:
-	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
-	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
+	template<typename KeyReference>
+	using ValueReference = ValueReferencer::template ValueReference<KeyReference>;
 
 private:
 	template<typename... ValueArgs>
@@ -502,14 +502,14 @@ public:
 		return pvInsertOrAssign(key, std::forward<ValueArg>(valueArg));
 	}
 
-	ValueReferenceRKey operator[](Key&& key)
+	ValueReference<Key&&> operator[](Key&& key)
 	{
 		Position pos = Find(std::as_const(key));
 		return !!pos ? ValueReferencer::template GetReference<Key&&>(*this, pos)
 			: ValueReferencer::template GetReference<Key&&>(*this, pos, std::move(key));
 	}
 
-	ValueReferenceCKey operator[](const Key& key)
+	ValueReference<const Key&> operator[](const Key& key)
 	{
 		Position pos = Find(key);
 		return !!pos ? ValueReferencer::template GetReference<const Key&>(*this, pos)

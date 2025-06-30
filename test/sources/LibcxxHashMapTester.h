@@ -46,15 +46,19 @@ public:
 	using HashTraitsBase::HashTraitsBase;
 };
 
+template<typename TKey, typename TMapped, typename TAllocator>
+class LibcxxHashMapKeyValueTraits
 #ifdef LIBCXX_TEST_MAP_VALUE_PTR
-template<typename TKey, typename TMapped, typename TAllocator>
-using LibcxxHashMapKeyValueTraits = momo::HashMapKeyValueTraits<TKey, TMapped,
-	momo::MemManagerStd<TAllocator>, true>;
+	: public momo::HashMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>
 #else
-template<typename TKey, typename TMapped, typename TAllocator>
-using LibcxxHashMapKeyValueTraits = momo::HashMapKeyValueTraits<TKey, TMapped,
-	momo::MemManagerStd<TAllocator>, false>;
+	: public momo::HashMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, false>
 #endif
+{
+public:
+#ifdef LIBCXX_TEST_SAFE_MAP_BRACKETS
+	static const bool useSafeValueReference = true;
+#endif
+};
 
 namespace std
 {

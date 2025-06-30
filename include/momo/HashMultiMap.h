@@ -350,6 +350,7 @@ namespace internal
 			typename HashMultiMapSettings::ValueArraySettings> Value;
 
 		static const bool useValuePtr = false;
+		static const bool useSafeValueReference = false;
 
 	private:
 		typedef ObjectManager<Value, MemManager> ValueManager;

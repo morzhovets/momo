@@ -230,8 +230,8 @@ private:
 	typedef internal::MapValueReferencer<TreeMap, Iterator> ValueReferencer;
 
 public:
-	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
-	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
+	template<typename KeyReference>
+	using ValueReference = ValueReferencer::template ValueReference<KeyReference>;
 
 private:
 	template<typename... ValueArgs>
@@ -684,7 +684,7 @@ public:
 		return pvInsertOrAssign(key, std::forward<ValueArg>(valueArg));
 	}
 
-	ValueReferenceRKey operator[](Key&& key)
+	ValueReference<Key&&> operator[](Key&& key)
 		requires (!TreeTraits::multiKey)
 	{
 		Iterator iter = GetLowerBound(std::as_const(key));
@@ -693,7 +693,7 @@ public:
 			: ValueReferencer::template GetReference<Key&&>(*this, iter, std::move(key));
 	}
 
-	ValueReferenceCKey operator[](const Key& key)
+	ValueReference<const Key&> operator[](const Key& key)
 		requires (!TreeTraits::multiKey)
 	{
 		Iterator iter = GetLowerBound(key);

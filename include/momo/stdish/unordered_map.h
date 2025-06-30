@@ -650,12 +650,12 @@ public:
 		return cont.mHashMap.Remove(pairFilter);
 	}
 
-	MOMO_FORCEINLINE typename HashMap::ValueReferenceRKey operator[](key_type&& key)
+	MOMO_FORCEINLINE decltype(auto) operator[](key_type&& key)
 	{
 		return mHashMap[std::move(key)];
 	}
 
-	MOMO_FORCEINLINE typename HashMap::ValueReferenceCKey operator[](const key_type& key)
+	MOMO_FORCEINLINE decltype(auto) operator[](const key_type& key)
 	{
 		return mHashMap[key];
 	}

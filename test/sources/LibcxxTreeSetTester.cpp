@@ -36,7 +36,7 @@ namespace std
 		typename TAllocator = std::allocator<TKey>>
 	using set = momo::stdish::set<TKey, TLessComparer, TAllocator,
 		momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessComparer, false,
-			momo::TreeNode<32, 4, momo::MemPoolParams<1>, true>>,
+			momo::TreeNode<>>,
 			momo::MemManagerStd<TAllocator>,
 			momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 			momo::TreeSetSettings>>;

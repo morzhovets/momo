@@ -398,6 +398,12 @@ namespace internal
 
 		static const bool useValuePtr = false;
 
+#ifdef MOMO_USE_SAFE_MAP_BRACKETS
+		static const bool useSafeValueReference = true;
+#else
+		static const bool useSafeValueReference = false;
+#endif
+
 		using MapKeyValueTraitsBase::isKeyNothrowRelocatable;
 		using MapKeyValueTraitsBase::isValueNothrowRelocatable;
 
@@ -547,6 +553,7 @@ namespace internal
 		using typename MapKeyValueTraitsBase::MemManager;
 
 		static const bool useValuePtr = true;
+		static const bool useSafeValueReference = false;
 
 		using MapKeyValueTraitsBase::isKeyNothrowRelocatable;
 
@@ -1217,8 +1224,12 @@ namespace internal
 		ValueMemPool* mValueMemPool;
 	};
 
+	template<typename TMap, typename TPosition,
+		bool tUseSafeReference = TMap::KeyValueTraits::useSafeValueReference>
+	class MapValueReferencer;
+
 	template<typename TMap, typename TPosition>
-	class MapValueReferencer
+	class MapValueReferencer<TMap, TPosition, false>
 	{
 	public:
 		typedef TMap Map;
@@ -1228,7 +1239,38 @@ namespace internal
 		typedef typename Map::Value Value;
 		typedef typename Map::KeyValueTraits KeyValueTraits;
 
-#ifdef MOMO_USE_SAFE_MAP_BRACKETS
+	public:
+		template<typename KeyReference>
+		using ValueReference = Value&;
+
+	public:
+		template<typename KeyReference>
+		static ValueReference<KeyReference> GetReference(Map& /*map*/, Position pos) noexcept
+		{
+			return pos->value;
+		}
+
+		template<typename KeyReference>
+		static ValueReference<KeyReference> GetReference(Map& map, Position pos,
+			KeyReference keyRef)
+		{
+			typename KeyValueTraits::template ValueCreator<> valueCreator(map.GetMemManager());
+			return map.AddCrt(pos, std::forward<KeyReference>(keyRef),
+				std::move(valueCreator))->value;
+		}
+	};
+
+	template<typename TMap, typename TPosition>
+	class MapValueReferencer<TMap, TPosition, true>
+	{
+	public:
+		typedef TMap Map;
+		typedef TPosition Position;
+
+	private:
+		typedef typename Map::Value Value;
+		typedef typename Map::KeyValueTraits KeyValueTraits;
+
 	public:
 		template<typename TKeyReference>
 		class ValueReference
@@ -1348,27 +1390,6 @@ namespace internal
 			return ValueReferenceProxy<KeyReference>(map, pos,
 				std::forward<KeyReference>(keyRef));
 		}
-#else // MOMO_USE_SAFE_MAP_BRACKETS
-	public:
-		template<typename KeyReference>
-		using ValueReference = Value&;
-
-	public:
-		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& /*map*/, Position pos) noexcept
-		{
-			return pos->value;
-		}
-
-		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& map, Position pos,
-			KeyReference keyRef)
-		{
-			typename KeyValueTraits::template ValueCreator<> valueCreator(map.GetMemManager());
-			return map.AddCrt(pos, std::forward<KeyReference>(keyRef),
-				std::move(valueCreator))->value;
-		}
-#endif // MOMO_USE_SAFE_MAP_BRACKETS
 	};
 
 	template<bool tAllowKeyValue = true>
