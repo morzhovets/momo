@@ -70,28 +70,32 @@ jobs:
           test_extra: 'On'
           flags: '-std=c++26 -Werror'
 
-# ninja: build stopped: interrupted by user
-#        - clang_ver: '18'
-#          ubuntu_ver: '24.04-arm'
-#          build_type: 'Debug'
-#          test_extra: 'Off'
-#          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-#
-#        - clang_ver: '18'
-#          ubuntu_ver: '24.04-arm'
-#          build_type: 'Debug'
-#          test_extra: 'On'
-#          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+        - clang_ver: '18'
+          ubuntu_ver: '24.04-arm'
+          build_type: 'Debug'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+
+        - clang_ver: '18'
+          ubuntu_ver: '24.04-arm'
+          build_type: 'Debug'
+          test_extra: 'On'
+          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
+    container: ubuntu:24.04
 
     steps:
+    - name: Install tools
+      run: |
+        apt-get update
+        apt-get install -y cmake
+        apt-get install -y ninja-build
+        apt-get install -y g++
     - name: Checkout
       uses: actions/checkout@v4
-    - name: Install Ninja
-      run: sudo apt-get install ninja-build
     - name: Install Clang
-      run: sudo apt install clang-${{ matrix.clang_ver }}
+      run: apt-get install -y clang-${{ matrix.clang_ver }}
     - name: Build
       env:
         CXX: clang++-${{ matrix.clang_ver }}
