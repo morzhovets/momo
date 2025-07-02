@@ -83,19 +83,22 @@ jobs:
           flags: '-std=c++26 -Werror -fsanitize=address,undefined'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
-    container: ubuntu:24.04
 
     steps:
-    - name: Install tools
+    - name: Increase swapfile
       run: |
-        apt-get update
-        apt-get install -y cmake
-        apt-get install -y ninja-build
-        apt-get install -y g++
+        sudo swapoff -a
+        sudo fallocate -l 15G /swapfile
+        sudo chmod 600 /swapfile
+        sudo mkswap /swapfile
+        sudo swapon /swapfile
+        sudo swapon --show
     - name: Checkout
       uses: actions/checkout@v4
+#    - name: Install Ninja
+#      run: sudo apt install ninja-build
     - name: Install Clang
-      run: apt-get install -y clang-${{ matrix.clang_ver }}
+      run: sudo apt install clang-${{ matrix.clang_ver }}
     - name: Build
       env:
         CXX: clang++-${{ matrix.clang_ver }}
