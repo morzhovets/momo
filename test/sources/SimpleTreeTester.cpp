@@ -76,6 +76,15 @@ private:
 		uint8_t mValue;
 	};
 
+	template<typename TKey, typename TValue, typename TMemManager,
+		bool tUseValuePtr, bool tUseSafeValueReference>
+	class TreeMapKeyValueTraits
+		: public momo::TreeMapKeyValueTraits<TKey, TValue, TMemManager, tUseValuePtr>
+	{
+	public:
+		static const bool useSafeValueReference = tUseSafeValueReference;
+	};
+
 public:
 	static void TestStrAll()
 	{
@@ -83,12 +92,16 @@ public:
 		TestStrTreeSet();
 		std::cout << "ok" << std::endl;
 
-		std::cout << "momo::TreeMap (-useValuePtr): " << std::flush;
-		TestStrTreeMap<false>();
+		std::cout << "momo::TreeMap: " << std::flush;
+		TestStrTreeMap<false, false>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::TreeMap (+useSafeValueReference): " << std::flush;
+		TestStrTreeMap<false, true>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::TreeMap (+useValuePtr): " << std::flush;
-		TestStrTreeMap<true>();
+		TestStrTreeMap<true, false>();
 		std::cout << "ok" << std::endl;
 	}
 
@@ -121,12 +134,13 @@ public:
 		assert(std::equal(set.GetBegin(), set.GetEnd(), set2.GetBegin()));
 	}
 
-	template<bool useValuePtr>
+	template<bool useValuePtr, bool useSafeValueReference>
 	static void TestStrTreeMap()
 	{
+		typedef TreeMapKeyValueTraits<std::string, std::string, momo::MemManagerDefault,
+			useValuePtr, useSafeValueReference> KeyValueTraits;
 		typedef momo::TreeMap<std::string, std::string, momo::TreeTraits<std::string>,
-			momo::MemManagerDefault, momo::TreeMapKeyValueTraits<std::string, std::string,
-			momo::MemManagerDefault, useValuePtr>> TreeMap;
+			momo::MemManagerDefault, KeyValueTraits> TreeMap;
 
 		auto equalComp = [] (auto ref1, auto ref2)
 			{ return ref1.key == ref2.key && ref1.value == ref2.value; };

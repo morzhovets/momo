@@ -1235,6 +1235,8 @@ namespace internal
 		typedef TMap Map;
 		typedef TPosition Position;
 
+		static const bool useSafeReference = false;
+
 	private:
 		typedef typename Map::Value Value;
 		typedef typename Map::KeyValueTraits KeyValueTraits;
@@ -1266,6 +1268,8 @@ namespace internal
 	public:
 		typedef TMap Map;
 		typedef TPosition Position;
+
+		static const bool useSafeReference = true;
 
 	private:
 		typedef typename Map::Value Value;
