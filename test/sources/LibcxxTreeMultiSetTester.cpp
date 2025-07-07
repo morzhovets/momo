@@ -33,7 +33,7 @@ template<typename TKey,
 	typename TAllocator = std::allocator<TKey>>
 using multiset = momo::stdish::multiset<TKey, TLessComparer, TAllocator,
 	momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessComparer, true,
-		momo::TreeNode<4, 2, momo::MemPoolParams<>, true>>,
+		momo::TreeNode<4, 2, momo::MemPoolParams<1>, true>>,
 		momo::MemManagerStd<TAllocator>,
 		momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		momo::TreeSetSettings>>;

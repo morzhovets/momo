@@ -44,7 +44,7 @@ void main()
     m[1] = -1.5;
     assert(m[1] == -1.5);
     assert(m.size() == 7);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     assert(m[6] == 0);
     assert(m.size() == 8);
 #endif
@@ -103,7 +103,7 @@ void main()
     m[1] = -1.5;
     assert(m[1] == -1.5);
     assert(m.size() == 7);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     assert(m[6] == 0);
     assert(m.size() == 8);
 #endif

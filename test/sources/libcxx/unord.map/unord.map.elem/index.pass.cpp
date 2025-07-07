@@ -118,7 +118,7 @@ int main(int, char**)
         assert(c.size() == 5);
         assert(c.at(11) == "eleven");
     }
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     {
         using Container = TCT::unordered_map<>;
         using Key = Container::key_type;

@@ -235,6 +235,12 @@ namespace internal
 		static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
 		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
+#ifdef MOMO_USE_SAFE_MAP_BRACKETS
+		static const bool useSafeValueReference = true;
+#else
+		static const bool useSafeValueReference = false;
+#endif
+
 		template<typename... ValueArgs>
 		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
 
@@ -306,13 +312,11 @@ namespace internal
 			key = std::forward<KeyArg>(keyArg);
 		}
 
-#ifdef MOMO_USE_SAFE_MAP_BRACKETS
 		template<typename ValueArg>
-		static void AssignValue(MemManager& /*memManager*/, ValueArg&& valueArg, Value& value)
+		static void AssignValue(MemManager& /*memManager*/, ValueArg&& valueArg, Value& value)	//?
 		{
 			value = std::forward<ValueArg>(valueArg);
 		}
-#endif
 
 	private:
 		template<bool isValueNothrowRelocatable>
@@ -720,18 +724,57 @@ namespace internal
 	};
 
 	template<typename TMap,
-		typename TIterator = typename TMap::Iterator>
-	class MapValueReferencer
+		typename TIterator = typename TMap::Iterator,
+		bool tUseSafeReference = TMap::KeyValueTraits::useSafeValueReference>
+	class MapValueReferencer;
+
+	template<typename TMap, typename TIterator>
+	class MapValueReferencer<TMap, TIterator, false>
 	{
 	public:
 		typedef TMap Map;
 		typedef TIterator Iterator;
 
+		static const bool useSafeReference = false;
+
 	private:
 		typedef typename Map::Value Value;
 		typedef typename Map::KeyValueTraits KeyValueTraits;
 
-#ifdef MOMO_USE_SAFE_MAP_BRACKETS
+	public:
+		template<typename KeyReference>
+		using ValueReference = Value&;
+
+	public:
+		template<typename KeyReference>
+		static ValueReference<KeyReference> GetReference(Map& /*map*/, Iterator iter) noexcept
+		{
+			return iter->value;
+		}
+
+		template<typename KeyReference>
+		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter,
+			KeyReference keyRef)
+		{
+			typename KeyValueTraits::template ValueCreator<> valueCreator(map.GetMemManager());
+			return map.AddCrt(iter, std::forward<KeyReference>(keyRef),
+				std::move(valueCreator))->value;
+		}
+	};
+
+	template<typename TMap, typename TIterator>
+	class MapValueReferencer<TMap, TIterator, true>
+	{
+	public:
+		typedef TMap Map;
+		typedef TIterator Iterator;
+
+		static const bool useSafeReference = true;
+
+	private:
+		typedef typename Map::Value Value;
+		typedef typename Map::KeyValueTraits KeyValueTraits;
+
 	public:
 		template<typename TKeyReference>
 		class ValueReference
@@ -852,27 +895,6 @@ namespace internal
 			return ValueReferenceProxy<KeyReference>(map, iter,
 				std::forward<KeyReference>(keyRef));
 		}
-#else // MOMO_USE_SAFE_MAP_BRACKETS
-	public:
-		template<typename KeyReference>
-		using ValueReference = Value&;
-
-	public:
-		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& /*map*/, Iterator iter) noexcept
-		{
-			return iter->value;
-		}
-
-		template<typename KeyReference>
-		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter,
-			KeyReference keyRef)
-		{
-			typename KeyValueTraits::template ValueCreator<> valueCreator(map.GetMemManager());
-			return map.AddCrt(iter, std::forward<KeyReference>(keyRef),
-				std::move(valueCreator))->value;
-		}
-#endif // MOMO_USE_SAFE_MAP_BRACKETS
 	};
 
 	template<typename TSetExtractedItem>

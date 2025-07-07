@@ -849,12 +849,12 @@ public:
 		left.swap(right);
 	}
 
-	typename TreeMap::ValueReferenceRKey operator[](key_type&& key)
+	typename TreeMap::template ValueReference<key_type&&> operator[](key_type&& key)
 	{
 		return MapBase::get_nested_container()[std::move(key)];
 	}
 
-	typename TreeMap::ValueReferenceCKey operator[](const key_type& key)
+	typename TreeMap::template ValueReference<const key_type&> operator[](const key_type& key)
 	{
 		return MapBase::get_nested_container()[key];
 	}

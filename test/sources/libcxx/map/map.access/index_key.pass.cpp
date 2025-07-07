@@ -50,7 +50,7 @@ int main(int, char**)
     m[1] = -1.5;
     assert(m[1] == -1.5);
     assert(m.size() == 7);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     assert(m[6] == 0);
     assert(m.size() == 8);
 #endif
@@ -79,7 +79,7 @@ int main(int, char**)
     m[i] = -1.5;
     assert(m[1] == -1.5);
     assert(m.size() == 7);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     assert(m[6] == 0);
     assert(m.size() == 8);
 #endif
@@ -87,7 +87,7 @@ int main(int, char**)
     assert(m[6] == 6.5);
     assert(m.size() == 8);
     }
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     {
         // Use "container_test_types.h" to check what arguments get passed
         // to the allocator for operator[]
@@ -170,7 +170,7 @@ int main(int, char**)
     m[1] = -1.5;
     assert(m[1] == -1.5);
     assert(m.size() == 7);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     assert(m[6] == 0);
     assert(m.size() == 8);
 #endif

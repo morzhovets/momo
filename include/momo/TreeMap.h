@@ -268,8 +268,8 @@ private:
 	typedef internal::MapValueReferencer<TreeMap> ValueReferencer;
 
 public:
-	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
-	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
+	template<typename KeyReference>
+	using ValueReference = ValueReferencer::template ValueReference<KeyReference>;
 
 private:
 	template<typename... ValueArgs>
@@ -665,7 +665,7 @@ public:
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
-	ValueReferenceRKey operator[](Key&& key)
+	ValueReference<Key&&> operator[](Key&& key)
 	{
 		MOMO_STATIC_ASSERT(!TreeTraits::multiKey);
 		Iterator iter = GetLowerBound(static_cast<const Key&>(key));
@@ -674,7 +674,7 @@ public:
 			: ValueReferencer::template GetReference<Key&&>(*this, iter, std::move(key));
 	}
 
-	ValueReferenceCKey operator[](const Key& key)
+	ValueReference<const Key&> operator[](const Key& key)
 	{
 		MOMO_STATIC_ASSERT(!TreeTraits::multiKey);
 		Iterator iter = GetLowerBound(key);

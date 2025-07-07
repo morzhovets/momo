@@ -36,14 +36,14 @@ int main(int, char**)
     {
     std::map<MoveOnly, double> m;
     assert(m.size() == 0);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     assert(m[1] == 0.0);
     assert(m.size() == 1);
 #endif
     m[1] = -1.5;
     assert(m[1] == -1.5);
     assert(m.size() == 1);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     assert(m[6] == 0);
     assert(m.size() == 2);
 #endif
@@ -55,14 +55,14 @@ int main(int, char**)
     typedef std::pair<const MoveOnly, double> V;
     std::map<MoveOnly, double, std::less<MoveOnly>, min_allocator<V>> m;
     assert(m.size() == 0);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     assert(m[1] == 0.0);
     assert(m.size() == 1);
 #endif
     m[1] = -1.5;
     assert(m[1] == -1.5);
     assert(m.size() == 1);
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     assert(m[6] == 0);
     assert(m.size() == 2);
 #endif
@@ -70,7 +70,7 @@ int main(int, char**)
     assert(m[6] == 6.5);
     assert(m.size() == 2);
     }
-#ifndef MOMO_USE_SAFE_MAP_BRACKETS
+#ifndef LIBCXX_TEST_SAFE_MAP_BRACKETS
     {
         // Use "container_test_types.h" to check what arguments get passed
         // to the allocator for operator[]

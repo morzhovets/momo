@@ -353,6 +353,8 @@ namespace internal
 			typename HashMultiMapSettings::ValueArrayMemPoolParams,
 			typename HashMultiMapSettings::ValueArraySettings> Value;
 
+		static const bool useSafeValueReference = false;
+
 	private:
 		typedef ObjectManager<Value, MemManager> ValueManager;
 

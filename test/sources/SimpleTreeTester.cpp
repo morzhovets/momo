@@ -76,6 +76,15 @@ private:
 		uint8_t mValue;
 	};
 
+	template<typename TKey, typename TValue, typename TMemManager,
+		bool tUseSafeValueReference>
+	class TreeMapKeyValueTraits
+		: public momo::TreeMapKeyValueTraits<TKey, TValue, TMemManager>
+	{
+	public:
+		static const bool useSafeValueReference = tUseSafeValueReference;
+	};
+
 public:
 	static void TestStrAll()
 	{
@@ -84,7 +93,11 @@ public:
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::TreeMap: " << std::flush;
-		TestStrTreeMap();
+		TestStrTreeMap<false>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << "momo::TreeMap (+useSafeValueReference): " << std::flush;
+		TestStrTreeMap<true>();
 		std::cout << "ok" << std::endl;
 	}
 
@@ -120,9 +133,14 @@ public:
 		assert(std::equal(set.GetBegin(), set.GetEnd(), set2.GetBegin()));
 	}
 
+	template<bool useSafeValueReference>
 	static void TestStrTreeMap()
 	{
-		typedef momo::TreeMap<std::string, std::string> TreeMap;
+		typedef TreeMapKeyValueTraits<std::string, std::string, momo::MemManagerDefault,
+			useSafeValueReference> KeyValueTraits;
+		typedef momo::TreeMap<std::string, std::string, momo::TreeTraits<std::string>,
+			momo::MemManagerDefault, KeyValueTraits> TreeMap;
+
 		typedef TreeMap::ConstIterator::Reference Reference;
 		auto equalComp = [] (Reference ref1, Reference ref2)
 			{ return ref1.key == ref2.key && ref1.value == ref2.value; };

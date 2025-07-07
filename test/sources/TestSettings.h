@@ -52,7 +52,6 @@
 #undef NDEBUG
 
 #ifdef TEST_EXTRA_SETTINGS
-# define MOMO_USE_SAFE_MAP_BRACKETS
 # define MOMO_DISABLE_TYPE_INFO
 #endif
 

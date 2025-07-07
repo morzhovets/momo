@@ -401,8 +401,8 @@ private:
 	typedef internal::MapValueReferencer<HashMap, Position> ValueReferencer;
 
 public:
-	typedef typename ValueReferencer::template ValueReference<Key&&> ValueReferenceRKey;
-	typedef typename ValueReferencer::template ValueReference<const Key&> ValueReferenceCKey;
+	template<typename KeyReference>
+	using ValueReference = ValueReferencer::template ValueReference<KeyReference>;
 
 private:
 	template<typename... ValueArgs>
@@ -751,14 +751,14 @@ public:
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
-	MOMO_FORCEINLINE ValueReferenceRKey operator[](Key&& key)
+	MOMO_FORCEINLINE ValueReference<Key&&> operator[](Key&& key)
 	{
 		Position pos = Find(static_cast<const Key&>(key));
 		return !!pos ? ValueReferencer::template GetReference<Key&&>(*this, pos)
 			: ValueReferencer::template GetReference<Key&&>(*this, pos, std::move(key));
 	}
 
-	MOMO_FORCEINLINE ValueReferenceCKey operator[](const Key& key)
+	MOMO_FORCEINLINE ValueReference<const Key&> operator[](const Key& key)
 	{
 		Position pos = Find(key);
 		return !!pos ? ValueReferencer::template GetReference<const Key&>(*this, pos)

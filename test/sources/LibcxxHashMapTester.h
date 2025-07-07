@@ -46,6 +46,16 @@ public:
 	using HashTraitsBase::HashTraitsBase;
 };
 
+template<typename TKey, typename TMapped, typename TAllocator>
+class LibcxxHashMapKeyValueTraits
+	: public momo::HashMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>
+{
+public:
+#ifdef LIBCXX_TEST_SAFE_MAP_BRACKETS
+	static const bool useSafeValueReference = true;
+#endif
+};
+
 LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey, typename TMapped,
 	typename THasher = std::hash<TKey>,
@@ -54,7 +64,7 @@ template<typename TKey, typename TMapped,
 using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
 	momo::HashMap<TKey, TMapped, LibcxxHashTraits<TKey, THasher, TEqualComparer>,
 		momo::MemManagerStd<TAllocator>,
-		momo::HashMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
+		LibcxxHashMapKeyValueTraits<TKey, TMapped, TAllocator>,
 		LibcxxHashMapSettings>>;
 LIBCXX_NAMESPACE_STD_END
 
