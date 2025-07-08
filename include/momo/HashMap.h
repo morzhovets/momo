@@ -402,7 +402,7 @@ private:
 
 public:
 	template<typename KeyReference>
-	using ValueReference = ValueReferencer::template ValueReference<KeyReference>;
+	using ValueReference = typename ValueReferencer::template ValueReference<KeyReference>;
 
 private:
 	template<typename... ValueArgs>
