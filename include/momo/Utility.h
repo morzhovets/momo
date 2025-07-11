@@ -354,7 +354,7 @@ namespace internal
 	};
 
 	template<conceptExecutor TExecutor>
-	requires (std::is_nothrow_move_constructible_v<TExecutor>
+	requires (std::is_nothrow_move_constructible_v<TExecutor> && !std::is_reference_v<TExecutor>
 		/*&& std::is_nothrow_invocable_v<TExecutor>*/)
 	class Finalizer
 	{
@@ -363,34 +363,34 @@ namespace internal
 
 	public:
 		[[nodiscard]] Finalizer(Executor exec) noexcept
-			: mExecutor(std::in_place, std::move(exec))
+			: mExecutor(std::move(exec)),
+			mIsEmpty(false)
 		{
 		}
-
-		Finalizer(Finalizer&&) noexcept = default;
 
 		Finalizer(const Finalizer&) = delete;
 
 		~Finalizer() noexcept
 		{
-			if (mExecutor.has_value())
-				std::move(mExecutor).value()();
+			if (!mIsEmpty)
+				std::move(mExecutor)();
 		}
 
 		Finalizer& operator=(const Finalizer&) = delete;
 
 		explicit operator bool() const noexcept
 		{
-			return mExecutor.has_value();
+			return !mIsEmpty;
 		}
 
 		void Detach() noexcept
 		{
-			mExecutor.reset();
+			mIsEmpty = true;
 		}
 
 	private:
-		std::optional<Executor> mExecutor;
+		Executor mExecutor;
+		bool mIsEmpty;
 	};
 
 	class Catcher
