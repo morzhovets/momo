@@ -80,7 +80,7 @@ public:
 		TestStrHashSet<HashTraits>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << bucketName << ": HashMap (-useValuePtr): " << std::flush;
+		std::cout << bucketName << ": HashMap: " << std::flush;
 		TestStrHashMap<HashTraits, false>();
 		std::cout << "ok" << std::endl;
 
