@@ -25,12 +25,6 @@ using namespace libcxx_from_range_unord;
 namespace libcxx_test_hash_map
 {
 
-class LibcxxHashMapSettings : public momo::HashMapSettings
-{
-public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
-};
-
 template<typename TKey, typename THasher, typename TEqualComparer>
 class LibcxxHashTraits : public momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>
 {
@@ -60,6 +54,12 @@ public:
 #endif
 };
 
+class LibcxxHashMapSettings : public momo::HashMapSettings
+{
+public:
+	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+};
+
 namespace std
 {
 	using namespace ::std;
@@ -68,10 +68,10 @@ namespace std
 		typename THasher = std::hash<TKey>,
 		typename TEqualComparer = std::equal_to<TKey>,
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-	using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
-		momo::HashMap<TKey, TMapped, LibcxxHashTraits<TKey, THasher, TEqualComparer>,
-			momo::MemManagerStd<TAllocator>, LibcxxHashMapKeyValueTraits<TKey, TMapped, TAllocator>,
-			LibcxxHashMapSettings>>;
+	using unordered_map = momo::stdish::unordered_map_adaptor<momo::HashMap<TKey, TMapped,
+		LibcxxHashTraits<TKey, THasher, TEqualComparer>, momo::MemManagerStd<TAllocator>,
+		LibcxxHashMapKeyValueTraits<TKey, TMapped, TAllocator>,
+		LibcxxHashMapSettings>>;
 }
 
 #define LIBCXX_TEST_FAILURE
