@@ -955,28 +955,28 @@ class unordered_map : public unordered_map_adaptor<HashMap<TKey, TMapped,
 private:
 	typedef unordered_map_adaptor<HashMap<TKey, TMapped,
 		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>,
-			MemManagerStd<TAllocator>>> UnorderedMapAdapter;
+			MemManagerStd<TAllocator>>> UnorderedMapAdaptor;
 
 public:
-	using typename UnorderedMapAdapter::value_type;
-	using typename UnorderedMapAdapter::allocator_type;
+	using typename UnorderedMapAdaptor::value_type;
+	using typename UnorderedMapAdaptor::allocator_type;
 
 public:
-	using UnorderedMapAdapter::UnorderedMapAdapter;
+	using UnorderedMapAdaptor::UnorderedMapAdaptor;
 
 	unordered_map(unordered_map&& right, const allocator_type& alloc)
-		: UnorderedMapAdapter(std::move(right), alloc)
+		: UnorderedMapAdaptor(std::move(right), alloc)
 	{
 	}
 
 	unordered_map(const unordered_map& right, const allocator_type& alloc)
-		: UnorderedMapAdapter(right, alloc)
+		: UnorderedMapAdaptor(right, alloc)
 	{
 	}
 
 	unordered_map& operator=(std::initializer_list<value_type> values)
 	{
-		UnorderedMapAdapter::operator=(values);
+		UnorderedMapAdaptor::operator=(values);
 		return *this;
 	}
 
@@ -1005,28 +1005,28 @@ class unordered_map_open : public unordered_map_adaptor<HashMap<TKey, TMapped,
 private:
 	typedef unordered_map_adaptor<HashMap<TKey, TMapped,
 		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
-			MemManagerStd<TAllocator>>> UnorderedMapAdapter;
+			MemManagerStd<TAllocator>>> UnorderedMapAdaptor;
 
 public:
-	using typename UnorderedMapAdapter::value_type;
-	using typename UnorderedMapAdapter::allocator_type;
+	using typename UnorderedMapAdaptor::value_type;
+	using typename UnorderedMapAdaptor::allocator_type;
 
 public:
-	using UnorderedMapAdapter::UnorderedMapAdapter;
+	using UnorderedMapAdaptor::UnorderedMapAdaptor;
 
 	unordered_map_open(unordered_map_open&& right, const allocator_type& alloc)
-		: UnorderedMapAdapter(std::move(right), alloc)
+		: UnorderedMapAdaptor(std::move(right), alloc)
 	{
 	}
 
 	unordered_map_open(const unordered_map_open& right, const allocator_type& alloc)
-		: UnorderedMapAdapter(right, alloc)
+		: UnorderedMapAdaptor(right, alloc)
 	{
 	}
 
 	unordered_map_open& operator=(std::initializer_list<value_type> values)
 	{
-		UnorderedMapAdapter::operator=(values);
+		UnorderedMapAdaptor::operator=(values);
 		return *this;
 	}
 
