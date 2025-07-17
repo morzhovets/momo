@@ -9,6 +9,7 @@
   momo/stdish/unordered_set.h
 
   namespace momo::stdish:
+    class unordered_set_adaptor
     class unordered_set
     class unordered_set_open
 
@@ -22,35 +23,8 @@
 namespace momo::stdish
 {
 
-/*!
-	\brief
-	`momo::stdish::unordered_set` is similar to `std::unordered_set`, but
-	much more efficient in memory usage. The implementation is based on
-	hash table with buckets in the form of small arrays.
-
-	\details
-	Deviations from the `std::unordered_set`:
-	1. Container items must be movable (preferably without exceptions)
-	or copyable, similar to items of `std::vector`.
-	2. After each addition or removal of the item all iterators and
-	references to items become invalid and should not be used.
-	3. Functions `clear`, `begin`, `cbegin` and iterator increment take
-	O(bucket_count) time in worst case.
-	4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
-	functions `erase` can throw exceptions.
-	5. Functions `merge`, `extract` and `insert(node_type&&)` move items.
-
-	It is allowed to pass to functions `insert` and `emplace` references
-	to items within the container.
-*/
-
-template<typename TKey,
-	typename THasher = HashCoder<TKey>,
-	typename TEqualComparer = std::equal_to<TKey>,
-	typename TAllocator = std::allocator<TKey>,
-	typename THashSet = HashSet<TKey, HashTraitsStd<TKey, THasher, TEqualComparer>,
-		MemManagerStd<TAllocator>>>
-class unordered_set
+template<typename THashSet>
+class unordered_set_adaptor
 {
 private:
 	typedef THashSet HashSet;
@@ -58,10 +32,9 @@ private:
 	typedef typename HashSet::MemManager MemManager;
 
 public:
-	typedef TKey key_type;
-	typedef THasher hasher;
-	typedef TEqualComparer key_equal;
-	typedef TAllocator allocator_type;
+	typedef typename HashSet::Key key_type;
+	typedef typename HashTraits::Hasher hasher;
+	typedef typename HashTraits::EqualComparer key_equal;
 
 	typedef HashSet nested_container_type;
 
@@ -69,6 +42,8 @@ public:
 	typedef ptrdiff_t difference_type;
 
 	typedef key_type value_type;
+	typedef typename std::allocator_traits<typename MemManager::ByteAllocator>
+		::template rebind_alloc<value_type> allocator_type;
 
 	typedef typename HashSet::ConstIterator const_iterator;
 	typedef typename HashSet::Iterator iterator;
@@ -102,80 +77,80 @@ private:
 	};
 
 public:
-	unordered_set()
+	unordered_set_adaptor()
 	{
 	}
 
-	explicit unordered_set(const allocator_type& alloc)
+	explicit unordered_set_adaptor(const allocator_type& alloc)
 		: mHashSet(HashTraits(), MemManager(alloc))
 	{
 	}
 
-	explicit unordered_set(size_type bucketCount, const allocator_type& alloc = allocator_type())
+	explicit unordered_set_adaptor(size_type bucketCount, const allocator_type& alloc = allocator_type())
 		: mHashSet(HashTraits(bucketCount), MemManager(alloc))
 	{
 	}
 
-	unordered_set(size_type bucketCount, const hasher& hashFunc,
+	unordered_set_adaptor(size_type bucketCount, const hasher& hashFunc,
 		const allocator_type& alloc = allocator_type())
 		: mHashSet(HashTraits(bucketCount, hashFunc), MemManager(alloc))
 	{
 	}
 
-	unordered_set(size_type bucketCount, const hasher& hashFunc, const key_equal& equalComp,
+	unordered_set_adaptor(size_type bucketCount, const hasher& hashFunc, const key_equal& equalComp,
 		const allocator_type& alloc = allocator_type())
 		: mHashSet(HashTraits(bucketCount, hashFunc, equalComp), MemManager(alloc))
 	{
 	}
 
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
-	unordered_set(Iterator first, Iterator last)
+	unordered_set_adaptor(Iterator first, Iterator last)
 	{
 		insert(first, last);
 	}
 
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
-	unordered_set(Iterator first, Iterator last, size_type bucketCount,
+	unordered_set_adaptor(Iterator first, Iterator last, size_type bucketCount,
 		const allocator_type& alloc = allocator_type())
-		: unordered_set(bucketCount, alloc)
+		: unordered_set_adaptor(bucketCount, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
-	unordered_set(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
+	unordered_set_adaptor(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
 		const allocator_type& alloc = allocator_type())
-		: unordered_set(bucketCount, hashFunc, alloc)
+		: unordered_set_adaptor(bucketCount, hashFunc, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<momo::internal::conceptIterator17<std::input_iterator_tag> Iterator>
-	unordered_set(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
+	unordered_set_adaptor(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
 		const key_equal& equalComp, const allocator_type& alloc = allocator_type())
-		: unordered_set(bucketCount, hashFunc, equalComp, alloc)
+		: unordered_set_adaptor(bucketCount, hashFunc, equalComp, alloc)
 	{
 		insert(first, last);
 	}
 
-	unordered_set(std::initializer_list<value_type> values)
+	unordered_set_adaptor(std::initializer_list<value_type> values)
 		: mHashSet(values)
 	{
 	}
 
-	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
+	unordered_set_adaptor(std::initializer_list<value_type> values, size_type bucketCount,
 		const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount), MemManager(alloc))
 	{
 	}
 
-	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
+	unordered_set_adaptor(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount, hashFunc), MemManager(alloc))
 	{
 	}
 
-	unordered_set(std::initializer_list<value_type> values, size_type bucketCount,
+	unordered_set_adaptor(std::initializer_list<value_type> values, size_type bucketCount,
 		const hasher& hashFunc, const key_equal& equalComp,
 		const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalComp), MemManager(alloc))
@@ -185,45 +160,45 @@ public:
 #if defined(__cpp_lib_containers_ranges)
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_set(std::from_range_t, Range&& values)
+	unordered_set_adaptor(std::from_range_t, Range&& values)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_set(std::from_range_t, Range&& values, size_type bucketCount,
+	unordered_set_adaptor(std::from_range_t, Range&& values, size_type bucketCount,
 		const allocator_type& alloc = allocator_type())
-		: unordered_set(bucketCount, alloc)
+		: unordered_set_adaptor(bucketCount, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_set(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
+	unordered_set_adaptor(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
 		const allocator_type& alloc = allocator_type())
-		: unordered_set(bucketCount, hashFunc, alloc)
+		: unordered_set_adaptor(bucketCount, hashFunc, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_set(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
+	unordered_set_adaptor(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
 		const key_equal& equalComp, const allocator_type& alloc = allocator_type())
-		: unordered_set(bucketCount, hashFunc, equalComp, alloc)
+		: unordered_set_adaptor(bucketCount, hashFunc, equalComp, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 #endif // __cpp_lib_containers_ranges
 
-	unordered_set(unordered_set&& right)
-		: unordered_set(std::move(right), right.get_allocator())
+	unordered_set_adaptor(unordered_set_adaptor&& right)
+		: unordered_set_adaptor(std::move(right), right.get_allocator())
 	{
 	}
 
-	unordered_set(unordered_set&& right, const std::type_identity_t<allocator_type>& alloc)
+	unordered_set_adaptor(unordered_set_adaptor&& right, const allocator_type& alloc)
 		: mHashSet(right.mHashSet.GetHashTraits(), MemManager(alloc))
 	{
 		if (right.get_allocator() == alloc)
@@ -237,41 +212,41 @@ public:
 		}
 	}
 
-	unordered_set(const unordered_set& right)
+	unordered_set_adaptor(const unordered_set_adaptor& right)
 		: mHashSet(right.mHashSet)
 	{
 	}
 
-	unordered_set(const unordered_set& right, const std::type_identity_t<allocator_type>& alloc)
+	unordered_set_adaptor(const unordered_set_adaptor& right, const allocator_type& alloc)
 		: mHashSet(right.mHashSet, MemManager(alloc))
 	{
 	}
 
-	~unordered_set() noexcept = default;
+	~unordered_set_adaptor() noexcept = default;
 
-	unordered_set& operator=(unordered_set&& right)
-		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_set>)
+	unordered_set_adaptor& operator=(unordered_set_adaptor&& right)
+		noexcept(momo::internal::ContainerAssignerStd::isNothrowMoveAssignable<unordered_set_adaptor>)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
-	unordered_set& operator=(const unordered_set& right)
+	unordered_set_adaptor& operator=(const unordered_set_adaptor& right)
 	{
 		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
-	unordered_set& operator=(std::initializer_list<value_type> values)
+	unordered_set_adaptor& operator=(std::initializer_list<value_type> values)
 	{
 		mHashSet = HashSet(values, mHashSet.GetHashTraits(), MemManager(get_allocator()));
 		return *this;
 	}
 
-	void swap(unordered_set& right) noexcept
+	void swap(unordered_set_adaptor& right) noexcept
 	{
 		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
-	friend void swap(unordered_set& left, unordered_set& right) noexcept
+	friend void swap(unordered_set_adaptor& left, unordered_set_adaptor& right) noexcept
 	{
 		left.swap(right);
 	}
@@ -572,7 +547,7 @@ public:
 	}
 
 	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
-	friend size_type erase_if(unordered_set& cont, ValueFilter valueFilter)
+	friend size_type erase_if(unordered_set_adaptor& cont, ValueFilter valueFilter)
 	{
 		return cont.mHashSet.Remove(momo::FastCopyableFunctor<ValueFilter>(valueFilter));
 	}
@@ -662,7 +637,7 @@ public:
 		return static_cast<float>(count) / static_cast<float>(bucketCount);
 	}
 
-	bool operator==(const unordered_set& right) const
+	bool operator==(const unordered_set_adaptor& right) const
 	{
 		if (size() != right.size())
 			return false;
@@ -696,6 +671,69 @@ private:
 
 /*!
 	\brief
+	`momo::stdish::unordered_set` is similar to `std::unordered_set`, but
+	much more efficient in memory usage. The implementation is based on
+	hash table with buckets in the form of small arrays.
+
+	\details
+	Deviations from the `std::unordered_set`:
+	1. Container items must be movable (preferably without exceptions)
+	or copyable, similar to items of `std::vector`.
+	2. After each addition or removal of the item all iterators and
+	references to items become invalid and should not be used.
+	3. Functions `clear`, `begin`, `cbegin` and iterator increment take
+	O(bucket_count) time in worst case.
+	4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
+	functions `erase` can throw exceptions.
+	5. Functions `merge`, `extract` and `insert(node_type&&)` move items.
+
+	It is allowed to pass to functions `insert` and `emplace` references
+	to items within the container.
+*/
+
+template<typename TKey,
+	typename THasher = HashCoder<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
+	typename TAllocator = std::allocator<TKey>>
+class unordered_set : public unordered_set_adaptor<HashSet<TKey,
+	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>, MemManagerStd<TAllocator>>>
+{
+private:
+	typedef unordered_set_adaptor<HashSet<TKey,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>,
+			MemManagerStd<TAllocator>>> UnorderedSetAdaptor;
+
+public:
+	using typename UnorderedSetAdaptor::value_type;
+	using typename UnorderedSetAdaptor::allocator_type;
+
+public:
+	using UnorderedSetAdaptor::UnorderedSetAdaptor;
+
+	unordered_set(unordered_set&& right, const allocator_type& alloc)
+		: UnorderedSetAdaptor(std::move(right), alloc)
+	{
+	}
+
+	unordered_set(const unordered_set& right, const allocator_type& alloc)
+		: UnorderedSetAdaptor(right, alloc)
+	{
+	}
+
+	unordered_set& operator=(std::initializer_list<value_type> values)
+	{
+		UnorderedSetAdaptor::operator=(values);
+		return *this;
+	}
+
+	friend void swap(unordered_set& left, unordered_set& right) noexcept
+	{
+		left.swap(right);
+	}
+};
+
+/*!
+	\brief
 	`momo::stdish::unordered_set_open` is similar to `std::unordered_set`,
 	but much more efficient in operation speed. The implementation is based
 	on open addressing hash table.
@@ -707,39 +745,40 @@ template<typename TKey,
 	typename THasher = HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-class unordered_set_open : public unordered_set<TKey, THasher, TEqualComparer, TAllocator,
-	HashSet<TKey, HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
-		MemManagerStd<TAllocator>>>
+class unordered_set_open : public unordered_set_adaptor<HashSet<TKey,
+	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef unordered_set<TKey, THasher, TEqualComparer, TAllocator,
-		momo::HashSet<TKey, HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
-		MemManagerStd<TAllocator>>> UnorderedSet;
+	typedef unordered_set_adaptor<HashSet<TKey,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
+			MemManagerStd<TAllocator>>> UnorderedSetAdaptor;
 
 public:
-	using typename UnorderedSet::size_type;
-	using typename UnorderedSet::value_type;
-	using typename UnorderedSet::const_reference;
+	using typename UnorderedSetAdaptor::value_type;
+	using typename UnorderedSetAdaptor::allocator_type;
 
 public:
-	using UnorderedSet::UnorderedSet;
+	using UnorderedSetAdaptor::UnorderedSetAdaptor;
+
+	unordered_set_open(unordered_set_open&& right, const allocator_type& alloc)
+		: UnorderedSetAdaptor(std::move(right), alloc)
+	{
+	}
+
+	unordered_set_open(const unordered_set_open& right, const allocator_type& alloc)
+		: UnorderedSetAdaptor(right, alloc)
+	{
+	}
 
 	unordered_set_open& operator=(std::initializer_list<value_type> values)
 	{
-		UnorderedSet::operator=(values);
+		UnorderedSetAdaptor::operator=(values);
 		return *this;
 	}
 
 	friend void swap(unordered_set_open& left, unordered_set_open& right) noexcept
 	{
 		left.swap(right);
-	}
-
-	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
-	friend size_type erase_if(unordered_set_open& cont, ValueFilter valueFilter)
-	{
-		return cont.get_nested_container().Remove(
-			momo::FastCopyableFunctor<ValueFilter>(valueFilter));
 	}
 };
 
@@ -750,32 +789,38 @@ unordered_set(Iterator, Iterator) \
 	-> unordered_set<Key>; \
 template<typename Iterator, \
 	typename Key = std::iter_value_t<Iterator>, \
-	typename Allocator = std::allocator<Key>> \
+	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(Iterator, Iterator, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename Iterator, typename Hasher, \
+template<typename Iterator, \
 	typename Key = std::iter_value_t<Iterator>, \
-	typename Allocator = std::allocator<Key>> \
+	momo::internal::conceptCopyableHasher<Key> Hasher, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(Iterator, Iterator, size_t, Hasher, Allocator = Allocator()) \
 	-> unordered_set<Key, Hasher, std::equal_to<Key>, Allocator>; \
-template<typename Iterator, typename Hasher, typename EqualComparer, \
+template<typename Iterator, \
 	typename Key = std::iter_value_t<Iterator>, \
-	typename Allocator = std::allocator<Key>> \
+	momo::internal::conceptCopyableHasher<Key> Hasher, \
+	momo::internal::conceptCopyableEqualComparer<Key> EqualComparer, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(Iterator, Iterator, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
 	-> unordered_set<Key, Hasher, EqualComparer, Allocator>; \
 template<typename Key> \
 unordered_set(std::initializer_list<Key>) \
 	-> unordered_set<Key>; \
 template<typename Key, \
-	typename Allocator = std::allocator<Key>> \
+	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(std::initializer_list<Key>, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<typename Key, typename Hasher, \
-	typename Allocator = std::allocator<Key>> \
+template<typename Key, \
+	momo::internal::conceptCopyableHasher<Key> Hasher, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(std::initializer_list<Key>, size_t, Hasher, Allocator = Allocator()) \
 	-> unordered_set<Key, Hasher, std::equal_to<Key>, Allocator>; \
-template<typename Key, typename Hasher, typename EqualComparer, \
-	typename Allocator = std::allocator<Key>> \
+template<typename Key, \
+	momo::internal::conceptCopyableHasher<Key> Hasher, \
+	momo::internal::conceptCopyableEqualComparer<Key> EqualComparer, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(std::initializer_list<Key>, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
 	-> unordered_set<Key, Hasher, EqualComparer, Allocator>;
 
@@ -786,17 +831,20 @@ unordered_set(std::from_range_t, Range&&) \
 	-> unordered_set<Key>; \
 template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>, \
-	typename Allocator = std::allocator<Key>> \
+	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(std::from_range_t, Range&&, size_t, Allocator = Allocator()) \
 	-> unordered_set<Key, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
-template<std::ranges::input_range Range, typename Hasher, \
+template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>, \
-	typename Allocator = std::allocator<Key>> \
+	momo::internal::conceptCopyableHasher<Key> Hasher, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(std::from_range_t, Range&&, size_t, Hasher, Allocator = Allocator()) \
 	-> unordered_set<Key, Hasher, std::equal_to<Key>, Allocator>; \
-template<std::ranges::input_range Range, typename Hasher, typename EqualComparer, \
+template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>, \
-	typename Allocator = std::allocator<Key>> \
+	momo::internal::conceptCopyableHasher<Key> Hasher, \
+	momo::internal::conceptCopyableEqualComparer<Key> EqualComparer, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(std::from_range_t, Range&&, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
 	-> unordered_set<Key, Hasher, EqualComparer, Allocator>;
 
