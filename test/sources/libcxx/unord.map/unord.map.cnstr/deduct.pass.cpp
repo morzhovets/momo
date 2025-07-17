@@ -90,150 +90,150 @@ int main(int, char**)
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long>);
+    LIBCXX_TEST_DEDUCT_CLASS m(std::begin(arr), std::end(arr));
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42);
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long>);
+    LIBCXX_TEST_DEDUCT_CLASS m(std::begin(arr), std::end(arr), 42);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<long long>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<int>>);
+    LIBCXX_TEST_DEDUCT_CLASS m(std::begin(arr), std::end(arr), 42, std::hash<long long>());
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>, std::equal_to<int>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), std::equal_to<>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>>);
+    LIBCXX_TEST_DEDUCT_CLASS m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), std::equal_to<>());
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>, std::equal_to<>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), std::equal_to<>(), test_allocator<PC>(0, 41));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>>);
+    LIBCXX_TEST_DEDUCT_CLASS m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), std::equal_to<>(), test_allocator<PC>(0, 41));
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 41);
     }
 
     {
-    momo::stdish::unordered_map<int, long> source;
-    momo::stdish::unordered_map m(source);
+    LIBCXX_TEST_DEDUCT_CLASS<int, long> source;
+    LIBCXX_TEST_DEDUCT_CLASS m(source);
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
     assert(m.size() == 0);
     }
 
     {
-    momo::stdish::unordered_map<int, long> source;
-    momo::stdish::unordered_map m{source};  // braces instead of parens
+    LIBCXX_TEST_DEDUCT_CLASS<int, long> source;
+    LIBCXX_TEST_DEDUCT_CLASS m{source};  // braces instead of parens
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
     assert(m.size() == 0);
     }
 
     {
-    momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>> source;
+    LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>> source;
     test_allocator<PC> a(0, 42);
-    momo::stdish::unordered_map m(source, a);
+    LIBCXX_TEST_DEDUCT_CLASS m(source, a);
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
     assert(m.get_allocator().get_id() == 42);
     assert(m.size() == 0);
     }
 
     {
-    momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>> source;
+    LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>> source;
     test_allocator<PC> a(0, 43);
-    momo::stdish::unordered_map m{source, a};  // braces instead of parens
+    LIBCXX_TEST_DEDUCT_CLASS m{source, a};  // braces instead of parens
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
     assert(m.get_allocator().get_id() == 43);
     assert(m.size() == 0);
     }
 
     {
-    momo::stdish::unordered_map m { P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long>);
+    LIBCXX_TEST_DEDUCT_CLASS m { P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42);
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long>);
+    LIBCXX_TEST_DEDUCT_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>>);
+    LIBCXX_TEST_DEDUCT_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>());
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), std::equal_to<>());
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>>);
+    LIBCXX_TEST_DEDUCT_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), std::equal_to<>());
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>, std::equal_to<>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), std::equal_to<>(), test_allocator<PC>(0, 44));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>>);
+    LIBCXX_TEST_DEDUCT_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), std::equal_to<>(), test_allocator<PC>(0, 44));
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>, std::equal_to<>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 44);
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, test_allocator<PC>(0, 45));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, momo::HashCoder<int>, std::equal_to<int>, test_allocator<PC>>);
+    LIBCXX_TEST_DEDUCT_CLASS m(std::begin(arr), std::end(arr), 42, test_allocator<PC>(0, 45));
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, momo::HashCoder<int>, std::equal_to<int>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 45);
     }
 
     {
     const P arr[] = { {1,1}, {2,2}, {1,1}, {INT_MAX,1}, {3,1} };
-    momo::stdish::unordered_map m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), test_allocator<PC>(0, 46));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<int>, test_allocator<PC>>);
+    LIBCXX_TEST_DEDUCT_CLASS m(std::begin(arr), std::end(arr), 42, std::hash<long long>(), test_allocator<PC>(0, 46));
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>, std::equal_to<int>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 46);
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, test_allocator<PC>(0, 47));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, momo::HashCoder<int>, std::equal_to<int>, test_allocator<PC>>);
+    LIBCXX_TEST_DEDUCT_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, test_allocator<PC>(0, 47));
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, momo::HashCoder<int>, std::equal_to<int>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 47);
     }
 
     {
-    momo::stdish::unordered_map m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), test_allocator<PC>(0, 48));
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, long, std::hash<long long>, std::equal_to<int>, test_allocator<PC>>);
+    LIBCXX_TEST_DEDUCT_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42, std::hash<long long>(), test_allocator<PC>(0, 48));
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, long, std::hash<long long>, std::equal_to<int>, test_allocator<PC>>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 48);
     }
 
     {
     // Examples from LWG3025
-    momo::stdish::unordered_map m{std::pair{1, 1}, {2, 2}, {3, 3}};
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::unordered_map<int, int>);
+    LIBCXX_TEST_DEDUCT_CLASS m{std::pair{1, 1}, {2, 2}, {3, 3}};
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_DEDUCT_CLASS<int, int>);
 
-    momo::stdish::unordered_map m2{m.begin(), m.end()};
-    ASSERT_SAME_TYPE(decltype(m2), momo::stdish::unordered_map<int, int>);
+    LIBCXX_TEST_DEDUCT_CLASS m2{m.begin(), m.end()};
+    ASSERT_SAME_TYPE(decltype(m2), LIBCXX_TEST_DEDUCT_CLASS<int, int>);
     }
 
     {
     // Examples from LWG3531
-    momo::stdish::unordered_map m1{{std::pair{1, 2}, {3, 4}}, 0};
-    ASSERT_SAME_TYPE(decltype(m1), momo::stdish::unordered_map<int, int>);
+    LIBCXX_TEST_DEDUCT_CLASS m1{{std::pair{1, 2}, {3, 4}}, 0};
+    ASSERT_SAME_TYPE(decltype(m1), LIBCXX_TEST_DEDUCT_CLASS<int, int>);
 
     using value_type = std::pair<const int, int>;
-    momo::stdish::unordered_map m2{{value_type{1, 2}, {3, 4}}, 0};
-    ASSERT_SAME_TYPE(decltype(m2), momo::stdish::unordered_map<int, int>);
+    LIBCXX_TEST_DEDUCT_CLASS m2{{value_type{1, 2}, {3, 4}}, 0};
+    ASSERT_SAME_TYPE(decltype(m2), LIBCXX_TEST_DEDUCT_CLASS<int, int>);
     }
 
 #if TEST_STD_VER >= 23
@@ -246,50 +246,50 @@ int main(int, char**)
       using Alloc = test_allocator<PC>;
 
       { // (from_range, range)
-        momo::stdish::unordered_map c(std::from_range, Range());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::unordered_map<int, long>>);
+        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, long>>);
       }
 
       { // (from_range, range, n)
-        momo::stdish::unordered_map c(std::from_range, Range(), std::size_t());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::unordered_map<int, long>>);
+        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, long>>);
       }
 
       { // (from_range, range, n, hash)
-        momo::stdish::unordered_map c(std::from_range, Range(), std::size_t(), Hash());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::unordered_map<int, long, Hash>>);
+        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Hash());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, long, Hash>>);
       }
 
       { // (from_range, range, n, hash, pred)
-        momo::stdish::unordered_map c(std::from_range, Range(), std::size_t(), Hash(), Pred());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::unordered_map<int, long, Hash, Pred>>);
+        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Hash(), Pred());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, long, Hash, Pred>>);
       }
 
       { // (from_range, range, n, hash, pred, alloc)
-        momo::stdish::unordered_map c(std::from_range, Range(), std::size_t(), Hash(), Pred(), Alloc());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::unordered_map<int, long, Hash, Pred, Alloc>>);
+        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Hash(), Pred(), Alloc());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, long, Hash, Pred, Alloc>>);
       }
 
       { // (from_range, range, n, alloc)
-        momo::stdish::unordered_map c(std::from_range, Range(), std::size_t(), Alloc());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::unordered_map<int, long, DefaultHash, DefaultPred, Alloc>>);
+        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Alloc());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, long, DefaultHash, DefaultPred, Alloc>>);
       }
 
       // TODO(LWG 2713): uncomment this test once the constructor is added.
       { // (from_range, range, alloc)
-        //momo::stdish::unordered_map c(std::from_range, Range(), Alloc());
-        //static_assert(std::is_same_v<decltype(c), momo::stdish::unordered_map<int, long, DefaultHash, DefaultPred, Alloc>>);
+        //LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), Alloc());
+        //static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, long, DefaultHash, DefaultPred, Alloc>>);
       }
 
       { // (from_range, range, n, hash, alloc)
-        momo::stdish::unordered_map c(std::from_range, Range(), std::size_t(), Hash(), Alloc());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::unordered_map<int, long, Hash, DefaultPred, Alloc>>);
+        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Hash(), Alloc());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, long, Hash, DefaultPred, Alloc>>);
       }
     }
 #endif
 
     //UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_map, std::unordered_map<int, long>>();
-    UnorderedContainerDeductionGuidesSfinaeAway<momo::stdish::unordered_map, momo::stdish::unordered_map<int, long>>();
+    UnorderedContainerDeductionGuidesSfinaeAway<LIBCXX_TEST_DEDUCT_CLASS, LIBCXX_TEST_DEDUCT_CLASS<int, long>>();
 
     return 0;
 }

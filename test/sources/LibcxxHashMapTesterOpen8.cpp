@@ -46,9 +46,11 @@ namespace std
 		THasher, TEqualComparer, TAllocator>;
 }
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_open"
+#define LIBCXX_TEST_DEDUCT_CLASS momo::stdish::unordered_map_open
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_open8"
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_DEDUCT_CLASS
 
 } // namespace libcxx_test_hash_map
 
