@@ -45,9 +45,11 @@ namespace std
 	using unordered_set = momo::stdish::unordered_set_open<TKey, THasher, TEqualComparer, TAllocator>;
 }
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_open"
+#define LIBCXX_TEST_DEDUCT_CLASS momo::stdish::unordered_set_open
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_open8"
 #include "libcxx/UnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_DEDUCT_CLASS
 
 } // namespace libcxx_test_hash_set
 
