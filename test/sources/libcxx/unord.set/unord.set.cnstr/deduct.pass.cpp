@@ -79,133 +79,133 @@ int main(int, char**)
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    LIBCXX_TEST_DEDUCT_CLASS s(std::begin(arr), std::end(arr));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr));
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    LIBCXX_TEST_DEDUCT_CLASS s(std::begin(arr), std::end(arr), 42);
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42);
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    LIBCXX_TEST_DEDUCT_CLASS s(std::begin(arr), std::end(arr), 42, std::hash<long long>());
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42, std::hash<long long>());
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<long long>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    LIBCXX_TEST_DEDUCT_CLASS s(std::begin(arr), std::end(arr), 42, std::hash<long long>(), test_allocator<int>(0, 40));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42, std::hash<long long>(), test_allocator<int>(0, 40));
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<long long>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 40);
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>> source;
-    LIBCXX_TEST_DEDUCT_CLASS s(source);
+    LIBCXX_TEST_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>> source;
+    LIBCXX_TEST_CLASS s(source);
     ASSERT_SAME_TYPE(decltype(s), decltype(source));
     assert(s.size() == 0);
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>> source;
-    LIBCXX_TEST_DEDUCT_CLASS s{source};  // braces instead of parens
+    LIBCXX_TEST_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>> source;
+    LIBCXX_TEST_CLASS s{source};  // braces instead of parens
     ASSERT_SAME_TYPE(decltype(s), decltype(source));
     assert(s.size() == 0);
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>> source;
-    LIBCXX_TEST_DEDUCT_CLASS s(source, test_allocator<int>(0, 41));
+    LIBCXX_TEST_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>> source;
+    LIBCXX_TEST_CLASS s(source, test_allocator<int>(0, 41));
     ASSERT_SAME_TYPE(decltype(s), decltype(source));
     assert(s.size() == 0);
     assert(s.get_allocator().get_id() == 41);
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>> source;
-    LIBCXX_TEST_DEDUCT_CLASS s{source, test_allocator<int>(0, 42)};  // braces instead of parens
+    LIBCXX_TEST_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>> source;
+    LIBCXX_TEST_CLASS s{source, test_allocator<int>(0, 42)};  // braces instead of parens
     ASSERT_SAME_TYPE(decltype(s), decltype(source));
     assert(s.size() == 0);
     assert(s.get_allocator().get_id() == 42);
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS s{ 1, 2, 1, INT_MAX, 3 };
+    LIBCXX_TEST_CLASS s{ 1, 2, 1, INT_MAX, 3 };
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42);
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42);
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<long long>());
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<long long>());
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<long long>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<long long>(), std::equal_to<>());
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<long long>(), std::equal_to<>());
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>, std::equal_to<>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<long long>, std::equal_to<>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<long long>(), std::equal_to<>(), test_allocator<int>(0, 43));
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<long long>(), std::equal_to<>(), test_allocator<int>(0, 43));
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<long long>, std::equal_to<>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 43);
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    LIBCXX_TEST_DEDUCT_CLASS s(std::begin(arr), std::end(arr), 42, test_allocator<int>(0, 44));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42, test_allocator<int>(0, 44));
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 44);
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    LIBCXX_TEST_DEDUCT_CLASS s(std::begin(arr), std::end(arr), 42, std::hash<long long>(), test_allocator<int>(0, 44));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42, std::hash<long long>(), test_allocator<int>(0, 44));
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<long long>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 44);
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, test_allocator<int>(0, 43));
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, test_allocator<int>(0, 43));
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 43);
     }
 
     {
-    LIBCXX_TEST_DEDUCT_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<long long>(), test_allocator<int>(0, 42));
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<long long>(), test_allocator<int>(0, 42));
 
-    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_DEDUCT_CLASS<int, std::hash<long long>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<long long>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 42);
     }
@@ -220,50 +220,50 @@ int main(int, char**)
       using Alloc = test_allocator<int>;
 
       { // (from_range, range)
-        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range());
-        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int>>);
       }
 
       { // (from_range, range, n)
-        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t());
-        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range(), std::size_t());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int>>);
       }
 
       { // (from_range, range, n, hash)
-        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Hash());
-        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, Hash>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range(), std::size_t(), Hash());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, Hash>>);
       }
 
       { // (from_range, range, n, hash, pred)
-        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Hash(), Pred());
-        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, Hash, Pred>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range(), std::size_t(), Hash(), Pred());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, Hash, Pred>>);
       }
 
       { // (from_range, range, n, hash, pred, alloc)
-        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Hash(), Pred(), Alloc());
-        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, Hash, Pred, Alloc>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range(), std::size_t(), Hash(), Pred(), Alloc());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, Hash, Pred, Alloc>>);
       }
 
       { // (from_range, range, n, alloc)
-        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Alloc());
-        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, DefaultHash, DefaultPred, Alloc>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range(), std::size_t(), Alloc());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, DefaultHash, DefaultPred, Alloc>>);
       }
 
       // TODO(LWG 2713): uncomment this test once the constructor is added.
       { // (from_range, range, alloc)
-        //LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), Alloc());
-        //static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, DefaultHash, DefaultPred, Alloc>>);
+        //LIBCXX_TEST_CLASS c(std::from_range, Range(), Alloc());
+        //static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, DefaultHash, DefaultPred, Alloc>>);
       }
 
       { // (from_range, range, n, hash, alloc)
-        LIBCXX_TEST_DEDUCT_CLASS c(std::from_range, Range(), std::size_t(), Hash(), Alloc());
-        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_DEDUCT_CLASS<int, Hash, DefaultPred, Alloc>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range(), std::size_t(), Hash(), Alloc());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, Hash, DefaultPred, Alloc>>);
       }
     }
 #endif
 
     //UnorderedContainerDeductionGuidesSfinaeAway<std::unordered_set, std::unordered_set<int>>();
-    UnorderedContainerDeductionGuidesSfinaeAway<LIBCXX_TEST_DEDUCT_CLASS, LIBCXX_TEST_DEDUCT_CLASS<int>>();
+    UnorderedContainerDeductionGuidesSfinaeAway<LIBCXX_TEST_CLASS, LIBCXX_TEST_CLASS<int>>();
 
     return 0;
 }

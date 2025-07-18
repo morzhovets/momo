@@ -16,6 +16,10 @@
 
 #include "../../include/momo/stdish/unordered_set.h"
 
+#ifndef LIBCXX_TEST_CLASS
+# define LIBCXX_TEST_FAILURE
+#endif
+
 namespace
 {
 
@@ -24,6 +28,8 @@ using namespace libcxx_from_range_unord;
 
 namespace libcxx_test_hash_set
 {
+
+#ifndef LIBCXX_TEST_CLASS
 
 template<typename TKey, typename THasher, typename TEqualComparer>
 class LibcxxHashTraits : public momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>
@@ -43,8 +49,12 @@ public:
 class LibcxxHashSetSettings : public momo::HashSetSettings
 {
 public:
+#ifdef LIBCXX_TEST_FAILURE
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+#endif
 };
+
+#endif // LIBCXX_TEST_CLASS
 
 namespace std
 {
@@ -54,18 +64,22 @@ namespace std
 		typename THasher = std::hash<TKey>,
 		typename TEqualComparer = std::equal_to<TKey>,
 		typename TAllocator = std::allocator<TKey>>
+#ifdef LIBCXX_TEST_CLASS
+	using unordered_set = LIBCXX_TEST_CLASS<TKey, THasher, TEqualComparer, TAllocator>;
+#else
 	using unordered_set = momo::stdish::unordered_set_adaptor<momo::HashSet<TKey,
 		LibcxxHashTraits<TKey, THasher, TEqualComparer>, momo::MemManagerStd<TAllocator>,
 		momo::HashSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
 		LibcxxHashSetSettings>>;
+#endif
 }
 
-#define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_" LIBCXX_TEST_PREFIX_TAIL
 #include "libcxx/UnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_test_hash_set
 
 } // namespace
+
+#undef LIBCXX_TEST_FAILURE
