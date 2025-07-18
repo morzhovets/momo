@@ -248,7 +248,7 @@ LIBCXX_TEST_BEGIN(cnstr_copy_alloc)
 #include "unord.map/unord.map.cnstr/copy_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCXX_TEST_DEDUCT_CLASS
+#ifdef LIBCXX_TEST_CLASS
 
 LIBCXX_TEST_BEGIN(cnstr_deduct)
 #include "unord.map/unord.map.cnstr/deduct.pass.cpp"
@@ -258,7 +258,7 @@ LIBCXX_TEST_BEGIN(cnstr_deduct_const)
 #include "unord.map/unord.map.cnstr/deduct_const.pass.cpp"
 LIBCXX_TEST_END
 
-#endif // LIBCXX_TEST_DEDUCT_CLASS
+#endif // LIBCXX_TEST_CLASS
 
 LIBCXX_TEST_BEGIN(cnstr_default)
 #include "unord.map/unord.map.cnstr/default.pass.cpp"
