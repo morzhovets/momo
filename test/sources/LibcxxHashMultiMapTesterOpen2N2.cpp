@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/LibcxxHashMultiMapTesterLimP4.cpp
+  test/sources/LibcxxHashMultiMapTesterOpen2N2.cpp
 
 \**********************************************************/
 
@@ -14,10 +14,10 @@
 
 #ifdef TEST_LIBCXX_HASH_MULTI_MAP
 
-#include "../../include/momo/details/HashBucketLimP4.h"
+#include "../../include/momo/details/HashBucketOpen2N2.h"
 
-#define LIBCXX_TEST_CLASS momo::stdish::unordered_multimap
-#define LIBCXX_TEST_PREFIX_TAIL "limp4"
+#define LIBCXX_TEST_BUCKET momo::HashBucketOpen2N2<>
+#define LIBCXX_TEST_PREFIX_TAIL "open2n2"
 
 #include "LibcxxHashMultiMapTester.h"
 

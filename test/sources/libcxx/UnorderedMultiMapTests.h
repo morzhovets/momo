@@ -182,7 +182,7 @@ LIBCXX_TEST_BEGIN(cnstr_copy_alloc)
 #include "unord.multimap/unord.multimap.cnstr/copy_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCXX_TEST_DEFAULT_BUCKET
+#ifdef LIBCXX_TEST_CLASS
 
 LIBCXX_TEST_BEGIN(cnstr_deduct)
 #include "unord.multimap/unord.multimap.cnstr/deduct.pass.cpp"
@@ -192,7 +192,7 @@ LIBCXX_TEST_BEGIN(cnstr_deduct_const)
 #include "unord.multimap/unord.multimap.cnstr/deduct_const.pass.cpp"
 LIBCXX_TEST_END
 
-#endif // LIBCXX_TEST_DEFAULT_BUCKET
+#endif // LIBCXX_TEST_CLASS
 
 LIBCXX_TEST_BEGIN(cnstr_default)
 #include "unord.multimap/unord.multimap.cnstr/default.pass.cpp"
