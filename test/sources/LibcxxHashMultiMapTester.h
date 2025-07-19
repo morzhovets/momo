@@ -41,11 +41,11 @@ namespace std
 		typename THasher = std::hash<TKey>,
 		typename TEqualComparer = std::equal_to<TKey>,
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-	using unordered_multimap = momo::stdish::unordered_multimap<TKey, TMapped, THasher, TEqualComparer, TAllocator,
-		momo::HashMultiMap<TKey, TMapped, momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>,
-			momo::MemManagerStd<TAllocator>,
-			momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
-			LibcxxHashMultiMapSettings>>;
+	using unordered_multimap = momo::stdish::unordered_multimap_adaptor<momo::HashMultiMap<TKey, TMapped,
+		momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>,
+		momo::MemManagerStd<TAllocator>,
+		momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
+		LibcxxHashMultiMapSettings>>;
 
 	template<typename TKey>
 	using set = momo::stdish::set<TKey>;
