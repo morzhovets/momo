@@ -136,8 +136,10 @@
 #if defined(_MSC_VER)
 // MSVC compiler has limited support for Empty Base Optimization by default
 # define MOMO_EMPTY_BASES __declspec(empty_bases)
+# define MOMO_NO_UNIQUE_ADDRESS [[msvc::no_unique_address]]
 #else
 # define MOMO_EMPTY_BASES
+# define MOMO_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #endif
 
 #define MOMO_ASSERT(expr) assert(expr)

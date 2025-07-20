@@ -1749,7 +1749,7 @@ private:
 	}
 
 private:
-	[[no_unique_address]] Crew mCrew;
+	MOMO_NO_UNIQUE_ADDRESS Crew mCrew;
 	size_t mCount;
 	Node* mRootNode;
 	NodeParams* mNodeParams;

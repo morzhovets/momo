@@ -557,7 +557,7 @@ public:
 	}
 
 private:
-	BaseFunctorReference mBaseFunctor;
+	MOMO_NO_UNIQUE_ADDRESS BaseFunctorReference mBaseFunctor;
 };
 
 template<typename TBaseFunctor>
@@ -593,7 +593,7 @@ public:
 	}
 
 private:
-	BaseFunctorReference mBaseFunctor;
+	MOMO_NO_UNIQUE_ADDRESS BaseFunctorReference mBaseFunctor;
 };
 
 } // namespace momo

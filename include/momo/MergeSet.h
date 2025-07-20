@@ -896,7 +896,7 @@ private:
 
 private:
 	MergeArray mMergeArray;
-	[[no_unique_address]] BloomFilter mBloomFilter;
+	MOMO_NO_UNIQUE_ADDRESS BloomFilter mBloomFilter;
 };
 
 template<conceptObject TKey>

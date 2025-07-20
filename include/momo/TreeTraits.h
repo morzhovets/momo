@@ -141,7 +141,7 @@ public:
 	}
 
 private:
-	[[no_unique_address]] LessComparer mLessComparer;
+	MOMO_NO_UNIQUE_ADDRESS LessComparer mLessComparer;
 };
 
 } // namespace momo

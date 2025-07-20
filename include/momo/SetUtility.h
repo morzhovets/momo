@@ -257,8 +257,8 @@ namespace internal
 		}
 
 	private:
-		[[no_unique_address]] ContainerTraits mContainerTraits;
-		[[no_unique_address]] MemManager mMemManager;
+		MOMO_NO_UNIQUE_ADDRESS ContainerTraits mContainerTraits;
+		MOMO_NO_UNIQUE_ADDRESS MemManager mMemManager;
 	};
 
 	template<typename TItemTraits, typename TSettings>

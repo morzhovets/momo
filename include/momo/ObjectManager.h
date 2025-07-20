@@ -301,7 +301,7 @@ namespace internal
 		}
 
 	private:
-		[[no_unique_address]] ObjectArg mObjectArg;
+		MOMO_NO_UNIQUE_ADDRESS ObjectArg mObjectArg;
 	};
 
 	template<typename ObjectArg, size_t index>
