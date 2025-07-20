@@ -9,6 +9,7 @@
   momo/stdish/unordered_multimap.h
 
   namespace momo::stdish:
+    class unordered_multimap_adaptor
     class unordered_multimap
     class unordered_multimap_open
 
