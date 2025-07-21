@@ -819,15 +819,16 @@ private:
 		MemManager& memManager = mHashMap.GetMemManager();
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
-		typedef typename KeyManager::template FinalDestroyer<> KeyFinalDestroyer;
+		typedef typename KeyManager::template DestroyFinalizer<> KeyDestroyFinalizer;
 		if constexpr (HashTraits::useHintIterators && !std::is_null_pointer_v<Hint>)
 		{
 			auto valueCreator = [&memManager, &keyArgs, mappedCreator = std::move(mappedCreator)]
 				(key_type* newKey, mapped_type* newMapped) mutable
 			{
 				KeyCreator(memManager, std::move(keyArgs))(newKey);
-				for (KeyFinalDestroyer fin(&memManager, newKey); fin.GetPtr() != nullptr; fin.ResetPtr())
-					std::move(mappedCreator)(newMapped);
+				KeyDestroyFinalizer keyFin(&memManager, newKey);
+				std::move(mappedCreator)(newMapped);
+				keyFin.ResetPtr();
 			};
 			typename HashMap::Position resPos = mHashMap.AddCrt(
 				ConstIteratorProxy::GetBaseIterator(hint), std::move(valueCreator));
@@ -839,7 +840,7 @@ private:
 				HashMap::KeyValueTraits::keyAlignment> KeyBuffer;
 			KeyBuffer keyBuffer;
 			KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPtr());
-			KeyFinalDestroyer keyFin(&memManager, keyBuffer.template GetPtr<true>());
+			KeyDestroyFinalizer keyFin(&memManager, keyBuffer.template GetPtr<true>());
 			typename HashMap::Position pos = mHashMap.Find(std::as_const(keyBuffer.Get()));
 			if (!!pos)
 				return { IteratorProxy(pos), false };
