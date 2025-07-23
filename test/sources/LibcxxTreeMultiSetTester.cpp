@@ -34,12 +34,7 @@ namespace std
 	template<typename TKey,
 		typename TLessComparer = std::less<TKey>,
 		typename TAllocator = std::allocator<TKey>>
-	using multiset = momo::stdish::multiset<TKey, TLessComparer, TAllocator,
-		momo::TreeSet<TKey, momo::TreeTraitsStd<TKey, TLessComparer, true,
-			momo::TreeNode<4, 2, momo::MemPoolParams<1>, false>>,
-			momo::MemManagerStd<TAllocator>,
-			momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
-			momo::TreeSetSettings>>;
+	using multiset = momo::stdish::multiset<TKey, TLessComparer, TAllocator>;
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multiset"
