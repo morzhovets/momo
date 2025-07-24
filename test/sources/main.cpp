@@ -90,6 +90,8 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "MOMO_CONSTEXPR_VERSION: " << MOMO_CONSTEXPR_VERSION << std::endl;
+
 	std::cout << "MOMO_HAS_DEDUCTION_GUIDES: ";
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
 	std::cout << "defined";

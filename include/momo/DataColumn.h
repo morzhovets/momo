@@ -69,8 +69,25 @@ namespace internal
 		// Fowler-Noll-Vo hash function (1a)
 		static constexpr uint64_t GetHashCode64(const char* str) noexcept
 		{
-			return (*str == '\0') ? fnvBasis64
-				: (GetHashCode64(str + 1) ^ uint64_t{static_cast<unsigned char>(*str)}) * fnvPrime64;
+#if MOMO_CONSTEXPR_VERSION < 201304L	// c++11
+			return pvGetHashCode(str, fnvBasis64);
+#else
+			uint64_t hashCode = fnvBasis64;
+			for (const char* p = str; *p != '\0'; ++p)
+				hashCode = pvAccumulate(hashCode, *p);
+			return hashCode;
+#endif
+		}
+
+	private:
+		static constexpr uint64_t pvGetHashCode(const char* str, uint64_t hashCode) noexcept
+		{
+			return (*str == '\0') ? hashCode : pvGetHashCode(str + 1, pvAccumulate(hashCode, *str));
+		}
+
+		static constexpr uint64_t pvAccumulate(uint64_t hashCode, char c) noexcept
+		{
+			return (hashCode ^ uint64_t{static_cast<unsigned char>(c)}) * fnvPrime64;
 		}
 	};
 

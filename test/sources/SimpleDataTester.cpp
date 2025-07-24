@@ -50,6 +50,8 @@ namespace
 #ifdef TEST_MSVC
 # pragma warning (pop)
 #endif
+
+	MOMO_STATIC_ASSERT(intString.GetCode() == 573803409989158255ull);
 }
 
 class SimpleDataTester

@@ -185,6 +185,12 @@
 # define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) reinterpret_cast<ResObject*>(ptr)
 #endif
 
+#ifdef __cpp_constexpr
+# define MOMO_CONSTEXPR_VERSION __cpp_constexpr
+#else
+# define MOMO_CONSTEXPR_VERSION 200704L
+#endif
+
 #ifdef __cpp_deduction_guides
 # define MOMO_HAS_DEDUCTION_GUIDES
 #endif
