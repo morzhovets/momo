@@ -34,12 +34,12 @@ namespace std
 	template<typename TKey, typename TMapped,
 		typename TLessComparer = std::less<TKey>,
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-	using multimap = momo::stdish::multimap<TKey, TMapped, TLessComparer, TAllocator,
-		momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessComparer, true,
-			momo::TreeNode<4, 2, momo::MemPoolParams<1>, true>>,
-			momo::MemManagerStd<TAllocator>,
-			momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
-			momo::TreeMapSettings>>;
+	using multimap = momo::stdish::multimap_adaptor<momo::TreeMap<TKey, TMapped,
+		momo::TreeTraitsStd<TKey, TLessComparer, true,
+			momo::TreeNode<32, 4, momo::MemPoolParams<1>, false>>,
+		momo::MemManagerStd<TAllocator>,
+		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>, true>,
+		momo::TreeMapSettings>>;
 }
 
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap_vp"

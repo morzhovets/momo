@@ -85,14 +85,12 @@ int main(int, char**)
     assert(m.size() == 0);
     }
 
-#if !defined(TEST_GCC) && !defined(TEST_CLANG)
     {
     momo::stdish::map<int, long> source;
     momo::stdish::map m(source, momo::stdish::map<int, long>::allocator_type());
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
     assert(m.size() == 0);
     }
-#endif
 
 #if !(defined(TEST_GCC) && __GNUC__ < 13)
     {

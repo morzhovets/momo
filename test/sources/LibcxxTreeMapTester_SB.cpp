@@ -44,12 +44,12 @@ namespace std
 	template<typename TKey, typename TMapped,
 		typename TLessComparer = std::less<TKey>,
 		typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-	using map = momo::stdish::map<TKey, TMapped, TLessComparer, TAllocator,
-		momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessComparer, false,
-			momo::TreeNode<32, 4, momo::MemPoolParams<1>, true>>,
-			momo::MemManagerStd<TAllocator>,
-			LibcxxTreeMapKeyValueTraits<TKey, TMapped, TAllocator>,
-			momo::TreeMapSettings>>;
+	using map = momo::stdish::map_adaptor<momo::TreeMap<TKey, TMapped,
+		momo::TreeTraitsStd<TKey, TLessComparer, false,
+			momo::TreeNode<4, 2, momo::MemPoolParams<1>, false>>,
+		momo::MemManagerStd<TAllocator>,
+		LibcxxTreeMapKeyValueTraits<TKey, TMapped, TAllocator>,
+		momo::TreeMapSettings>>;
 
 	template<typename TValue>
 	using vector = momo::stdish::vector<TValue>;
