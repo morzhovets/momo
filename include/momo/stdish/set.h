@@ -609,11 +609,9 @@ private:
 	typedef set_adaptor<TTreeSet> SetAdaptor;
 
 public:
-	using typename SetAdaptor::size_type;
 	using typename SetAdaptor::value_type;
 	using typename SetAdaptor::iterator;
 	using typename SetAdaptor::node_type;
-	using typename SetAdaptor::const_reference;
 
 	typedef iterator insert_return_type;
 
