@@ -705,20 +705,9 @@ private:
 
 public:
 	using typename UnorderedSetAdaptor::value_type;
-	using typename UnorderedSetAdaptor::allocator_type;
 
 public:
 	using UnorderedSetAdaptor::UnorderedSetAdaptor;
-
-	unordered_set(unordered_set&& right, const allocator_type& alloc)
-		: UnorderedSetAdaptor(std::move(right), alloc)
-	{
-	}
-
-	unordered_set(const unordered_set& right, const allocator_type& alloc)
-		: UnorderedSetAdaptor(right, alloc)
-	{
-	}
 
 	unordered_set& operator=(std::initializer_list<value_type> values)
 	{
@@ -755,20 +744,9 @@ private:
 
 public:
 	using typename UnorderedSetAdaptor::value_type;
-	using typename UnorderedSetAdaptor::allocator_type;
 
 public:
 	using UnorderedSetAdaptor::UnorderedSetAdaptor;
-
-	unordered_set_open(unordered_set_open&& right, const allocator_type& alloc)
-		: UnorderedSetAdaptor(std::move(right), alloc)
-	{
-	}
-
-	unordered_set_open(const unordered_set_open& right, const allocator_type& alloc)
-		: UnorderedSetAdaptor(right, alloc)
-	{
-	}
 
 	unordered_set_open& operator=(std::initializer_list<value_type> values)
 	{
@@ -822,6 +800,9 @@ template<typename Key, \
 	momo::internal::conceptCopyableEqualComparer<Key> EqualComparer, \
 	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(std::initializer_list<Key>, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
+	-> unordered_set<Key, Hasher, EqualComparer, Allocator>; \
+template<typename Key, typename Hasher, typename EqualComparer, typename Allocator> \
+unordered_set(unordered_set<Key, Hasher, EqualComparer, Allocator>, std::type_identity_t<Allocator>) \
 	-> unordered_set<Key, Hasher, EqualComparer, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set) \

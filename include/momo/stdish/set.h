@@ -689,20 +689,9 @@ private:
 
 public:
 	using typename SetAdaptor::value_type;
-	using typename SetAdaptor::allocator_type;
 
 public:
 	using SetAdaptor::SetAdaptor;
-
-	set(set&& right, const allocator_type& alloc)
-		: SetAdaptor(std::move(right), alloc)
-	{
-	}
-
-	set(const set& right, const allocator_type& alloc)
-		: SetAdaptor(right, alloc)
-	{
-	}
 
 	set& operator=(std::initializer_list<value_type> values)
 	{
@@ -736,20 +725,9 @@ private:
 
 public:
 	using typename MultiSetAdaptor::value_type;
-	using typename MultiSetAdaptor::allocator_type;
 
 public:
 	using MultiSetAdaptor::MultiSetAdaptor;
-
-	multiset(multiset&& right, const allocator_type& alloc)
-		: MultiSetAdaptor(std::move(right), alloc)
-	{
-	}
-
-	multiset(const multiset& right, const allocator_type& alloc)
-		: MultiSetAdaptor(right, alloc)
-	{
-	}
 
 	multiset& operator=(std::initializer_list<value_type> values)
 	{
@@ -783,6 +761,9 @@ template<typename Key, \
 	momo::internal::conceptCopyableLessComparer<Key> LessComparer, \
 	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 set(std::initializer_list<Key>, LessComparer, Allocator = Allocator()) \
+	-> set<Key, LessComparer, Allocator>; \
+template<typename Key, typename LessComparer, typename Allocator> \
+set(set<Key, LessComparer, Allocator>, std::type_identity_t<Allocator>) \
 	-> set<Key, LessComparer, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set) \

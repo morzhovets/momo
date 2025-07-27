@@ -1025,20 +1025,9 @@ private:
 
 public:
 	using typename MapAdaptor::value_type;
-	using typename MapAdaptor::allocator_type;
 
 public:
 	using MapAdaptor::MapAdaptor;
-
-	map(map&& right, const allocator_type& alloc)
-		: MapAdaptor(std::move(right), alloc)
-	{
-	}
-
-	map(const map& right, const allocator_type& alloc)
-		: MapAdaptor(right, alloc)
-	{
-	}
 
 	map& operator=(std::initializer_list<value_type> values)
 	{
@@ -1072,20 +1061,9 @@ private:
 
 public:
 	using typename MultiMapAdaptor::value_type;
-	using typename MultiMapAdaptor::allocator_type;
 
 public:
 	using MultiMapAdaptor::MultiMapAdaptor;
-
-	multimap(multimap&& right, const allocator_type& alloc)
-		: MultiMapAdaptor(std::move(right), alloc)
-	{
-	}
-
-	multimap(const multimap& right, const allocator_type& alloc)
-		: MultiMapAdaptor(right, alloc)
-	{
-	}
 
 	multimap& operator=(std::initializer_list<value_type> values)
 	{
@@ -1125,6 +1103,9 @@ template<typename QKey, typename Mapped, \
 	momo::internal::conceptCopyableLessComparer<Key> LessComparer, \
 	momo::internal::conceptAllocator Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 map(std::initializer_list<std::pair<QKey, Mapped>>, LessComparer, Allocator = Allocator()) \
+	-> map<Key, Mapped, LessComparer, Allocator>; \
+template<typename Key, typename Mapped, typename LessComparer, typename Allocator> \
+map(map<Key, Mapped, LessComparer, Allocator>, std::type_identity_t<Allocator>) \
 	-> map<Key, Mapped, LessComparer, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map) \

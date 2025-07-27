@@ -960,20 +960,9 @@ private:
 
 public:
 	using typename UnorderedMapAdaptor::value_type;
-	using typename UnorderedMapAdaptor::allocator_type;
 
 public:
 	using UnorderedMapAdaptor::UnorderedMapAdaptor;
-
-	unordered_map(unordered_map&& right, const allocator_type& alloc)
-		: UnorderedMapAdaptor(std::move(right), alloc)
-	{
-	}
-
-	unordered_map(const unordered_map& right, const allocator_type& alloc)
-		: UnorderedMapAdaptor(right, alloc)
-	{
-	}
 
 	unordered_map& operator=(std::initializer_list<value_type> values)
 	{
@@ -1010,20 +999,9 @@ private:
 
 public:
 	using typename UnorderedMapAdaptor::value_type;
-	using typename UnorderedMapAdaptor::allocator_type;
 
 public:
 	using UnorderedMapAdaptor::UnorderedMapAdaptor;
-
-	unordered_map_open(unordered_map_open&& right, const allocator_type& alloc)
-		: UnorderedMapAdaptor(std::move(right), alloc)
-	{
-	}
-
-	unordered_map_open(const unordered_map_open& right, const allocator_type& alloc)
-		: UnorderedMapAdaptor(right, alloc)
-	{
-	}
 
 	unordered_map_open& operator=(std::initializer_list<value_type> values)
 	{
@@ -1089,6 +1067,9 @@ template<typename QKey, typename Mapped, \
 	momo::internal::conceptCopyableEqualComparer<Key> EqualComparer, \
 	momo::internal::conceptAllocator Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_map(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
+	-> unordered_map<Key, Mapped, Hasher, EqualComparer, Allocator>; \
+template<typename Key, typename Mapped, typename Hasher, typename EqualComparer, typename Allocator> \
+unordered_map(unordered_map<Key, Mapped, Hasher, EqualComparer, Allocator>, std::type_identity_t<Allocator>) \
 	-> unordered_map<Key, Mapped, Hasher, EqualComparer, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_map) \

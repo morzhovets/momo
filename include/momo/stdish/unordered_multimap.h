@@ -717,20 +717,9 @@ private:
 
 public:
 	using typename UnorderedMultiMapAdaptor::value_type;
-	using typename UnorderedMultiMapAdaptor::allocator_type;
 
 public:
 	using UnorderedMultiMapAdaptor::UnorderedMultiMapAdaptor;
-
-	unordered_multimap(unordered_multimap&& right, const allocator_type& alloc)
-		: UnorderedMultiMapAdaptor(std::move(right), alloc)
-	{
-	}
-
-	unordered_multimap(const unordered_multimap& right, const allocator_type& alloc)
-		: UnorderedMultiMapAdaptor(right, alloc)
-	{
-	}
 
 	unordered_multimap& operator=(std::initializer_list<value_type> values)
 	{
@@ -767,20 +756,9 @@ private:
 
 public:
 	using typename UnorderedMultiMapAdaptor::value_type;
-	using typename UnorderedMultiMapAdaptor::allocator_type;
 
 public:
 	using UnorderedMultiMapAdaptor::UnorderedMultiMapAdaptor;
-
-	unordered_multimap_open(unordered_multimap_open&& right, const allocator_type& alloc)
-		: UnorderedMultiMapAdaptor(std::move(right), alloc)
-	{
-	}
-
-	unordered_multimap_open(const unordered_multimap_open& right, const allocator_type& alloc)
-		: UnorderedMultiMapAdaptor(right, alloc)
-	{
-	}
 
 	unordered_multimap_open& operator=(std::initializer_list<value_type> values)
 	{
@@ -846,6 +824,9 @@ template<typename QKey, typename Mapped, \
 	momo::internal::conceptCopyableEqualComparer<Key> EqualComparer, \
 	momo::internal::conceptAllocator Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>; \
+template<typename Key, typename Mapped, typename Hasher, typename EqualComparer, typename Allocator> \
+unordered_multimap(unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>, std::type_identity_t<Allocator>) \
 	-> unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>;
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_multimap) \
