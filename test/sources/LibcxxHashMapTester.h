@@ -32,10 +32,11 @@ namespace libcxx_test_hash_map
 #ifndef LIBCXX_TEST_CLASS
 
 template<typename TKey, typename THasher, typename TEqualComparer>
-class LibcxxHashTraits : public momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>
+class LibcxxHashTraits
+	: public momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_HASH_BUCKET>
 {
 private:
-	typedef momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET> HashTraitsBase;
+	typedef momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_HASH_BUCKET> HashTraitsStd;
 
 public:
 #ifdef LIBCXX_TEST_HINT_ITERATORS
@@ -43,7 +44,7 @@ public:
 #endif
 
 public:
-	using HashTraitsBase::HashTraitsBase;
+	using HashTraitsStd::HashTraitsStd;
 };
 
 template<typename TKey, typename TMapped, typename TAllocator>
@@ -88,7 +89,7 @@ namespace std
 #endif
 }
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_map" LIBCXX_TEST_PREFIX_TAIL
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 

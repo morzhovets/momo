@@ -17,7 +17,7 @@
 #include "../../include/momo/details/HashBucketOpen8.h"
 
 #define LIBCXX_TEST_CLASS momo::stdish::unordered_map_open
-#define LIBCXX_TEST_PREFIX_TAIL "open8"
+#define LIBCXX_TEST_PREFIX_TAIL "_open8"
 
 #include "LibcxxHashMapTester.h"
 

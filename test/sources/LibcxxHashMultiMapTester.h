@@ -55,7 +55,7 @@ namespace std
 	using unordered_multimap = LIBCXX_TEST_CLASS<TKey, TMapped, THasher, TEqualComparer, TAllocator>;
 #else
 	using unordered_multimap = momo::stdish::unordered_multimap_adaptor<momo::HashMultiMap<TKey, TMapped,
-		momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>,
+		momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_HASH_BUCKET>,
 		momo::MemManagerStd<TAllocator>,
 		momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
 		LibcxxHashMultiMapSettings>>;
@@ -68,7 +68,7 @@ namespace std
 	using multiset = momo::stdish::multiset<TKey>;
 }
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap_" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap" LIBCXX_TEST_PREFIX_TAIL
 #include "libcxx/UnorderedMultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 

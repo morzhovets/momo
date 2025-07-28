@@ -17,7 +17,7 @@
 #include "../../include/momo/details/HashBucketLimP4.h"
 
 #define LIBCXX_TEST_CLASS momo::stdish::unordered_set
-#define LIBCXX_TEST_PREFIX_TAIL "limp4"
+#define LIBCXX_TEST_PREFIX_TAIL "_limp4"
 
 #include "LibcxxHashSetTester.h"
 
