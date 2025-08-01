@@ -546,22 +546,6 @@ vector(std::from_range_t, Range&&, Allocator = Allocator())
 
 template<size_t tInternalCapacity, typename TValue,
 	typename TAllocator = std::allocator<TValue>>
-class vector_intcap
-	: public vector_adaptor<ArrayIntCap<tInternalCapacity, TValue, MemManagerStd<TAllocator>>>
-{
-private:
-	typedef vector_adaptor<ArrayIntCap<tInternalCapacity, TValue,
-		MemManagerStd<TAllocator>>> VectorAdaptor;
-
-public:
-	using VectorAdaptor::VectorAdaptor;
-
-	using VectorAdaptor::operator=;
-
-	friend void swap(vector_intcap& left, vector_intcap& right) noexcept
-	{
-		left.swap(right);
-	}
-};
+using vector_intcap = vector_adaptor<ArrayIntCap<tInternalCapacity, TValue, MemManagerStd<TAllocator>>>;
 
 } // namespace momo::stdish

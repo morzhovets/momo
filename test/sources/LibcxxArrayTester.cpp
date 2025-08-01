@@ -77,7 +77,21 @@ namespace std
 
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::vector_intcap<5, TValue, TAllocator>;
+	class vector : public momo::stdish::vector_intcap<5, TValue, TAllocator>
+	{
+	private:
+		typedef momo::stdish::vector_intcap<5, TValue, TAllocator> VectorIntCap;
+
+	public:
+		using VectorIntCap::VectorIntCap;
+
+		using VectorIntCap::operator=;
+
+		//friend void swap(vector& left, vector& right) noexcept
+		//{
+		//	left.swap(right);
+		//}
+	};
 }
 
 #define LIBCXX_TEST_INTCAP_ARRAY
