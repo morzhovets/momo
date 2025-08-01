@@ -26,17 +26,59 @@ namespace momo::stdish
 
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
-using segmented_vector = vector<TValue, TAllocator,
-	SegmentedArray<TValue, MemManagerStd<TAllocator>>>;
+class segmented_vector
+	: public vector_adaptor<SegmentedArray<TValue, MemManagerStd<TAllocator>>>
+{
+private:
+	typedef vector_adaptor<SegmentedArray<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
+
+public:
+	using VectorAdaptor::VectorAdaptor;
+
+	using VectorAdaptor::operator=;
+
+	friend void swap(segmented_vector& left, segmented_vector& right) noexcept
+	{
+		left.swap(right);
+	}
+};
 
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
-using segmented_vector_sqrt = vector<TValue, TAllocator,
-	SegmentedArraySqrt<TValue, MemManagerStd<TAllocator>>>;
+class segmented_vector_sqrt
+	: public vector_adaptor<SegmentedArraySqrt<TValue, MemManagerStd<TAllocator>>>
+{
+private:
+	typedef vector_adaptor<SegmentedArraySqrt<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
+
+public:
+	using VectorAdaptor::VectorAdaptor;
+
+	using VectorAdaptor::operator=;
+
+	friend void swap(segmented_vector_sqrt& left, segmented_vector_sqrt& right) noexcept
+	{
+		left.swap(right);
+	}
+};
 
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
-using merge_vector = vector<TValue, TAllocator,
-	MergeArray<TValue, MemManagerStd<TAllocator>>>;
+class merge_vector
+	: public vector_adaptor<MergeArray<TValue, MemManagerStd<TAllocator>>>
+{
+private:
+	typedef vector_adaptor<MergeArray<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
+
+public:
+	using VectorAdaptor::VectorAdaptor;
+
+	using VectorAdaptor::operator=;
+
+	friend void swap(merge_vector& left, merge_vector& right) noexcept
+	{
+		left.swap(right);
+	}
+};
 
 } // namespace momo::stdish

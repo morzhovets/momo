@@ -40,10 +40,10 @@ namespace std
 
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::vector<TValue, TAllocator,
-		momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
-			momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
-			LibcxxSegmentedArraySettings>>;
+	using vector = momo::stdish::vector_adaptor<momo::SegmentedArray<TValue,
+		momo::MemManagerStd<TAllocator>,
+		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+		LibcxxSegmentedArraySettings>>;
 }
 
 #define LIBCXX_TEST_FAILURE
@@ -72,10 +72,10 @@ namespace std
 
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::vector<TValue, TAllocator,
-		momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
-			momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
-			LibcxxSegmentedArraySettings>>;
+	using vector = momo::stdish::vector_adaptor<momo::SegmentedArray<TValue,
+		momo::MemManagerStd<TAllocator>,
+		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+		LibcxxSegmentedArraySettings>>;
 }
 
 #define LIBCXX_TEST_FAILURE

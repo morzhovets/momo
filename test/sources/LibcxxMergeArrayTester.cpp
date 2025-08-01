@@ -39,10 +39,10 @@ namespace std
 
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::vector<TValue, TAllocator,
-		momo::MergeArray<TValue, momo::MemManagerStd<TAllocator>,
-			momo::MergeArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
-			LibcxxMergeArraySettings>>;
+	using vector = momo::stdish::vector_adaptor<momo::MergeArray<TValue,
+		momo::MemManagerStd<TAllocator>,
+		momo::MergeArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+		LibcxxMergeArraySettings>>;
 }
 
 #define LIBCXX_TEST_FAILURE

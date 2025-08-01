@@ -39,9 +39,26 @@ namespace std
 
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::vector<TValue, TAllocator,
-		momo::Array<TValue, momo::MemManagerStd<TAllocator>,
-			momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>, LibcxxArraySettings>>;
+	class vector : public momo::stdish::vector_adaptor<momo::Array<TValue,
+		momo::MemManagerStd<TAllocator>,
+		momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+		LibcxxArraySettings>>
+	{
+	private:
+		typedef momo::stdish::vector_adaptor<momo::Array<TValue, momo::MemManagerStd<TAllocator>,
+			momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+			LibcxxArraySettings>> VectorAdaptor;
+
+	public:
+		using VectorAdaptor::VectorAdaptor;
+
+		using VectorAdaptor::operator=;
+
+		friend void swap(vector& left, vector& right) noexcept
+		{
+			left.swap(right);
+		}
+	};
 }
 
 #define LIBCXX_TEST_FAILURE
