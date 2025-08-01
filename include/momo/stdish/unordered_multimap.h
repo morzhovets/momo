@@ -245,10 +245,13 @@ public:
 		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
-	unordered_multimap_adaptor& operator=(std::initializer_list<value_type> values)
+	template<momo::internal::conceptMutableThis RUnorderedMultiMap>
+	std::remove_reference_t<RUnorderedMultiMap>& operator=(this RUnorderedMultiMap&& left,
+		std::initializer_list<value_type> values)
 	{
-		mHashMultiMap = HashMultiMap(values, mHashMultiMap.GetHashTraits(), MemManager(get_allocator()));
-		return *this;
+		left.mHashMultiMap = HashMultiMap(values, left.mHashMultiMap.GetHashTraits(),
+			MemManager(left.get_allocator()));
+		return left;
 	}
 
 	void swap(unordered_multimap_adaptor& right) noexcept
@@ -716,16 +719,9 @@ private:
 		MemManagerStd<TAllocator>>> UnorderedMultiMapAdaptor;
 
 public:
-	using typename UnorderedMultiMapAdaptor::value_type;
-
-public:
 	using UnorderedMultiMapAdaptor::UnorderedMultiMapAdaptor;
 
-	unordered_multimap& operator=(std::initializer_list<value_type> values)
-	{
-		UnorderedMultiMapAdaptor::operator=(values);
-		return *this;
-	}
+	using UnorderedMultiMapAdaptor::operator=;
 
 	friend void swap(unordered_multimap& left, unordered_multimap& right) noexcept
 	{
@@ -755,16 +751,9 @@ private:
 		MemManagerStd<TAllocator>>> UnorderedMultiMapAdaptor;
 
 public:
-	using typename UnorderedMultiMapAdaptor::value_type;
-
-public:
 	using UnorderedMultiMapAdaptor::UnorderedMultiMapAdaptor;
 
-	unordered_multimap_open& operator=(std::initializer_list<value_type> values)
-	{
-		UnorderedMultiMapAdaptor::operator=(values);
-		return *this;
-	}
+	using UnorderedMultiMapAdaptor::operator=;
 
 	friend void swap(unordered_multimap_open& left, unordered_multimap_open& right) noexcept
 	{

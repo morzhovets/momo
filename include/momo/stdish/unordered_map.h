@@ -264,10 +264,12 @@ public:
 		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
-	unordered_map_adaptor& operator=(std::initializer_list<value_type> values)
+	template<momo::internal::conceptMutableThis RUnorderedMap>
+	std::remove_reference_t<RUnorderedMap>& operator=(this RUnorderedMap&& left,
+		std::initializer_list<value_type> values)
 	{
-		mHashMap = HashMap(values, mHashMap.GetHashTraits(), MemManager(get_allocator()));
-		return *this;
+		left.mHashMap = HashMap(values, left.mHashMap.GetHashTraits(), MemManager(left.get_allocator()));
+		return left;
 	}
 
 	void swap(unordered_map_adaptor& right) noexcept
@@ -959,16 +961,9 @@ private:
 			MemManagerStd<TAllocator>>> UnorderedMapAdaptor;
 
 public:
-	using typename UnorderedMapAdaptor::value_type;
-
-public:
 	using UnorderedMapAdaptor::UnorderedMapAdaptor;
 
-	unordered_map& operator=(std::initializer_list<value_type> values)
-	{
-		UnorderedMapAdaptor::operator=(values);
-		return *this;
-	}
+	using UnorderedMapAdaptor::operator=;
 
 	friend void swap(unordered_map& left, unordered_map& right) noexcept
 	{
@@ -998,16 +993,9 @@ private:
 			MemManagerStd<TAllocator>>> UnorderedMapAdaptor;
 
 public:
-	using typename UnorderedMapAdaptor::value_type;
-
-public:
 	using UnorderedMapAdaptor::UnorderedMapAdaptor;
 
-	unordered_map_open& operator=(std::initializer_list<value_type> values)
-	{
-		UnorderedMapAdaptor::operator=(values);
-		return *this;
-	}
+	using UnorderedMapAdaptor::operator=;
 
 	friend void swap(unordered_map_open& left, unordered_map_open& right) noexcept
 	{

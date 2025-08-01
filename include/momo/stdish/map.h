@@ -225,6 +225,14 @@ namespace internal
 			return momo::internal::ContainerAssignerStd::Copy(right, *this);
 		}
 
+		template<momo::internal::conceptMutableThis RMap>
+		std::remove_reference_t<RMap>& operator=(this RMap&& left,
+			std::initializer_list<value_type> values)
+		{
+			left.mTreeMap = TreeMap(values, left.mTreeMap.GetTreeTraits(), MemManager(left.get_allocator()));
+			return left;
+		}
+
 		void swap(map_adaptor_base& right) noexcept
 		{
 			momo::internal::ContainerAssignerStd::Swap(*this, right);
@@ -659,11 +667,6 @@ namespace internal
 		}
 
 	protected:	//?
-		void ptAssign(std::initializer_list<value_type> values)
-		{
-			mTreeMap = TreeMap(values, mTreeMap.GetTreeTraits(), MemManager(get_allocator()));
-		}
-
 		template<typename Hint, typename... KeyArgs, typename... MappedArgs>
 		std::pair<iterator, bool> ptEmplace(Hint hint, std::tuple<KeyArgs...>&& keyArgs,
 			std::tuple<MappedArgs...>&& mappedArgs)
@@ -784,7 +787,6 @@ private:
 public:
 	using typename MapAdaptorBase::key_type;
 	using typename MapAdaptorBase::mapped_type;
-	using typename MapAdaptorBase::value_type;
 	using typename MapAdaptorBase::const_iterator;
 	using typename MapAdaptorBase::iterator;
 
@@ -798,11 +800,7 @@ private:
 public:
 	using MapAdaptorBase::MapAdaptorBase;
 
-	map_adaptor& operator=(std::initializer_list<value_type> values)
-	{
-		MapAdaptorBase::ptAssign(values);
-		return *this;
-	}
+	using MapAdaptorBase::operator=;
 
 	friend void swap(map_adaptor& left, map_adaptor& right) noexcept
 	{
@@ -930,11 +928,7 @@ public:
 public:
 	using MapAdaptorBase::MapAdaptorBase;
 
-	multimap_adaptor& operator=(std::initializer_list<value_type> values)
-	{
-		MapAdaptorBase::ptAssign(values);
-		return *this;
-	}
+	using MapAdaptorBase::operator=;
 
 	friend void swap(multimap_adaptor& left, multimap_adaptor& right) noexcept
 	{
@@ -1024,16 +1018,9 @@ private:
 		TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>> MapAdaptor;
 
 public:
-	using typename MapAdaptor::value_type;
-
-public:
 	using MapAdaptor::MapAdaptor;
 
-	map& operator=(std::initializer_list<value_type> values)
-	{
-		MapAdaptor::operator=(values);
-		return *this;
-	}
+	using MapAdaptor::operator=;
 
 	friend void swap(map& left, map& right) noexcept
 	{
@@ -1060,16 +1047,9 @@ private:
 		TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>> MultiMapAdaptor;
 
 public:
-	using typename MultiMapAdaptor::value_type;
-
-public:
 	using MultiMapAdaptor::MultiMapAdaptor;
 
-	multimap& operator=(std::initializer_list<value_type> values)
-	{
-		MultiMapAdaptor::operator=(values);
-		return *this;
-	}
+	using MultiMapAdaptor::operator=;
 
 	friend void swap(multimap& left, multimap& right) noexcept
 	{

@@ -235,10 +235,12 @@ public:
 		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
-	unordered_set_adaptor& operator=(std::initializer_list<value_type> values)
+	template<momo::internal::conceptMutableThis RUnorderedSet>
+	std::remove_reference_t<RUnorderedSet>& operator=(this RUnorderedSet&& left,
+		std::initializer_list<value_type> values)
 	{
-		mHashSet = HashSet(values, mHashSet.GetHashTraits(), MemManager(get_allocator()));
-		return *this;
+		left.mHashSet = HashSet(values, left.mHashSet.GetHashTraits(), MemManager(left.get_allocator()));
+		return left;
 	}
 
 	void swap(unordered_set_adaptor& right) noexcept
@@ -704,16 +706,9 @@ private:
 			MemManagerStd<TAllocator>>> UnorderedSetAdaptor;
 
 public:
-	using typename UnorderedSetAdaptor::value_type;
-
-public:
 	using UnorderedSetAdaptor::UnorderedSetAdaptor;
 
-	unordered_set& operator=(std::initializer_list<value_type> values)
-	{
-		UnorderedSetAdaptor::operator=(values);
-		return *this;
-	}
+	using UnorderedSetAdaptor::operator=;
 
 	friend void swap(unordered_set& left, unordered_set& right) noexcept
 	{
@@ -743,16 +738,9 @@ private:
 			MemManagerStd<TAllocator>>> UnorderedSetAdaptor;
 
 public:
-	using typename UnorderedSetAdaptor::value_type;
-
-public:
 	using UnorderedSetAdaptor::UnorderedSetAdaptor;
 
-	unordered_set_open& operator=(std::initializer_list<value_type> values)
-	{
-		UnorderedSetAdaptor::operator=(values);
-		return *this;
-	}
+	using UnorderedSetAdaptor::operator=;
 
 	friend void swap(unordered_set_open& left, unordered_set_open& right) noexcept
 	{

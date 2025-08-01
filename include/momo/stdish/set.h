@@ -179,10 +179,12 @@ public:
 		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
-	set_adaptor& operator=(std::initializer_list<value_type> values)
+	template<momo::internal::conceptMutableThis RSet>
+	std::remove_reference_t<RSet>& operator=(this RSet&& left,
+		std::initializer_list<value_type> values)
 	{
-		mTreeSet = TreeSet(values, mTreeSet.GetTreeTraits(), MemManager(get_allocator()));
-		return *this;
+		left.mTreeSet = TreeSet(values, left.mTreeSet.GetTreeTraits(), MemManager(left.get_allocator()));
+		return left;
 	}
 
 	void swap(set_adaptor& right) noexcept
@@ -618,11 +620,7 @@ public:
 public:
 	using SetAdaptor::SetAdaptor;
 
-	multiset_adaptor& operator=(std::initializer_list<value_type> values)
-	{
-		SetAdaptor::operator=(values);
-		return *this;
-	}
+	using SetAdaptor::operator=;
 
 	friend void swap(multiset_adaptor& left, multiset_adaptor& right) noexcept
 	{
@@ -688,16 +686,9 @@ private:
 		TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>> SetAdaptor;
 
 public:
-	using typename SetAdaptor::value_type;
-
-public:
 	using SetAdaptor::SetAdaptor;
 
-	set& operator=(std::initializer_list<value_type> values)
-	{
-		SetAdaptor::operator=(values);
-		return *this;
-	}
+	using SetAdaptor::operator=;
 
 	friend void swap(set& left, set& right) noexcept
 	{
@@ -724,16 +715,9 @@ private:
 		TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>> MultiSetAdaptor;
 
 public:
-	using typename MultiSetAdaptor::value_type;
-
-public:
 	using MultiSetAdaptor::MultiSetAdaptor;
 
-	multiset& operator=(std::initializer_list<value_type> values)
-	{
-		MultiSetAdaptor::operator=(values);
-		return *this;
-	}
+	using MultiSetAdaptor::operator=;
 
 	friend void swap(multiset& left, multiset& right) noexcept
 	{
