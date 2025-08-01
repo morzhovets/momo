@@ -94,8 +94,9 @@ template<conceptObject TItem,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = MergeArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = MergeArraySettings<>>
-class MergeArray
-	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>
+class MOMO_EMPTY_BASES MergeArray
+	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>,
+	public internal::Swappable<MergeArray>
 {
 public:
 	typedef TItem Item;

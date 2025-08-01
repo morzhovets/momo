@@ -242,7 +242,7 @@ namespace internal
 
 	template<conceptObject TItem, conceptMemManager TMemManager,
 		typename TItemTraits, typename TSettings>
-	class MOMO_EMPTY_BASES ArrayBase : public Rangeable, public Swappable
+	class MOMO_EMPTY_BASES ArrayBase : public Rangeable
 	{
 	public:
 		typedef TItem Item;

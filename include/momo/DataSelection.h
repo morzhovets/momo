@@ -405,7 +405,7 @@ namespace internal
 	template<typename TRowReference, typename TDataTraits>
 	class MOMO_EMPTY_BASES DataSelection
 		: private VersionKeeper<typename TRowReference::ColumnList::Settings>,
-		public Rangeable, public Swappable
+		public Rangeable, public Swappable<DataSelection>
 	{
 	public:
 		typedef TRowReference RowReference;

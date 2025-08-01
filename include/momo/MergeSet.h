@@ -462,7 +462,7 @@ template<conceptObject TKey,
 	conceptSetItemTraits<TKey, TMemManager> TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = MergeSetSettings>
 class MOMO_EMPTY_BASES MergeSet
-	: public internal::Rangeable, public internal::Swappable
+	: public internal::Rangeable, public internal::Swappable<MergeSet>
 {
 public:
 	typedef TKey Key;

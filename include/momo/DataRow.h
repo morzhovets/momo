@@ -60,7 +60,7 @@ namespace internal
 	};
 
 	template<typename TColumnList, typename TRawMemPool>
-	class DataRow : public Swappable
+	class DataRow : public Swappable<DataRow>
 	{
 	protected:
 		typedef TRawMemPool RawMemPool;

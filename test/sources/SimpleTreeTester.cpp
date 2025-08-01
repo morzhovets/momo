@@ -272,7 +272,7 @@ public:
 				if (i > 0)
 					set1.Remove(array[i - 1]);
 				if (mt() % 2 == 0)
-					std::swap(set1, set2);
+					swap(set1, set2);
 				set1.MergeFrom(set2);
 				if (i > 0)
 					set1.Insert(array[i - 1]);

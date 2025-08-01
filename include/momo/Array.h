@@ -188,8 +188,9 @@ template<conceptObject TItem,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = ArraySettings<>>
-class Array
-	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>
+class MOMO_EMPTY_BASES Array
+	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>,
+	public internal::Swappable<Array>
 {
 public:
 	typedef TItem Item;

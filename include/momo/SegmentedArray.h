@@ -159,8 +159,9 @@ template<conceptObject TItem,
 	conceptMemManager TMemManager = MemManagerDefault,
 	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = SegmentedArraySettings<>>
-class SegmentedArray
-	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>
+class MOMO_EMPTY_BASES SegmentedArray
+	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>,
+	public internal::Swappable<SegmentedArray>
 {
 public:
 	typedef TItem Item;

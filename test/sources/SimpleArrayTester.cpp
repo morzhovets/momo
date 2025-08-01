@@ -143,11 +143,18 @@ public:
 
 		Array ar2;
 		ar2 = ar;
+		assert(!ar2.IsEmpty());
 		for (std::string& s : ar2)
 			assert(s == "s1");
 
 		ar2.Clear(true);
 		assert(ar2.IsEmpty());
+
+		using std::swap;
+		swap(ar, ar2);
+		assert(!ar2.IsEmpty());
+		for (std::string& s : ar2)
+			assert(s == "s1");
 	}
 
 	static void TestTemplAll()

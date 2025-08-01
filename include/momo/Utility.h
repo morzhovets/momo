@@ -320,11 +320,12 @@ namespace internal
 		static const uint32_t max32 = UINT32_MAX;
 	};
 
+	template<template<typename...> typename ObjectTempl>	// vs
 	class Swappable
 	{
 	public:
-		template<std::derived_from<Swappable> Object>
-		friend void swap(Object& object1, Object& object2)
+		template<typename... Params>
+		friend void swap(ObjectTempl<Params...>& object1, ObjectTempl<Params...>& object2)
 			noexcept(noexcept(object1.Swap(object2)))
 		{
 			object1.Swap(object2);
