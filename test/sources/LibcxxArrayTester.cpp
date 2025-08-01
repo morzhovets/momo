@@ -39,10 +39,12 @@ namespace std
 
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
-	class vector : public momo::stdish::vector_adaptor<momo::Array<TValue,
-		momo::MemManagerStd<TAllocator>,
-		momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
-		LibcxxArraySettings>>
+	class MOMO_EMPTY_BASES vector
+		: public momo::stdish::vector_adaptor<momo::Array<TValue,
+			momo::MemManagerStd<TAllocator>,
+			momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+			LibcxxArraySettings>>,
+		public momo::internal::Swappable<vector>
 	{
 	private:
 		typedef momo::stdish::vector_adaptor<momo::Array<TValue, momo::MemManagerStd<TAllocator>,
@@ -53,11 +55,6 @@ namespace std
 		using VectorAdaptor::VectorAdaptor;
 
 		using VectorAdaptor::operator=;
-
-		friend void swap(vector& left, vector& right) noexcept
-		{
-			left.swap(right);
-		}
 	};
 }
 

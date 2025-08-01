@@ -24,7 +24,8 @@ namespace momo::stdish
 {
 
 template<typename THashMap>
-class unordered_map_adaptor
+class MOMO_EMPTY_BASES unordered_map_adaptor
+	: public momo::internal::Swappable<unordered_map_adaptor>
 {
 private:
 	typedef THashMap HashMap;
@@ -275,11 +276,6 @@ public:
 	void swap(unordered_map_adaptor& right) noexcept
 	{
 		momo::internal::ContainerAssignerStd::Swap(*this, right);
-	}
-
-	friend void swap(unordered_map_adaptor& left, unordered_map_adaptor& right) noexcept
-	{
-		left.swap(right);
 	}
 
 	const nested_container_type& get_nested_container() const noexcept
@@ -952,8 +948,10 @@ template<typename TKey, typename TMapped,
 	typename THasher = HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class unordered_map : public unordered_map_adaptor<HashMap<TKey, TMapped,
-	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES unordered_map
+	: public unordered_map_adaptor<HashMap<TKey, TMapped,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<unordered_map>
 {
 private:
 	typedef unordered_map_adaptor<HashMap<TKey, TMapped,
@@ -964,11 +962,6 @@ public:
 	using UnorderedMapAdaptor::UnorderedMapAdaptor;
 
 	using UnorderedMapAdaptor::operator=;
-
-	friend void swap(unordered_map& left, unordered_map& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 /*!
@@ -984,8 +977,10 @@ template<typename TKey, typename TMapped,
 	typename THasher = HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class unordered_map_open : public unordered_map_adaptor<HashMap<TKey, TMapped,
-	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES unordered_map_open
+	: public unordered_map_adaptor<HashMap<TKey, TMapped,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<unordered_map_open>
 {
 private:
 	typedef unordered_map_adaptor<HashMap<TKey, TMapped,
@@ -996,11 +991,6 @@ public:
 	using UnorderedMapAdaptor::UnorderedMapAdaptor;
 
 	using UnorderedMapAdaptor::operator=;
-
-	friend void swap(unordered_map_open& left, unordered_map_open& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map) \

@@ -778,7 +778,9 @@ namespace internal
 }
 
 template<typename TTreeMap>
-class map_adaptor : public internal::map_adaptor_base<TTreeMap>
+class MOMO_EMPTY_BASES map_adaptor
+	: public internal::map_adaptor_base<TTreeMap>,
+	public momo::internal::Swappable<map_adaptor>
 {
 private:
 	typedef TTreeMap TreeMap;
@@ -801,11 +803,6 @@ public:
 	using MapAdaptorBase::MapAdaptorBase;
 
 	using MapAdaptorBase::operator=;
-
-	friend void swap(map_adaptor& left, map_adaptor& right) noexcept
-	{
-		left.swap(right);
-	}
 
 	decltype(auto) operator[](key_type&& key)
 	{
@@ -910,7 +907,9 @@ private:
 };
 
 template<typename TTreeMap>
-class multimap_adaptor : public internal::map_adaptor_base<TTreeMap>
+class MOMO_EMPTY_BASES multimap_adaptor
+	: public internal::map_adaptor_base<TTreeMap>,
+	public momo::internal::Swappable<multimap_adaptor>
 {
 private:
 	typedef internal::map_adaptor_base<TTreeMap> MapAdaptorBase;
@@ -929,11 +928,6 @@ public:
 	using MapAdaptorBase::MapAdaptorBase;
 
 	using MapAdaptorBase::operator=;
-
-	friend void swap(multimap_adaptor& left, multimap_adaptor& right) noexcept
-	{
-		left.swap(right);
-	}
 
 	//using MapAdaptorBase::insert;	// vs clang
 
@@ -1010,8 +1004,10 @@ public:
 template<typename TKey, typename TMapped,
 	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class map : public map_adaptor<TreeMap<TKey, TMapped,
-	TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES map
+	: public map_adaptor<TreeMap<TKey, TMapped,
+		TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<map>
 {
 private:
 	typedef map_adaptor<TreeMap<TKey, TMapped,
@@ -1021,11 +1017,6 @@ public:
 	using MapAdaptor::MapAdaptor;
 
 	using MapAdaptor::operator=;
-
-	friend void swap(map& left, map& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 /*!
@@ -1039,8 +1030,10 @@ public:
 template<typename TKey, typename TMapped,
 	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class multimap : public multimap_adaptor<TreeMap<TKey, TMapped,
-	TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES multimap
+	: public multimap_adaptor<TreeMap<TKey, TMapped,
+		TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<multimap>
 {
 private:
 	typedef multimap_adaptor<TreeMap<TKey, TMapped,
@@ -1050,11 +1043,6 @@ public:
 	using MultiMapAdaptor::MultiMapAdaptor;
 
 	using MultiMapAdaptor::operator=;
-
-	friend void swap(multimap& left, multimap& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(map) \

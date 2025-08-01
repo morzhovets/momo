@@ -327,8 +327,17 @@ namespace internal
 		template<typename... Params>
 		friend void swap(ObjectTempl<Params...>& object1, ObjectTempl<Params...>& object2)
 			noexcept(noexcept(object1.Swap(object2)))
+			requires requires { { object1.Swap(object2) }; }
 		{
 			object1.Swap(object2);
+		}
+
+		template<typename... Params>
+		friend void swap(ObjectTempl<Params...>& object1, ObjectTempl<Params...>& object2)	//?
+			noexcept(noexcept(object1.swap(object2)))
+			requires requires { { object1.swap(object2) }; }
+		{
+			object1.swap(object2);
 		}
 	};
 

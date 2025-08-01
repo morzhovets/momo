@@ -23,7 +23,8 @@ namespace momo::stdish
 {
 
 template<typename TArray>
-class vector_adaptor
+class MOMO_EMPTY_BASES vector_adaptor
+	: public momo::internal::Swappable<vector_adaptor>
 {
 private:
 	typedef TArray Array;
@@ -149,11 +150,6 @@ public:
 	void swap(vector_adaptor& right) noexcept
 	{
 		momo::internal::ContainerAssignerStd::Swap(*this, right);
-	}
-
-	friend void swap(vector_adaptor& left, vector_adaptor& right) noexcept
-	{
-		left.swap(right);
 	}
 
 	const nested_container_type& get_nested_container() const noexcept
@@ -501,7 +497,9 @@ private:
 
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
-class vector : public vector_adaptor<Array<TValue, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES vector
+	: public vector_adaptor<Array<TValue, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<vector>
 {
 private:
 	typedef vector_adaptor<Array<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
@@ -510,11 +508,6 @@ public:
 	using VectorAdaptor::VectorAdaptor;
 
 	using VectorAdaptor::operator=;
-
-	friend void swap(vector& left, vector& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 template<typename Value,

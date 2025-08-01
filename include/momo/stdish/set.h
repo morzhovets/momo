@@ -25,7 +25,8 @@ namespace momo::stdish
 {
 
 template<typename TTreeSet>
-class set_adaptor
+class MOMO_EMPTY_BASES set_adaptor
+	: public momo::internal::Swappable<set_adaptor>
 {
 private:
 	typedef TTreeSet TreeSet;
@@ -190,11 +191,6 @@ public:
 	void swap(set_adaptor& right) noexcept
 	{
 		momo::internal::ContainerAssignerStd::Swap(*this, right);
-	}
-
-	friend void swap(set_adaptor& left, set_adaptor& right) noexcept
-	{
-		left.swap(right);
 	}
 
 	const nested_container_type& get_nested_container() const noexcept
@@ -605,7 +601,9 @@ private:
 };
 
 template<typename TTreeSet>
-class multiset_adaptor : public set_adaptor<TTreeSet>
+class MOMO_EMPTY_BASES multiset_adaptor
+	: public set_adaptor<TTreeSet>,
+	public momo::internal::Swappable<multiset_adaptor>
 {
 private:
 	typedef set_adaptor<TTreeSet> SetAdaptor;
@@ -621,11 +619,6 @@ public:
 	using SetAdaptor::SetAdaptor;
 
 	using SetAdaptor::operator=;
-
-	friend void swap(multiset_adaptor& left, multiset_adaptor& right) noexcept
-	{
-		left.swap(right);
-	}
 
 	using SetAdaptor::insert;
 
@@ -678,8 +671,10 @@ public:
 template<typename TKey,
 	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-class set : public set_adaptor<TreeSet<TKey,
-	TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES set
+	: public set_adaptor<TreeSet<TKey,
+		TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<set>
 {
 private:
 	typedef set_adaptor<TreeSet<TKey,
@@ -689,11 +684,6 @@ public:
 	using SetAdaptor::SetAdaptor;
 
 	using SetAdaptor::operator=;
-
-	friend void swap(set& left, set& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 /*!
@@ -707,8 +697,10 @@ public:
 template<typename TKey,
 	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-class multiset : public multiset_adaptor<TreeSet<TKey,
-	TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES multiset
+	: public multiset_adaptor<TreeSet<TKey,
+		TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<multiset>
 {
 private:
 	typedef multiset_adaptor<TreeSet<TKey,
@@ -718,11 +710,6 @@ public:
 	using MultiSetAdaptor::MultiSetAdaptor;
 
 	using MultiSetAdaptor::operator=;
-
-	friend void swap(multiset& left, multiset& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(set) \

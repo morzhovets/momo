@@ -24,7 +24,8 @@ namespace momo::stdish
 {
 
 template<typename THashSet>
-class unordered_set_adaptor
+class MOMO_EMPTY_BASES unordered_set_adaptor
+	: public momo::internal::Swappable<unordered_set_adaptor>
 {
 private:
 	typedef THashSet HashSet;
@@ -246,11 +247,6 @@ public:
 	void swap(unordered_set_adaptor& right) noexcept
 	{
 		momo::internal::ContainerAssignerStd::Swap(*this, right);
-	}
-
-	friend void swap(unordered_set_adaptor& left, unordered_set_adaptor& right) noexcept
-	{
-		left.swap(right);
 	}
 
 	const nested_container_type& get_nested_container() const noexcept
@@ -697,8 +693,10 @@ template<typename TKey,
 	typename THasher = HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-class unordered_set : public unordered_set_adaptor<HashSet<TKey,
-	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES unordered_set
+	: public unordered_set_adaptor<HashSet<TKey,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<unordered_set>
 {
 private:
 	typedef unordered_set_adaptor<HashSet<TKey,
@@ -709,11 +707,6 @@ public:
 	using UnorderedSetAdaptor::UnorderedSetAdaptor;
 
 	using UnorderedSetAdaptor::operator=;
-
-	friend void swap(unordered_set& left, unordered_set& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 /*!
@@ -729,8 +722,10 @@ template<typename TKey,
 	typename THasher = HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-class unordered_set_open : public unordered_set_adaptor<HashSet<TKey,
-	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES unordered_set_open
+	: public unordered_set_adaptor<HashSet<TKey,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<unordered_set_open>
 {
 private:
 	typedef unordered_set_adaptor<HashSet<TKey,
@@ -741,11 +736,6 @@ public:
 	using UnorderedSetAdaptor::UnorderedSetAdaptor;
 
 	using UnorderedSetAdaptor::operator=;
-
-	friend void swap(unordered_set_open& left, unordered_set_open& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set) \

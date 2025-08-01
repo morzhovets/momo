@@ -23,7 +23,8 @@ namespace momo::stdish
 {
 
 template<typename THashMultiMap>
-class unordered_multimap_adaptor
+class MOMO_EMPTY_BASES unordered_multimap_adaptor
+	: public momo::internal::Swappable<unordered_multimap_adaptor>
 {
 private:
 	typedef THashMultiMap HashMultiMap;
@@ -257,11 +258,6 @@ public:
 	void swap(unordered_multimap_adaptor& right) noexcept
 	{
 		momo::internal::ContainerAssignerStd::Swap(*this, right);
-	}
-
-	friend void swap(unordered_multimap_adaptor& left, unordered_multimap_adaptor& right) noexcept
-	{
-		left.swap(right);
 	}
 
 	const nested_container_type& get_nested_container() const noexcept
@@ -710,8 +706,10 @@ template<typename TKey, typename TMapped,
 	typename THasher = HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class unordered_multimap : public unordered_multimap_adaptor<HashMultiMap<TKey, TMapped,
-	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES unordered_multimap
+	: public unordered_multimap_adaptor<HashMultiMap<TKey, TMapped,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<unordered_multimap>
 {
 private:
 	typedef unordered_multimap_adaptor<HashMultiMap<TKey, TMapped,
@@ -722,11 +720,6 @@ public:
 	using UnorderedMultiMapAdaptor::UnorderedMultiMapAdaptor;
 
 	using UnorderedMultiMapAdaptor::operator=;
-
-	friend void swap(unordered_multimap& left, unordered_multimap& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 /*!
@@ -742,8 +735,10 @@ template<typename TKey, typename TMapped,
 	typename THasher = HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class unordered_multimap_open : public unordered_multimap_adaptor<HashMultiMap<TKey, TMapped,
-	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES unordered_multimap_open
+	: public unordered_multimap_adaptor<HashMultiMap<TKey, TMapped,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<unordered_multimap_open>
 {
 private:
 	typedef unordered_multimap_adaptor<HashMultiMap<TKey, TMapped,
@@ -754,11 +749,6 @@ public:
 	using UnorderedMultiMapAdaptor::UnorderedMultiMapAdaptor;
 
 	using UnorderedMultiMapAdaptor::operator=;
-
-	friend void swap(unordered_multimap_open& left, unordered_multimap_open& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap) \

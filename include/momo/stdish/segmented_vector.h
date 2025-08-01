@@ -26,8 +26,9 @@ namespace momo::stdish
 
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
-class segmented_vector
-	: public vector_adaptor<SegmentedArray<TValue, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES segmented_vector
+	: public vector_adaptor<SegmentedArray<TValue, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<segmented_vector>
 {
 private:
 	typedef vector_adaptor<SegmentedArray<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
@@ -36,17 +37,13 @@ public:
 	using VectorAdaptor::VectorAdaptor;
 
 	using VectorAdaptor::operator=;
-
-	friend void swap(segmented_vector& left, segmented_vector& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
-class segmented_vector_sqrt
-	: public vector_adaptor<SegmentedArraySqrt<TValue, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES segmented_vector_sqrt
+	: public vector_adaptor<SegmentedArraySqrt<TValue, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<segmented_vector_sqrt>
 {
 private:
 	typedef vector_adaptor<SegmentedArraySqrt<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
@@ -55,17 +52,13 @@ public:
 	using VectorAdaptor::VectorAdaptor;
 
 	using VectorAdaptor::operator=;
-
-	friend void swap(segmented_vector_sqrt& left, segmented_vector_sqrt& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
-class merge_vector
-	: public vector_adaptor<MergeArray<TValue, MemManagerStd<TAllocator>>>
+class MOMO_EMPTY_BASES merge_vector
+	: public vector_adaptor<MergeArray<TValue, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<merge_vector>
 {
 private:
 	typedef vector_adaptor<MergeArray<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
@@ -74,11 +67,6 @@ public:
 	using VectorAdaptor::VectorAdaptor;
 
 	using VectorAdaptor::operator=;
-
-	friend void swap(merge_vector& left, merge_vector& right) noexcept
-	{
-		left.swap(right);
-	}
 };
 
 } // namespace momo::stdish
