@@ -69,4 +69,42 @@ public:
 	using VectorAdaptor::operator=;
 };
 
+#define MOMO_DECLARE_DEDUCTION_GUIDES(vector) \
+template<typename Value, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Value>> \
+vector(size_t, Value, Allocator = Allocator()) \
+	-> vector<Value, Allocator>; \
+template<typename Iterator, \
+	typename Value = std::iter_value_t<Iterator>, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Value>> \
+vector(Iterator, Iterator, Allocator = Allocator()) \
+	-> vector<Value, Allocator>; \
+template<typename Value, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Value>> \
+vector(std::initializer_list<Value>, Allocator = Allocator()) \
+	-> vector<Value, Allocator>; \
+template<typename Value, typename Allocator> \
+vector(vector<Value, Allocator>, std::type_identity_t<Allocator>) \
+	-> vector<Value, Allocator>;
+
+#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(vector) \
+template<std::ranges::input_range Range, \
+	typename Value = std::ranges::range_value_t<Range>, \
+	momo::internal::conceptAllocator Allocator = std::allocator<Value>> \
+vector(std::from_range_t, Range&&, Allocator = Allocator()) \
+	-> vector<Value, Allocator>;
+
+MOMO_DECLARE_DEDUCTION_GUIDES(segmented_vector)
+MOMO_DECLARE_DEDUCTION_GUIDES(segmented_vector_sqrt)
+MOMO_DECLARE_DEDUCTION_GUIDES(merge_vector)
+
+#if defined(__cpp_lib_containers_ranges)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(segmented_vector)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(segmented_vector_sqrt)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(merge_vector)
+#endif
+
+#undef MOMO_DECLARE_DEDUCTION_GUIDES
+#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
+
 } // namespace momo::stdish
