@@ -37,9 +37,11 @@ namespace std
 	using multiset = momo::stdish::multiset<TKey, TLessComparer, TAllocator>;
 }
 
+#define LIBCXX_TEST_CLASS momo::stdish::multiset
 #define LIBCXX_TEST_PREFIX "libcxx_test_tree_multiset"
 #include "libcxx/MultiSetTests.h"
 #undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_CLASS
 
 } // namespace libcxx_test_tree_multiset
 

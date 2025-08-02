@@ -48,9 +48,9 @@ struct NotAnAllocator {
 int main(int, char **) {
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::set s(std::begin(arr), std::end(arr));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     const int expected_s[] = { 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -58,9 +58,9 @@ int main(int, char **) {
 
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::set s(std::begin(arr), std::end(arr), std::greater<int>());
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), std::greater<int>());
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<int, std::greater<int> >);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::greater<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -68,11 +68,11 @@ int main(int, char **) {
 
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::set s(std::begin(arr), std::end(arr), std::greater<int>(),
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), std::greater<int>(),
                test_allocator<int>(0, 42));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     momo::stdish::set<int, std::greater<int>, test_allocator<int> >);
+                     LIBCXX_TEST_CLASS<int, std::greater<int>, test_allocator<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -80,50 +80,50 @@ int main(int, char **) {
   }
 
   {
-    momo::stdish::set<long> source;
-    momo::stdish::set s(source);
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<long>);
+    LIBCXX_TEST_CLASS<long> source;
+    LIBCXX_TEST_CLASS s(source);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<long>);
     assert(s.size() == 0);
   }
 
   {
-    momo::stdish::set<long> source;
-    momo::stdish::set s{ source };  // braces instead of parens
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<long>);
+    LIBCXX_TEST_CLASS<long> source;
+    LIBCXX_TEST_CLASS s{ source };  // braces instead of parens
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<long>);
     assert(s.size() == 0);
   }
 
   {
-    momo::stdish::set<long> source;
-    momo::stdish::set s(source, momo::stdish::set<long>::allocator_type());
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<long>);
+    LIBCXX_TEST_CLASS<long> source;
+    LIBCXX_TEST_CLASS s(source, LIBCXX_TEST_CLASS<long>::allocator_type());
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<long>);
     assert(s.size() == 0);
   }
 
   {
-    momo::stdish::set s{ 1, 2, 1, INT_MAX, 3 };
+    LIBCXX_TEST_CLASS s{ 1, 2, 1, INT_MAX, 3 };
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     const int expected_s[] = { 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
   }
 
   {
-    momo::stdish::set s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>());
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>());
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<int, std::greater<int> >);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::greater<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
   }
 
   {
-    momo::stdish::set s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>(),
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>(),
                test_allocator<int>(0, 43));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     momo::stdish::set<int, std::greater<int>, test_allocator<int> >);
+                     LIBCXX_TEST_CLASS<int, std::greater<int>, test_allocator<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -132,10 +132,10 @@ int main(int, char **) {
 
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::set s(std::begin(arr), std::end(arr), test_allocator<int>(0, 44));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), test_allocator<int>(0, 44));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     momo::stdish::set<int, std::less<int>, test_allocator<int> >);
+                     LIBCXX_TEST_CLASS<int, std::less<int>, test_allocator<int> >);
     const int expected_s[] = { 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -143,10 +143,10 @@ int main(int, char **) {
   }
 
   {
-    momo::stdish::set s({ 1, 2, 1, INT_MAX, 3 }, test_allocator<int>(0, 45));
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, test_allocator<int>(0, 45));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     momo::stdish::set<int, std::less<int>, test_allocator<int> >);
+                     LIBCXX_TEST_CLASS<int, std::less<int>, test_allocator<int> >);
     const int expected_s[] = { 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -155,36 +155,36 @@ int main(int, char **) {
 
   {
     NotAnAllocator a;
-    momo::stdish::set s{ a }; // set(initializer_list<NotAnAllocator>)
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<NotAnAllocator>);
+    LIBCXX_TEST_CLASS s{ a }; // set(initializer_list<NotAnAllocator>)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<NotAnAllocator>);
     assert(s.size() == 1);
   }
 
   {
-    momo::stdish::set<long> source;
-    momo::stdish::set s{ source, source }; // set(initializer_list<set<long>>)
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<momo::stdish::set<long> >);
+    LIBCXX_TEST_CLASS<long> source;
+    LIBCXX_TEST_CLASS s{ source, source }; // set(initializer_list<set<long>>)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<LIBCXX_TEST_CLASS<long> >);
     assert(s.size() == 1);
   }
 
   {
     NotAnAllocator a;
-    momo::stdish::set s{ a, a }; // set(initializer_list<NotAnAllocator>)
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<NotAnAllocator>);
+    LIBCXX_TEST_CLASS s{ a, a }; // set(initializer_list<NotAnAllocator>)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<NotAnAllocator>);
     assert(s.size() == 1);
   }
 
   {
     int source[3] = { 3, 4, 5 };
-    momo::stdish::set s(source, source + 3); // set(InputIterator, InputIterator)
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<int>);
+    LIBCXX_TEST_CLASS s(source, source + 3); // set(InputIterator, InputIterator)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(s.size() == 3);
   }
 
   {
     int source[3] = { 3, 4, 5 };
-    momo::stdish::set s{ source, source + 3 }; // set(initializer_list<int*>)
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::set<int *>);
+    LIBCXX_TEST_CLASS s{ source, source + 3 }; // set(initializer_list<int*>)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int *>);
     assert(s.size() == 2);
   }
 
@@ -196,29 +196,29 @@ int main(int, char **) {
       using Alloc = test_allocator<int>;
 
       { // (from_range, range)
-        momo::stdish::set c(std::from_range, Range());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::set<int>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int>>);
       }
 
       { // (from_range, range, comp)
-        momo::stdish::set c(std::from_range, Range(), Comp());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::set<int, Comp>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range(), Comp());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, Comp>>);
       }
 
       { // (from_range, range, comp, alloc)
-        momo::stdish::set c(std::from_range, Range(), Comp(), Alloc());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::set<int, Comp, Alloc>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range(), Comp(), Alloc());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, Comp, Alloc>>);
       }
 
       { // (from_range, range, alloc)
-        momo::stdish::set c(std::from_range, Range(), Alloc());
-        static_assert(std::is_same_v<decltype(c), momo::stdish::set<int, DefaultComp, Alloc>>);
+        LIBCXX_TEST_CLASS c(std::from_range, Range(), Alloc());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, DefaultComp, Alloc>>);
       }
     }
 #endif
 
   //AssociativeContainerDeductionGuidesSfinaeAway<std::set, std::set<int>>();
-  AssociativeContainerDeductionGuidesSfinaeAway<momo::stdish::set, momo::stdish::set<int>>();
+  AssociativeContainerDeductionGuidesSfinaeAway<LIBCXX_TEST_CLASS, LIBCXX_TEST_CLASS<int>>();
 
   return 0;
 }
