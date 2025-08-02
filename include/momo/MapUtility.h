@@ -344,15 +344,9 @@ namespace internal
 				KeyManager::Copy(*memManager, srcKey, dstKey);
 			else
 				::new(static_cast<void*>(dstKey)) Key(static_cast<const Key&>(srcKey));	//?
-			try
-			{
-				ValueManager::Relocator::Relocate(memManager, srcValue, dstValue);
-			}
-			catch (...)
-			{
-				KeyManager::Destroyer::Destroy(memManager, *dstKey);
-				throw;
-			}
+			typename KeyManager::DestroyFinalizer dstKeyFin(memManager, *dstKey);
+			ValueManager::Relocator::Relocate(memManager, srcValue, dstValue);
+			dstKeyFin.ResetPtr();
 			KeyManager::Destroyer::Destroy(memManager, srcKey);
 		}
 
@@ -421,15 +415,9 @@ namespace internal
 			BoolConstant<isValueNothrowAnywayAssignable>)
 		{
 			KeyManager::Copy(memManager, midKey, dstKey);
-			try
-			{
-				ValueManager::ReplaceRelocate(memManager, srcValue, midValue, dstValue);
-			}
-			catch (...)
-			{
-				KeyManager::Destroy(memManager, *dstKey);
-				throw;
-			}
+			typename KeyManager::DestroyFinalizer dstKeyFin(&memManager, *dstKey);
+			ValueManager::ReplaceRelocate(memManager, srcValue, midValue, dstValue);
+			dstKeyFin.ResetPtr();
 			KeyManager::Replace(memManager, srcKey, midKey);
 		}
 
@@ -441,15 +429,9 @@ namespace internal
 			std::true_type /*isValueNothrowAnywayAssignable*/)
 		{
 			ValueManager::Copy(memManager, midValue, dstValue);
-			try
-			{
-				KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
-			}
-			catch (...)
-			{
-				ValueManager::Destroy(memManager, *dstValue);
-				throw;
-			}
+			typename ValueManager::DestroyFinalizer dstValueFin(&memManager, *dstValue);
+			KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
+			dstValueFin.ResetPtr();
 			ValueManager::Replace(memManager, srcValue, midValue);
 		}
 
@@ -461,24 +443,12 @@ namespace internal
 			std::false_type /*isValueNothrowAnywayAssignable*/)
 		{
 			KeyManager::Copy(memManager, midKey, dstKey);
-			try
-			{
-				ValueManager::Copy(memManager, midValue, dstValue);
-				try
-				{
-					pvReplaceUnsafe(memManager, srcKey, srcValue, midKey, midValue);
-				}
-				catch (...)
-				{
-					ValueManager::Destroy(memManager, *dstValue);
-					throw;
-				}
-			}
-			catch (...)
-			{
-				KeyManager::Destroy(memManager, *dstKey);
-				throw;
-			}
+			typename KeyManager::DestroyFinalizer dstKeyFin(&memManager, *dstKey);
+			ValueManager::Copy(memManager, midValue, dstValue);
+			typename ValueManager::DestroyFinalizer dstValueFin(&memManager, *dstValue);
+			pvReplaceUnsafe(memManager, srcKey, srcValue, midKey, midValue);
+			dstValueFin.ResetPtr();
+			dstKeyFin.ResetPtr();
 		}
 
 		template<typename KeyIterator, typename ValueIterator, typename Executor,

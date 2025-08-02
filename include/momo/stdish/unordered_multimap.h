@@ -680,19 +680,9 @@ private:
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		KeyBuffer keyBuffer;
 		KeyCreator(memManager, std::move(keyArgs))(keyBuffer.GetPtr());
-		iterator resIter;
-		try
-		{
-			resIter = pvInsert(std::forward_as_tuple(std::move(keyBuffer.Get())),
-				std::forward<MappedCreator>(mappedCreator));
-		}
-		catch (...)
-		{
-			KeyManager::Destroy(memManager, keyBuffer.Get());
-			throw;
-		}
-		KeyManager::Destroy(memManager, keyBuffer.Get());
-		return resIter;
+		typename KeyManager::DestroyFinalizer keyFin(&memManager, keyBuffer.Get());
+		return pvInsert(std::forward_as_tuple(std::move(keyBuffer.Get())),
+			std::forward<MappedCreator>(mappedCreator));
 	}
 
 	template<typename RKey, typename MappedCreator,

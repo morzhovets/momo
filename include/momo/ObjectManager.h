@@ -236,6 +236,50 @@ namespace internal
 	};
 
 	template<typename TObject, typename TMemManager>
+	class ObjectDestroyFinalizer
+	{
+	public:
+		typedef TObject Object;
+		typedef TMemManager MemManager;
+
+	public:
+		explicit ObjectDestroyFinalizer(MemManager* memManager, Object& object) noexcept
+			: mMemManager(memManager),
+			mObjectPtr(std::addressof(object))
+		{
+		}
+
+		ObjectDestroyFinalizer(const ObjectDestroyFinalizer&) = delete;
+
+		~ObjectDestroyFinalizer() noexcept
+		{
+			if (mObjectPtr != nullptr)
+				ObjectDestroyer<Object, MemManager>::Destroy(mMemManager, *mObjectPtr);
+		}
+
+		ObjectDestroyFinalizer& operator=(const ObjectDestroyFinalizer&) = delete;
+
+		MemManager* GetMemManager() const noexcept
+		{
+			return mMemManager;
+		}
+
+		Object* GetPtr() const noexcept
+		{
+			return mObjectPtr;
+		}
+
+		void ResetPtr() noexcept
+		{
+			mObjectPtr = nullptr;
+		}
+
+	private:
+		MemManager* mMemManager;
+		Object* mObjectPtr;
+	};
+
+	template<typename TObject, typename TMemManager>
 	class ObjectManager
 	{
 	public:
@@ -244,6 +288,7 @@ namespace internal
 
 		typedef ObjectDestroyer<Object, MemManager> Destroyer;
 		typedef ObjectRelocator<Object, MemManager> Relocator;
+		typedef ObjectDestroyFinalizer<Object, MemManager> DestroyFinalizer;
 
 		static const bool isTriviallyRelocatable = Relocator::isTriviallyRelocatable;
 
@@ -337,15 +382,9 @@ namespace internal
 			Executor&& exec)
 		{
 			Copy(memManager, srcObject, dstObject);
-			try
-			{
-				std::forward<Executor>(exec)();
-			}
-			catch (...)
-			{
-				Destroy(memManager, *dstObject);
-				throw;
-			}
+			DestroyFinalizer dstFin(&memManager, *dstObject);
+			std::forward<Executor>(exec)();
+			dstFin.ResetPtr();
 		}
 
 		static void Destroy(MemManager& memManager, Object& object) noexcept
@@ -447,16 +486,9 @@ namespace internal
 			Executor&& exec, std::false_type /*isNothrowMoveConstructible*/)
 		{
 			Move(memManager, std::move(srcObject), dstObject);
-			try
-			{
-				std::forward<Executor>(exec)();
-			}
-			catch (...)
-			{
-				// srcObject has been changed!
-				Destroy(memManager, *dstObject);
-				throw;
-			}
+			DestroyFinalizer dstFin(&memManager, *dstObject);
+			std::forward<Executor>(exec)();	//?
+			dstFin.ResetPtr();
 		}
 
 		template<bool isNothrowSwappable, bool isNothrowRelocatable>
@@ -517,15 +549,9 @@ namespace internal
 			std::false_type /*isNothrowAnywayAssignable*/)
 		{
 			Copy(memManager, midObject, dstObject);
-			try
-			{
-				Replace(memManager, srcObject, midObject);
-			}
-			catch (...)
-			{
-				Destroy(memManager, *dstObject);
-				throw;
-			}
+			DestroyFinalizer dstFin(&memManager, *dstObject);
+			Replace(memManager, srcObject, midObject);
+			dstFin.ResetPtr();
 		}
 
 		template<typename Iterator, bool isNothrowRelocatable>
