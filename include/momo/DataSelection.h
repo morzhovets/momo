@@ -23,7 +23,7 @@ namespace internal
 {
 	template<typename TRaws, typename TSettings>
 	class DataRawIterator
-		: public ArrayIteratorBase
+		: public ArrayIndexIterator<const TRaws, const typename TRaws::Item, TSettings>
 	{
 	protected:
 		typedef TRaws Raws;
@@ -31,23 +31,16 @@ namespace internal
 
 	private:
 		typedef typename Raws::Item RawPtr;
+		typedef internal::ArrayIndexIterator<const Raws, const RawPtr, Settings> ArrayIndexIterator;
 
 	public:
-		typedef const RawPtr& Reference;
-		typedef const RawPtr* Pointer;
-
 		typedef DataRawIterator ConstIterator;
 
 	public:
-		explicit DataRawIterator() noexcept
-			: mRaws(nullptr),
-			mIndex(0)
-		{
-		}
+		explicit DataRawIterator() noexcept = default;
 
 		explicit DataRawIterator(const Raws& raws, size_t index) noexcept
-			: mRaws(&raws),
-			mIndex(index)
+			: ArrayIndexIterator(&raws, index)
 		{
 		}
 
@@ -55,38 +48,9 @@ namespace internal
 
 		DataRawIterator& operator+=(ptrdiff_t diff)
 		{
-			size_t newIndex = static_cast<size_t>(static_cast<ptrdiff_t>(mIndex) + diff);
-			MOMO_CHECK((mRaws != nullptr) ? newIndex <= mRaws->GetCount() : diff == 0);
-			mIndex = newIndex;
+			ArrayIndexIterator::operator+=(diff);
 			return *this;
 		}
-
-		friend ptrdiff_t operator-(DataRawIterator iter1, DataRawIterator iter2)
-		{
-			MOMO_CHECK(iter1.mRaws == iter2.mRaws);
-			return static_cast<ptrdiff_t>(iter1.mIndex - iter2.mIndex);
-		}
-
-		Pointer operator->() const
-		{
-			MOMO_CHECK(mRaws != nullptr && mIndex < mRaws->GetCount());
-			return mRaws->GetItems() + mIndex;
-		}
-
-		friend bool operator==(DataRawIterator iter1, DataRawIterator iter2) noexcept
-		{
-			return iter1.mRaws == iter2.mRaws && iter1.mIndex == iter2.mIndex;
-		}
-
-		friend auto operator<=>(DataRawIterator iter1, DataRawIterator iter2)
-		{
-			MOMO_CHECK(iter1.mRaws == iter2.mRaws);
-			return iter1.mIndex <=> iter2.mIndex;
-		}
-
-	private:
-		const Raws* mRaws;
-		size_t mIndex;
 	};
 
 	template<typename DataRowIterator, typename RowReference>

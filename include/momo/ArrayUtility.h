@@ -21,21 +21,21 @@ namespace momo
 
 namespace internal
 {
-	template<typename TQArray, typename TQItem>
+	template<typename TQArray, typename TQItem,
+		typename TSettings = typename TQArray::Settings>
 	class ArrayIndexIterator
 		: public ArrayIteratorBase
 	{
 	protected:
 		typedef TQItem QItem;
 		typedef TQArray QArray;
-
-		typedef typename QArray::Settings Settings;
+		typedef TSettings Settings;
 
 	public:
 		typedef QItem& Reference;
 		typedef QItem* Pointer;
 
-		typedef ArrayIndexIterator<const QArray, const QItem> ConstIterator;
+		typedef ArrayIndexIterator<const QArray, const QItem, Settings> ConstIterator;
 
 	private:
 		struct ConstIteratorProxy : public ConstIterator
@@ -541,17 +541,17 @@ namespace internal
 
 namespace std
 {
-	template<typename A, typename I>
-	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::ArrayIndexIterator<A, I>,
+	template<typename A, typename I, typename S>
+	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::ArrayIndexIterator<A, I, S>,
 			random_access_iterator_tag>
 	{
 	};
 
-	template<typename A, typename I>
+	template<typename A, typename I, typename S>
 	requires requires (A& a) { { a.GetItems() } -> std::same_as<I*>; }
-	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::ArrayIndexIterator<A, I>,
+	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::ArrayIndexIterator<A, I, S>,
 			random_access_iterator_tag, contiguous_iterator_tag>
 	{
 	};
