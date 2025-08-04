@@ -14,52 +14,6 @@
 
 #include "Utility.h"
 
-#define MOMO_MORE_ARRAY_ITERATOR_OPERATORS(Iterator) \
-	Iterator& operator++() \
-	{ \
-		return *this += 1; \
-	} \
-	Iterator operator++(int) \
-	{ \
-		Iterator tempIter = *this; \
-		++*this; \
-		return tempIter; \
-	} \
-	Iterator& operator--() \
-	{ \
-		return *this -= 1; \
-	} \
-	Iterator operator--(int) \
-	{ \
-		Iterator tempIter = *this; \
-		--*this; \
-		return tempIter; \
-	} \
-	Iterator operator+(ptrdiff_t diff) const \
-	{ \
-		return Iterator(*this) += diff; \
-	} \
-	friend Iterator operator+(ptrdiff_t diff, Iterator iter) \
-	{ \
-		return iter + diff; \
-	} \
-	Iterator& operator-=(ptrdiff_t diff) \
-	{ \
-		return *this += (-diff); \
-	} \
-	Iterator operator-(ptrdiff_t diff) const \
-	{ \
-		return *this + (-diff); \
-	} \
-	Reference operator*() const \
-	{ \
-		return *operator->(); \
-	} \
-	Reference operator[](ptrdiff_t diff) const \
-	{ \
-		return *(*this + diff); \
-	}
-
 #define MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
@@ -316,6 +270,74 @@ namespace internal
 		operator ConstBounds() const noexcept
 		{
 			return ConstBounds(BoundsBase::GetBegin(), BoundsBase::GetCount());
+		}
+	};
+
+	class ArrayIteratorBase
+	{
+	public:
+		template<conceptMutableThis RIterator>
+		std::remove_reference_t<RIterator>& operator++(this RIterator&& iter)
+		{
+			return iter += 1;
+		}
+
+		template<conceptMutableThis RIterator>
+		std::remove_reference_t<RIterator> operator++(this RIterator&& iter, int)
+		{
+			std::remove_reference_t<RIterator> resIter = iter;
+			iter += 1;
+			return resIter;
+		}
+
+		template<conceptMutableThis RIterator>
+		std::remove_reference_t<RIterator>& operator--(this RIterator&& iter)
+		{
+			return iter += -1;
+		}
+
+		template<conceptMutableThis RIterator>
+		std::remove_reference_t<RIterator> operator--(this RIterator&& iter, int)
+		{
+			std::remove_reference_t<RIterator> resIter = iter;
+			iter += -1;
+			return resIter;
+		}
+
+		template<typename Iterator>
+		Iterator operator+(this Iterator iter, ptrdiff_t diff)
+		{
+			return iter += diff;
+		}
+
+		template<std::derived_from<ArrayIteratorBase> Iterator>
+		friend Iterator operator+(ptrdiff_t diff, Iterator iter)
+		{
+			return iter += diff;
+		}
+
+		template<conceptMutableThis RIterator>
+		std::remove_reference_t<RIterator>& operator-=(this RIterator&& iter, ptrdiff_t diff)
+		{
+			return iter += (-diff);
+		}
+
+		template<typename Iterator>
+		Iterator operator-(this Iterator iter, ptrdiff_t diff)
+		{
+			return iter += (-diff);
+		}
+
+		template<typename Iterator>
+		typename Iterator::Reference operator*(this const Iterator& iter)
+		{
+			return *iter.operator->();
+		}
+
+		template<typename Iterator>
+		typename Iterator::Reference operator[](this Iterator iter, ptrdiff_t diff)
+		{
+			return *(iter += diff);
 		}
 	};
 

@@ -22,7 +22,8 @@ namespace momo
 namespace internal
 {
 	template<typename TRaws, typename TSettings>
-	class DataRawIterator : private ArrayIndexIterator<const TRaws, const typename TRaws::Item>
+	class DataRawIterator
+		: public ArrayIteratorBase
 	{
 	protected:
 		typedef TRaws Raws;
@@ -31,8 +32,6 @@ namespace internal
 	private:
 		typedef typename Raws::Item RawPtr;
 
-		typedef internal::ArrayIndexIterator<const Raws, const RawPtr> ArrayIndexIterator;
-
 	public:
 		typedef const RawPtr& Reference;
 		typedef const RawPtr* Pointer;
@@ -40,10 +39,15 @@ namespace internal
 		typedef DataRawIterator ConstIterator;
 
 	public:
-		explicit DataRawIterator() noexcept = default;
+		explicit DataRawIterator() noexcept
+			: mRaws(nullptr),
+			mIndex(0)
+		{
+		}
 
 		explicit DataRawIterator(const Raws& raws, size_t index) noexcept
-			: ArrayIndexIterator(&raws, index)
+			: mRaws(&raws),
+			mIndex(index)
 		{
 		}
 
@@ -51,52 +55,38 @@ namespace internal
 
 		DataRawIterator& operator+=(ptrdiff_t diff)
 		{
-			[[maybe_unused]] const Raws* raws = pvGetRaws();
-			[[maybe_unused]] size_t newIndex =
-				static_cast<size_t>(static_cast<ptrdiff_t>(pvGetIndex()) + diff);
-			MOMO_CHECK((raws != nullptr) ? newIndex <= raws->GetCount() : diff == 0);
-			ArrayIndexIterator::operator+=(diff);
+			size_t newIndex = static_cast<size_t>(static_cast<ptrdiff_t>(mIndex) + diff);
+			MOMO_CHECK((mRaws != nullptr) ? newIndex <= mRaws->GetCount() : diff == 0);
+			mIndex = newIndex;
 			return *this;
 		}
 
 		friend ptrdiff_t operator-(DataRawIterator iter1, DataRawIterator iter2)
 		{
-			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
-			return static_cast<ptrdiff_t>(iter1.ptGetIndex() - iter2.ptGetIndex());
+			MOMO_CHECK(iter1.mRaws == iter2.mRaws);
+			return static_cast<ptrdiff_t>(iter1.mIndex - iter2.mIndex);
 		}
 
 		Pointer operator->() const
 		{
-			const Raws* raws = pvGetRaws();
-			size_t index = pvGetIndex();
-			MOMO_CHECK(raws != nullptr && index < raws->GetCount());
-			return raws->GetItems() + index;
+			MOMO_CHECK(mRaws != nullptr && mIndex < mRaws->GetCount());
+			return mRaws->GetItems() + mIndex;
 		}
 
 		friend bool operator==(DataRawIterator iter1, DataRawIterator iter2) noexcept
 		{
-			return iter1.pvGetRaws() == iter2.pvGetRaws()
-				&& iter1.pvGetIndex() == iter2.pvGetIndex();
+			return iter1.mRaws == iter2.mRaws && iter1.mIndex == iter2.mIndex;
 		}
 
 		friend auto operator<=>(DataRawIterator iter1, DataRawIterator iter2)
 		{
-			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
-			return iter1.pvGetIndex() <=> iter2.pvGetIndex();
+			MOMO_CHECK(iter1.mRaws == iter2.mRaws);
+			return iter1.mIndex <=> iter2.mIndex;
 		}
-
-		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawIterator)
 
 	private:
-		const Raws* pvGetRaws() const noexcept
-		{
-			return ArrayIndexIterator::ptGetArray();
-		}
-
-		size_t pvGetIndex() const noexcept
-		{
-			return ArrayIndexIterator::ptGetIndex();
-		}
+		const Raws* mRaws;
+		size_t mIndex;
 	};
 
 	template<typename DataRowIterator, typename RowReference>
@@ -104,7 +94,9 @@ namespace internal
 		requires (DataRowIterator iter) { { *iter } -> std::convertible_to<RowReference>; };
 
 	template<typename TRawIterator, typename TRowReference>
-	class DataRowIterator : private VersionKeeper<typename TRowReference::Settings>
+	class MOMO_EMPTY_BASES DataRowIterator
+		: private VersionKeeper<typename TRowReference::Settings>,
+		public ArrayIteratorBase
 	{
 	protected:
 		typedef TRawIterator RawIterator;
@@ -174,8 +166,6 @@ namespace internal
 			MOMO_CHECK(iter1.mColumnList == iter2.mColumnList);
 			return iter1.mRawIterator <=> iter2.mRawIterator;
 		}
-
-		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRowIterator)
 
 	protected:
 		explicit DataRowIterator(const ColumnList* columnList, RawIterator rawIter,
@@ -279,6 +269,7 @@ namespace internal
 
 	template<typename TRowIterator, typename TItem>
 	class DataConstItemIterator
+		: public ArrayIteratorBase
 	{
 	public:
 		typedef TRowIterator RowIterator;
@@ -332,8 +323,6 @@ namespace internal
 			MOMO_CHECK(iter1.mOffset == iter2.mOffset);
 			return iter1.mRowIterator <=> iter2.mRowIterator;
 		}
-
-		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataConstItemIterator)
 
 		RowIterator GetRowIterator() const noexcept
 		{

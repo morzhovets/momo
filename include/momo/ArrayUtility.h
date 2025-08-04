@@ -23,6 +23,7 @@ namespace internal
 {
 	template<typename TQArray, typename TQItem>
 	class ArrayIndexIterator
+		: public ArrayIteratorBase
 	{
 	protected:
 		typedef TQItem QItem;
@@ -88,8 +89,6 @@ namespace internal
 			MOMO_CHECK(iter1.mArray == iter2.mArray);
 			return iter1.mIndex <=> iter2.mIndex;
 		}
-
-		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(ArrayIndexIterator)
 
 	protected:
 		explicit ArrayIndexIterator(QArray* array, size_t index) noexcept

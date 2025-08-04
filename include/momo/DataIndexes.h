@@ -37,6 +37,7 @@ namespace internal
 {
 	template<typename TRaw, typename TSettings>
 	class DataRawUniqueHashIterator
+		: public ArrayIteratorBase
 	{
 	public:
 		typedef TRaw Raw;
@@ -94,8 +95,6 @@ namespace internal
 			return iter1.mRawIndex <=> iter2.mRawIndex;
 		}
 
-		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawUniqueHashIterator)
-
 	private:
 		Raw* mRaw;
 		ptrdiff_t mRawIndex;
@@ -140,7 +139,9 @@ namespace internal
 	};
 
 	template<typename TRawIterator, typename TSettings>
-	class DataRawMultiHashIterator : private VersionKeeper<TSettings>
+	class MOMO_EMPTY_BASES DataRawMultiHashIterator
+		: private VersionKeeper<TSettings>,
+		public ArrayIteratorBase
 	{
 	public:
 		typedef TRawIterator RawIterator;
@@ -220,8 +221,6 @@ namespace internal
 			MOMO_CHECK(iter1.mRaw0 == iter2.mRaw0);
 			return iter1.mRawIndex <=> iter2.mRawIndex;
 		}
-
-		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawMultiHashIterator)
 
 	private:
 		RawPtr mRaw0;

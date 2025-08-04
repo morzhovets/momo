@@ -103,7 +103,7 @@ namespace internal
 			const auto* array = MergeArrayIterator::ptGetArray();
 			MOMO_CHECK(array != nullptr);
 			if (MergeArrayIterator::ptGetIndex() + 1 < array->GetCount())
-				MergeArrayIterator::operator++();
+				MergeArrayIterator::operator+=(1);
 			else
 				*this = MergeSetIterator();
 			return *this;
