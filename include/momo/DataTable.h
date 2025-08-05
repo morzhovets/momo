@@ -151,7 +151,9 @@ public:
 		UniqueHashIndex uniqueHashIndex;
 	};
 
-	class UniqueIndexViolation : public std::runtime_error, public TryResult
+	class UniqueIndexViolation
+		: public std::runtime_error,
+		public TryResult
 	{
 	public:
 		explicit UniqueIndexViolation(const TryResult& tryResult)

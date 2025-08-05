@@ -282,7 +282,8 @@ typedef MOMO_DEFAULT_MEM_MANAGER MemManagerDefault;
 //! `MemManagerStd<std::allocator<...>>` is same as `MemManagerDefault`
 template<typename Object>
 class MOMO_EMPTY_BASES MemManagerStd<std::allocator<Object>>
-	: private std::allocator<internal::Byte>, public MemManagerDefault
+	: private std::allocator<internal::Byte>,
+	public MemManagerDefault
 {
 public:
 	typedef std::allocator<Object> Allocator;

@@ -183,7 +183,8 @@ namespace internal
 
 	template<typename TContainerTraits, typename TMemManager, bool tKeepVersion>
 	class SetCrew<TContainerTraits, TMemManager, tKeepVersion, false>
-		: private TContainerTraits, private TMemManager
+		: private TContainerTraits,
+		private TMemManager
 	{
 	public:
 		typedef TContainerTraits ContainerTraits;
