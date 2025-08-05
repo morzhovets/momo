@@ -77,7 +77,8 @@ public:
 template<conceptDataColumnList TColumnList = DataColumnList<>,
 	conceptDataTraits TDataTraits = DataTraits>
 class MOMO_EMPTY_BASES DataTable
-	: public internal::Rangeable, public internal::Swappable<DataTable>
+	: public internal::Rangeable,
+	public internal::Swappable<DataTable>
 {
 public:
 	typedef TColumnList ColumnList;
@@ -152,7 +153,9 @@ public:
 		UniqueHashIndex uniqueHashIndex;
 	};
 
-	class UniqueIndexViolation : public std::runtime_error, public TryResult
+	class UniqueIndexViolation
+		: public std::runtime_error,
+		public TryResult
 	{
 	public:
 		explicit UniqueIndexViolation(const TryResult& tryResult)

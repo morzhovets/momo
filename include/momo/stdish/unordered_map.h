@@ -24,7 +24,7 @@ namespace momo::stdish
 {
 
 template<typename THashMap>
-class MOMO_EMPTY_BASES unordered_map_adaptor
+class unordered_map_adaptor
 	: public momo::internal::Swappable<unordered_map_adaptor>
 {
 private:

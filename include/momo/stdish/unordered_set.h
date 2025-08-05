@@ -24,7 +24,7 @@ namespace momo::stdish
 {
 
 template<typename THashSet>
-class MOMO_EMPTY_BASES unordered_set_adaptor
+class unordered_set_adaptor
 	: public momo::internal::Swappable<unordered_set_adaptor>
 {
 private:

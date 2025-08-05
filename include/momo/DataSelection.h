@@ -157,7 +157,8 @@ namespace internal
 
 	template<typename TRawBounds, typename TRowReference>
 	class MOMO_EMPTY_BASES DataRowBounds
-		: private VersionKeeper<typename TRowReference::Settings>, public Rangeable
+		: private VersionKeeper<typename TRowReference::Settings>,
+		public Rangeable
 	{
 	protected:
 		typedef TRawBounds RawBounds;
@@ -232,8 +233,7 @@ namespace internal
 	};
 
 	template<typename TRowIterator, typename TItem>
-	class DataConstItemIterator
-		: public ArrayIteratorBase
+	class DataConstItemIterator : public ArrayIteratorBase
 	{
 	public:
 		typedef TRowIterator RowIterator;
@@ -358,7 +358,8 @@ namespace internal
 	template<typename TRowReference, typename TDataTraits>
 	class MOMO_EMPTY_BASES DataSelection
 		: private VersionKeeper<typename TRowReference::ColumnList::Settings>,
-		public Rangeable, public Swappable<DataSelection>
+		public Rangeable,
+		public Swappable<DataSelection>
 	{
 	public:
 		typedef TRowReference RowReference;

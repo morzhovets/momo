@@ -205,7 +205,8 @@ namespace internal
 
 template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
 	bool tUseValuePtr = false>
-class HashMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager, tUseValuePtr>
+class HashMapKeyValueTraits
+	: public internal::MapKeyValueTraits<TKey, TValue, TMemManager, tUseValuePtr>
 {
 };
 
@@ -240,7 +241,8 @@ template<conceptObject TKey, conceptObject TValue,
 		= HashMapKeyValueTraits<TKey, TValue, TMemManager>,
 	typename TSettings = HashMapSettings>
 class MOMO_EMPTY_BASES HashMap
-	: public internal::Rangeable, public internal::Swappable<HashMap>
+	: public internal::Rangeable,
+	public internal::Swappable<HashMap>
 {
 public:
 	typedef TKey Key;

@@ -36,8 +36,7 @@ enum class DataMultiHashIndex : ptrdiff_t
 namespace internal
 {
 	template<typename TRaw, typename TSettings>
-	class DataRawUniqueHashIterator
-		: public ArrayIteratorBase
+	class DataRawUniqueHashIterator : public ArrayIteratorBase
 	{
 	public:
 		typedef TRaw Raw;
@@ -230,7 +229,8 @@ namespace internal
 
 	template<typename TRawIterator, typename TSettings>
 	class MOMO_EMPTY_BASES DataRawMultiHashBounds
-		: private VersionKeeper<TSettings>, public Rangeable
+		: private VersionKeeper<TSettings>,
+		public Rangeable
 	{
 	public:
 		typedef TRawIterator RawIterator;

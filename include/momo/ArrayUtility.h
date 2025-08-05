@@ -23,8 +23,7 @@ namespace internal
 {
 	template<typename TQArray, typename TQItem,
 		typename TSettings = typename TQArray::Settings>
-	class ArrayIndexIterator
-		: public ArrayIteratorBase
+	class ArrayIndexIterator : public ArrayIteratorBase
 	{
 	protected:
 		typedef TQItem QItem;
@@ -241,7 +240,7 @@ namespace internal
 
 	template<conceptObject TItem, conceptMemManager TMemManager,
 		typename TItemTraits, typename TSettings>
-	class MOMO_EMPTY_BASES ArrayBase : public Rangeable
+	class ArrayBase : public Rangeable
 	{
 	public:
 		typedef TItem Item;

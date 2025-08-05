@@ -23,7 +23,7 @@ namespace momo::stdish
 {
 
 template<typename TArray>
-class MOMO_EMPTY_BASES vector_adaptor
+class vector_adaptor
 	: public momo::internal::Swappable<vector_adaptor>
 {
 private:

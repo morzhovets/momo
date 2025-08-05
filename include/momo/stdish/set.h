@@ -25,7 +25,7 @@ namespace momo::stdish
 {
 
 template<typename TTreeSet>
-class MOMO_EMPTY_BASES set_adaptor
+class set_adaptor
 	: public momo::internal::Swappable<set_adaptor>
 {
 private:

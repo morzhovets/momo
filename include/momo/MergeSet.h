@@ -78,7 +78,9 @@ namespace internal
 	};
 
 	template<typename TMergeArrayIterator, typename TSettings>
-	class MergeSetIterator : private VersionKeeper<TSettings>, private TMergeArrayIterator
+	class MergeSetIterator
+		: private VersionKeeper<TSettings>,
+		private TMergeArrayIterator
 	{
 	protected:
 		typedef TMergeArrayIterator MergeArrayIterator;
@@ -134,7 +136,8 @@ namespace internal
 
 	template<typename TMergeSetCrew>
 	class MOMO_EMPTY_BASES MergeSetNestedArrayMemManager
-		: private TMergeSetCrew, public MemManagerPtr<typename TMergeSetCrew::MemManager>
+		: private TMergeSetCrew,
+		public MemManagerPtr<typename TMergeSetCrew::MemManager>
 	{
 	public:
 		typedef TMergeSetCrew MergeSetCrew;
@@ -462,7 +465,8 @@ template<conceptObject TKey,
 	conceptSetItemTraits<TKey, TMemManager> TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
 	typename TSettings = MergeSetSettings>
 class MOMO_EMPTY_BASES MergeSet
-	: public internal::Rangeable, public internal::Swappable<MergeSet>
+	: public internal::Rangeable,
+	public internal::Swappable<MergeSet>
 {
 public:
 	typedef TKey Key;

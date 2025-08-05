@@ -23,7 +23,7 @@ namespace momo::stdish
 {
 
 template<typename THashMultiMap>
-class MOMO_EMPTY_BASES unordered_multimap_adaptor
+class unordered_multimap_adaptor
 	: public momo::internal::Swappable<unordered_multimap_adaptor>
 {
 private:
