@@ -11,6 +11,7 @@ message(STATUS "CMAKE_CXX_STANDARD: " ${CMAKE_CXX_STANDARD})
 message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 message(STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR})
 message(STATUS "CMAKE_HOST_SYSTEM_PROCESSOR: " ${CMAKE_HOST_SYSTEM_PROCESSOR})
+message(STATUS "CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
 message(STATUS "MOMO_TEST_EXTRA: " ${MOMO_TEST_EXTRA})
 
 file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
@@ -70,4 +71,17 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     target_compile_options(momo_test PRIVATE -Wa,-mbig-obj)
   endif()
 
+endif()
+
+if(WIN32)
+  add_custom_command(TARGET momo_test POST_BUILD
+    COMMAND cmd /c "dir *.obj /s")
+endif()
+if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  add_custom_command(TARGET momo_test POST_BUILD
+    COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -c '%s %n' {} + | sort -k2")
+endif()
+if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  add_custom_command(TARGET momo_test POST_BUILD
+    COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -f '%z %N' {} + | sort -k2")
 endif()
