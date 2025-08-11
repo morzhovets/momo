@@ -79,9 +79,9 @@ if(WIN32)
 endif()
 if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
   add_custom_command(TARGET momo_test POST_BUILD
-    COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -c '%s %n' {} + | sort -k2")
+    COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -c '%s %n' {} +")
 endif()
 if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   add_custom_command(TARGET momo_test POST_BUILD
-    COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -f '%z %N' {} + | sort -k2")
+    COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -f '%z %N' {} +")
 endif()
