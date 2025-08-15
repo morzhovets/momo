@@ -97,15 +97,21 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
 
 endif()
 
-if(WIN32)
-  add_custom_command(TARGET momo_test POST_BUILD
-    COMMAND cmd /c "dir *.obj /s")
-endif()
-if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  add_custom_command(TARGET momo_test POST_BUILD
-    COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -c '%s %n' {} +")
-endif()
-if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  add_custom_command(TARGET momo_test POST_BUILD
-    COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -f '%z %N' {} +")
+option(MOMO_TEST_PRINT_BIN_SIZES "Print binary file sizes" ON)
+if(MOMO_TEST_PRINT_BIN_SIZES)
+  if(WIN32)
+    add_custom_command(TARGET momo_test POST_BUILD
+      COMMAND cmd /c "dir *.obj /s"
+      COMMAND cmd /c "dir *.exe")
+  endif()
+  if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_custom_command(TARGET momo_test POST_BUILD
+      COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -c '%s %n' {} +"
+      COMMAND sh -c "stat -c '%s %n' \"$<TARGET_FILE:momo_test>\"")
+  endif()
+  if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    add_custom_command(TARGET momo_test POST_BUILD
+      COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -f '%z %N' {} +"
+      COMMAND sh -c "stat -f '%z %N' \"$<TARGET_FILE:momo_test>\"")
+  endif()
 endif()
