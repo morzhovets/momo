@@ -78,7 +78,7 @@ if(MOMO_TEST_PRINT_BIN_SIZES)
   if(WIN32)
     add_custom_command(TARGET momo_test POST_BUILD
       COMMAND cmd /c "dir *.obj /s"
-      COMMAND cmd /c "dir *.exe")
+      COMMAND cmd /c "dir *.exe /s")
   endif()
   if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_custom_command(TARGET momo_test POST_BUILD
