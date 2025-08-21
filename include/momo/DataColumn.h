@@ -248,16 +248,16 @@ public:
 	}
 
 private:
-	template<typename RightColumn,
-		typename RightItem = typename internal::DataColumnItemSelector<RightColumn>::Item,
-		size_t... sequence>
+	template<typename RightColumn, size_t... sequence>
 	DataEquality<Columns..., RightColumn> pvAnd(const RightColumn& rightColumn,
-		const RightItem& rightItem, std::index_sequence<sequence...>) const noexcept
+		const typename internal::DataColumnItemSelector<RightColumn>::Item& rightItem,
+		std::index_sequence<sequence...>) const noexcept
 	{
 		return DataEquality<Columns..., RightColumn>(
 			std::pair<const Columns&, const typename internal::DataColumnItemSelector<Columns>::Item&>(
 				Get<sequence>().GetColumn(), Get<sequence>().GetItem())...,
-			std::pair<const RightColumn&, const RightItem&>(rightColumn, rightItem));
+			std::pair<const RightColumn&, const typename internal::DataColumnItemSelector<RightColumn>::Item&>(
+				rightColumn, rightItem));
 	}
 
 private:

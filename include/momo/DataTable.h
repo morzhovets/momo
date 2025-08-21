@@ -1248,17 +1248,15 @@ private:
 		++mCrew.GetRemoveVersion();
 	}
 
-	template<typename... Items,
-		size_t columnCount = sizeof...(Items)>
-	std::array<size_t, columnCount> pvGetOffsets(const Column<Items>&... columns) const
+	template<typename... Items>
+	std::array<size_t, sizeof...(Items)> pvGetOffsets(const Column<Items>&... columns) const
 	{
 		const ColumnList& columnList = GetColumnList();
 		return {{ columnList.GetOffset(columns)... }};
 	}
 
-	template<typename... Items,
-		size_t columnCount = sizeof...(Items)>
-	std::array<size_t, columnCount> pvGetOffsets(const Equality<Items>&... equals) const
+	template<typename... Items>
+	std::array<size_t, sizeof...(Items)> pvGetOffsets(const Equality<Items>&... equals) const
 	{
 		return pvGetOffsets(equals.GetColumn()...);
 	}
@@ -1292,7 +1290,8 @@ private:
 	}
 
 	template<typename Result, internal::conceptPredicate<ConstRowReference> RowFilter,
-		typename Item, typename... Items, size_t columnCount = 1 + sizeof...(Items)>
+		typename Item, typename... Items,
+		size_t columnCount = 1 + sizeof...(Items)>	//?
 	requires (columnCount > DataTraits::selectEqualityMaxCount)
 	Result pvSelect(FastCopyableFunctor<RowFilter> rowFilter, const Equality<Item>& equal,
 		const Equality<Items>&... equals) const
@@ -1307,8 +1306,8 @@ private:
 		return pvSelect<Result>(FastCopyableFunctor(newRowFilter), equals...);
 	}
 
-	template<typename Result, internal::conceptPredicate<ConstRowReference> RowFilter,
-		typename... Items, size_t columnCount = sizeof...(Items)>
+	template<typename Result, internal::conceptPredicate<ConstRowReference> RowFilter, typename... Items,
+		size_t columnCount = sizeof...(Items)>
 	requires (0 < columnCount && columnCount <= DataTraits::selectEqualityMaxCount)
 	Result pvSelect(FastCopyableFunctor<RowFilter> rowFilter,
 		const Equality<Items>&... equals) const
@@ -1465,8 +1464,7 @@ private:
 		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	template<bool distinct, internal::conceptPredicate<ConstRowReference> RowFilter,
-		typename... Items>
+	template<bool distinct, internal::conceptPredicate<ConstRowReference> RowFilter, typename... Items>
 	DataTable pvProject(ColumnList&& resColumnList, FastCopyableFunctor<RowFilter> rowFilter,
 		const Column<Items>&... columns) const
 	{
