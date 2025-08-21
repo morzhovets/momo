@@ -606,4 +606,42 @@ private:
 	MOMO_NO_UNIQUE_ADDRESS BaseFunctorReference mBaseFunctor;
 };
 
+template<typename TBaseFunctor>
+class FastMovableFunctor<FastMovableFunctor<TBaseFunctor>>
+	: public FastMovableFunctor<TBaseFunctor>
+{
+public:
+	typedef FastMovableFunctor<TBaseFunctor> BaseFunctor;
+};
+
+template<typename TBaseFunctor>
+class FastCopyableFunctor<FastCopyableFunctor<TBaseFunctor>>
+	: public FastCopyableFunctor<TBaseFunctor>
+{
+public:
+	typedef FastCopyableFunctor<TBaseFunctor> BaseFunctor;
+};
+
+template<typename TBaseFunctor>
+class FastMovableFunctor<FastCopyableFunctor<TBaseFunctor>>
+	: public FastCopyableFunctor<TBaseFunctor>
+{
+public:
+	typedef FastCopyableFunctor<TBaseFunctor> BaseFunctor;
+
+public:
+	explicit FastMovableFunctor(BaseFunctor&& baseFunctor) noexcept
+		: BaseFunctor(std::move(baseFunctor))
+	{
+	}
+
+	FastMovableFunctor(FastMovableFunctor&&) noexcept = default;
+
+	FastMovableFunctor(const FastMovableFunctor&) = delete;
+
+	~FastMovableFunctor() noexcept = default;
+
+	FastMovableFunctor& operator=(const FastMovableFunctor&) = delete;
+};
+
 } // namespace momo
