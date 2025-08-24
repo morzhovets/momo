@@ -903,9 +903,8 @@ namespace internal
 			return pvGetHashIndex(mMultiHashes, GetSortedOffsets(offsets));
 		}
 
-		template<typename... Items, typename Raws,
-			size_t columnCount = sizeof...(Items)>
-		Result AddUniqueHashIndex(const Raws& raws, const std::array<size_t, columnCount>& offsets)
+		template<typename... Items, typename Raws>
+		Result AddUniqueHashIndex(const Raws& raws, const std::array<size_t, sizeof...(Items)>& offsets)
 		{
 			Raw* resRaw = nullptr;
 			auto rawAdder = [&resRaw] (UniqueHash& uniqueHash, Raw* raw)
@@ -923,10 +922,9 @@ namespace internal
 			return { resRaw, uniqueHashIndex };
 		}
 
-		template<typename... Items, typename Raws,
-			size_t columnCount = sizeof...(Items)>
+		template<typename... Items, typename Raws>
 		MultiHashIndex AddMultiHashIndex(const Raws& raws,
-			const std::array<size_t, columnCount>& offsets)
+			const std::array<size_t, sizeof...(Items)>& offsets)
 		{
 			auto rawAdder = [] (MultiHash& multiHash, Raw* raw)
 			{
@@ -1271,7 +1269,7 @@ namespace internal
 	private:
 		template<typename Hash,
 			typename Index = typename Hash::Index>
-		static const Hash& pvGetHash(const Hashes<Hash>& hashes, Index index) noexcept
+		static const Hash& pvGetHash(const Hashes<Hash>& hashes, Identity<Index> index) noexcept
 		{
 			MOMO_ASSERT(index != Index::empty);
 			return hashes[static_cast<size_t>(index)];
@@ -1302,12 +1300,11 @@ namespace internal
 		}
 
 		template<typename... Items, typename Hash, typename Raws, typename RawAdder,
-			size_t columnCount = sizeof...(Items),
 			typename Index = typename Hash::Index>
 		static Index pvAddHashIndex(Hashes<Hash>& hashes, const Raws& raws,
-			const std::array<size_t, columnCount>& offsets, const RawAdder& rawAdder)
+			const std::array<size_t, sizeof...(Items)>& offsets, const RawAdder& rawAdder)
 		{
-			std::array<size_t, columnCount> sortedOffsets = GetSortedOffsets(offsets);
+			std::array<size_t, sizeof...(Items)> sortedOffsets = GetSortedOffsets(offsets);
 			Index index = pvGetHashIndex(hashes, sortedOffsets);
 			if (index != Index::empty)
 				return index;
@@ -1335,8 +1332,9 @@ namespace internal
 			return pvGetHashIndex(hashes, hashes.GetBackItem());
 		}
 
-		template<typename Hash, typename Index, size_t columnCount>
-		static Index pvGetTrueIndex(const Hashes<Hash>& hashes, Index index,
+		template<typename Hash, size_t columnCount,
+			typename Index = typename Hash::Index>
+		static Index pvGetTrueIndex(const Hashes<Hash>& hashes, Identity<Index> index,
 			const std::array<size_t, columnCount>& offsets)
 		{
 			if (index != Index::empty)

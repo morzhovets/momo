@@ -1351,17 +1351,15 @@ private:
 		++mCrew.GetRemoveVersion();
 	}
 
-	template<typename... Items,
-		size_t columnCount = sizeof...(Items)>
-	std::array<size_t, columnCount> pvGetOffsets(const Column<Items>&... columns) const
+	template<typename... Items>
+	std::array<size_t, sizeof...(Items)> pvGetOffsets(const Column<Items>&... columns) const
 	{
 		const ColumnList& columnList = GetColumnList();
 		return {{ columnList.GetOffset(columns)... }};
 	}
 
-	template<typename... Items,
-		size_t columnCount = sizeof...(Items)>
-	std::array<size_t, columnCount> pvGetOffsets(const Equality<Items>&... equals) const
+	template<typename... Items>
+	std::array<size_t, sizeof...(Items)> pvGetOffsets(const Equality<Items>&... equals) const
 	{
 		return pvGetOffsets(equals.GetColumn()...);
 	}
@@ -1398,7 +1396,7 @@ private:
 	}
 
 	template<typename Result, typename RowFilter, typename Item, typename... Items,
-		size_t columnCount = 1 + sizeof...(Items)>
+		size_t columnCount = 1 + sizeof...(Items)>	//?
 	internal::EnableIf<(columnCount > DataTraits::selectEqualityMaxCount),
 	Result> pvSelect(const RowFilter& rowFilter, const Equality<Item>& equal,
 		const Equality<Items>&... equals) const
@@ -1563,12 +1561,11 @@ private:
 			equals.template Get<sequence>()...);
 	}
 
-	template<typename RowBoundsProxy, typename Index, typename... Items,
-		size_t columnCount = sizeof...(Items)>
+	template<typename RowBoundsProxy, typename Index, typename... Items>
 	RowBoundsProxy pvFindByHash(Index index, const Equality<Items>&... equals) const
 	{
 		return pvFindByHash<RowBoundsProxy>(index,
-			typename internal::SequenceMaker<columnCount>::Sequence(), equals...);
+			typename internal::SequenceMaker<sizeof...(Items)>::Sequence(), equals...);
 	}
 
 	template<typename RowBoundsProxy, typename Index, typename... Items, size_t... sequence>
