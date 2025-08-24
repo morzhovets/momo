@@ -311,9 +311,9 @@ namespace internal
 		//MOMO_MORE_FORWARD_ITERATOR_OPERATORS(HashSetIterator)
 		HashSetIterator operator++(int)
 		{
-			HashSetIterator tempIter = *this;
+			HashSetIterator resIter = *this;
 			++*this;
-			return tempIter;
+			return resIter;
 		}
 
 	protected:

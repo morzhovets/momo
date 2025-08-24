@@ -17,15 +17,15 @@
 #define MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
-		Iterator tempIter = *this; \
+		Iterator resIter = *this; \
 		++*this; \
-		return tempIter; \
+		return resIter; \
 	} \
 	Iterator operator--(int) \
 	{ \
-		Iterator tempIter = *this; \
+		Iterator resIter = *this; \
 		--*this; \
-		return tempIter; \
+		return resIter; \
 	} \
 	Reference operator*() const \
 	{ \
@@ -35,9 +35,9 @@
 #define MOMO_MORE_FORWARD_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
-		Iterator tempIter = *this; \
+		Iterator resIter = *this; \
 		++*this; \
-		return tempIter; \
+		return resIter; \
 	} \
 	Reference operator*() const \
 	{ \
