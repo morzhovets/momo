@@ -327,9 +327,9 @@ namespace internal
 		//MOMO_MORE_HASH_ITERATOR_OPERATORS(HashSetConstIterator)
 		HashSetConstIterator operator++(int)
 		{
-			HashSetConstIterator tempIter = *this;
+			HashSetConstIterator resIter = *this;
 			++*this;
-			return tempIter;
+			return resIter;
 		}
 
 	protected:

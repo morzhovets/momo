@@ -23,19 +23,19 @@
 	} \
 	Iterator operator++(int) \
 	{ \
-		Iterator tempIter = *this; \
-		++*this; \
-		return tempIter; \
+		Iterator resIter = *this; \
+		*this += 1; \
+		return resIter; \
 	} \
 	Iterator& operator--() \
 	{ \
-		return *this -= 1; \
+		return *this += -1; \
 	} \
 	Iterator operator--(int) \
 	{ \
-		Iterator tempIter = *this; \
-		--*this; \
-		return tempIter; \
+		Iterator resIter = *this; \
+		*this += -1; \
+		return resIter; \
 	} \
 	Iterator operator+(ptrdiff_t diff) const \
 	{ \
@@ -43,7 +43,7 @@
 	} \
 	friend Iterator operator+(ptrdiff_t diff, Iterator iter) \
 	{ \
-		return iter + diff; \
+		return iter += diff; \
 	} \
 	Iterator& operator-=(ptrdiff_t diff) \
 	{ \
@@ -51,7 +51,7 @@
 	} \
 	Iterator operator-(ptrdiff_t diff) const \
 	{ \
-		return *this + (-diff); \
+		return Iterator(*this) += (-diff); \
 	} \
 	Reference operator*() const \
 	{ \
@@ -59,15 +59,15 @@
 	} \
 	Reference operator[](ptrdiff_t diff) const \
 	{ \
-		return *(*this + diff); \
+		return *(Iterator(*this) += diff); \
 	}
 
 #define MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
-		Iterator tempIter = *this; \
+		Iterator resIter = *this; \
 		++*this; \
-		return tempIter; \
+		return resIter; \
 	} \
 	Reference operator*() const \
 	{ \
@@ -107,15 +107,15 @@
 #define MOMO_MORE_TREE_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
-		Iterator tempIter = *this; \
+		Iterator resIter = *this; \
 		++*this; \
-		return tempIter; \
+		return resIter; \
 	} \
 	Iterator operator--(int) \
 	{ \
-		Iterator tempIter = *this; \
+		Iterator resIter = *this; \
 		--*this; \
-		return tempIter; \
+		return resIter; \
 	} \
 	Reference operator*() const \
 	{ \
