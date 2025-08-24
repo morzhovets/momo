@@ -9,7 +9,7 @@ jobs:
         include:
 
         # x64
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           macos_ver: '13'
           build_type: 'Release'
           test_libcxx_new: 'Off'
@@ -17,7 +17,7 @@ jobs:
           flags: '-std=c++11'
           path_prefix: '/usr/local'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           macos_ver: '13'
           build_type: 'Release'
           test_libcxx_new: 'On'
@@ -25,7 +25,7 @@ jobs:
           flags: '-std=c++26 -Werror'
           path_prefix: '/usr/local'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           macos_ver: '13'
           build_type: 'Debug'
           test_libcxx_new: 'On'
@@ -34,7 +34,7 @@ jobs:
           path_prefix: '/usr/local'
 
         # ARM64
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           macos_ver: '14'
           build_type: 'Release'
           test_libcxx_new: 'Off'
@@ -42,7 +42,7 @@ jobs:
           flags: '-std=c++11'
           path_prefix: '/opt/homebrew'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           macos_ver: '14'
           build_type: 'Release'
           test_libcxx_new: 'On'
@@ -50,7 +50,7 @@ jobs:
           flags: '-std=c++26 -Werror'
           path_prefix: '/opt/homebrew'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           macos_ver: '14'
           build_type: 'Debug'
           test_libcxx_new: 'On'
