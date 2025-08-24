@@ -45,12 +45,13 @@ jobs:
           flags: '-std=c++26 -Werror -Wno-psabi'
           path_prefix: '/opt/homebrew'
 
-        - gcc_ver: '15'
-          macos_ver: '14'
-          build_type: 'Debug'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror -Wno-psabi'
-          path_prefix: '/opt/homebrew'
+# ld: B/BL out of range 134481372 (max +/-128MB) from 0x100002488
+#        - gcc_ver: '15'
+#          macos_ver: '14'
+#          build_type: 'Debug'
+#          test_extra: 'Off'
+#          flags: '-std=c++26 -Werror -Wno-psabi'
+#          path_prefix: '/opt/homebrew'
 
     runs-on: macos-${{ matrix.macos_ver }}
 
