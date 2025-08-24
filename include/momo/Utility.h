@@ -59,25 +59,25 @@
 	}
 
 #define MOMO_FRIENDS_SIZE_BEGIN_END_CONST(Object, ConstIterator) \
-	friend size_t size(const Object& object) noexcept(noexcept(object.GetCount())) \
+	friend size_t size(const Object& object) noexcept \
 	{ \
 		return object.GetCount(); \
 	} \
-	friend ConstIterator begin(const Object& object) noexcept(noexcept(object.GetBegin())) \
+	friend ConstIterator begin(const Object& object) noexcept \
 	{ \
 		return object.GetBegin(); \
 	} \
-	friend ConstIterator end(const Object& object) noexcept(noexcept(object.GetEnd())) \
+	friend ConstIterator end(const Object& object) noexcept \
 	{ \
 		return object.GetEnd(); \
 	}
 
 #define MOMO_FRIENDS_BEGIN_END(Object, Iterator) \
-	friend Iterator begin(Object& object) noexcept(noexcept(object.GetBegin())) \
+	friend Iterator begin(Object& object) noexcept \
 	{ \
 		return object.GetBegin(); \
 	} \
-	friend Iterator end(Object& object) noexcept(noexcept(object.GetEnd())) \
+	friend Iterator end(Object& object) noexcept \
 	{ \
 		return object.GetEnd(); \
 	}
