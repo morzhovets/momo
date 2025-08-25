@@ -574,45 +574,14 @@ public:
 	template<typename ResObject = void>
 	[[nodiscard]] ResObject* Allocate()
 	{
-		void* block;
-		if (pvUseCache() && mCachedCount > 0)
-		{
-			block = mCacheHead;
-			mCacheHead = internal::MemCopyer::FromBuffer<Byte*>(block);
-			--mCachedCount;
-		}
-		else
-		{
-			if (Params::GetBlockCount() > 1)
-				block = pvNewBlock();
-			else if (pvGetAlignmentAddend() == 0)
-				block = MemManagerProxy::Allocate(GetMemManager(), pvGetChunkSize0());
-			else
-				block = pvNewBlock1();
-		}
-		++mData.allocCount;
-		return internal::PtrCaster::FromBytePtr<ResObject>(block);
+		return internal::PtrCaster::FromBytePtr<ResObject>(pvAllocate());
 	}
 
 	template<typename Object>
 	void Deallocate(Object* ptr) noexcept
 	{
-		MOMO_ASSERT(ptr != nullptr);
-		MOMO_ASSERT(mData.allocCount > 0);
-		Byte* block = internal::PtrCaster::ToBytePtr(ptr);
-		if (pvUseCache())
-		{
-			if (mCachedCount >= Params::GetCachedFreeBlockCount())
-				pvFlushDeallocate();
-			internal::MemCopyer::ToBuffer(mCacheHead, block);
-			mCacheHead = block;
-			++mCachedCount;
-		}
-		else
-		{
-			pvDeallocate(block);
-		}
-		--mData.allocCount;
+		//MOMO_ASSERT(ptr != nullptr);
+		pvDeallocate(internal::PtrCaster::ToBytePtr(ptr));
 	}
 
 	size_t GetAllocateCount() const noexcept
@@ -746,18 +715,58 @@ private:
 			&& Params::GetBlockSize() >= sizeof(Byte*);	//?
 	}
 
+	void* pvAllocate()
+	{
+		void* block;
+		if (pvUseCache() && mCachedCount > 0)
+		{
+			block = mCacheHead;
+			mCacheHead = internal::MemCopyer::FromBuffer<Byte*>(block);
+			--mCachedCount;
+		}
+		else
+		{
+			if (Params::GetBlockCount() > 1)
+				block = pvNewBlock();
+			else if (pvGetAlignmentAddend() == 0)
+				block = MemManagerProxy::Allocate(GetMemManager(), pvGetChunkSize0());
+			else
+				block = pvNewBlock1();
+		}
+		++mData.allocCount;
+		return block;
+	}
+
+	void pvDeallocate(Byte* block) noexcept
+	{
+		MOMO_ASSERT(mData.allocCount > 0);
+		if (pvUseCache())
+		{
+			if (mCachedCount >= Params::GetCachedFreeBlockCount())
+				pvFlushDeallocate();
+			internal::MemCopyer::ToBuffer(mCacheHead, block);
+			mCacheHead = block;
+			++mCachedCount;
+		}
+		else
+		{
+			pvDeallocateNoCache(block);
+		}
+		--mData.allocCount;
+	}
+
 	MOMO_NOINLINE void pvFlushDeallocate() noexcept
 	{
 		for (size_t i = 0; i < mCachedCount; ++i)
 		{
 			Byte* block = mCacheHead;
 			mCacheHead = internal::MemCopyer::FromBuffer<Byte*>(block);
-			pvDeallocate(block);
+			pvDeallocateNoCache(block);
 		}
 		mCachedCount = 0;
 	}
 
-	void pvDeallocate(Byte* block) noexcept
+	void pvDeallocateNoCache(Byte* block) noexcept
 	{
 		if (Params::GetBlockCount() > 1)
 			pvDeleteBlock(block);
@@ -987,30 +996,45 @@ namespace internal
 		template<typename ResObject = void>
 		[[nodiscard]] ResObject* Allocate()
 		{
+			return PtrCaster::FromBytePtr<ResObject>(pvAllocate());
+		}
+
+		template<typename Object>
+		void Deallocate(Object* ptr) noexcept
+		{
+			pvDeallocate(PtrCaster::ToBytePtr(ptr));
+		}
+
+		template<typename Object>
+		void DeallocateLazy(Object* ptr) noexcept
+		{
+			pvDeallocateLazy(PtrCaster::ToBytePtr(ptr));
+		}
+
+	private:
+		void* pvAllocate()
+		{
 			if (mLazyHead != nullptr)
 			{
 				std::byte* block = mLazyHead.exchange(nullptr);
 				if (block != nullptr)
 				{
 					pvFlushDeallocate(MemCopyer::FromBuffer<std::byte*>(block));
-					return PtrCaster::FromBytePtr<ResObject>(block);
+					return block;
 				}
 			}
-			return mMemPool.template Allocate<ResObject>();
+			return mMemPool.Allocate();
 		}
 
-		template<typename Object>
-		void Deallocate(Object* ptr) noexcept
+		void pvDeallocate(std::byte* block) noexcept
 		{
 			if (mLazyHead != nullptr)
 				pvFlushDeallocate(mLazyHead.exchange(nullptr));
-			mMemPool.Deallocate(ptr);
+			mMemPool.Deallocate(block);
 		}
 
-		template<typename Object>
-		void DeallocateLazy(Object* ptr) noexcept
+		void pvDeallocateLazy(std::byte* block) noexcept
 		{
-			std::byte* block = PtrCaster::ToBytePtr(ptr);
 			while (true)
 			{
 				std::byte* lazyHead = mLazyHead;
@@ -1020,7 +1044,6 @@ namespace internal
 			}
 		}
 
-	private:
 		void pvFlushDeallocate(std::byte* block) noexcept
 		{
 			while (block != nullptr)
@@ -1145,10 +1168,7 @@ namespace internal
 		template<typename ResObject = void>
 		ResObject* GetRealPointer(uint32_t block) noexcept
 		{
-			MOMO_ASSERT(block != nullPtr);
-			std::byte* chunk = mChunks[block / blockCount];
-			std::byte* bytePtr = chunk + (size_t{block} % blockCount) * mBlockSize;
-			return PtrCaster::FromBytePtr<ResObject>(bytePtr);
+			return PtrCaster::FromBytePtr<ResObject>(pvGetRealPointer(block));
 		}
 
 		[[nodiscard]] uint32_t Allocate()
@@ -1179,6 +1199,13 @@ namespace internal
 		}
 
 	private:
+		std::byte* pvGetRealPointer(uint32_t block) noexcept
+		{
+			MOMO_ASSERT(block != nullPtr);
+			std::byte* chunk = mChunks[block / blockCount];
+			return chunk + (size_t{block} % blockCount) * mBlockSize;
+		}
+
 		static uint32_t pvGetNextBlock(void* realPtr) noexcept
 		{
 			return internal::MemCopyer::FromBuffer<uint32_t>(realPtr);
