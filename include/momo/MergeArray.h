@@ -95,7 +95,7 @@ template<conceptObject TItem,
 	typename TItemTraits = MergeArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = MergeArraySettings<>>
 class MOMO_EMPTY_BASES MergeArray
-	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>,
+	: public internal::ArrayBase,
 	public internal::Swappable<MergeArray>
 {
 public:
@@ -108,8 +108,6 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
-	typedef internal::ArrayBase<Item, MemManager, ItemTraits, Settings> ArrayBase;
-
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;

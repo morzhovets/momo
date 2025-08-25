@@ -238,39 +238,28 @@ namespace internal
 		}
 	};
 
-	template<conceptObject TItem, conceptMemManager TMemManager,
-		typename TItemTraits, typename TSettings>
 	class ArrayBase : public Rangeable
 	{
-	public:
-		typedef TItem Item;
-		typedef TMemManager MemManager;
-		typedef TItemTraits ItemTraits;
-		typedef TSettings Settings;
-
-	private:
-		typedef ArrayItemHandler<ItemTraits> ItemHandler;
-
-		template<typename RArray>
-		using ArrayInserter = internal::ArrayInserter<std::decay_t<RArray>>;
-
 	public:
 		template<conceptMutableThis RArray>
 		void SetCount(this RArray&& array, size_t count)
 		{
+			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
 			typedef typename ItemTraits::template Creator<> ItemCreator;
-			MemManager& memManager = array.GetMemManager();
-			auto itemMultiCreator = [&memManager] (Item* newItem)
+			auto& memManager = array.GetMemManager();
+			auto itemMultiCreator = [&memManager] (auto* newItem)
 				{ (ItemCreator(memManager))(newItem); };
 			array.SetCountCrt(count, itemMultiCreator);
 		}
 
 		template<conceptMutableThis RArray>
-		void SetCount(this RArray&& array, size_t count, const Item& item)
+		void SetCount(this RArray&& array, size_t count,
+			const typename std::decay_t<RArray>::Item& item)
 		{
-			typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
-			MemManager& memManager = array.GetMemManager();
-			auto itemMultiCreator = [&memManager, &item] (Item* newItem)
+			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
+			typedef typename ItemTraits::template Creator<const typename ItemTraits::Item&> ItemCreator;
+			auto& memManager = array.GetMemManager();
+			auto itemMultiCreator = [&memManager, &item] (auto* newItem)
 				{ ItemCreator(memManager, item)(newItem); };
 			array.SetCountCrt(count, itemMultiCreator);
 		}
@@ -288,8 +277,7 @@ namespace internal
 		}
 
 		template<typename RArray>
-		ConstLike<Item, std::remove_reference_t<RArray>>& GetBackItem(
-			this RArray&& array, size_t revIndex = 0)
+		decltype(auto) GetBackItem(this RArray&& array, size_t revIndex = 0)
 		{
 			return array[array.GetCount() - 1 - revIndex];
 		}
@@ -301,18 +289,19 @@ namespace internal
 		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 		void AddBackNogrowVar(this RArray&& array, ItemArgs&&... itemArgs)
 		{
+			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
 			array.AddBackNogrowCrt(typename ItemTraits::template Creator<ItemArgs...>(
 				array.GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 		}
 
 		template<conceptMutableThis RArray>
-		void AddBackNogrow(this RArray&& array, Item&& item)
+		void AddBackNogrow(this RArray&& array, typename std::decay_t<RArray>::Item&& item)
 		{
 			array.AddBackNogrowVar(std::move(item));
 		}
 
 		template<conceptMutableThis RArray>
-		void AddBackNogrow(this RArray&& array, const Item& item)
+		void AddBackNogrow(this RArray&& array, const typename std::decay_t<RArray>::Item& item)
 		{
 			array.AddBackNogrowVar(item);
 		}
@@ -324,23 +313,25 @@ namespace internal
 		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 		void AddBackVar(this RArray&& array, ItemArgs&&... itemArgs)
 		{
+			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
 			array.AddBackCrt(typename ItemTraits::template Creator<ItemArgs...>(
 				array.GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 		}
 
 		template<conceptMutableThis RArray>
-		void AddBack(this RArray&& array, Item&& item)
+		void AddBack(this RArray&& array, typename std::decay_t<RArray>::Item&& item)
 		{
 			array.AddBackVar(std::move(item));
 		}
 
 		template<conceptMutableThis RArray>
-		void AddBack(this RArray&& array, const Item& item)
+		void AddBack(this RArray&& array, const typename std::decay_t<RArray>::Item& item)
 		{
 			array.AddBackVar(item);
 		}
 
-		template<conceptMutableThis RArray, conceptObjectCreator<Item> ItemCreator>
+		template<conceptMutableThis RArray,
+			conceptObjectCreator<typename std::decay_t<RArray>::Item> ItemCreator>
 		void InsertCrt(this RArray&& array, size_t index, ItemCreator itemCreator)
 		{
 			pvInsert(array, index,
@@ -351,30 +342,34 @@ namespace internal
 		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
 		void InsertVar(this RArray&& array, size_t index, ItemArgs&&... itemArgs)
 		{
+			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
 			array.InsertCrt(index, typename ItemTraits::template Creator<ItemArgs...>(
 				array.GetMemManager(), std::forward<ItemArgs>(itemArgs)...));
 		}
 
 		template<conceptMutableThis RArray>
-		void Insert(this RArray&& array, size_t index, Item&& item)
+		void Insert(this RArray&& array, size_t index, typename std::decay_t<RArray>::Item&& item)
 		{
 			array.InsertVar(index, std::move(item));
 		}
 
 		template<conceptMutableThis RArray>
-		void Insert(this RArray&& array, size_t index, const Item& item)
+		void Insert(this RArray&& array, size_t index, const typename std::decay_t<RArray>::Item& item)
 		{
 			array.InsertVar(index, item);
 		}
 
 		template<conceptMutableThis RArray>
-		void Insert(this RArray&& array, size_t index, size_t count, const Item& item)
+		void Insert(this RArray&& array, size_t index, size_t count,
+			const typename std::decay_t<RArray>::Item& item)
 		{
-			typedef typename ItemTraits::template Creator<const Item&> ItemCreator;
-			MemManager& memManager = array.GetMemManager();
-			ItemHandler itemHandler(memManager, FastMovableFunctor(ItemCreator(memManager, item)));
+			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
+			typedef typename ItemTraits::template Creator<const typename ItemTraits::Item&> ItemCreator;
+			auto& memManager = array.GetMemManager();
+			ArrayItemHandler<ItemTraits> itemHandler(memManager,
+				FastMovableFunctor(ItemCreator(memManager, item)));
 			array.Reserve(array.GetCount() + count);
-			ArrayInserter<RArray>::InsertNogrow(array, index, count, itemHandler.Get());
+			ArrayInserter<std::decay_t<RArray>>::InsertNogrow(array, index, count, itemHandler.Get());
 		}
 
 		template<conceptMutableThis RArray,
@@ -385,13 +380,14 @@ namespace internal
 			{
 				size_t count = UIntMath<>::Dist(begin, end);
 				array.Reserve(array.GetCount() + count);
-				ArrayInserter<RArray>::InsertNogrow(array, index, begin, count);
+				ArrayInserter<std::decay_t<RArray>>::InsertNogrow(array, index, begin, count);
 			}
 			else
 			{
+				typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
 				typedef typename ItemTraits::template Creator<
 					std::iter_reference_t<ArgIterator>> IterCreator;
-				MemManager& memManager = array.GetMemManager();
+				auto& memManager = array.GetMemManager();
 				size_t count = 0;
 				for (ArgIterator iter = std::move(begin); iter != end; (void)++iter, ++count)
 					array.InsertCrt(index + count, IterCreator(memManager, *iter));
@@ -399,7 +395,8 @@ namespace internal
 		}
 
 		template<conceptMutableThis RArray>
-		void Insert(this RArray&& array, size_t index, std::initializer_list<Item> items)
+		void Insert(this RArray&& array, size_t index,
+			std::initializer_list<typename std::decay_t<RArray>::Item> items)
 		{
 			array.Insert(index, items.begin(), items.end());
 		}
@@ -407,24 +404,28 @@ namespace internal
 		template<conceptMutableThis RArray>
 		void Remove(this RArray&& array, size_t index, size_t count = 1)
 		{
+			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
+			typedef typename std::decay_t<RArray>::Settings Settings;
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index + count <= initCount);
 			if (count == 0)
 				return;
-			MemManager& memManager = array.GetMemManager();
+			auto& memManager = array.GetMemManager();
 			for (size_t i = index + count; i < initCount; ++i)
 				ItemTraits::Assign(memManager, std::move(array[i]), array[i - count]);
 			array.RemoveBack(count);
 		}
 
-		template<conceptMutableThis RArray, conceptObjectPredicate<Item> ItemFilter>
+		template<conceptMutableThis RArray,
+			conceptObjectPredicate<typename std::decay_t<RArray>::Item> ItemFilter>
 		size_t Remove(this RArray&& array, ItemFilter itemFilter)
 		{
+			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
 			size_t initCount = array.GetCount();
 			size_t newCount = 0;
 			while (newCount < initCount && !itemFilter(std::as_const(array[newCount])))
 				++newCount;
-			MemManager& memManager = array.GetMemManager();
+			auto& memManager = array.GetMemManager();
 			for (size_t i = newCount + 1; i < initCount; ++i)
 			{
 				if (itemFilter(std::as_const(array[i])))
@@ -438,18 +439,18 @@ namespace internal
 		}
 
 		template<typename Array, typename ItemArg,
-			conceptEqualComparer<Item, ItemArg> ItemEqualComparer = std::equal_to<>>
+			conceptEqualComparer<typename Array::Item, ItemArg> ItemEqualComparer = std::equal_to<>>
 		bool Contains(this const Array& array, const ItemArg& itemArg,
 			ItemEqualComparer itemEqualComp = ItemEqualComparer())
 		{
 			FastCopyableFunctor<ItemEqualComparer> fastItemEqualComp(itemEqualComp);
-			auto itemPred = [&itemArg, fastItemEqualComp] (const Item& item)
+			auto itemPred = [&itemArg, fastItemEqualComp] (const typename Array::Item& item)
 				{ return fastItemEqualComp(item, itemArg); };
 			return std::any_of(array.GetBegin(), array.GetEnd(), FastCopyableFunctor(itemPred));
 		}
 
 		template<typename Array,
-			conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
+			conceptEqualComparer<typename Array::Item> ItemEqualComparer = std::equal_to<typename Array::Item>>
 		bool IsEqual(this const Array& array1, const std::type_identity_t<Array>& array2,
 			ItemEqualComparer itemEqualComp = ItemEqualComparer())
 		{
@@ -471,10 +472,11 @@ namespace internal
 		explicit ArrayBase() noexcept = default;
 
 	private:
-		template<typename Array, internal::conceptObjectCreator<Item> ItemCreator>
+		template<typename Array, internal::conceptObjectCreator<typename Array::Item> ItemCreator>
 		static void pvInsert(Array& array, size_t index, FastMovableFunctor<ItemCreator> itemCreator)
 		{
-			ItemHandler itemHandler(array.GetMemManager(), std::move(itemCreator));
+			ArrayItemHandler<typename Array::ItemTraits> itemHandler(array.GetMemManager(),
+				std::move(itemCreator));
 			array.Reserve(array.GetCount() + 1);
 			ArrayInserter<Array>::InsertNogrow(array, index, std::move(itemHandler.Get()));
 		}

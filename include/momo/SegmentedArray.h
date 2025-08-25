@@ -160,7 +160,7 @@ template<conceptObject TItem,
 	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = SegmentedArraySettings<>>
 class MOMO_EMPTY_BASES SegmentedArray
-	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>,
+	: public internal::ArrayBase,
 	public internal::Swappable<SegmentedArray>
 {
 public:
@@ -173,8 +173,6 @@ public:
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
-	typedef internal::ArrayBase<Item, MemManager, ItemTraits, Settings> ArrayBase;
-
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;

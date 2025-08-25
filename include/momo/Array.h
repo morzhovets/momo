@@ -189,7 +189,7 @@ template<conceptObject TItem,
 	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
 	typename TSettings = ArraySettings<>>
 class MOMO_EMPTY_BASES Array
-	: public internal::ArrayBase<TItem, TMemManager, TItemTraits, TSettings>,
+	: public internal::ArrayBase,
 	public internal::Swappable<Array>
 {
 public:
@@ -201,8 +201,6 @@ public:
 	static const size_t internalCapacity = Settings::internalCapacity;
 
 private:
-	typedef internal::ArrayBase<Item, MemManager, ItemTraits, Settings> ArrayBase;
-
 	class Data : private MemManager
 	{
 	private:
