@@ -28,7 +28,7 @@ namespace momo
 namespace internal
 {
 	template<typename TNode, typename TSettings>
-	class TreeSetIterator
+	class MOMO_EMPTY_BASES TreeSetIterator
 		: private VersionKeeper<TSettings>,
 		public BidirectionalIteratorBase
 	{
