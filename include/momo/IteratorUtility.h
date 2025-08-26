@@ -14,24 +14,6 @@
 
 #include "Utility.h"
 
-#define MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(Iterator) \
-	Iterator operator++(int) \
-	{ \
-		Iterator resIter = *this; \
-		++*this; \
-		return resIter; \
-	} \
-	Iterator operator--(int) \
-	{ \
-		Iterator resIter = *this; \
-		--*this; \
-		return resIter; \
-	} \
-	Reference operator*() const \
-	{ \
-		return *operator->(); \
-	}
-
 #define MOMO_MORE_FORWARD_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
@@ -273,7 +255,34 @@ namespace internal
 		}
 	};
 
-	class ArrayIteratorBase
+	class IteratorBase
+	{
+	public:
+		template<conceptMutableThis RIterator>
+		std::remove_reference_t<RIterator> operator++(this RIterator&& iter, int)
+		{
+			std::remove_reference_t<RIterator> resIter = iter;
+			++iter;
+			return resIter;
+		}
+
+		template<conceptMutableThis RIterator>
+		std::remove_reference_t<RIterator> operator--(this RIterator&& iter, int)
+			requires requires { { --iter }; }
+		{
+			std::remove_reference_t<RIterator> resIter = iter;
+			--iter;
+			return resIter;
+		}
+
+		template<typename Iterator>
+		typename Iterator::Reference operator*(this const Iterator& iter)
+		{
+			return *iter.operator->();
+		}
+	};
+
+	class ArrayIteratorBase : public IteratorBase
 	{
 	public:
 		template<conceptMutableThis RIterator>
@@ -283,26 +292,13 @@ namespace internal
 		}
 
 		template<conceptMutableThis RIterator>
-		std::remove_reference_t<RIterator> operator++(this RIterator&& iter, int)
-		{
-			std::remove_reference_t<RIterator> resIter = iter;
-			iter += 1;
-			return resIter;
-		}
-
-		template<conceptMutableThis RIterator>
 		std::remove_reference_t<RIterator>& operator--(this RIterator&& iter)
 		{
 			return iter += -1;
 		}
 
-		template<conceptMutableThis RIterator>
-		std::remove_reference_t<RIterator> operator--(this RIterator&& iter, int)
-		{
-			std::remove_reference_t<RIterator> resIter = iter;
-			iter += -1;
-			return resIter;
-		}
+		using IteratorBase::operator++;
+		using IteratorBase::operator--;
 
 		template<typename Iterator>
 		Iterator operator+(this Iterator iter, ptrdiff_t diff)
@@ -329,21 +325,19 @@ namespace internal
 		}
 
 		template<typename Iterator>
-		typename Iterator::Reference operator*(this const Iterator& iter)
-		{
-			return *iter.operator->();
-		}
-
-		template<typename Iterator>
 		typename Iterator::Reference operator[](this Iterator iter, ptrdiff_t diff)
 		{
 			return *(iter += diff);
 		}
 	};
 
+	class BidirectionalIteratorBase : public IteratorBase
+	{
+	};
+
 	template<std::bidirectional_iterator TBaseIterator,
 		template<typename BaseReference> class TReference>
-	class DerivedBidirectionalIterator
+	class DerivedBidirectionalIterator : public BidirectionalIteratorBase
 	{
 	protected:
 		typedef TBaseIterator BaseIterator;
@@ -390,6 +384,9 @@ namespace internal
 			return *this;
 		}
 
+		using BidirectionalIteratorBase::operator++;
+		using BidirectionalIteratorBase::operator--;
+
 		Pointer operator->() const
 		{
 			return Pointer(ReferenceProxy(*mBaseIterator));
@@ -400,8 +397,6 @@ namespace internal
 		{
 			return iter1.mBaseIterator == iter2.mBaseIterator;
 		}
-
-		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(DerivedBidirectionalIterator)
 
 	protected:
 		explicit DerivedBidirectionalIterator(BaseIterator iter) noexcept

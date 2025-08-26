@@ -139,7 +139,7 @@ namespace internal
 
 	template<typename TSetIterator,
 		bool tIsConst = false>
-	class MapBidirectionalIterator
+	class MapBidirectionalIterator : public BidirectionalIteratorBase
 	{
 	protected:
 		typedef TSetIterator SetIterator;
@@ -187,6 +187,9 @@ namespace internal
 			return *this;
 		}
 
+		using BidirectionalIteratorBase::operator++;
+		using BidirectionalIteratorBase::operator--;
+
 		Pointer operator->() const
 		{
 			return Pointer(ReferenceProxy(*mSetIterator));
@@ -197,8 +200,6 @@ namespace internal
 		{
 			return iter1.mSetIterator == iter2.mSetIterator;
 		}
-
-		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(MapBidirectionalIterator)
 
 	protected:
 		explicit MapBidirectionalIterator(SetIterator setIter) noexcept

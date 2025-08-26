@@ -28,7 +28,9 @@ namespace momo
 namespace internal
 {
 	template<typename TNode, typename TSettings>
-	class TreeSetIterator : private VersionKeeper<TSettings>
+	class TreeSetIterator
+		: private VersionKeeper<TSettings>,
+		public BidirectionalIteratorBase
 	{
 	protected:
 		typedef TNode Node;
@@ -98,6 +100,9 @@ namespace internal
 			return *this;
 		}
 
+		using BidirectionalIteratorBase::operator++;
+		using BidirectionalIteratorBase::operator--;
+
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
@@ -110,8 +115,6 @@ namespace internal
 		{
 			return iter1.mNode == iter2.mNode && iter1.mItemIndex == iter2.mItemIndex;
 		}
-
-		MOMO_MORE_BIDIRECTIONAL_ITERATOR_OPERATORS(TreeSetIterator)
 
 	protected:
 		explicit TreeSetIterator(Node& node, size_t itemIndex, const size_t* version,
