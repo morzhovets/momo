@@ -28,7 +28,7 @@ namespace internal
 {
 	template<typename TMergeSetPosition,
 		bool tIsConst = false>
-	class MergeMapPosition
+	class MergeMapPosition : public ForwardIteratorBase
 	{
 	protected:
 		typedef TMergeSetPosition MergeSetPosition;
@@ -98,8 +98,6 @@ namespace internal
 		{
 			return pos1.mMergeSetPosition == pos2.mMergeSetPosition;
 		}
-
-		MOMO_MORE_POSITION_OPERATORS(MergeMapPosition)
 
 	protected:
 		explicit MergeMapPosition(MergeSetPosition mergeSetPos) noexcept

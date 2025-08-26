@@ -172,7 +172,9 @@ namespace internal
 	class HashSetIterator;
 
 	template<typename TBucket, typename TSettings>
-	class HashSetPosition : private VersionKeeper<TSettings>
+	class MOMO_EMPTY_BASES HashSetPosition
+		: private VersionKeeper<TSettings>,
+		public ForwardIteratorBase
 	{
 	protected:
 		typedef TBucket Bucket;
@@ -213,8 +215,6 @@ namespace internal
 		{
 			return pos1.mBucketIterator == pos2.mBucketIterator;
 		}
-
-		MOMO_MORE_POSITION_OPERATORS(HashSetPosition)
 
 	protected:
 		explicit HashSetPosition(size_t indexCode, BucketIterator bucketIter,
@@ -308,13 +308,7 @@ namespace internal
 			return *this;
 		}
 
-		//MOMO_MORE_FORWARD_ITERATOR_OPERATORS(HashSetIterator)
-		HashSetIterator operator++(int)
-		{
-			HashSetIterator resIter = *this;
-			++*this;
-			return resIter;
-		}
+		using ForwardIteratorBase::operator++;
 
 	protected:
 		explicit HashSetIterator(Buckets& buckets, size_t bucketIndex,

@@ -218,7 +218,7 @@ namespace internal
 
 	template<typename TSetIterator,
 		bool tIsConst = false>
-	class MapForwardIterator
+	class MapForwardIterator : public ForwardIteratorBase
 	{
 	protected:
 		typedef TSetIterator SetIterator;
@@ -259,6 +259,8 @@ namespace internal
 			return *this;
 		}
 
+		using ForwardIteratorBase::operator++;
+
 		Pointer operator->() const
 		{
 			return Pointer(ReferenceProxy(*mSetIterator));
@@ -268,8 +270,6 @@ namespace internal
 		{
 			return iter1.mSetIterator == iter2.mSetIterator;
 		}
-
-		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(MapForwardIterator)
 
 	protected:
 		explicit MapForwardIterator(SetIterator setIter) noexcept

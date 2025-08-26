@@ -14,40 +14,6 @@
 
 #include "Utility.h"
 
-#define MOMO_MORE_FORWARD_ITERATOR_OPERATORS(Iterator) \
-	Iterator operator++(int) \
-	{ \
-		Iterator resIter = *this; \
-		++*this; \
-		return resIter; \
-	} \
-	Reference operator*() const \
-	{ \
-		return *operator->(); \
-	} \
-	bool operator!() const noexcept \
-	{ \
-		return *this == Iterator(); \
-	} \
-	explicit operator bool() const noexcept \
-	{ \
-		return !!*this; \
-	}
-
-#define MOMO_MORE_POSITION_OPERATORS(Position) \
-	Reference operator*() const \
-	{ \
-		return *operator->(); \
-	} \
-	bool operator!() const noexcept \
-	{ \
-		return *this == Position(); \
-	} \
-	explicit operator bool() const noexcept \
-	{ \
-		return !!*this; \
-	}
-
 namespace momo
 {
 
@@ -260,6 +226,7 @@ namespace internal
 	public:
 		template<conceptMutableThis RIterator>
 		std::remove_reference_t<RIterator> operator++(this RIterator&& iter, int)
+			requires requires { { ++iter }; }
 		{
 			std::remove_reference_t<RIterator> resIter = iter;
 			++iter;
@@ -333,6 +300,22 @@ namespace internal
 
 	class BidirectionalIteratorBase : public IteratorBase
 	{
+	};
+
+	class ForwardIteratorBase : public IteratorBase
+	{
+	public:
+		template<typename Iterator>
+		bool operator!(this const Iterator& iter) noexcept
+		{
+			return iter == Iterator();
+		}
+
+		template<typename Iterator>
+		explicit operator bool(this const Iterator& iter) noexcept
+		{
+			return !!iter;
+		}
 	};
 
 	template<std::bidirectional_iterator TBaseIterator,
@@ -415,7 +398,7 @@ namespace internal
 
 	template<std::forward_iterator TBaseIterator,
 		template<typename BaseReference> class TReference>
-	class DerivedForwardIterator
+	class DerivedForwardIterator : public ForwardIteratorBase
 	{
 	protected:
 		typedef TBaseIterator BaseIterator;
@@ -456,6 +439,8 @@ namespace internal
 			return *this;
 		}
 
+		using ForwardIteratorBase::operator++;
+
 		Pointer operator->() const
 		{
 			return Pointer(ReferenceProxy(*mBaseIterator));
@@ -465,8 +450,6 @@ namespace internal
 		{
 			return iter1.mBaseIterator == iter2.mBaseIterator;
 		}
-
-		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(DerivedForwardIterator)
 
 	protected:
 		explicit DerivedForwardIterator(BaseIterator iter) noexcept

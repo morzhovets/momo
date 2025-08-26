@@ -28,7 +28,7 @@ namespace internal
 {
 	template<typename THashSetPosition,
 		bool tIsConst = false>
-	class HashMapPosition
+	class HashMapPosition : public ForwardIteratorBase
 	{
 	protected:
 		typedef THashSetPosition HashSetPosition;
@@ -105,8 +105,6 @@ namespace internal
 		{
 			return pos2 == iter1;
 		}
-
-		MOMO_MORE_POSITION_OPERATORS(HashMapPosition)
 
 	protected:
 		explicit HashMapPosition(HashSetPosition hashSetPos) noexcept

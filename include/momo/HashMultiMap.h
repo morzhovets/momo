@@ -174,7 +174,9 @@ namespace internal
 	};
 
 	template<typename TKeyIterator, typename TSettings>
-	class HashMultiMapIterator : private VersionKeeper<TSettings, TSettings::checkValueVersion>
+	class MOMO_EMPTY_BASES HashMultiMapIterator
+		: private VersionKeeper<TSettings, TSettings::checkValueVersion>,
+		public ForwardIteratorBase
 	{
 	public:
 		typedef TKeyIterator KeyIterator;
@@ -228,6 +230,8 @@ namespace internal
 			return *this;
 		}
 
+		using ForwardIteratorBase::operator++;
+
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
@@ -239,8 +243,6 @@ namespace internal
 		{
 			return iter1.mValueIterator == iter2.mValueIterator;
 		}
-
-		MOMO_MORE_FORWARD_ITERATOR_OPERATORS(HashMultiMapIterator)
 
 		KeyIterator GetKeyIterator() const noexcept
 		{
