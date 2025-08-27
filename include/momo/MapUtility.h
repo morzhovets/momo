@@ -313,19 +313,16 @@ namespace internal
 		static void Create(MemManager& memManager, Key&& key,
 			FastMovableFunctor<ValueCreator> valueCreator, Key* newKey, Value* newValue)
 		{
-			auto exec = [valueCreator = std::move(valueCreator), newValue] () mutable
-				{ std::move(valueCreator)(newValue); };
 			KeyManager::MoveExec(memManager, std::move(key), newKey,
-				FastMovableFunctor(std::move(exec)));
+				FastMovableFunctor(ObjectCreateExecutor(std::move(valueCreator), newValue)));
 		}
 
 		template<conceptObjectCreator<Value> ValueCreator>
 		static void Create(MemManager& memManager, const Key& key,
 			FastMovableFunctor<ValueCreator> valueCreator, Key* newKey, Value* newValue)
 		{
-			auto exec = [valueCreator = std::move(valueCreator), newValue] () mutable
-				{ std::move(valueCreator)(newValue); };
-			KeyManager::CopyExec(memManager, key, newKey, FastMovableFunctor(std::move(exec)));
+			KeyManager::CopyExec(memManager, key, newKey,
+				FastMovableFunctor(ObjectCreateExecutor(std::move(valueCreator), newValue)));
 		}
 
 		template<conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
@@ -867,10 +864,9 @@ namespace internal
 				{ return (dstIter++)->GetKeyPtr(); };
 			IncIterator dstValueIter = [dstIter = dstBegin] () mutable noexcept
 				{ return (dstIter++)->GetValuePtr(); };
-			auto exec = [itemCreator = std::move(itemCreator), newItem] () mutable
-				{ std::move(itemCreator)(newItem); };
-			KeyValueTraits::RelocateExec(memManager, srcKeyIter, srcValueIter,
-				dstKeyIter, dstValueIter, count, FastMovableFunctor(std::move(exec)));
+			KeyValueTraits::RelocateExec(memManager,
+				srcKeyIter, srcValueIter, dstKeyIter, dstValueIter, count,
+				FastMovableFunctor(ObjectCreateExecutor(std::move(itemCreator), newItem)));
 		}
 
 		template<typename KeyArg>
@@ -997,10 +993,8 @@ namespace internal
 				{ return (srcIter++)->template GetKeyPtr<true>(); };
 			IncIterator dstKeyIter = [dstIter = dstBegin] () mutable noexcept
 				{ return (dstIter++)->GetKeyPtr(); };
-			auto exec = [itemCreator = std::move(itemCreator), newItem] () mutable
-				{ std::move(itemCreator)(newItem); };
-			KeyValueTraits::RelocateExecKeys(memManager, srcKeyIter, dstKeyIter,
-				count, FastMovableFunctor(std::move(exec)));
+			KeyValueTraits::RelocateExecKeys(memManager, srcKeyIter, dstKeyIter, count,
+				FastMovableFunctor(ObjectCreateExecutor(std::move(itemCreator), newItem)));
 			IncIterator srcValueIter = [srcIter = srcBegin] () mutable noexcept
 				{ return &(srcIter++)->GetValuePtr(); };
 			IncIterator dstValueIter = [dstIter = dstBegin] () mutable noexcept

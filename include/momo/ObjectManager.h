@@ -387,6 +387,30 @@ namespace internal
 		}
 	};
 
+	template<conceptObject TObject, conceptObjectCreator<TObject> TObjectCreator>
+	class ObjectCreateExecutor
+	{
+	public:
+		typedef TObject Object;
+		typedef TObjectCreator ObjectCreator;
+
+	public:
+		explicit ObjectCreateExecutor(FastMovableFunctor<ObjectCreator> objectCreator, Object* newObject)
+			: mObjectCreator(std::move(objectCreator)),
+			mNewObject(newObject)
+		{
+		}
+
+		void operator()() &&
+		{
+			std::move(mObjectCreator)(mNewObject);
+		}
+
+	private:
+		FastMovableFunctor<ObjectCreator> mObjectCreator;
+		Object* mNewObject;
+	};
+
 	template<conceptObject TObject, conceptMemManager TMemManager,
 		conceptMemManagerOrNullPtr<TMemManager> TMemManagerOrNullPtr>
 	class ObjectDestroyFinalizer
@@ -662,9 +686,8 @@ namespace internal
 			size_t count, FastMovableFunctor<ObjectCreator> objectCreator, Object* newObject)
 			requires isNothrowRelocatable || (isCopyConstructible && isNothrowDestructible)
 		{
-			auto exec = [objectCreator = std::move(objectCreator), newObject] () mutable
-				{ std::move(objectCreator)(newObject); };
-			RelocateExec(memManager, srcBegin, dstBegin, count, FastMovableFunctor(std::move(exec)));
+			RelocateExec(memManager, srcBegin, dstBegin, count,
+				FastMovableFunctor(ObjectCreateExecutor(std::move(objectCreator), newObject)));
 		}
 
 		template<conceptIncIterator<Object> SrcIterator, conceptIncIterator<Object> DstIterator,
