@@ -249,18 +249,18 @@ namespace internal
 		static void Create(MemManager& memManager, Key&& key,
 			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
 		{
-			auto exec = [&valueCreator, newValue] ()
-				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			KeyManager::MoveExec(memManager, std::move(key), newKey, exec);
+			KeyManager::MoveExec(memManager, std::move(key), newKey,
+				ObjectCreateExecutor<Value, ValueCreator>(
+					std::forward<ValueCreator>(valueCreator), newValue));
 		}
 
 		template<typename ValueCreator>
 		static void Create(MemManager& memManager, const Key& key,
 			ValueCreator&& valueCreator, Key* newKey, Value* newValue)
 		{
-			auto exec = [&valueCreator, newValue] ()
-				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			KeyManager::CopyExec(memManager, key, newKey, exec);
+			KeyManager::CopyExec(memManager, key, newKey,
+				ObjectCreateExecutor<Value, ValueCreator>(
+					std::forward<ValueCreator>(valueCreator), newValue));
 		}
 
 		static void Destroy(MemManager* memManager, Key& key, Value& value) noexcept

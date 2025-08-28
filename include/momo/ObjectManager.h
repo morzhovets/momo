@@ -235,6 +235,38 @@ namespace internal
 		MOMO_ALIGNED_STORAGE(sizeof(Object) * count, alignment) mBuffer;
 	};
 
+	template<typename TObject, typename TObjectCreator>
+	class ObjectCreateExecutor
+	{
+	public:
+		typedef TObject Object;
+		typedef TObjectCreator ObjectCreator;
+
+	public:
+		explicit ObjectCreateExecutor(ObjectCreator&& objectCreator, Object* newObject) noexcept
+			: mObjectCreator(std::forward<ObjectCreator>(objectCreator)),
+			mNewObject(newObject)
+		{
+		}
+
+		ObjectCreateExecutor(ObjectCreateExecutor&&) noexcept = default;
+
+		ObjectCreateExecutor(const ObjectCreateExecutor&) = delete;
+
+		~ObjectCreateExecutor() noexcept = default;
+
+		ObjectCreateExecutor& operator=(const ObjectCreateExecutor&) = delete;
+
+		void operator()() &&
+		{
+			std::forward<ObjectCreator>(mObjectCreator)(mNewObject);
+		}
+
+	private:
+		ObjectCreator&& mObjectCreator;
+		Object* mNewObject;
+	};
+
 	template<typename TObject, typename TMemManager>
 	class ObjectDestroyFinalizer
 	{
@@ -444,9 +476,9 @@ namespace internal
 		static void RelocateCreate(MemManager& memManager, Iterator srcBegin, Iterator dstBegin,
 			size_t count, ObjectCreator&& objectCreator, Object* newObject)
 		{
-			auto exec = [&objectCreator, newObject] ()
-				{ std::forward<ObjectCreator>(objectCreator)(newObject); };
-			RelocateExec(memManager, srcBegin, dstBegin, count, exec);
+			RelocateExec(memManager, srcBegin, dstBegin, count,
+				ObjectCreateExecutor<Object, ObjectCreator>(
+					std::forward<ObjectCreator>(objectCreator), newObject));
 		}
 
 		template<typename Iterator, typename Executor>

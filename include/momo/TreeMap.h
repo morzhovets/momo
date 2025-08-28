@@ -130,14 +130,13 @@ namespace internal
 			Iterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i, (void)++dstIter)
 				Item::Create(dstIter.operator->());	//?
-			auto exec = [&itemCreator, newItem] ()
-				{ std::forward<ItemCreator>(itemCreator)(newItem); };
 			try
 			{
 				KeyValueTraits::RelocateExec(memManager,
 					MapKeyIterator<Iterator>(srcBegin), MapValueIterator<Iterator>(srcBegin),
 					MapKeyIterator<Iterator>(dstBegin), MapValueIterator<Iterator>(dstBegin),
-					count, exec);
+					count, ObjectCreateExecutor<Item, ItemCreator>(
+						std::forward<ItemCreator>(itemCreator), newItem));
 			}
 			catch (...)
 			{

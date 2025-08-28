@@ -383,18 +383,18 @@ namespace internal
 		static void Create(MemManager& memManager, Key&& key, ValueCreator&& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			auto exec = [&valueCreator, newValue] ()
-				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			HashMultiMapKeyValueTraits::MoveExecKey(memManager, std::move(key), newKey, exec);
+			HashMultiMapKeyValueTraits::MoveExecKey(memManager, std::move(key), newKey,
+				ObjectCreateExecutor<Value, ValueCreator>(
+					std::forward<ValueCreator>(valueCreator), newValue));
 		}
 
 		template<typename ValueCreator>
 		static void Create(MemManager& memManager, const Key& key, ValueCreator&& valueCreator,
 			Key* newKey, Value* newValue)
 		{
-			auto exec = [&valueCreator, newValue] ()
-				{ std::forward<ValueCreator>(valueCreator)(newValue); };
-			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey, exec);
+			HashMultiMapKeyValueTraits::CopyExecKey(memManager, key, newKey,
+				ObjectCreateExecutor<Value, ValueCreator>(
+					std::forward<ValueCreator>(valueCreator), newValue));
 		}
 
 		static void Destroy(MemManager* memManager, Key& key, Value& value) noexcept
