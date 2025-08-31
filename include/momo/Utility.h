@@ -571,6 +571,15 @@ private:
 };
 
 template<typename TBaseFunctor>
+class FastMovableFunctor<FastMovableFunctor<TBaseFunctor>>
+{
+	static_assert(false);
+};
+
+template<typename BaseFunctor>
+FastMovableFunctor(BaseFunctor&) -> FastMovableFunctor<BaseFunctor&>;
+
+template<typename TBaseFunctor>
 class FastCopyableFunctor
 {
 public:
@@ -604,14 +613,6 @@ public:
 
 private:
 	MOMO_NO_UNIQUE_ADDRESS BaseFunctorReference mBaseFunctor;
-};
-
-template<typename TBaseFunctor>
-class FastMovableFunctor<FastMovableFunctor<TBaseFunctor>>
-	: public FastMovableFunctor<TBaseFunctor>
-{
-public:
-	typedef FastMovableFunctor<TBaseFunctor> BaseFunctor;
 };
 
 template<typename TBaseFunctor>

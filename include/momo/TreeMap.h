@@ -474,8 +474,7 @@ public:
 	template<internal::conceptObjectCreator<Value> ValueCreator>
 	InsertResult InsertCrt(Key&& key, ValueCreator valueCreator)
 	{
-		return pvInsert(std::move(key),
-			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+		return pvInsert(std::move(key), FastMovableFunctor(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -499,8 +498,7 @@ public:
 	template<internal::conceptObjectCreator<Value> ValueCreator>
 	InsertResult InsertCrt(const Key& key, ValueCreator valueCreator)
 	{
-		return pvInsert(key,
-			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+		return pvInsert(key, FastMovableFunctor(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -591,8 +589,7 @@ public:
 		bool extraCheck = true>
 	Iterator AddCrt(ConstIterator iter, PairCreator pairCreator)
 	{
-		return pvAdd<extraCheck>(iter,
-			FastMovableFunctor<PairCreator>(std::forward<PairCreator>(pairCreator)));
+		return pvAdd<extraCheck>(iter, FastMovableFunctor(std::forward<PairCreator>(pairCreator)));
 	}
 
 	template<internal::conceptObjectCreator<Value> ValueCreator,
@@ -600,7 +597,7 @@ public:
 	Iterator AddCrt(ConstIterator iter, Key&& key, ValueCreator valueCreator)
 	{
 		return pvAdd<extraCheck>(iter, std::move(key),
-			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+			FastMovableFunctor(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>
@@ -626,7 +623,7 @@ public:
 	Iterator AddCrt(ConstIterator iter, const Key& key, ValueCreator valueCreator)
 	{
 		return pvAdd<extraCheck>(iter, key,
-			FastMovableFunctor<ValueCreator>(std::forward<ValueCreator>(valueCreator)));
+			FastMovableFunctor(std::forward<ValueCreator>(valueCreator)));
 	}
 
 	template<typename... ValueArgs>

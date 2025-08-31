@@ -1079,7 +1079,7 @@ namespace internal
 		template<conceptMapPairRemover<Key, Value> PairRemover>
 		void Remove(PairRemover pairRemover)
 		{
-			pvRemove(FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
+			pvRemove(FastMovableFunctor(std::forward<PairRemover>(pairRemover)));
 		}
 
 	protected:
@@ -1184,7 +1184,7 @@ namespace internal
 		template<conceptMapPairRemover<Key, Value> PairRemover>
 		void Remove(PairRemover pairRemover)
 		{
-			pvRemove(FastMovableFunctor<PairRemover>(std::forward<PairRemover>(pairRemover)));
+			pvRemove(FastMovableFunctor(std::forward<PairRemover>(pairRemover)));
 		}
 
 	protected:

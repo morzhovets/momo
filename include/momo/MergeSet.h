@@ -658,8 +658,7 @@ public:
 		bool extraCheck = true>
 	InsertResult InsertCrt(const Key& key, ItemCreator itemCreator)
 	{
-		return pvInsert<extraCheck>(key,
-			FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
+		return pvInsert<extraCheck>(key, FastMovableFunctor(std::forward<ItemCreator>(itemCreator)));
 	}
 
 	template<typename... ItemArgs>
@@ -705,8 +704,7 @@ public:
 		bool extraCheck = true>
 	Position AddCrt(ConstPosition pos, ItemCreator itemCreator)
 	{
-		return pvAdd<extraCheck>(pos,
-			FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
+		return pvAdd<extraCheck>(pos, FastMovableFunctor(std::forward<ItemCreator>(itemCreator)));
 	}
 
 	template<typename... ItemArgs>

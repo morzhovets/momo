@@ -406,7 +406,7 @@ public:
 	void AddBackNogrowCrt(ItemCreator itemCreator)
 	{
 		MOMO_CHECK(mCount < mCapacity);
-		pvAddBackNogrow(FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
+		pvAddBackNogrow(FastMovableFunctor(std::forward<ItemCreator>(itemCreator)));
 	}
 
 	//template<typename... ItemArgs>
@@ -418,7 +418,7 @@ public:
 	template<internal::conceptObjectCreator<Item> ItemCreator>
 	void AddBackCrt(ItemCreator itemCreator)
 	{
-		pvAddBack(FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
+		pvAddBack(FastMovableFunctor(std::forward<ItemCreator>(itemCreator)));
 	}
 
 	//template<typename... ItemArgs>

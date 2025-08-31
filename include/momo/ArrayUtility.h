@@ -334,8 +334,7 @@ namespace internal
 			conceptObjectCreator<typename std::decay_t<RArray>::Item> ItemCreator>
 		void InsertCrt(this RArray&& array, size_t index, ItemCreator itemCreator)
 		{
-			pvInsert(array, index,
-				FastMovableFunctor<ItemCreator>(std::forward<ItemCreator>(itemCreator)));
+			pvInsert(array, index, FastMovableFunctor(std::forward<ItemCreator>(itemCreator)));
 		}
 
 		template<conceptMutableThis RArray, typename... ItemArgs>
