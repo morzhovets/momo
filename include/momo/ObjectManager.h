@@ -395,7 +395,8 @@ namespace internal
 		typedef TObjectCreator ObjectCreator;
 
 	public:
-		explicit ObjectCreateExecutor(FastMovableFunctor<ObjectCreator> objectCreator, Object* newObject)
+		explicit ObjectCreateExecutor(FastMovableFunctor<ObjectCreator> objectCreator,
+			Object* newObject) noexcept
 			: mObjectCreator(std::move(objectCreator)),
 			mNewObject(newObject)
 		{
