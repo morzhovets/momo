@@ -37,7 +37,9 @@
 // By default, we can use the move constructor even if it is not marked as `noexcept`.
 // If your program does not use exceptions at all, you can define it as `true`.
 // On the contrary, for strong safety it can be defined as `false`.
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(MOMO_DISABLE_EXCEPTIONS)
+# define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) true
+#elif defined(__GNUC__) || defined(__clang__)
 // `false` if Object has copy constructor and no move constructor, works in GCC and Clang
 # define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) \
 	(!std::is_constructible_v<Object, momo::internal::ConvertibleToReferences<Object>>)
