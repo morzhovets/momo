@@ -51,7 +51,11 @@ struct ObjectCopy
 };
 
 static_assert(!momo::IsTriviallyRelocatable<ObjectCopy>::value);
+#if defined(MOMO_DISABLE_EXCEPTIONS)
+static_assert(momo::ObjectRelocator<ObjectCopy, momo::MemManagerDefault>::isNothrowRelocatable);
+#else
 static_assert(!momo::ObjectRelocator<ObjectCopy, momo::MemManagerDefault>::isNothrowRelocatable);
+#endif
 
 struct ObjectMove
 {
@@ -73,7 +77,7 @@ struct ObjectMoveCopy
 };
 
 static_assert(!momo::IsTriviallyRelocatable<ObjectMoveCopy>::value);
-#if defined(TEST_MSVC)
+#if defined(TEST_MSVC) && !defined(MOMO_DISABLE_EXCEPTIONS)
 static_assert(!momo::ObjectRelocator<ObjectMoveCopy, momo::MemManagerDefault>::isNothrowRelocatable);
 #else
 static_assert(momo::ObjectRelocator<ObjectMoveCopy, momo::MemManagerDefault>::isNothrowRelocatable);
