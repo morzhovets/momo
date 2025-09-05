@@ -341,12 +341,8 @@ private:
 			if (grow || capacity > internalCapacity)
 			{
 				Item* items = pvAllocate(capacity);
-				for (internal::Finalizer fin = [this, items, capacity] () noexcept
-						{ pvDeallocate(items, capacity); };
-					fin; fin.Detach())
-				{
+				for (internal::Finalizer fin(&Data::pvDeallocate, *this, items, capacity); fin; fin.Detach())
 					std::move(itemsCreator)(items);
-				}
 				if (!pvIsInternal() && mCapacity > 0)
 					pvDeallocate(mItems, mCapacity);
 				mItems = items;
@@ -365,12 +361,8 @@ private:
 				MOMO_ASSERT(!pvIsInternal());
 				size_t initCapacity = mCapacity;
 				Item* items = pvActivateInternalItems();
-				for (internal::Finalizer fin = [this, initCapacity] () noexcept
-						{ mCapacity = initCapacity; };
-					fin; fin.Detach())
-				{
+				for (internal::Finalizer fin(&Data::pvSetCapacity, *this, initCapacity); fin; fin.Detach())
 					std::move(itemsCreator)(items);
-				}
 				pvDeallocate(mItems, initCapacity);
 				mItems = items;
 				mCount = count;
@@ -436,6 +428,11 @@ private:
 		Item* pvActivateInternalItems() noexcept
 		{
 			return std::construct_at(&mInternalItems)->GetPtr();
+		}
+
+		void pvSetCapacity(size_t capacity) noexcept
+		{
+			mCapacity = capacity;
 		}
 
 		void pvDestroy() noexcept

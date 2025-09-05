@@ -218,7 +218,7 @@ public:
 	explicit SegmentedArray(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
 		: SegmentedArray(std::move(memManager))
 	{
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&SegmentedArray::pvDestroy, *this); fin; fin.Detach())
 		{
 			typedef typename ItemTraits::template Creator<
 				std::iter_reference_t<ArgIterator>> IterCreator;
@@ -253,7 +253,7 @@ public:
 		: SegmentedArray(MemManager(array.GetMemManager()))
 	{
 		pvIncCapacity(0, shrink ? array.GetCount() : array.GetCapacity());
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&SegmentedArray::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (const Item& item : array)
 				this->AddBackNogrow(item);

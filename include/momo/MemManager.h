@@ -390,12 +390,11 @@ namespace internal
 		template<typename ResObject, typename... ResObjectArgs>
 		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
 		{
-			void* ptr = Allocate(memManager, sizeof(ResObject));
-			Finalizer allocReverterFin = [&memManager, ptr] () noexcept
-				{ memManager.Deallocate(ptr, sizeof(ResObject)); };
-			ResObject* resObjectPtr = ::new(ptr) ResObject(std::forward<ResObjectArgs>(resObjectArgs)...);
-			allocReverterFin.Detach();
-			return resObjectPtr;
+			ResObject* ptr = Allocate<ResObject>(memManager, sizeof(ResObject));
+			Finalizer deallocFin(&Deallocate<ResObject>, memManager, ptr, sizeof(ResObject));
+			ptr = std::construct_at(ptr, std::forward<ResObjectArgs>(resObjectArgs)...);
+			deallocFin.Detach();
+			return ptr;
 		}
 
 		template<typename Object>
