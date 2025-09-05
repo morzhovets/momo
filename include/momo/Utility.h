@@ -363,17 +363,20 @@ namespace internal
 		}
 	};
 
-	template<conceptExecutor TExecutor>
-	requires (std::is_nothrow_move_constructible_v<TExecutor> && !std::is_reference_v<TExecutor>
-		/*&& std::is_nothrow_invocable_v<TExecutor>*/)
-	class Finalizer
+	template<typename TFunctor>
+	class Finalizer;
+
+	template<conceptExecutor TFunctor>
+	requires (std::is_nothrow_move_constructible_v<TFunctor> && !std::is_reference_v<TFunctor>
+		/*&& std::is_nothrow_invocable_v<TFunctor>*/)
+	class Finalizer<TFunctor>
 	{
 	public:
-		typedef TExecutor Executor;
+		typedef TFunctor Functor;
 
 	public:
-		[[nodiscard]] Finalizer(Executor exec) noexcept
-			: mExecutor(std::move(exec)),
+		[[nodiscard]] Finalizer(Functor func) noexcept
+			: mFunctor(std::move(func)),
 			mIsEmpty(false)
 		{
 		}
@@ -383,7 +386,7 @@ namespace internal
 		~Finalizer() noexcept
 		{
 			if (!mIsEmpty)
-				std::move(mExecutor)();
+				std::move(mFunctor)();
 		}
 
 		Finalizer& operator=(const Finalizer&) = delete;
@@ -399,9 +402,97 @@ namespace internal
 		}
 
 	private:
-		Executor mExecutor;
+		Functor mFunctor;
 		bool mIsEmpty;
 	};
+
+	template<conceptExecutor Functor>
+	Finalizer(Functor)
+		-> Finalizer<Functor>;
+
+	template<typename... Args>
+	class Finalizer<void (*)(Args...)>
+	{
+	public:
+		typedef void (*Functor)(Args...);
+
+	public:
+		[[nodiscard]] explicit Finalizer(Functor func, Args... args) noexcept
+			: mFunctor(func),
+			mArgTuple(std::forward<Args>(args)...)
+		{
+		}
+
+		Finalizer(const Finalizer&) = delete;
+
+		~Finalizer() noexcept
+		{
+			if (mFunctor != nullptr)
+				std::apply(mFunctor, mArgTuple);
+		}
+
+		Finalizer& operator=(const Finalizer&) = delete;
+
+		explicit operator bool() const noexcept
+		{
+			return mFunctor != nullptr;
+		}
+
+		void Detach() noexcept
+		{
+			mFunctor = nullptr;
+		}
+
+	private:
+		Functor mFunctor;
+		std::tuple<Args...> mArgTuple;
+	};
+
+	template<typename... Args>
+	Finalizer(void (*)(Args...), std::type_identity_t<Args>...)
+		-> Finalizer<void (*)(Args...)>;
+
+	template<typename Object, typename... Args>
+	class Finalizer<void (Object::*)(Args...)>
+	{
+	public:
+		typedef void (Object::*Functor)(Args...);
+
+	public:
+		[[nodiscard]] explicit Finalizer(Functor func, Object& object, Args... args) noexcept
+			: mFunctor(func),
+			mArgTuple(object, std::forward<Args>(args)...)
+		{
+		}
+
+		Finalizer(const Finalizer&) = delete;
+
+		~Finalizer() noexcept
+		{
+			if (mFunctor != nullptr)
+				std::apply(mFunctor, mArgTuple);
+		}
+
+		Finalizer& operator=(const Finalizer&) = delete;
+
+		explicit operator bool() const noexcept
+		{
+			return mFunctor != nullptr;
+		}
+
+		void Detach() noexcept
+		{
+			mFunctor = nullptr;
+		}
+
+	private:
+		Functor mFunctor;
+		std::tuple<Object&, Args...> mArgTuple;
+	};
+
+	template<typename Object, typename... Args>
+	Finalizer(void (Object::*)(Args...), std::type_identity_t<Object>&, std::type_identity_t<Args>...)
+		-> Finalizer<void (Object::*)(Args...)>;
 
 	class Catcher
 	{
