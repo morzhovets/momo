@@ -542,7 +542,7 @@ public:
 		const MergeTraits& mergeTraits = MergeTraits(), MemManager memManager = MemManager())
 		: MergeSet(mergeTraits, std::move(memManager))
 	{
-		for (internal::Finalizer fin = [this] { pvFilterClear(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeSet::pvFilterClear, *this); fin; fin.Detach())
 			Insert(std::move(begin), std::move(end));
 	}
 

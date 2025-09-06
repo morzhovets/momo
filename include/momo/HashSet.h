@@ -57,8 +57,7 @@ namespace internal
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
 			void* buffer = MemManagerProxy::Allocate(memManager, bufferSize);
 			HashSetBuckets* resBuckets = ::new(buffer) HashSetBuckets(logBucketCount);
-			for (Finalizer fin = [&memManager, buffer, bufferSize] () noexcept
-					{ MemManagerProxy::Deallocate(memManager, buffer, bufferSize); };
+			for (Finalizer fin(&MemManagerProxy::template Deallocate<void>, memManager, buffer, bufferSize);
 				fin; fin.Detach())
 			{
 				std::uninitialized_default_construct_n(
@@ -1193,8 +1192,7 @@ private:
 		if (newBuckets == nullptr)
 			return pvAddNogrow<true>(*mBuckets, hashCode, std::move(itemCreator));
 		Position resPos;
-		for (internal::Finalizer fin = [this, newBuckets] () noexcept
-				{ newBuckets->Destroy(GetMemManager(), mBuckets == nullptr); };
+		for (internal::Finalizer fin(&Buckets::Destroy, *newBuckets, GetMemManager(), mBuckets == nullptr);
 			fin; fin.Detach())
 		{
 			resPos = pvAddNogrow<true>(*newBuckets, hashCode, std::move(itemCreator));

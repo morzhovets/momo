@@ -915,7 +915,7 @@ private:
 		const ColumnList& columnList = GetColumnList();
 		if constexpr (std::is_same_v<RowFilter, EmptyRowFilter>)
 			Reserve(rows.GetCount());
-		for (internal::Finalizer rawsFin = [this] { pvDestroyRaws(); }; rawsFin; rawsFin.Detach())
+		for (internal::Finalizer rawsFin(&DataTable::pvDestroyRaws, *this); rawsFin; rawsFin.Detach())
 		{
 			for (ConstRowReference rowRef : rows)
 			{
@@ -923,7 +923,7 @@ private:
 					continue;
 				mRaws.Reserve(mRaws.GetCount() + 1);
 				Raw* raw = pvImportRaw(columnList, rowRef.GetRaw());
-				for (internal::Finalizer rawFin = [this, raw] { pvDestroyRaw(raw); };
+				for (internal::Finalizer rawFin(&DataTable::pvDestroyRaw, *this, raw);
 					rawFin; rawFin.Detach())
 				{
 					mIndexes.AddRaw(raw);
@@ -955,11 +955,9 @@ private:
 	Raw* pvCreateRaw(FastMovableFunctor<RawCreator> rawCreator)
 	{
 		Raw* raw = mCrew.GetRawMemPool().template Allocate<Raw>();
-		for (internal::Finalizer fin = [this, raw] { mCrew.GetRawMemPool().Deallocate(raw); };
-			fin; fin.Detach())
-		{
-			std::move(rawCreator)(raw);
-		}
+		internal::Finalizer deallocFin(&RawMemPool::template Deallocate<Raw>, mCrew.GetRawMemPool(), raw);
+		std::move(rawCreator)(raw);
+		deallocFin.Detach();
 		return raw;
 	}
 
@@ -997,7 +995,7 @@ private:
 	Row pvNewRow(const Assignment<Items, ItemArgs>&... assigns)
 	{
 		Raw* raw = pvCreateRaw();
-		for (internal::Finalizer fin = [this, raw] { pvDestroyRaw(raw); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&DataTable::pvDestroyRaw, *this, raw); fin; fin.Detach())
 			(pvFillRaw(raw, assigns), ...);
 		return pvMakeRow(raw);
 	}
@@ -1087,7 +1085,7 @@ private:
 		for (Raw* raw : mRaws)
 			columnList.SetNumber(raw, invalidNumber);
 		size_t count = 0;
-		for (internal::Finalizer fin = [this] { pvSetNumbers(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&DataTable::pvSetNumbers, *this, 0); fin; fin.Detach())
 		{
 			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
@@ -1154,7 +1152,7 @@ private:
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
-		for (internal::Finalizer fin = [this] { pvSetNumbers(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&DataTable::pvSetNumbers, *this, 0); fin; fin.Detach())
 		{
 			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
@@ -1191,7 +1189,7 @@ private:
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
-		for (internal::Finalizer fin = [this] { pvSetNumbers(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&DataTable::pvSetNumbers, *this, 0); fin; fin.Detach())
 		{
 			for (Raw* raw : mRaws)
 			{

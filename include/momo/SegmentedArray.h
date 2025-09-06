@@ -597,8 +597,7 @@ private:
 		Settings::GetSegmentItemIndexes(capacity, segIndex, segItemIndex);
 		if (segItemIndex > 0)
 			++segIndex;
-		for (internal::Finalizer fin = [this, initCapacity] { pvDecCapacity(initCapacity); };
-			fin; fin.Detach())
+		for (internal::Finalizer fin(&SegmentedArray::pvDecCapacity, *this, initCapacity); fin; fin.Detach())
 		{
 			for (size_t segCount = mSegments.GetCount(); segCount < segIndex; ++segCount)
 			{

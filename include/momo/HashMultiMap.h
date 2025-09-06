@@ -765,7 +765,7 @@ public:
 		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
 		: HashMultiMap(hashTraits, std::move(memManager))
 	{
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&HashMultiMap::pvDestroy, *this); fin; fin.Detach())
 			Add(std::move(begin), std::move(end));
 	}
 
@@ -799,7 +799,7 @@ public:
 		mValueCount(hashMultiMap.mValueCount),
 		mValueCrew(GetMemManager())
 	{
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&HashMultiMap::pvDestroy, *this); fin; fin.Detach())
 		{
 			ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
 			mHashMap.Reserve(hashMultiMap.mHashMap.GetCount());

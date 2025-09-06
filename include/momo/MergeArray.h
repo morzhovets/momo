@@ -145,7 +145,7 @@ public:
 		: MergeArray(std::move(memManager))
 	{
 		pvInitCapacity(count);
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArray::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (size_t i = 0; i < count; ++i)
 				this->AddBackNogrowVar();
@@ -156,7 +156,7 @@ public:
 		: MergeArray(std::move(memManager))
 	{
 		pvInitCapacity(count);
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArray::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (size_t i = 0; i < count; ++i)
 				this->AddBackNogrow(item);
@@ -171,7 +171,7 @@ public:
 		MemManager& thisMemManager = GetMemManager();
 		if constexpr (std::forward_iterator<ArgIterator>)
 			pvInitCapacity(internal::UIntMath<>::Dist(begin, end));
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArray::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 			{
@@ -209,7 +209,7 @@ public:
 		: MergeArray(MemManager(array.GetMemManager()))
 	{
 		pvInitCapacity(shrink ? array.GetCount() : array.GetCapacity());
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArray::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (const Item& item : array)
 				this->AddBackNogrow(item);
@@ -550,7 +550,7 @@ private:
 		capacity = pvCeilCapacity(capacity);
 		size_t segCount = pvGetSegmentIndex(0, capacity) + 1;
 		mSegments.SetCount(segCount, nullptr);
-		for (internal::Finalizer fin = [this] { pvDeallocateSegments(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArray::pvDeallocateSegments, *this); fin; fin.Detach())
 		{
 			for (size_t i = 0; i < segCount; ++i)
 			{

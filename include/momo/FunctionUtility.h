@@ -119,12 +119,12 @@ namespace internal
 	class FinalizerArgs<Arg>
 	{
 	protected:
-		void ptExecute(void (*func)(Arg)) noexcept
+		void ptExecute(void (*func)(Arg) noexcept) noexcept
 		{
 			func(arg);
 		}
 
-		void ptExecute(void (std::decay_t<Arg>::*func)()) noexcept
+		void ptExecute(void (std::decay_t<Arg>::*func)() noexcept) noexcept
 		{
 			(arg.*func)();
 		}
@@ -137,12 +137,12 @@ namespace internal
 	class FinalizerArgs<Arg0, Arg1>
 	{
 	protected:
-		void ptExecute(void (*func)(Arg0, Arg1)) noexcept
+		void ptExecute(void (*func)(Arg0, Arg1) noexcept) noexcept
 		{
 			func(arg0, arg1);
 		}
 
-		void ptExecute(void (std::decay_t<Arg0>::*func)(Arg1)) noexcept
+		void ptExecute(void (std::decay_t<Arg0>::*func)(Arg1) noexcept) noexcept
 		{
 			(arg0.*func)(arg1);
 		}
@@ -156,12 +156,12 @@ namespace internal
 	class FinalizerArgs<Arg0, Arg1, Arg2>
 	{
 	protected:
-		void ptExecute(void (*func)(Arg0, Arg1, Arg2)) noexcept
+		void ptExecute(void (*func)(Arg0, Arg1, Arg2) noexcept) noexcept
 		{
 			func(arg0, arg1, arg2);
 		}
 
-		void ptExecute(void (std::decay_t<Arg0>::*func)(Arg1, Arg2)) noexcept
+		void ptExecute(void (std::decay_t<Arg0>::*func)(Arg1, Arg2) noexcept) noexcept
 		{
 			(arg0.*func)(arg1, arg2);
 		}
@@ -173,11 +173,11 @@ namespace internal
 	};
 
 	template<typename... Args>
-	class Finalizer<void (*)(Args...)>
+	class Finalizer<void (*)(Args...) noexcept>
 		: private FinalizerArgs<Args...>
 	{
 	public:
-		typedef void (*Functor)(Args...);
+		typedef void (*Functor)(Args...) noexcept;
 
 	private:
 		typedef internal::FinalizerArgs<Args...> FinalizerArgs;
@@ -214,15 +214,15 @@ namespace internal
 	};
 
 	template<typename... Args>
-	Finalizer(void (*)(Args...), std::type_identity_t<Args>...)
-		-> Finalizer<void (*)(Args...)>;
+	Finalizer(void (*)(Args...) noexcept, std::type_identity_t<Args>...)
+		-> Finalizer<void (*)(Args...) noexcept>;
 
 	template<typename Object, typename... Args>
-	class Finalizer<void (Object::*)(Args...)>
+	class Finalizer<void (Object::*)(Args...) noexcept>
 		: private FinalizerArgs<Object&, Args...>
 	{
 	public:
-		typedef void (Object::*Functor)(Args...);
+		typedef void (Object::*Functor)(Args...) noexcept;
 
 	private:
 		typedef internal::FinalizerArgs<Object&, Args...> FinalizerArgs;
@@ -259,8 +259,9 @@ namespace internal
 	};
 
 	template<typename Object, typename... Args>
-	Finalizer(void (Object::*)(Args...), std::type_identity_t<Object>&, std::type_identity_t<Args>...)
-		-> Finalizer<void (Object::*)(Args...)>;
+	Finalizer(void (Object::*)(Args...) noexcept,
+		std::type_identity_t<Object>&, std::type_identity_t<Args>...)
+		-> Finalizer<void (Object::*)(Args...) noexcept>;
 
 	class Catcher
 	{
