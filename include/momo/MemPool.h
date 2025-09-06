@@ -21,6 +21,7 @@
 #pragma once
 
 #include "MemManager.h"
+#include "FunctionUtility.h"
 #include "Array.h"
 
 #include <atomic>

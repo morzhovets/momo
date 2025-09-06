@@ -21,6 +21,7 @@
 #include "TreeTraits.h"
 #include "SetUtility.h"
 #include "IteratorUtility.h"
+#include "Array.h"
 
 namespace momo
 {

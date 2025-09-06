@@ -20,6 +20,7 @@
 #pragma once
 
 #include "MemManager.h"
+#include "FunctionUtility.h"
 
 namespace momo
 {

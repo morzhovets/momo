@@ -47,7 +47,7 @@
 
 #pragma once
 
-#include "Utility.h"
+#include "FunctionUtility.h"
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 # include <Windows.h>
