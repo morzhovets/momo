@@ -648,14 +648,14 @@ namespace internal
 		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessComparer>
 		DataSelection&& Sort(RowLessComparer rowLessComp) &&
 		{
-			pvSort(FastCopyableFunctor<RowLessComparer>(rowLessComp));
+			pvSort(FastCopyableFunctor(rowLessComp));
 			return std::move(*this);
 		}
 
 		template<internal::conceptPredicate<ConstRowReference, ConstRowReference> RowLessComparer>
 		DataSelection& Sort(RowLessComparer rowLessComp) &
 		{
-			pvSort(FastCopyableFunctor<RowLessComparer>(rowLessComp));
+			pvSort(FastCopyableFunctor(rowLessComp));
 			return *this;
 		}
 
@@ -688,8 +688,7 @@ namespace internal
 		template<internal::conceptPredicate<ConstRowReference> RowPredicate>
 		size_t BinarySearch(RowPredicate rowPred) const
 		{
-			FastCopyableFunctor<RowPredicate> fastRowPred(rowPred);
-			auto rawPred = [this, fastRowPred] (Raw*, Raw* raw)
+			auto rawPred = [this, fastRowPred = FastCopyableFunctor(rowPred)] (Raw*, Raw* raw)
 				{ return fastRowPred(pvMakeConstRowReference(raw)); };
 			return UIntMath<>::Dist(mRaws.GetBegin(),
 				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(),

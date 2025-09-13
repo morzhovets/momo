@@ -163,25 +163,25 @@ namespace internal
 		template<typename PtrVisitor>	// ptrVisitor(const auto* item [, const ColumnInfo& columnInfo])
 		void VisitPointers(PtrVisitor ptrVisitor) const
 		{
-			mColumnList->VisitPointers(mRaw, FastCopyableFunctor<PtrVisitor>(ptrVisitor));
+			mColumnList->VisitPointers(mRaw, FastCopyableFunctor(ptrVisitor));
 		}
 
 		template<typename PtrVisitor>	// ptrVisitor(auto* item [, const ColumnInfo& columnInfo])
 		void VisitPointers(PtrVisitor ptrVisitor)
 		{
-			mColumnList->VisitPointers(mRaw, FastCopyableFunctor<PtrVisitor>(ptrVisitor));
+			mColumnList->VisitPointers(mRaw, FastCopyableFunctor(ptrVisitor));
 		}
 
 		template<typename RefVisitor>	// refVisitor(const auto& item [, const ColumnInfo& columnInfo])
 		void VisitReferences(RefVisitor refVisitor) const
 		{
-			VisitPointers(DataPtrVisitor<RefVisitor>(FastCopyableFunctor<RefVisitor>(refVisitor)));
+			VisitPointers(DataPtrVisitor(FastCopyableFunctor(refVisitor)));
 		}
 
 		template<typename RefVisitor>	// refVisitor(auto& item [, const ColumnInfo& columnInfo])
 		void VisitReferences(RefVisitor refVisitor)
 		{
-			VisitPointers(DataPtrVisitor<RefVisitor>(FastCopyableFunctor<RefVisitor>(refVisitor)));
+			VisitPointers(DataPtrVisitor(FastCopyableFunctor(refVisitor)));
 		}
 
 		const Raw* GetRaw() const noexcept
@@ -288,13 +288,13 @@ namespace internal
 		template<typename PtrVisitor>	// ptrVisitor(const auto* item [, const ColumnInfo& columnInfo])
 		void VisitPointers(PtrVisitor ptrVisitor) const
 		{
-			mColumnList->VisitPointers(GetRaw(), FastCopyableFunctor<PtrVisitor>(ptrVisitor));
+			mColumnList->VisitPointers(GetRaw(), FastCopyableFunctor(ptrVisitor));
 		}
 
 		template<typename RefVisitor>	// refVisitor(const auto& item [, const ColumnInfo& columnInfo])
 		void VisitReferences(RefVisitor refVisitor) const
 		{
-			VisitPointers(DataPtrVisitor<RefVisitor>(FastCopyableFunctor<RefVisitor>(refVisitor)));
+			VisitPointers(DataPtrVisitor(FastCopyableFunctor(refVisitor)));
 		}
 
 		const Raw* GetRaw() const

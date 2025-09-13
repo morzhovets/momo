@@ -442,7 +442,7 @@ namespace internal
 		bool Contains(this const Array& array, const ItemArg& itemArg,
 			ItemEqualComparer itemEqualComp = ItemEqualComparer())
 		{
-			FastCopyableFunctor<ItemEqualComparer> fastItemEqualComp(itemEqualComp);
+			FastCopyableFunctor fastItemEqualComp(itemEqualComp);
 			auto itemPred = [&itemArg, fastItemEqualComp] (const typename Array::Item& item)
 				{ return fastItemEqualComp(item, itemArg); };
 			return std::any_of(array.GetBegin(), array.GetEnd(), FastCopyableFunctor(itemPred));
@@ -454,7 +454,7 @@ namespace internal
 			ItemEqualComparer itemEqualComp = ItemEqualComparer())
 		{
 			return std::equal(array1.GetBegin(), array1.GetEnd(), array2.GetBegin(), array2.GetEnd(),
-				FastCopyableFunctor<ItemEqualComparer>(itemEqualComp));
+				FastCopyableFunctor(itemEqualComp));
 		}
 
 		template<typename Array,
@@ -464,7 +464,7 @@ namespace internal
 		{
 			return std::lexicographical_compare_three_way(
 				array1.GetBegin(), array1.GetEnd(), array2.GetBegin(), array2.GetEnd(),
-				FastCopyableFunctor<ItemThreeComparer>(itemThreeComp));
+				FastCopyableFunctor(itemThreeComp));
 		}
 
 	protected:

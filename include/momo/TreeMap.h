@@ -733,8 +733,7 @@ public:
 	template<internal::conceptMapPairPredicate<Key, Value> PairFilter>
 	size_t Remove(PairFilter pairFilter)
 	{
-		FastCopyableFunctor<PairFilter> fastPairFilter(pairFilter);
-		auto itemFilter = [fastPairFilter] (const KeyValuePair& item)
+		auto itemFilter = [fastPairFilter = FastCopyableFunctor(pairFilter)] (const KeyValuePair& item)
 			{ return fastPairFilter(item.GetKey(), std::as_const(item.GetValue())); };
 		return mTreeSet.Remove(itemFilter);
 	}

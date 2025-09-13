@@ -625,7 +625,7 @@ public:
 		if (pvUseCache())
 			pvFlushDeallocate();
 		if (mData.allocCount > 0)
-			pvDeallocateIf(FastCopyableFunctor<BlockFilter>(blockFilter));
+			pvDeallocateIf(FastCopyableFunctor(blockFilter));
 	}
 
 	void MergeFrom(MemPool& memPool)

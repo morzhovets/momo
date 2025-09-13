@@ -435,7 +435,7 @@ public:
 	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
 	friend size_type erase_if(vector_adaptor& cont, ValueFilter valueFilter)
 	{
-		return cont.mArray.Remove(momo::FastCopyableFunctor<ValueFilter>(valueFilter));
+		return cont.mArray.Remove(momo::FastCopyableFunctor(valueFilter));
 	}
 
 	void assign(size_type count, const value_type& value)

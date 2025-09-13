@@ -520,7 +520,7 @@ public:
 	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
 	friend size_type erase_if(set_adaptor& cont, ValueFilter valueFilter)
 	{
-		return cont.mTreeSet.Remove(momo::FastCopyableFunctor<ValueFilter>(valueFilter));
+		return cont.mTreeSet.Remove(momo::FastCopyableFunctor(valueFilter));
 	}
 
 	node_type extract(const_iterator where)

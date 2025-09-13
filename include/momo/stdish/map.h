@@ -660,7 +660,7 @@ namespace internal
 		template<momo::internal::conceptPredicate<const_reference> ValueFilter>
 		friend size_type erase_if(map_adaptor_base& cont, ValueFilter valueFilter)
 		{
-			momo::FastCopyableFunctor<ValueFilter> fastValueFilter(valueFilter);
+			momo::FastCopyableFunctor fastValueFilter(valueFilter);
 			auto pairFilter = [fastValueFilter] (const key_type& key, const mapped_type& mapped)
 				{ return fastValueFilter(const_reference(key, mapped)); };
 			return cont.mTreeMap.Remove(pairFilter);

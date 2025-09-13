@@ -122,10 +122,9 @@ public:
 	static void Sort(Iterator begin, size_t count, Hasher hasher = Hasher(),
 		EqualComparer equalComp = EqualComparer(), IterSwapper iterSwapper = IterSwapper())
 	{
-		IterHasher<Iterator, Hasher> iterHasher((FastCopyableFunctor<Hasher>(hasher)));
+		IterHasher<Iterator, Hasher> iterHasher((FastCopyableFunctor(hasher)));
 		pvSort(begin, count, FastCopyableFunctor(iterHasher),
-			FastCopyableFunctor<EqualComparer>(equalComp),
-			FastCopyableFunctor<IterSwapper>(iterSwapper));
+			FastCopyableFunctor(equalComp), FastCopyableFunctor(iterSwapper));
 	}
 
 	template<internal::conceptRandomIterator17 Iterator,
@@ -144,7 +143,7 @@ public:
 		};
 		pvSort(begin, count,
 			FastCopyableFunctor(IterPrehasher<Iterator, HashIterator>(begin, hashBegin)),
-			FastCopyableFunctor<EqualComparer>(equalComp), FastCopyableFunctor(iterHashSwapper));
+			FastCopyableFunctor(equalComp), FastCopyableFunctor(iterHashSwapper));
 	}
 
 	template<internal::conceptRandomIterator17 Iterator,
@@ -154,9 +153,9 @@ public:
 	static bool IsSorted(Iterator begin, size_t count, Hasher hasher = Hasher(),
 		EqualComparer equalComp = EqualComparer())
 	{
-		IterHasher<Iterator, Hasher> iterHasher((FastCopyableFunctor<Hasher>(hasher)));
+		IterHasher<Iterator, Hasher> iterHasher((FastCopyableFunctor(hasher)));
 		return pvIsSorted(begin, count, FastCopyableFunctor(iterHasher),
-			FastCopyableFunctor<EqualComparer>(equalComp));
+			FastCopyableFunctor(equalComp));
 	}
 
 	template<internal::conceptRandomIterator17 Iterator,
@@ -169,7 +168,7 @@ public:
 	{
 		return pvIsSorted(begin, count,
 			FastCopyableFunctor(IterPrehasher<Iterator, HashIterator>(begin, hashBegin)),
-			FastCopyableFunctor<EqualComparer>(equalComp));
+			FastCopyableFunctor(equalComp));
 	}
 
 	template<internal::conceptRandomIterator17 Iterator, typename ItemArg,
@@ -180,9 +179,9 @@ public:
 		const ItemArg& itemArg, HashCode argHashCode,
 		Hasher hasher = Hasher(), EqualComparer equalComp = EqualComparer())
 	{
-		IterHasher<Iterator, Hasher> iterHasher((FastCopyableFunctor<Hasher>(hasher)));
+		IterHasher<Iterator, Hasher> iterHasher((FastCopyableFunctor(hasher)));
 		return pvFind(begin, count, itemArg, argHashCode, FastCopyableFunctor(iterHasher),
-			FastCopyableFunctor<EqualComparer>(equalComp));
+			FastCopyableFunctor(equalComp));
 	}
 
 	template<internal::conceptRandomIterator17 Iterator, typename ItemArg,
@@ -195,7 +194,7 @@ public:
 	{
 		return pvFind(begin, count, itemArg, argHashCode,
 			FastCopyableFunctor(IterPrehasher<Iterator, HashIterator>(begin, hashBegin)),
-			FastCopyableFunctor<EqualComparer>(equalComp));
+			FastCopyableFunctor(equalComp));
 	}
 
 	template<internal::conceptRandomIterator17 Iterator, typename ItemArg,
@@ -206,9 +205,9 @@ public:
 		const ItemArg& itemArg, HashCode argHashCode,
 		Hasher hasher = Hasher(), EqualComparer equalComp = EqualComparer())
 	{
-		IterHasher<Iterator, Hasher> iterHasher((FastCopyableFunctor<Hasher>(hasher)));
+		IterHasher<Iterator, Hasher> iterHasher((FastCopyableFunctor(hasher)));
 		return pvGetBounds(begin, count, itemArg, argHashCode,
-			FastCopyableFunctor(iterHasher), FastCopyableFunctor<EqualComparer>(equalComp));
+			FastCopyableFunctor(iterHasher), FastCopyableFunctor(equalComp));
 	}
 
 	template<internal::conceptRandomIterator17 Iterator, typename ItemArg,
@@ -221,7 +220,7 @@ public:
 	{
 		return pvGetBounds(begin, count, itemArg, argHashCode,
 			FastCopyableFunctor(IterPrehasher<Iterator, HashIterator>(begin, hashBegin)),
-			FastCopyableFunctor<EqualComparer>(equalComp));
+			FastCopyableFunctor(equalComp));
 	}
 
 private:

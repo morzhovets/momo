@@ -277,7 +277,7 @@ public:
 		MemManager memManager = MemManager())
 	{
 		SegmentedArray array = CreateCap(count, std::move(memManager));
-		array.pvIncCount(count, FastCopyableFunctor<ItemMultiCreator>(itemMultiCreator));
+		array.pvIncCount(count, FastCopyableFunctor(itemMultiCreator));
 		return array;
 	}
 
@@ -340,7 +340,7 @@ public:
 	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>
 	void SetCountCrt(size_t count, ItemMultiCreator itemMultiCreator)
 	{
-		pvSetCount(count, FastCopyableFunctor<ItemMultiCreator>(itemMultiCreator));
+		pvSetCount(count, FastCopyableFunctor(itemMultiCreator));
 	}
 
 	//void SetCount(size_t count)

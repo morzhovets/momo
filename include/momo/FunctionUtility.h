@@ -393,11 +393,9 @@ private:
 };
 
 template<typename TBaseFunctor>
-class FastCopyableFunctor<FastCopyableFunctor<TBaseFunctor>>	//?
-	: public FastCopyableFunctor<TBaseFunctor>
+class FastCopyableFunctor<FastCopyableFunctor<TBaseFunctor>>
 {
-public:
-	typedef FastCopyableFunctor<TBaseFunctor> BaseFunctor;
+	static_assert(false);	//?
 };
 
 template<typename TBaseFunctor>

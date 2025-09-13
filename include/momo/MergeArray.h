@@ -232,10 +232,9 @@ public:
 	static MergeArray CreateCrt(size_t count, ItemMultiCreator itemMultiCreator,
 		MemManager memManager = MemManager())
 	{
-		FastCopyableFunctor<ItemMultiCreator> fastItemMultiCreator(itemMultiCreator);
 		MergeArray array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
-			array.pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(fastItemMultiCreator)));
+			array.pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(itemMultiCreator)));
 		return array;
 	}
 
@@ -299,7 +298,7 @@ public:
 	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>
 	void SetCountCrt(size_t count, ItemMultiCreator itemMultiCreator)
 	{
-		pvSetCount(count, FastCopyableFunctor<ItemMultiCreator>(itemMultiCreator));
+		pvSetCount(count, FastCopyableFunctor(itemMultiCreator));
 	}
 
 	//void SetCount(size_t count)

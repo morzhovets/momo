@@ -378,7 +378,7 @@ public:
 	{
 		if (copyIndexes)
 			mIndexes.Assign(table.mIndexes);
-		pvFill(table, FastCopyableFunctor<RowFilter>(rowFilter));
+		pvFill(table, FastCopyableFunctor(rowFilter));
 	}
 
 	explicit DataTable(const ConstSelection& selection)
@@ -679,7 +679,7 @@ public:
 	size_t Remove(RowFilter rowFilter)
 	{
 		size_t initCount = GetCount();
-		pvRemove(FastCopyableFunctor<RowFilter>(rowFilter));
+		pvRemove(FastCopyableFunctor(rowFilter));
 		return initCount - GetCount();
 	}
 
@@ -762,42 +762,42 @@ public:
 		typename... Items>
 	ConstSelection Select(RowFilter rowFilter = RowFilter(), Equality<Items>... equals) const
 	{
-		return pvSelect<Selection>(FastCopyableFunctor<RowFilter>(rowFilter), equals...);
+		return pvSelect<Selection>(FastCopyableFunctor(rowFilter), equals...);
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
 		typename... Items>
 	ConstSelection Select(Equalities<Items...> equals, RowFilter rowFilter = RowFilter()) const
 	{
-		return pvSelect<Selection>(equals, FastCopyableFunctor<RowFilter>(rowFilter));
+		return pvSelect<Selection>(equals, FastCopyableFunctor(rowFilter));
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
 		typename... Items>
 	Selection Select(RowFilter rowFilter = RowFilter(), Equality<Items>... equals)
 	{
-		return pvSelect<Selection>(FastCopyableFunctor<RowFilter>(rowFilter), equals...);
+		return pvSelect<Selection>(FastCopyableFunctor(rowFilter), equals...);
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
 		typename... Items>
 	Selection Select(Equalities<Items...> equals, RowFilter rowFilter = RowFilter())
 	{
-		return pvSelect<Selection>(equals, FastCopyableFunctor<RowFilter>(rowFilter));
+		return pvSelect<Selection>(equals, FastCopyableFunctor(rowFilter));
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
 		typename... Items>
 	size_t SelectCount(RowFilter rowFilter = RowFilter(), Equality<Items>... equals) const
 	{
-		return pvSelect<size_t>(FastCopyableFunctor<RowFilter>(rowFilter), equals...);
+		return pvSelect<size_t>(FastCopyableFunctor(rowFilter), equals...);
 	}
 
 	template<internal::conceptPredicate<ConstRowReference> RowFilter = EmptyRowFilter,
 		typename... Items>
 	size_t SelectCount(Equalities<Items...> equals, RowFilter rowFilter = RowFilter()) const
 	{
-		return pvSelect<size_t>(equals, FastCopyableFunctor<RowFilter>(rowFilter));
+		return pvSelect<size_t>(equals, FastCopyableFunctor(rowFilter));
 	}
 
 	ConstRowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, const Row& row) const
@@ -880,7 +880,7 @@ public:
 		const Column<Item>& column, const Column<Items>&... columns) const
 	{
 		return pvProject<false>(std::move(resColumnList),
-			FastCopyableFunctor<RowFilter>(rowFilter), column, columns...);
+			FastCopyableFunctor(rowFilter), column, columns...);
 	}
 
 	template<typename Item, typename... Items>
@@ -897,7 +897,7 @@ public:
 		const Column<Item>& column, const Column<Items>&... columns) const
 	{
 		return pvProject<true>(std::move(resColumnList),
-			FastCopyableFunctor<RowFilter>(rowFilter), column, columns...);
+			FastCopyableFunctor(rowFilter), column, columns...);
 	}
 
 	RowReference MakeMutableReference(ConstRowReference rowRef)
