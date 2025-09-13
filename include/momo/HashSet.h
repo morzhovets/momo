@@ -578,7 +578,7 @@ public:
 		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
 		: HashSet(hashTraits, std::move(memManager))
 	{
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&HashSet::pvDestroy, *this); fin; fin.Detach())
 			Insert(std::move(begin), std::move(end));
 	}
 
@@ -622,7 +622,7 @@ public:
 			++logBucketCount;
 		}
 		mBuckets = Buckets::Create(GetMemManager(), logBucketCount, nullptr);
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&HashSet::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (const Item& item : hashSet)
 			{

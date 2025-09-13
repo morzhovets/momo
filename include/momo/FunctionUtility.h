@@ -124,7 +124,9 @@ namespace internal
 			func(arg);
 		}
 
-		void ptExecute(void (std::decay_t<Arg>::*func)() noexcept) noexcept
+		template<typename Object = std::decay_t<Arg>>
+		requires std::is_class_v<Object>
+		void ptExecute(void (Object::*func)() noexcept) noexcept
 		{
 			(arg.*func)();
 		}
@@ -142,7 +144,9 @@ namespace internal
 			func(arg0, arg1);
 		}
 
-		void ptExecute(void (std::decay_t<Arg0>::*func)(Arg1) noexcept) noexcept
+		template<typename Object = std::decay_t<Arg0>>
+		requires std::is_class_v<Object>
+		void ptExecute(void (Object::*func)(Arg1) noexcept) noexcept
 		{
 			(arg0.*func)(arg1);
 		}
@@ -161,7 +165,9 @@ namespace internal
 			func(arg0, arg1, arg2);
 		}
 
-		void ptExecute(void (std::decay_t<Arg0>::*func)(Arg1, Arg2) noexcept) noexcept
+		template<typename Object = std::decay_t<Arg0>>
+		requires std::is_class_v<Object>
+		void ptExecute(void (Object::*func)(Arg1, Arg2) noexcept) noexcept
 		{
 			(arg0.*func)(arg1, arg2);
 		}
@@ -262,6 +268,10 @@ namespace internal
 	Finalizer(void (Object::*)(Args...) noexcept,
 		std::type_identity_t<Object>&, std::type_identity_t<Args>...)
 		-> Finalizer<void (Object::*)(Args...) noexcept>;
+
+	template<typename Object>
+	Finalizer(std::type_identity_t<void (Object::*)() noexcept>, Object&)
+		-> Finalizer<void (Object::*)() noexcept>;
 
 	class Catcher
 	{

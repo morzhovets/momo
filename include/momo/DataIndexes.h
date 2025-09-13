@@ -973,19 +973,12 @@ namespace internal
 
 		Result AddRaw(Raw* raw)
 		{
-			auto addRejector = [this] () noexcept
-			{
-				for (UniqueHash& uniqueHash : mUniqueHashes)
-					uniqueHash.RejectAdd();
-				for (MultiHash& multiHash : mMultiHashes)
-					multiHash.RejectAdd();
-			};
-			for (Finalizer fin = addRejector; fin; fin.Detach())
+			for (Finalizer fin(&DataIndexes::pvReject, *this, true, false, nullptr); fin; fin.Detach())
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
 					Raw* resRaw = uniqueHash.Add(raw);
-					if (resRaw != raw)	// addRejector();
+					if (resRaw != raw)	// pvReject();
 						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 				}
 				for (MultiHash& multiHash : mMultiHashes)
@@ -1000,14 +993,7 @@ namespace internal
 
 		void RemoveRaw(Raw* raw)
 		{
-			auto removeRejector = [this] () noexcept
-			{
-				for (UniqueHash& uniqueHash : mUniqueHashes)
-					uniqueHash.RejectRemove();
-				for (MultiHash& multiHash : mMultiHashes)
-					multiHash.RejectRemove();
-			};
-			for (Finalizer fin = removeRejector; fin; fin.Detach())
+			for (Finalizer fin(&DataIndexes::pvReject, *this, false, true, nullptr); fin; fin.Detach())
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 					uniqueHash.PrepareRemove(raw);
@@ -1022,25 +1008,12 @@ namespace internal
 
 		Result UpdateRaw(Raw* oldRaw, Raw* newRaw)
 		{
-			auto updateRejector = [this, newRaw] () noexcept
-			{
-				for (UniqueHash& uniqueHash : mUniqueHashes)
-				{
-					uniqueHash.RejectAdd(newRaw);
-					uniqueHash.RejectRemove();
-				}
-				for (MultiHash& multiHash : mMultiHashes)
-				{
-					multiHash.RejectAdd();
-					multiHash.RejectRemove();
-				}
-			};
-			for (Finalizer fin = updateRejector; fin; fin.Detach())
+			for (Finalizer fin(&DataIndexes::pvReject, *this, true, true, newRaw); fin; fin.Detach())
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
 					Raw* resRaw = uniqueHash.Add(newRaw, oldRaw);
-					if (resRaw != newRaw && resRaw != oldRaw)	// updateRejector();
+					if (resRaw != newRaw && resRaw != oldRaw)	// pvReject();
 						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 					if (resRaw == newRaw)
 						uniqueHash.PrepareRemove(oldRaw);
@@ -1074,27 +1047,14 @@ namespace internal
 				return { nullptr, UniqueHashIndex::empty };
 			}
 			MixedRaw<Item> mixedRaw{ raw, offset, std::addressof(item) };
-			auto updateRejector = [this] () noexcept
-			{
-				for (UniqueHash& uniqueHash : mUniqueHashes)
-				{
-					uniqueHash.RejectAdd();
-					uniqueHash.RejectRemove();
-				}
-				for (MultiHash& multiHash : mMultiHashes)
-				{
-					multiHash.RejectAdd();
-					multiHash.RejectRemove();
-				}
-			};
-			for (Finalizer fin = updateRejector; fin; fin.Detach())
+			for (Finalizer fin(&DataIndexes::pvReject, *this, true, true, nullptr); fin; fin.Detach())
 			{
 				for (UniqueHash& uniqueHash : mUniqueHashes)
 				{
 					if (!pvContainsOffset(uniqueHash, offset))
 						continue;
 					Raw* resRaw = uniqueHash.Add(mixedRaw);
-					if (resRaw != raw)	// updateRejector();
+					if (resRaw != raw)	// pvReject();
 						return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 					uniqueHash.PrepareRemove(raw);
 				}
@@ -1339,6 +1299,26 @@ namespace internal
 				: *static_cast<const Item*>(key1.item);
 			const Item& item2 = ColumnList::template GetByOffset<const Item>(key2, offset);
 			return DataTraits::IsEqual(item1, item2);
+		}
+
+		void pvReject(bool add, bool remove, Raw* newRaw) noexcept
+		{
+			for (UniqueHash& uniqueHash : mUniqueHashes)
+			{
+				if (add && newRaw == nullptr)
+					uniqueHash.RejectAdd();
+				if (add && newRaw != nullptr)
+					uniqueHash.RejectAdd(newRaw);
+				if (remove)
+					uniqueHash.RejectRemove();
+			}
+			for (MultiHash& multiHash : mMultiHashes)
+			{
+				if (add)
+					multiHash.RejectAdd();
+				if (remove)
+					multiHash.RejectRemove();
+			}
 		}
 
 	private:

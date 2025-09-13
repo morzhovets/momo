@@ -551,7 +551,7 @@ public:
 		const TreeTraits& treeTraits = TreeTraits(), MemManager memManager = MemManager())
 		: TreeSet(treeTraits, std::move(memManager))
 	{
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&TreeSet::pvDestroy, *this); fin; fin.Detach())
 			Insert(std::move(begin), std::move(end));
 	}
 
@@ -588,7 +588,7 @@ public:
 		MemManager& thisMemManager = GetMemManager();
 		mNodeParams = MemManagerProxy::template AllocateCreate<NodeParams>(
 			thisMemManager, thisMemManager);
-		for (internal::Finalizer fin = [this] { pvDestroy(); }; fin; fin.Detach())
+		for (internal::Finalizer fin(&TreeSet::pvDestroy, *this); fin; fin.Detach())
 			mRootNode = pvCopy(treeSet.mRootNode);
 		if (!mRootNode->IsLeaf())
 			pvUpdateParents(mRootNode);

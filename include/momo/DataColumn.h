@@ -1240,10 +1240,10 @@ private:
 			ItemTraits::Copy(memManager, *srcItem, item);
 		if constexpr (sizeof...(Items) > 0)
 		{
-			auto itemDestroyer = [&memManager, raw, offset] () noexcept
-				{ ItemTraits::Destroy(&memManager, *pvGetItemPtr<Item, true>(raw, offset)); };	//?
-			for (internal::Finalizer fin = itemDestroyer; fin; fin.Detach())
-				pvCreate<Items...>(memManager, columnRecordPtr + 1, srcColumnList, srcRaw, raw);
+			//item = pvGetItemPtr<Item, true>(raw, offset);
+			internal::Finalizer fin(&ItemTraits::template Destroy<MemManager*, Item>, &memManager, *item);
+			pvCreate<Items...>(memManager, columnRecordPtr + 1, srcColumnList, srcRaw, raw);
+			fin.Detach();
 		}
 	}
 
