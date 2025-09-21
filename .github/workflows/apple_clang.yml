@@ -45,6 +45,43 @@ jobs:
           test_extra: 'On'
           flags: '-std=c++26 -Werror'
 
+        # AppleClang 17.0.0 x64
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++23 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_extra: 'On'
+          flags: '-std=c++23 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_extra: 'On'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Debug'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Debug'
+          test_extra: 'On'
+          flags: '-std=c++26 -Werror'
+
     runs-on: macos-${{ matrix.macos_ver }}
 
     steps:
