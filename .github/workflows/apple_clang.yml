@@ -8,36 +8,6 @@ jobs:
       matrix:
         include:
 
-        # AppleClang 14.0.3 x64
-        - xcode_ver: '14.3.1'
-          macos_ver: '13'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '-std=c++11 -Werror'
-
-        - xcode_ver: '14.3.1'
-          macos_ver: '13'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'On'
-          flags: '-std=c++11 -Werror'
-
-        - xcode_ver: '14.3.1'
-          macos_ver: '13'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '-std=c++20 -Werror'
-
-        # AppleClang 15.0.0 x64
-        - xcode_ver: '15.2'
-          macos_ver: '13'
-          build_type: 'Release'
-          test_libcxx_new: 'Off'
-          test_extra: 'Off'
-          flags: '-std=c++20 -Werror'
-
         # AppleClang 15.0.0 ARM64
         - xcode_ver: '15.4'
           macos_ver: '14'
@@ -113,6 +83,70 @@ jobs:
 
         - xcode_ver: '16.4'
           macos_ver: '15'
+          build_type: 'Debug'
+          test_libcxx_new: 'On'
+          test_extra: 'On'
+          flags: '-std=c++26 -Werror'
+
+        # AppleClang 17.0.0 x64
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_libcxx_new: 'Off'
+          test_extra: 'Off'
+          flags: '-std=c++11 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_libcxx_new: 'Off'
+          test_extra: 'Off'
+          flags: '-std=c++14 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_libcxx_new: 'Off'
+          test_extra: 'Off'
+          flags: '-std=c++17 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_libcxx_new: 'On'
+          test_extra: 'Off'
+          flags: '-std=c++20 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_libcxx_new: 'On'
+          test_extra: 'Off'
+          flags: '-std=c++23 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_libcxx_new: 'On'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_libcxx_new: 'On'
+          test_extra: 'On'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
+          build_type: 'Debug'
+          test_libcxx_new: 'On'
+          test_extra: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '16.4'
+          macos_ver: '15-intel'
           build_type: 'Debug'
           test_libcxx_new: 'On'
           test_extra: 'On'
