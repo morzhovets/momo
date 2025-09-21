@@ -1008,7 +1008,12 @@ private:
 		columnList.template Assign<Item>(raw, offset, std::forward<ItemArg>(assign.GetItemArg()));
 	}
 
-	void pvSetNumbers(size_t beginNumber = 0) noexcept
+	void pvSetNumbers() noexcept
+	{
+		pvSetNumbers(0);
+	}
+
+	void pvSetNumbers(size_t beginNumber) noexcept
 	{
 		for (size_t i = beginNumber, count = mRaws.GetCount(); i < count; ++i)
 			pvSetNumber(mRaws[i], i);
@@ -1085,7 +1090,7 @@ private:
 		for (Raw* raw : mRaws)
 			columnList.SetNumber(raw, invalidNumber);
 		size_t count = 0;
-		for (internal::Finalizer fin(&DataTable::pvSetNumbers, *this, 0); fin; fin.Detach())
+		for (internal::Finalizer fin(&DataTable::pvSetNumbers, *this); fin; fin.Detach())
 		{
 			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
@@ -1152,7 +1157,7 @@ private:
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
-		for (internal::Finalizer fin(&DataTable::pvSetNumbers, *this, 0); fin; fin.Detach())
+		for (internal::Finalizer fin(&DataTable::pvSetNumbers, *this); fin; fin.Detach())
 		{
 			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
@@ -1189,7 +1194,7 @@ private:
 		requires (Settings::keepRowNumber)
 	{
 		const ColumnList& columnList = GetColumnList();
-		for (internal::Finalizer fin(&DataTable::pvSetNumbers, *this, 0); fin; fin.Detach())
+		for (internal::Finalizer fin(&DataTable::pvSetNumbers, *this); fin; fin.Detach())
 		{
 			for (Raw* raw : mRaws)
 			{

@@ -908,8 +908,7 @@ private:
 		{
 			Item* items = GetItems();
 			size_t index = initCount;
-			for (internal::Finalizer fin = [this, items, initCount, &index] () noexcept
-					{ ItemTraits::Destroy(GetMemManager(), items + initCount, index - initCount); };
+			for (internal::Finalizer fin(&Array::pvDestroyExtraItems, *this, items, initCount, index);
 				fin; fin.Detach())
 			{
 				for (; index < newCount; ++index)
@@ -923,8 +922,7 @@ private:
 			auto itemsCreator = [this, initCount, newCount, itemMultiCreator] (Item* newItems)
 			{
 				size_t index = initCount;
-				for (internal::Finalizer fin = [this, newItems, initCount, &index] () noexcept
-						{ ItemTraits::Destroy(GetMemManager(), newItems + initCount, index - initCount); };
+				for (internal::Finalizer fin(&Array::pvDestroyExtraItems, *this, newItems, initCount, index);
 					fin; fin.Detach())
 				{
 					for (; index < newCount; ++index)
@@ -935,6 +933,11 @@ private:
 			mData.template Reset<true>(newCapacity, newCount,
 				FastMovableFunctor(std::move(itemsCreator)));
 		}
+	}
+
+	void pvDestroyExtraItems(Item* items, size_t initCount, size_t& count) noexcept
+	{
+		ItemTraits::Destroy(GetMemManager(), items + initCount, count - initCount);
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>

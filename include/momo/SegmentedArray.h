@@ -528,8 +528,8 @@ private:
 			MOMO_ASSERT(segItemIndex == 0);
 			mSegments.Reserve(segCount + 1);
 			Item* segment = pvAllocateSegment(segCount);
-			for (internal::Finalizer fin =
-				[this, segCount, segment] { pvDeallocateSegment(segCount, segment); }; fin; fin.Detach())
+			for (internal::Finalizer fin(&SegmentedArray::pvDeallocateSegment, *this, segCount, segment);
+				fin; fin.Detach())
 			{
 				std::move(itemCreator)(segment);
 			}
