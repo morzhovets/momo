@@ -51,8 +51,9 @@ namespace internal
 	class Finalizer;
 
 	template<conceptExecutor TFunctor>
-	requires (std::is_nothrow_move_constructible_v<TFunctor> && !std::is_reference_v<TFunctor>
-		/*&& std::is_nothrow_invocable_v<TFunctor>*/)
+	requires (std::is_nothrow_destructible_v<TFunctor> &&
+		std::is_nothrow_move_constructible_v<TFunctor> &&
+		!std::is_reference_v<TFunctor> /*&& std::is_nothrow_invocable_v<TFunctor>*/)
 	class Finalizer<TFunctor>
 	{
 	public:
@@ -95,7 +96,7 @@ namespace internal
 		-> Finalizer<Functor>;
 
 	template<typename... Args>
-	requires ((std::is_reference_v<Args> || std::is_trivially_copyable_v<Args>) && ...)
+	requires ((std::is_nothrow_destructible_v<Args> && std::is_nothrow_copy_constructible_v<Args>) && ...)
 	class FinalizerArgs
 	{
 	public:
