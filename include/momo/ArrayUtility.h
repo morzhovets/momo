@@ -21,36 +21,38 @@ namespace momo
 
 namespace internal
 {
-	template<typename TQArray, typename TItem>
+	template<typename TQArray, typename TItem, typename TSettings>
 	class ArrayIndexIterator;
 
-	template<typename QArray, typename QItem,
+	template<typename QArray, typename QItem, typename Settings,
 		typename = QItem*>
 	struct ArrayIndexIteratorTraitsStd
-		: public IteratorTraitsStd<ArrayIndexIterator<QArray, QItem>, std::random_access_iterator_tag>
+		: public IteratorTraitsStd<ArrayIndexIterator<QArray, QItem, Settings>,
+			std::random_access_iterator_tag>
 	{
 	};
 
-	template<typename QArray, typename QItem>
-	struct ArrayIndexIteratorTraitsStd<QArray, QItem, decltype(std::declval<QArray&>().GetItems())>
+	template<typename QArray, typename QItem, typename Settings>
+	struct ArrayIndexIteratorTraitsStd<QArray, QItem, Settings,
+		decltype(std::declval<QArray&>().GetItems())>
 		: public std::iterator_traits<QItem*>
 	{
 	};
 
-	template<typename TQArray, typename TQItem>
+	template<typename TQArray, typename TQItem,
+		typename TSettings = typename TQArray::Settings>
 	class ArrayIndexIterator
 	{
 	protected:
 		typedef TQItem QItem;
 		typedef TQArray QArray;
-
-		typedef typename QArray::Settings Settings;
+		typedef TSettings Settings;
 
 	public:
 		typedef QItem& Reference;
 		typedef QItem* Pointer;
 
-		typedef ArrayIndexIterator<const QArray, const QItem> ConstIterator;
+		typedef ArrayIndexIterator<const QArray, const QItem, Settings> ConstIterator;
 
 	private:
 		struct ConstIteratorProxy : public ConstIterator
@@ -88,7 +90,7 @@ namespace internal
 		{
 			MOMO_CHECK(mArray != nullptr);
 			return pvGetPointer(std::is_base_of<std::iterator_traits<QItem*>,
-				ArrayIndexIteratorTraitsStd<QArray, QItem>>());
+				ArrayIndexIteratorTraitsStd<QArray, QItem, Settings>>());
 		}
 
 		friend bool operator==(ArrayIndexIterator iter1, ArrayIndexIterator iter2) noexcept
@@ -368,9 +370,9 @@ namespace internal
 
 namespace std
 {
-	template<typename A, typename I>
-	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I>>
-		: public momo::internal::ArrayIndexIteratorTraitsStd<A, I>
+	template<typename A, typename I, typename S>
+	struct iterator_traits<momo::internal::ArrayIndexIterator<A, I, S>>
+		: public momo::internal::ArrayIndexIteratorTraitsStd<A, I, S>
 	{
 	};
 } // namespace std

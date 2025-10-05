@@ -23,7 +23,7 @@ namespace momo
 namespace internal
 {
 	template<typename TRaws, typename TSettings>
-	class DataRawIterator : private ArrayIndexIterator<const TRaws, const typename TRaws::Item>
+	class DataRawIterator
 	{
 	protected:
 		typedef TRaws Raws;
@@ -31,12 +31,16 @@ namespace internal
 
 	private:
 		typedef typename Raws::Item RawPtr;
+		typedef ArrayIndexIterator<const Raws, const RawPtr, Settings> IndexIterator;
 
-		typedef internal::ArrayIndexIterator<const Raws, const RawPtr> ArrayIndexIterator;
+		struct IndexIteratorProxy : public IndexIterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(IndexIterator)
+		};
 
 	public:
-		typedef const RawPtr& Reference;
-		typedef const RawPtr* Pointer;
+		typedef typename IndexIterator::Reference Reference;
+		typedef typename IndexIterator::Pointer Pointer;
 
 		typedef DataRawIterator ConstIterator;
 
@@ -46,7 +50,7 @@ namespace internal
 		}
 
 		explicit DataRawIterator(const Raws& raws, size_t index) noexcept
-			: ArrayIndexIterator(&raws, index)
+			: mIndexIterator(IndexIteratorProxy(&raws, index))
 		{
 		}
 
@@ -54,60 +58,41 @@ namespace internal
 
 		DataRawIterator& operator+=(ptrdiff_t diff)
 		{
-			const Raws* raws = pvGetRaws();
-			size_t newIndex = static_cast<size_t>(static_cast<ptrdiff_t>(pvGetIndex()) + diff);
-			(void)raws; (void)newIndex;
-			MOMO_CHECK((raws != nullptr) ? newIndex <= raws->GetCount() : diff == 0);
-			ArrayIndexIterator::operator+=(diff);
+			mIndexIterator += diff;
 			return *this;
 		}
 
 		friend ptrdiff_t operator-(DataRawIterator iter1, DataRawIterator iter2)
 		{
-			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
-			return static_cast<ptrdiff_t>(iter1.ptGetIndex() - iter2.ptGetIndex());
+			return iter1.mIndexIterator - iter2.mIndexIterator;
 		}
 
 		Pointer operator->() const
 		{
-			const Raws* raws = pvGetRaws();
-			size_t index = pvGetIndex();
-			MOMO_CHECK(raws != nullptr && index < raws->GetCount());
-			return raws->GetItems() + index;
+			return mIndexIterator.operator->();
 		}
 
 		friend bool operator==(DataRawIterator iter1, DataRawIterator iter2) noexcept
 		{
-			return iter1.pvGetRaws() == iter2.pvGetRaws()
-				&& iter1.pvGetIndex() == iter2.pvGetIndex();
+			return iter1.mIndexIterator == iter2.mIndexIterator;
 		}
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
 		friend auto operator<=>(DataRawIterator iter1, DataRawIterator iter2)
 		{
-			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
-			return iter1.pvGetIndex() <=> iter2.pvGetIndex();
+			return iter1.mIndexIterator <=> iter2.mIndexIterator;
 		}
 #else
 		friend bool operator<(DataRawIterator iter1, DataRawIterator iter2)
 		{
-			MOMO_CHECK(iter1.pvGetRaws() == iter2.pvGetRaws());
-			return iter1.pvGetIndex() < iter2.pvGetIndex();
+			return iter1.mIndexIterator < iter2.mIndexIterator;
 		}
 #endif
 
 		MOMO_MORE_ARRAY_ITERATOR_OPERATORS(DataRawIterator)
 
 	private:
-		const Raws* pvGetRaws() const noexcept
-		{
-			return ArrayIndexIterator::ptGetArray();
-		}
-
-		size_t pvGetIndex() const noexcept
-		{
-			return ArrayIndexIterator::ptGetIndex();
-		}
+		IndexIterator mIndexIterator;
 	};
 
 	template<typename TRawIterator, typename TRowReference>
