@@ -24,7 +24,7 @@ namespace
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_assoc;
 
-namespace libcxx_test_tree_set
+namespace libcxx_tree_set
 {
 
 namespace std
@@ -38,12 +38,12 @@ namespace std
 }
 
 #define LIBCXX_TEST_CLASS momo::stdish::set
-#define LIBCXX_TEST_PREFIX "libcxx_test_tree_set"
+#define LIBCXX_TEST_PREFIX "libcxx_tree_set"
 #include "libcxx/SetTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS
 
-} // namespace libcxx_test_tree_set
+} // namespace libcxx_tree_set
 
 } // namespace
 

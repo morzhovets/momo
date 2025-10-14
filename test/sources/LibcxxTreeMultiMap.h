@@ -22,7 +22,7 @@ namespace
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_assoc;
 
-namespace libcxx_test_tree_multimap
+namespace libcxx_tree_multimap
 {
 
 #ifndef LIBCXX_TEST_CLASS
@@ -56,10 +56,10 @@ namespace std
 #endif
 }
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "libcxx_tree_multimap" LIBCXX_TEST_PREFIX_TAIL
 #include "libcxx/MultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace libcxx_test_tree_multimap
+} // namespace libcxx_tree_multimap
 
 } // namespace

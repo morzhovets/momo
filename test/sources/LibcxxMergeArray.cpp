@@ -24,7 +24,7 @@ namespace
 using namespace libcxx_insert_range_seq;
 using namespace libcxx_from_range_seq;
 
-namespace libcxx_test_merge_array_0
+namespace libcxx_merge_array_0
 {
 
 class LibcxxMergeArraySettings : public momo::MergeArraySettings<0>
@@ -47,15 +47,15 @@ namespace std
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_test_merge_array_0"
+#define LIBCXX_TEST_PREFIX "libcxx_merge_array_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 #undef LIBCXX_TEST_FAILURE
 
-} // namespace libcxx_test_merge_array_0
+} // namespace libcxx_merge_array_0
 
-namespace libcxx_test_merge_array
+namespace libcxx_merge_array
 {
 
 namespace std
@@ -69,13 +69,13 @@ namespace std
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_CLASS momo::stdish::merge_vector
-#define LIBCXX_TEST_PREFIX "libcxx_test_merge_array"
+#define LIBCXX_TEST_PREFIX "libcxx_merge_array"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 
-} // namespace libcxx_test_merge_array
+} // namespace libcxx_merge_array
 
 } // namespace
 

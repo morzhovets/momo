@@ -28,7 +28,7 @@ namespace
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_unord;
 
-namespace libcxx_test_hash_multimap
+namespace libcxx_hash_multimap
 {
 
 #ifndef LIBCXX_TEST_CLASS
@@ -68,11 +68,11 @@ namespace std
 	using multiset = momo::stdish::multiset<TKey>;
 }
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_multimap" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "libcxx_hash_multimap" LIBCXX_TEST_PREFIX_TAIL
 #include "libcxx/UnorderedMultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace libcxx_test_hash_multimap
+} // namespace libcxx_hash_multimap
 
 } // namespace
 

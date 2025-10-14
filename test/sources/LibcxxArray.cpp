@@ -24,7 +24,7 @@ namespace
 using namespace libcxx_insert_range_seq;
 using namespace libcxx_from_range_seq;
 
-namespace libcxx_test_array_0
+namespace libcxx_array_0
 {
 
 class LibcxxArraySettings : public momo::ArraySettings<0, false>
@@ -61,16 +61,16 @@ namespace std
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_ARRAY
 #define LIBCXX_TEST_CLASS momo::stdish::vector
-#define LIBCXX_TEST_PREFIX "libcxx_test_array_0"
+#define LIBCXX_TEST_PREFIX "libcxx_array_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS
 #undef LIBCXX_TEST_ARRAY
 #undef LIBCXX_TEST_FAILURE
 
-} // namespace libcxx_test_array_0
+} // namespace libcxx_array_0
 
-namespace libcxx_test_array_5
+namespace libcxx_array_5
 {
 
 namespace std
@@ -97,12 +97,12 @@ namespace std
 }
 
 #define LIBCXX_TEST_INTCAP_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_test_array_5"
+#define LIBCXX_TEST_PREFIX "libcxx_array_5"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_INTCAP_ARRAY
 
-} // namespace libcxx_test_array_5
+} // namespace libcxx_array_5
 
 } // namespace
 

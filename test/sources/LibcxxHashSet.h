@@ -26,7 +26,7 @@ namespace
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_unord;
 
-namespace libcxx_test_hash_set
+namespace libcxx_hash_set
 {
 
 #ifndef LIBCXX_TEST_CLASS
@@ -75,11 +75,11 @@ namespace std
 #endif
 }
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "libcxx_hash_set" LIBCXX_TEST_PREFIX_TAIL
 #include "libcxx/UnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace libcxx_test_hash_set
+} // namespace libcxx_hash_set
 
 } // namespace
 

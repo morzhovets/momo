@@ -24,7 +24,7 @@ namespace
 using namespace libcxx_insert_range_seq;
 using namespace libcxx_from_range_seq;
 
-namespace libcxx_test_segmented_array_sqrt_0
+namespace libcxx_segmented_array_sqrt_0
 {
 
 class LibcxxSegmentedArraySettings
@@ -48,15 +48,15 @@ namespace std
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt_0"
+#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_sqrt_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 #undef LIBCXX_TEST_FAILURE
 
-} // namespace libcxx_test_segmented_array_sqrt_0
+} // namespace libcxx_segmented_array_sqrt_0
 
-namespace libcxx_test_segmented_array_cnst_0
+namespace libcxx_segmented_array_cnst_0
 {
 
 class LibcxxSegmentedArraySettings
@@ -80,15 +80,15 @@ namespace std
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst_0"
+#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_cnst_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 #undef LIBCXX_TEST_FAILURE
 
-} // namespace libcxx_test_segmented_array_cnst_0
+} // namespace libcxx_segmented_array_cnst_0
 
-namespace libcxx_test_segmented_array_cnst
+namespace libcxx_segmented_array_cnst
 {
 
 namespace std
@@ -102,15 +102,15 @@ namespace std
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_CLASS momo::stdish::segmented_vector
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst"
+#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_cnst"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 
-} // namespace libcxx_test_segmented_array_cnst
+} // namespace libcxx_segmented_array_cnst
 
-namespace libcxx_test_segmented_array_sqrt
+namespace libcxx_segmented_array_sqrt
 {
 
 namespace std
@@ -124,13 +124,13 @@ namespace std
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_CLASS momo::stdish::segmented_vector_sqrt
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt"
+#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_sqrt"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 
-} // namespace libcxx_test_segmented_array_sqrt
+} // namespace libcxx_segmented_array_sqrt
 
 } // namespace
 
