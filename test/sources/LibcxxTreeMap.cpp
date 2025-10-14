@@ -6,23 +6,17 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/pch.h
+  test/sources/LibcxxTreeMap.cpp
 
 \**********************************************************/
 
-#pragma once
+#include "pch.h"
 
-#include "TestSettings.h"
+#ifdef TEST_LIBCXX_TREE_MAP
 
-#ifdef MOMO_USE_MEM_MANAGER_WIN
-# include <Windows.h>
-#endif
+#define LIBCXX_TEST_CLASS momo::stdish::map
+#define LIBCXX_TEST_PREFIX_TAIL ""
 
-#include <version>
-#include <string>
-#include <iostream>
-#include <random>
+#include "LibcxxTreeMap.h"
 
-#include "../../include/momo/Utility.h"
-
-#include "Libcxx.h"	//?
+#endif // TEST_LIBCXX_TREE_MAP

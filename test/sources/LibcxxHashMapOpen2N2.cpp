@@ -6,23 +6,19 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/pch.h
+  test/sources/LibcxxHashMapOpen2N2.cpp
 
 \**********************************************************/
 
-#pragma once
+#include "pch.h"
 
-#include "TestSettings.h"
+#ifdef TEST_LIBCXX_HASH_MAP
 
-#ifdef MOMO_USE_MEM_MANAGER_WIN
-# include <Windows.h>
-#endif
+#include "../../include/momo/details/HashBucketOpen2N2.h"
 
-#include <version>
-#include <string>
-#include <iostream>
-#include <random>
+#define LIBCXX_TEST_HASH_BUCKET momo::HashBucketOpen2N2<>
+#define LIBCXX_TEST_PREFIX_TAIL "_open2n2"
 
-#include "../../include/momo/Utility.h"
+#include "LibcxxHashMap.h"
 
-#include "Libcxx.h"	//?
+#endif // TEST_LIBCXX_HASH_MAP

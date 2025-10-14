@@ -6,23 +6,18 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/pch.h
+  test/sources/LibcxxTreeMultiMap_VP.cpp
 
 \**********************************************************/
 
-#pragma once
+#include "pch.h"
 
-#include "TestSettings.h"
+#ifdef TEST_LIBCXX_TREE_MAP
 
-#ifdef MOMO_USE_MEM_MANAGER_WIN
-# include <Windows.h>
-#endif
+#define LIBCXX_TEST_TREE_NODE momo::TreeNode<32, 4, momo::MemPoolParams<1>, false>
+#define LIBCXX_TEST_PREFIX_TAIL "_vp"
+#define LIBCXX_TEST_MAP_VALUE_PTR
 
-#include <version>
-#include <string>
-#include <iostream>
-#include <random>
+#include "LibcxxTreeMultiMap.h"
 
-#include "../../include/momo/Utility.h"
-
-#include "Libcxx.h"	//?
+#endif // TEST_LIBCXX_TREE_MAP
