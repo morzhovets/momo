@@ -54,10 +54,9 @@ namespace std
 #ifdef LIBCXX_TEST_CLASS
 	using unordered_multimap = LIBCXX_TEST_CLASS<TKey, TMapped, THasher, TEqualComparer, TAllocator>;
 #else
-	using unordered_multimap = momo::stdish::unordered_multimap_adaptor<momo::HashMultiMap<TKey, TMapped,
-		momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_HASH_BUCKET>,
-		momo::MemManagerStd<TAllocator>,
+	using unordered_multimap = momo::stdish::unordered_multimap_adaptor<momo::HashMultiMapCore<
 		momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
+		momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_HASH_BUCKET>,
 		LibcxxHashMultiMapSettings>>;
 #endif
 
