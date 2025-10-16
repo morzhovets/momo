@@ -22,7 +22,7 @@
     </Expand>
 </Type>
 
-<Type Name="momo::HashSet&lt;*&gt;">
+<Type Name="momo::HashSetCore&lt;*&gt;">
     <DisplayString>{{ Count={mCount} }}</DisplayString>
     <Expand>
         <Item Name="[Count]">mCount</Item>
@@ -31,7 +31,7 @@
     </Expand>
 </Type>
 
-<Type Name="momo::HashMap&lt;*&gt;">
+<Type Name="momo::HashMapCore&lt;*&gt;">
     <DisplayString>{{ Count={mHashSet.mCount} }}</DisplayString>
     <Expand>
         <Item Name="[Count]">mHashSet.mCount</Item>

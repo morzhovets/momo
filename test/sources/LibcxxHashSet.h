@@ -68,10 +68,9 @@ namespace std
 #ifdef LIBCXX_TEST_CLASS
 	using unordered_set = LIBCXX_TEST_CLASS<TKey, THasher, TEqualComparer, TAllocator>;
 #else
-	using unordered_set = momo::stdish::unordered_set_adaptor<momo::HashSet<TKey,
-		LibcxxHashTraits<TKey, THasher, TEqualComparer>, momo::MemManagerStd<TAllocator>,
+	using unordered_set = momo::stdish::unordered_set_adaptor<momo::HashSetCore<
 		momo::HashSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
-		LibcxxHashSetSettings>>;
+		LibcxxHashTraits<TKey, THasher, TEqualComparer>, LibcxxHashSetSettings>>;
 #endif
 }
 

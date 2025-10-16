@@ -11,6 +11,7 @@
   namespace momo:
     class HashMapKeyValueTraits
     class HashMapSettings
+    class HashMapCore
     class HashMap
     class HashMapOpen
 
@@ -219,7 +220,7 @@ public:
 };
 
 /*!
-	All `HashMap` functions and constructors have strong exception safety,
+	All `HashMapCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	1. Functions `Insert` receiving many items have basic exception safety.
 	2. Function `Remove` receiving predicate has basic exception safety.
@@ -232,23 +233,23 @@ public:
 	removing value may be changed.
 */
 
-template<conceptObject TKey, conceptObject TValue,
-	conceptHashTraits<TKey> THashTraits = HashTraits<TKey>,
-	conceptMemManager TMemManager = MemManagerDefault,
-	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
-		= HashMapKeyValueTraits<TKey, TValue, TMemManager>,
+template<typename TKeyValueTraits,
+	conceptHashTraits<typename TKeyValueTraits::Key> THashTraits
+		= HashTraits<typename TKeyValueTraits::Key>,
 	typename TSettings = HashMapSettings>
-class MOMO_EMPTY_BASES HashMap
+requires conceptMapKeyValueTraits<TKeyValueTraits, typename TKeyValueTraits::Key,
+	typename TKeyValueTraits::Value, typename TKeyValueTraits::MemManager>
+class MOMO_EMPTY_BASES HashMapCore
 	: public internal::Rangeable,
-	public internal::Swappable<HashMap>
+	public internal::Swappable<HashMapCore>
 {
 public:
-	typedef TKey Key;
-	typedef TValue Value;
-	typedef THashTraits HashTraits;
-	typedef TMemManager MemManager;
 	typedef TKeyValueTraits KeyValueTraits;
+	typedef THashTraits HashTraits;
 	typedef TSettings Settings;
+	typedef typename KeyValueTraits::Key Key;
+	typedef typename KeyValueTraits::Value Value;
+	typedef typename KeyValueTraits::MemManager MemManager;
 
 private:
 	typedef internal::HashMapNestedSetItemTraits<KeyValueTraits> HashSetItemTraits;
@@ -256,8 +257,7 @@ private:
 
 	typedef internal::HashMapNestedSetSettings<Settings> HashSetSettings;
 
-	typedef momo::HashSet<Key, HashTraits, typename HashSetItemTraits::MemManager,
-		HashSetItemTraits, HashSetSettings> HashSet;
+	typedef HashSetCore<HashSetItemTraits, HashTraits, HashSetSettings> HashSet;
 
 	typedef typename HashSet::ConstIterator HashSetConstIterator;
 	typedef typename HashSet::ConstPosition HashSetConstPosition;
@@ -282,7 +282,7 @@ public:
 	static const size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
 
 private:
-	typedef internal::MapValueReferencer<HashMap, Position> ValueReferencer;
+	typedef internal::MapValueReferencer<HashMapCore, Position> ValueReferencer;
 
 public:
 	template<typename KeyReference>
@@ -336,66 +336,66 @@ private:
 	};
 
 public:
-	HashMap()
-		: HashMap(HashTraits())
+	HashMapCore()
+		: HashMapCore(HashTraits())
 	{
 	}
 
-	explicit HashMap(const HashTraits& hashTraits, MemManager memManager = MemManager())
+	explicit HashMapCore(const HashTraits& hashTraits, MemManager memManager = MemManager())
 		: mHashSet(hashTraits, std::move(memManager))
 	{
 	}
 
 	template<internal::conceptMapArgIterator<Key> ArgIterator,
 		internal::conceptSentinel<ArgIterator> ArgSentinel>
-	explicit HashMap(ArgIterator begin, ArgSentinel end,
+	explicit HashMapCore(ArgIterator begin, ArgSentinel end,
 		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
-		: HashMap(hashTraits, std::move(memManager))
+		: HashMapCore(hashTraits, std::move(memManager))
 	{
 		Insert(std::move(begin), std::move(end));
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
-	HashMap(std::initializer_list<Pair> pairs)
-		: HashMap(pairs, HashTraits())
+	HashMapCore(std::initializer_list<Pair> pairs)
+		: HashMapCore(pairs, HashTraits())
 	{
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
-	explicit HashMap(std::initializer_list<Pair> pairs, const HashTraits& hashTraits,
+	explicit HashMapCore(std::initializer_list<Pair> pairs, const HashTraits& hashTraits,
 		MemManager memManager = MemManager())
-		: HashMap(pairs.begin(), pairs.end(), hashTraits, std::move(memManager))
+		: HashMapCore(pairs.begin(), pairs.end(), hashTraits, std::move(memManager))
 	{
 	}
 
-	HashMap(HashMap&& hashMap) noexcept
+	HashMapCore(HashMapCore&& hashMap) noexcept
 		: mHashSet(std::move(hashMap.mHashSet))
 	{
 	}
 
-	HashMap(const HashMap& hashMap)
+	HashMapCore(const HashMapCore& hashMap)
 		: mHashSet(hashMap.mHashSet)
 	{
 	}
 
-	explicit HashMap(const HashMap& hashMap, MemManager memManager)
+	explicit HashMapCore(const HashMapCore& hashMap, MemManager memManager)
 		: mHashSet(hashMap.mHashSet, std::move(memManager))
 	{
 	}
 
-	~HashMap() noexcept = default;
+	~HashMapCore() noexcept = default;
 
-	HashMap& operator=(HashMap&& hashMap) noexcept
+	HashMapCore& operator=(HashMapCore&& hashMap) noexcept
 	{
 		return internal::ContainerAssigner::Move(std::move(hashMap), *this);
 	}
 
-	HashMap& operator=(const HashMap& hashMap)
+	HashMapCore& operator=(const HashMapCore& hashMap)
 	{
 		return internal::ContainerAssigner::Copy(hashMap, *this);
 	}
 
-	void Swap(HashMap& hashMap) noexcept
+	void Swap(HashMapCore& hashMap) noexcept
 	{
 		mHashSet.Swap(hashMap.mHashSet);
 	}
@@ -858,6 +858,11 @@ private:
 private:
 	HashSet mHashSet;
 };
+
+template<conceptObject TKey, conceptObject TValue,
+	conceptHashTraits<TKey> THashTraits = HashTraits<TKey>,
+	conceptMemManager TMemManager = MemManagerDefault>
+using HashMap = HashMapCore<HashMapKeyValueTraits<TKey, TValue, TMemManager>, THashTraits>;
 
 template<conceptObject TKey, conceptObject TValue>
 using HashMapOpen = HashMap<TKey, TValue, HashTraitsOpen<TKey>>;

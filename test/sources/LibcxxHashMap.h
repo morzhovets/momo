@@ -82,10 +82,9 @@ namespace std
 #ifdef LIBCXX_TEST_CLASS
 	using unordered_map = LIBCXX_TEST_CLASS<TKey, TMapped, THasher, TEqualComparer, TAllocator>;
 #else
-	using unordered_map = momo::stdish::unordered_map_adaptor<momo::HashMap<TKey, TMapped,
-		LibcxxHashTraits<TKey, THasher, TEqualComparer>, momo::MemManagerStd<TAllocator>,
+	using unordered_map = momo::stdish::unordered_map_adaptor<momo::HashMapCore<
 		LibcxxHashMapKeyValueTraits<TKey, TMapped, TAllocator>,
-		LibcxxHashMapSettings>>;
+		LibcxxHashTraits<TKey, THasher, TEqualComparer>, LibcxxHashMapSettings>>;
 #endif
 }
 

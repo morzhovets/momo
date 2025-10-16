@@ -139,9 +139,9 @@ public:
 	template<typename HashTraits, bool useValuePtr>
 	static void TestStrHashMap()
 	{
-		typedef momo::HashMap<std::string, std::string, HashTraits, momo::MemManagerDefault,
-			momo::HashMapKeyValueTraits<std::string, std::string, momo::MemManagerDefault,
-			useValuePtr>> HashMap;
+		typedef momo::HashMapCore<
+			momo::HashMapKeyValueTraits<std::string, std::string, momo::MemManagerDefault, useValuePtr>,
+			HashTraits> HashMap;
 
 		std::string s1 = "s1";
 		std::string s2 = "s2";

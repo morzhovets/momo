@@ -855,8 +855,8 @@ private:
 
 	typedef typename ColumnTraits::ColumnCodeHashTraits ColumnCodeHashTraits;
 
-	typedef HashSet<ColumnCode, ColumnCodeHashTraits, MemManager,
-		HashSetItemTraits<ColumnCode, MemManager>, internal::NestedHashSetSettings> ColumnCodeSet;
+	typedef HashSetCore<HashSetItemTraits<ColumnCode, MemManager>,
+		ColumnCodeHashTraits, internal::NestedHashSetSettings> ColumnCodeSet;
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
