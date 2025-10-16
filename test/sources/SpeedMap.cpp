@@ -213,9 +213,9 @@ public:
 	void TestHashBucket(const std::string& mapTitle, float maxLoadFactor = 0.0, bool reserve = false)
 	{
 		typedef std::allocator<std::pair<const Key, Value>> Allocator;
-		typedef momo::stdish::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>, Allocator,
-			momo::HashMap<Key, Value, momo::HashTraitsStd<Key, std::hash<Key>, std::equal_to<Key>, HashBucket>,
-			momo::MemManagerStd<Allocator>>> HashMap;
+		typedef momo::stdish::unordered_map_adaptor<momo::HashMap<
+			Key, Value, momo::HashTraitsStd<Key, std::hash<Key>, std::equal_to<Key>, HashBucket>,
+				momo::MemManagerStd<Allocator>>> HashMap;
 		TestHashMap<HashMap>(mapTitle, maxLoadFactor, reserve);
 	}
 
@@ -256,9 +256,9 @@ public:
 	void TestTreeNode(const std::string& mapTitle)
 	{
 		typedef std::allocator<std::pair<const Key, Value>> Allocator;
-		typedef momo::stdish::map<Key, Value, std::less<Key>, Allocator,
-			momo::TreeMap<Key, Value, momo::TreeTraitsStd<Key, std::less<Key>, false, TreeNode>,
-			momo::MemManagerStd<Allocator>>> TreeMap;
+		typedef momo::stdish::map_adaptor<momo::TreeMap<
+			Key, Value, momo::TreeTraitsStd<Key, std::less<Key>, false, TreeNode>,
+				momo::MemManagerStd<Allocator>>> TreeMap;
 		TestTreeMap<TreeMap>(mapTitle);
 	}
 
@@ -426,13 +426,13 @@ private:
 	std::ostream& mProcStream;
 };
 
-void TestSpeedMap()
+static int testSpeedMap = []
 {
 	std::cout << "TestSpeedMap started" << std::endl;
 
 #ifdef NDEBUG
 	const size_t maxKeyCount = 1 << 21;
-	std::ofstream resStream("bench.csv", std::ios_base::app);
+	std::ofstream resStream("SpeedMap.csv", std::ios_base::app);
 #else
 	const size_t maxKeyCount = 1 << 12;
 	std::stringstream resStream;
@@ -440,8 +440,8 @@ void TestSpeedMap()
 
 	SpeedMapTester<uint64_t>(maxKeyCount, 3, resStream).TestAll();
 	SpeedMapTester<IntPtr>(maxKeyCount, 3, resStream).TestAll();
-}
 
-static int testSpeedMap = (TestSpeedMap(), 0);
+	return 0;
+}();
 
 #endif // TEST_SPEED_MAP
