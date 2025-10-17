@@ -11,6 +11,7 @@
   namespace momo:
     class TreeMapKeyValueTraits
     class TreeMapSettings
+    class TreeMapCore
     class TreeMap
     class TreeMultiMap
 
@@ -174,7 +175,7 @@ public:
 };
 
 /*!
-	All `TreeMap` functions and constructors have strong exception safety,
+	All `TreeMapCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	1. Functions `Insert` receiving many items have basic exception safety.
 	2. Function `Remove` receiving predicate has basic exception safety.
@@ -187,23 +188,23 @@ public:
 	removing value may be changed.
 */
 
-template<conceptObject TKey, conceptObject TValue,
-	conceptTreeTraits<TKey> TTreeTraits = TreeTraits<TKey>,
-	conceptMemManager TMemManager = MemManagerDefault,
-	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
-		= TreeMapKeyValueTraits<TKey, TValue, TMemManager>,
+template<typename TKeyValueTraits,
+	conceptTreeTraits<typename TKeyValueTraits::Key> TTreeTraits
+		= TreeTraits<typename TKeyValueTraits::Key>,
 	typename TSettings = TreeMapSettings>
-class MOMO_EMPTY_BASES TreeMap
+requires conceptMapKeyValueTraits<TKeyValueTraits, typename TKeyValueTraits::Key,
+	typename TKeyValueTraits::Value, typename TKeyValueTraits::MemManager>
+class MOMO_EMPTY_BASES TreeMapCore
 	: public internal::Rangeable,
-	public internal::Swappable<TreeMap>
+	public internal::Swappable<TreeMapCore>
 {
 public:
-	typedef TKey Key;
-	typedef TValue Value;
-	typedef TTreeTraits TreeTraits;
-	typedef TMemManager MemManager;
 	typedef TKeyValueTraits KeyValueTraits;
+	typedef TTreeTraits TreeTraits;
 	typedef TSettings Settings;
+	typedef typename KeyValueTraits::Key Key;
+	typedef typename KeyValueTraits::Value Value;
+	typedef typename KeyValueTraits::MemManager MemManager;
 
 private:
 	typedef internal::TreeMapNestedSetItemTraits<KeyValueTraits> TreeSetItemTraits;
@@ -211,8 +212,7 @@ private:
 
 	typedef internal::TreeMapNestedSetSettings<Settings> TreeSetSettings;
 
-	typedef momo::TreeSet<Key, TreeTraits, typename TreeSetItemTraits::MemManager,
-		TreeSetItemTraits, TreeSetSettings> TreeSet;
+	typedef TreeSetCore<TreeSetItemTraits, TreeTraits, TreeSetSettings> TreeSet;
 
 	typedef typename TreeSet::ConstIterator TreeSetConstIterator;
 
@@ -228,7 +228,7 @@ public:
 		KeyValueTraits::useValuePtr> ExtractedPair;
 
 private:
-	typedef internal::MapValueReferencer<TreeMap, Iterator> ValueReferencer;
+	typedef internal::MapValueReferencer<TreeMapCore, Iterator> ValueReferencer;
 
 public:
 	template<typename KeyReference>
@@ -261,66 +261,66 @@ private:
 	};
 
 public:
-	TreeMap()
-		: TreeMap(TreeTraits())
+	TreeMapCore()
+		: TreeMapCore(TreeTraits())
 	{
 	}
 
-	explicit TreeMap(const TreeTraits& treeTraits, MemManager memManager = MemManager())
+	explicit TreeMapCore(const TreeTraits& treeTraits, MemManager memManager = MemManager())
 		: mTreeSet(treeTraits, std::move(memManager))
 	{
 	}
 
 	template<internal::conceptMapArgIterator<Key> ArgIterator,
 		internal::conceptSentinel<ArgIterator> ArgSentinel>
-	explicit TreeMap(ArgIterator begin, ArgSentinel end,
+	explicit TreeMapCore(ArgIterator begin, ArgSentinel end,
 		const TreeTraits& treeTraits = TreeTraits(), MemManager memManager = MemManager())
-		: TreeMap(treeTraits, std::move(memManager))
+		: TreeMapCore(treeTraits, std::move(memManager))
 	{
 		Insert(std::move(begin), std::move(end));
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
-	TreeMap(std::initializer_list<Pair> pairs)
-		: TreeMap(pairs, TreeTraits())
+	TreeMapCore(std::initializer_list<Pair> pairs)
+		: TreeMapCore(pairs, TreeTraits())
 	{
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
-	explicit TreeMap(std::initializer_list<Pair> pairs, const TreeTraits& treeTraits,
+	explicit TreeMapCore(std::initializer_list<Pair> pairs, const TreeTraits& treeTraits,
 		MemManager memManager = MemManager())
-		: TreeMap(pairs.begin(), pairs.end(), treeTraits, std::move(memManager))
+		: TreeMapCore(pairs.begin(), pairs.end(), treeTraits, std::move(memManager))
 	{
 	}
 
-	TreeMap(TreeMap&& treeMap) noexcept
+	TreeMapCore(TreeMapCore&& treeMap) noexcept
 		: mTreeSet(std::move(treeMap.mTreeSet))
 	{
 	}
 
-	TreeMap(const TreeMap& treeMap)
+	TreeMapCore(const TreeMapCore& treeMap)
 		: mTreeSet(treeMap.mTreeSet)
 	{
 	}
 
-	explicit TreeMap(const TreeMap& treeMap, MemManager memManager)
+	explicit TreeMapCore(const TreeMapCore& treeMap, MemManager memManager)
 		: mTreeSet(treeMap.mTreeSet, std::move(memManager))
 	{
 	}
 
-	~TreeMap() noexcept = default;
+	~TreeMapCore() noexcept = default;
 
-	TreeMap& operator=(TreeMap&& treeMap) noexcept
+	TreeMapCore& operator=(TreeMapCore&& treeMap) noexcept
 	{
 		return internal::ContainerAssigner::Move(std::move(treeMap), *this);
 	}
 
-	TreeMap& operator=(const TreeMap& treeMap)
+	TreeMapCore& operator=(const TreeMapCore& treeMap)
 	{
 		return internal::ContainerAssigner::Copy(treeMap, *this);
 	}
 
-	void Swap(TreeMap& treeMap) noexcept
+	void Swap(TreeMapCore& treeMap) noexcept
 	{
 		mTreeSet.Swap(treeMap.mTreeSet);
 	}
@@ -830,6 +830,11 @@ private:
 private:
 	TreeSet mTreeSet;
 };
+
+template<conceptObject TKey, conceptObject TValue,
+	conceptTreeTraits<TKey> TTreeTraits = TreeTraits<TKey>,
+	conceptMemManager TMemManager = MemManagerDefault>
+using TreeMap = TreeMapCore<TreeMapKeyValueTraits<TKey, TValue, TMemManager>, TTreeTraits>;
 
 template<conceptObject TKey, conceptObject TValue>
 using TreeMultiMap = TreeMap<TKey, TValue, TreeTraits<TKey, true>>;

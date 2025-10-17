@@ -37,8 +37,7 @@ static int testNatvis = []
 	momo::TreeSet<int, momo::TreeTraits<int, false,
 		momo::TreeNode<32, 4, momo::MemPoolParams<8>, false>>> tsetc;
 	momo::TreeMap<int, int> tmap;
-	momo::TreeMap<int, int, momo::TreeTraits<int>, momo::MemManagerDefault,
-		momo::TreeMapKeyValueTraits<int, int, momo::MemManagerDefault, true>> tmapp;
+	momo::TreeMapCore<momo::TreeMapKeyValueTraits<int, int, momo::MemManagerDefault, true>> tmapp;
 
 	struct Struct
 	{

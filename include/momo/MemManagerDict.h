@@ -45,9 +45,8 @@ public:
 private:
 	typedef TreeTraits<void*, false, typename Settings::BlockDictTreeNode> BlockDictTreeTraits;
 
-	typedef TreeMap<void*, size_t, BlockDictTreeTraits, BaseMemManager,
-		TreeMapKeyValueTraits<void*, size_t, BaseMemManager>,
-		internal::NestedTreeMapSettings> BlockDict;
+	typedef TreeMapCore<TreeMapKeyValueTraits<void*, size_t, BaseMemManager>,
+		BlockDictTreeTraits, internal::NestedTreeMapSettings> BlockDict;
 
 public:
 	explicit MemManagerDict(BaseMemManager baseMemManager = BaseMemManager())

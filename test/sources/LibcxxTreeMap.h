@@ -56,9 +56,9 @@ namespace std
 #ifdef LIBCXX_TEST_CLASS
 	using map = LIBCXX_TEST_CLASS<TKey, TMapped, TLessComparer, TAllocator>;
 #else
-	using map = momo::stdish::map_adaptor<momo::TreeMap<TKey, TMapped,
-		LibcxxTreeTraits<TKey, TLessComparer>, momo::MemManagerStd<TAllocator>,
-		LibcxxTreeMapKeyValueTraits<TKey, TMapped, TAllocator>, momo::TreeMapSettings>>;
+	using map = momo::stdish::map_adaptor<momo::TreeMapCore<
+		LibcxxTreeMapKeyValueTraits<TKey, TMapped, TAllocator>,
+		LibcxxTreeTraits<TKey, TLessComparer>>>;
 #endif
 }
 

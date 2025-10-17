@@ -11,6 +11,7 @@
   namespace momo:
     class TreeSetItemTraits
     class TreeSetSettings
+    class TreeSetCore
     class TreeSet
     class TreeMultiSet
 
@@ -243,29 +244,28 @@ public:
 };
 
 /*!
-	All `TreeSet` functions and constructors have strong exception safety,
+	All `TreeSetCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	1. Functions `Insert` receiving many items have basic exception safety.
 	2. Function `Remove` receiving predicate has basic exception safety.
 	3. Functions `MergeFrom` and `MergeTo` have basic exception safety.
 */
 
-template<conceptObject TKey,
-	conceptTreeTraits<TKey> TTreeTraits = TreeTraits<TKey>,
-	conceptMemManager TMemManager = MemManagerDefault,
-	conceptSetItemTraits<TKey, TMemManager> TItemTraits = TreeSetItemTraits<TKey, TMemManager>,
+template<typename TItemTraits,
+	conceptTreeTraits<typename TItemTraits::Key> TTreeTraits = TreeTraits<typename TItemTraits::Key>,
 	typename TSettings = TreeSetSettings>
-class MOMO_EMPTY_BASES TreeSet
+requires conceptSetItemTraits<TItemTraits, typename TItemTraits::Key, typename TItemTraits::MemManager>
+class MOMO_EMPTY_BASES TreeSetCore
 	: public internal::Rangeable,
-	public internal::Swappable<TreeSet>
+	public internal::Swappable<TreeSetCore>
 {
 public:
-	typedef TKey Key;
-	typedef TTreeTraits TreeTraits;
-	typedef TMemManager MemManager;
 	typedef TItemTraits ItemTraits;
+	typedef TTreeTraits TreeTraits;
 	typedef TSettings Settings;
+	typedef typename ItemTraits::Key Key;
 	typedef typename ItemTraits::Item Item;
+	typedef typename ItemTraits::MemManager MemManager;
 
 private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -532,12 +532,12 @@ private:
 #endif
 
 public:
-	TreeSet()
-		: TreeSet(TreeTraits())
+	TreeSetCore()
+		: TreeSetCore(TreeTraits())
 	{
 	}
 
-	explicit TreeSet(const TreeTraits& treeTraits, MemManager memManager = MemManager())
+	explicit TreeSetCore(const TreeTraits& treeTraits, MemManager memManager = MemManager())
 		: mCrew(treeTraits, std::move(memManager)),
 		mCount(0),
 		mRootNode(nullptr),
@@ -547,26 +547,26 @@ public:
 
 	template<internal::conceptSetArgIterator<Item> ArgIterator,
 		internal::conceptSentinel<ArgIterator> ArgSentinel>
-	explicit TreeSet(ArgIterator begin, ArgSentinel end,
+	explicit TreeSetCore(ArgIterator begin, ArgSentinel end,
 		const TreeTraits& treeTraits = TreeTraits(), MemManager memManager = MemManager())
-		: TreeSet(treeTraits, std::move(memManager))
+		: TreeSetCore(treeTraits, std::move(memManager))
 	{
-		for (internal::Finalizer fin(&TreeSet::pvDestroy, *this); fin; fin.Detach())
+		for (internal::Finalizer fin(&TreeSetCore::pvDestroy, *this); fin; fin.Detach())
 			Insert(std::move(begin), std::move(end));
 	}
 
-	TreeSet(std::initializer_list<Item> items)
-		: TreeSet(items, TreeTraits())
+	TreeSetCore(std::initializer_list<Item> items)
+		: TreeSetCore(items, TreeTraits())
 	{
 	}
 
-	explicit TreeSet(std::initializer_list<Item> items, const TreeTraits& treeTraits,
+	explicit TreeSetCore(std::initializer_list<Item> items, const TreeTraits& treeTraits,
 		MemManager memManager = MemManager())
-		: TreeSet(items.begin(), items.end(), treeTraits, std::move(memManager))
+		: TreeSetCore(items.begin(), items.end(), treeTraits, std::move(memManager))
 	{
 	}
 
-	TreeSet(TreeSet&& treeSet) noexcept
+	TreeSetCore(TreeSetCore&& treeSet) noexcept
 		: mCrew(std::move(treeSet.mCrew)),
 		mCount(std::exchange(treeSet.mCount, 0)),
 		mRootNode(std::exchange(treeSet.mRootNode, nullptr)),
@@ -574,13 +574,13 @@ public:
 	{
 	}
 
-	TreeSet(const TreeSet& treeSet)
-		: TreeSet(treeSet, MemManager(treeSet.GetMemManager()))
+	TreeSetCore(const TreeSetCore& treeSet)
+		: TreeSetCore(treeSet, MemManager(treeSet.GetMemManager()))
 	{
 	}
 
-	explicit TreeSet(const TreeSet& treeSet, MemManager memManager)
-		: TreeSet(treeSet.GetTreeTraits(), std::move(memManager))
+	explicit TreeSetCore(const TreeSetCore& treeSet, MemManager memManager)
+		: TreeSetCore(treeSet.GetTreeTraits(), std::move(memManager))
 	{
 		mCount = treeSet.mCount;
 		if (mCount == 0)
@@ -588,28 +588,28 @@ public:
 		MemManager& thisMemManager = GetMemManager();
 		mNodeParams = MemManagerProxy::template AllocateCreate<NodeParams>(
 			thisMemManager, thisMemManager);
-		for (internal::Finalizer fin(&TreeSet::pvDestroy, *this); fin; fin.Detach())
+		for (internal::Finalizer fin(&TreeSetCore::pvDestroy, *this); fin; fin.Detach())
 			mRootNode = pvCopy(treeSet.mRootNode);
 		if (!mRootNode->IsLeaf())
 			pvUpdateParents(mRootNode);
 	}
 
-	~TreeSet() noexcept
+	~TreeSetCore() noexcept
 	{
 		pvDestroy();
 	}
 
-	TreeSet& operator=(TreeSet&& treeSet) noexcept
+	TreeSetCore& operator=(TreeSetCore&& treeSet) noexcept
 	{
 		return internal::ContainerAssigner::Move(std::move(treeSet), *this);
 	}
 
-	TreeSet& operator=(const TreeSet& treeSet)
+	TreeSetCore& operator=(const TreeSetCore& treeSet)
 	{
 		return internal::ContainerAssigner::Copy(treeSet, *this);
 	}
 
-	void Swap(TreeSet& treeSet) noexcept
+	void Swap(TreeSetCore& treeSet) noexcept
 	{
 		mCrew.Swap(treeSet.mCrew);
 		std::swap(mCount, treeSet.mCount);
@@ -977,7 +977,7 @@ public:
 		pvMergeTo(dstSet);
 	}
 
-	void MergeTo(TreeSet& dstTreeSet)
+	void MergeTo(TreeSetCore& dstTreeSet)
 	{
 		if (this == &dstTreeSet)
 			return;
@@ -1118,7 +1118,7 @@ private:
 			: treeTraits.IsLess(key1, key2);
 	}
 
-	bool pvIsOrdered(const TreeSet& treeSet1, const TreeSet& treeSet2) const
+	bool pvIsOrdered(const TreeSetCore& treeSet1, const TreeSetCore& treeSet2) const
 	{
 		MOMO_ASSERT(!treeSet1.IsEmpty() && !treeSet2.IsEmpty());
 		return pvIsOrdered(std::prev(treeSet1.GetEnd()), treeSet2.GetBegin());
@@ -1642,7 +1642,7 @@ private:
 		}
 	}
 
-	void pvMergeToLinear(TreeSet& dstTreeSet)
+	void pvMergeToLinear(TreeSetCore& dstTreeSet)
 	{
 		MemManager& dstMemManager = dstTreeSet.GetMemManager();
 		Iterator iter = GetBegin();
@@ -1666,12 +1666,12 @@ private:
 		}
 	}
 
-	static Node* pvMergeFast(TreeSet& treeSet1, TreeSet& treeSet2)
+	static Node* pvMergeFast(TreeSetCore& treeSet1, TreeSetCore& treeSet2)
 	{
 		size_t height1 = pvGetHeight(treeSet1.mRootNode);
 		size_t height2 = pvGetHeight(treeSet2.mRootNode);
-		TreeSet* treeSetPtr1 = &treeSet1;
-		TreeSet* treeSetPtr2 = &treeSet2;
+		TreeSetCore* treeSetPtr1 = &treeSet1;
+		TreeSetCore* treeSetPtr2 = &treeSet2;
 		bool swap = false;
 		if (height1 > height2)
 		{
@@ -1757,6 +1757,11 @@ private:
 	Node* mRootNode;
 	NodeParams* mNodeParams;
 };
+
+template<conceptObject TKey,
+	conceptTreeTraits<TKey> TTreeTraits = TreeTraits<TKey>,
+	conceptMemManager TMemManager = MemManagerDefault>
+using TreeSet = TreeSetCore<TreeSetItemTraits<TKey, TMemManager>, TTreeTraits>;
 
 template<conceptObject TKey>
 using TreeMultiSet = TreeSet<TKey, TreeTraits<TKey, true>>;

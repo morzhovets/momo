@@ -139,8 +139,7 @@ public:
 	{
 		typedef TreeMapKeyValueTraits<std::string, std::string, momo::MemManagerDefault,
 			useValuePtr, useSafeValueReference> KeyValueTraits;
-		typedef momo::TreeMap<std::string, std::string, momo::TreeTraits<std::string>,
-			momo::MemManagerDefault, KeyValueTraits> TreeMap;
+		typedef momo::TreeMapCore<KeyValueTraits> TreeMap;
 
 		auto equalComp = [] (auto ref1, auto ref2)
 			{ return ref1.key == ref2.key && ref1.value == ref2.value; };
