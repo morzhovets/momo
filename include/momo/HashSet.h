@@ -394,7 +394,8 @@ namespace internal
 	};
 }
 
-template<conceptObject TKey, conceptMemManager TMemManager>
+template<conceptObject TKey,
+	conceptMemManager TMemManager = MemManagerDefault>
 class HashSetItemTraits : public internal::SetItemTraits<TKey, TMemManager>
 {
 private:

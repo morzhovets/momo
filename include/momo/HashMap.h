@@ -202,7 +202,8 @@ namespace internal
 	};
 }
 
-template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager,
+template<conceptObject TKey, conceptObject TValue,
+	conceptMemManager TMemManager = MemManagerDefault,
 	bool tUseValuePtr = false>
 class HashMapKeyValueTraits
 	: public internal::MapKeyValueTraits<TKey, TValue, TMemManager, tUseValuePtr>

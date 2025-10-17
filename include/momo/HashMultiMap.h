@@ -477,7 +477,8 @@ concept conceptHashMultiMapKeyValueTraits =
 	internal::ObjectAlignmenter<Key>::Check(HashMultiMapKeyValueTraits::keyAlignment) &&
 	internal::ObjectAlignmenter<Value>::Check(HashMultiMapKeyValueTraits::valueAlignment);
 
-template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
+template<conceptObject TKey, conceptObject TValue,
+	conceptMemManager TMemManager = MemManagerDefault>
 class HashMultiMapKeyValueTraits
 {
 public:

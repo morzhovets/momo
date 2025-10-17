@@ -90,7 +90,8 @@ namespace internal
 	};
 }
 
-template<conceptObject TItem, conceptMemManager TMemManager>
+template<conceptObject TItem,
+	conceptMemManager TMemManager = MemManagerDefault>
 class ArrayItemTraits
 {
 public:
