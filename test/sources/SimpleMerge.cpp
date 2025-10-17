@@ -69,8 +69,9 @@ public:
 
 		typedef momo::MergeTraits<size_t, mergeTraitsFunc,
 			momo::MergeArraySettings<logInitialItemCount>, MergeBloomFilter> MergeTraits;
-		typedef momo::MergeMap<size_t, size_t, MergeTraits, momo::MemManagerDict<>,
-			momo::MergeMapKeyValueTraits<size_t, size_t, momo::MemManagerDict<>, useValuePtr>> MergeMap;
+		typedef momo::MergeMapCore<
+			momo::MergeMapKeyValueTraits<size_t, size_t, momo::MemManagerDict<>, useValuePtr>,
+				MergeTraits> MergeMap;
 		MergeMap map;
 
 		std::shuffle(array, array + count, mt);

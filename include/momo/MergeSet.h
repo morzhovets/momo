@@ -11,6 +11,7 @@
   namespace momo:
     class MergeSetItemTraits
     class MergeSetSettings
+    class MergeSetCore
     class MergeSet
     class MergeSetHash
 
@@ -463,29 +464,28 @@ public:
 };
 
 /*!
-	All `MergeSet` functions and constructors have strong exception safety,
+	All `MergeSetCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	 - Functions `Insert` receiving many items have basic exception safety.
 
 	Swap and move operations invalidate all container iterators.
 */
 
-template<conceptObject TKey,
-	conceptMergeTraits<TKey> TMergeTraits = MergeTraits<TKey>,
-	conceptMemManager TMemManager = MemManagerDefault,
-	conceptSetItemTraits<TKey, TMemManager> TItemTraits = MergeSetItemTraits<TKey, TMemManager>,
+template<typename TItemTraits,
+	conceptMergeTraits<typename TItemTraits::Key> TMergeTraits = MergeTraits<typename TItemTraits::Key>,
 	typename TSettings = MergeSetSettings>
-class MOMO_EMPTY_BASES MergeSet
+requires conceptSetItemTraits<TItemTraits, typename TItemTraits::Key, typename TItemTraits::MemManager>
+class MOMO_EMPTY_BASES MergeSetCore
 	: public internal::Rangeable,
-	public internal::Swappable<MergeSet>
+	public internal::Swappable<MergeSetCore>
 {
 public:
-	typedef TKey Key;
-	typedef TMergeTraits MergeTraits;
-	typedef TMemManager MemManager;
 	typedef TItemTraits ItemTraits;
+	typedef TMergeTraits MergeTraits;
 	typedef TSettings Settings;
+	typedef typename ItemTraits::Key Key;
 	typedef typename ItemTraits::Item Item;
+	typedef typename ItemTraits::MemManager MemManager;
 
 private:
 	typedef internal::SetCrew<MergeTraits, MemManager, Settings::checkVersion> Crew;
@@ -527,49 +527,49 @@ private:
 	};
 
 public:
-	MergeSet()
-		: MergeSet(MergeTraits())
+	MergeSetCore()
+		: MergeSetCore(MergeTraits())
 	{
 	}
 
-	explicit MergeSet(const MergeTraits& mergeTraits, MemManager memManager = MemManager())
+	explicit MergeSetCore(const MergeTraits& mergeTraits, MemManager memManager = MemManager())
 		: mMergeArray(MergeArrayMemManager(Crew(mergeTraits, std::move(memManager))))
 	{
 	}
 
 	template<internal::conceptSetArgIterator<Item> ArgIterator,
 		internal::conceptSentinel<ArgIterator> ArgSentinel>
-	explicit MergeSet(ArgIterator begin, ArgSentinel end,
+	explicit MergeSetCore(ArgIterator begin, ArgSentinel end,
 		const MergeTraits& mergeTraits = MergeTraits(), MemManager memManager = MemManager())
-		: MergeSet(mergeTraits, std::move(memManager))
+		: MergeSetCore(mergeTraits, std::move(memManager))
 	{
-		for (internal::Finalizer fin(&MergeSet::pvFilterClear, *this); fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeSetCore::pvFilterClear, *this); fin; fin.Detach())
 			Insert(std::move(begin), std::move(end));
 	}
 
-	MergeSet(std::initializer_list<Item> items)
-		: MergeSet(items, MergeTraits())
+	MergeSetCore(std::initializer_list<Item> items)
+		: MergeSetCore(items, MergeTraits())
 	{
 	}
 
-	explicit MergeSet(std::initializer_list<Item> items, const MergeTraits& mergeTraits,
+	explicit MergeSetCore(std::initializer_list<Item> items, const MergeTraits& mergeTraits,
 		MemManager memManager = MemManager())
-		: MergeSet(items.begin(), items.end(), mergeTraits, std::move(memManager))
+		: MergeSetCore(items.begin(), items.end(), mergeTraits, std::move(memManager))
 	{
 	}
 
-	MergeSet(MergeSet&& mergeSet) noexcept
+	MergeSetCore(MergeSetCore&& mergeSet) noexcept
 		: mMergeArray(std::move(mergeSet.mMergeArray)),
 		mBloomFilter(std::move(mergeSet.mBloomFilter))
 	{
 	}
 
-	MergeSet(const MergeSet& mergeSet)
-		: MergeSet(mergeSet, MemManager(mergeSet.GetMemManager()))
+	MergeSetCore(const MergeSetCore& mergeSet)
+		: MergeSetCore(mergeSet, MemManager(mergeSet.GetMemManager()))
 	{
 	}
 
-	explicit MergeSet(const MergeSet& mergeSet, MemManager memManager)
+	explicit MergeSetCore(const MergeSetCore& mergeSet, MemManager memManager)
 		: mMergeArray(MergeArray::CreateCap(mergeSet.GetCount(),
 			MergeArrayMemManager(Crew(mergeSet.GetMergeTraits(), std::move(memManager)))))
 	{
@@ -580,22 +580,22 @@ public:
 			{ mBloomFilter.Init(GetMemManager(), pvGetFilterLogMaxCount(), mergeSet.mBloomFilter); });
 	}
 
-	~MergeSet() noexcept
+	~MergeSetCore() noexcept
 	{
 		pvFilterClear();
 	}
 
-	MergeSet& operator=(MergeSet&& mergeSet) noexcept
+	MergeSetCore& operator=(MergeSetCore&& mergeSet) noexcept
 	{
 		return internal::ContainerAssigner::Move(std::move(mergeSet), *this);
 	}
 
-	MergeSet& operator=(const MergeSet& mergeSet)
+	MergeSetCore& operator=(const MergeSetCore& mergeSet)
 	{
 		return internal::ContainerAssigner::Copy(mergeSet, *this);
 	}
 
-	void Swap(MergeSet& mergeSet) noexcept
+	void Swap(MergeSetCore& mergeSet) noexcept
 	{
 		mMergeArray.Swap(mergeSet.mMergeArray);
 		mBloomFilter.Swap(mergeSet.mBloomFilter);
@@ -911,6 +911,11 @@ private:
 	MergeArray mMergeArray;
 	MOMO_NO_UNIQUE_ADDRESS BloomFilter mBloomFilter;
 };
+
+template<conceptObject TKey,
+	conceptMergeTraits<TKey> TMergeTraits = MergeTraits<TKey>,
+	conceptMemManager TMemManager = MemManagerDefault>
+using MergeSet = MergeSetCore<MergeSetItemTraits<TKey, TMemManager>, TMergeTraits>;
 
 template<conceptObject TKey>
 using MergeSetHash = MergeSet<TKey, MergeTraitsHash<TKey>>;

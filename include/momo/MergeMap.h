@@ -11,6 +11,7 @@
   namespace momo:
     class MergeMapKeyValueTraits
     class MergeMapSettings
+    class MergeMapCore
     class MergeMap
     class MergeMapHash
 
@@ -148,7 +149,7 @@ public:
 };
 
 /*!
-	All `MergeMap` functions and constructors have strong exception safety,
+	All `MergeMapCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	1. Functions `Insert` receiving many items have basic exception safety.
 	2. In case default `KeyValueTraits`: if insert/add function receiving
@@ -157,23 +158,23 @@ public:
 	Swap and move operations invalidate all container iterators.
 */
 
-template<conceptObject TKey, conceptObject TValue,
-	conceptMergeTraits<TKey> TMergeTraits = MergeTraits<TKey>,
-	conceptMemManager TMemManager = MemManagerDefault,
-	conceptMapKeyValueTraits<TKey, TValue, TMemManager> TKeyValueTraits
-		= MergeMapKeyValueTraits<TKey, TValue, TMemManager>,
+template<typename TKeyValueTraits,
+	conceptMergeTraits<typename TKeyValueTraits::Key> TMergeTraits
+		= MergeTraits<typename TKeyValueTraits::Key>,
 	typename TSettings = MergeMapSettings>
-class MOMO_EMPTY_BASES MergeMap
+requires conceptMapKeyValueTraits<TKeyValueTraits, typename TKeyValueTraits::Key,
+	typename TKeyValueTraits::Value, typename TKeyValueTraits::MemManager>
+class MOMO_EMPTY_BASES MergeMapCore
 	: public internal::Rangeable,
-	public internal::Swappable<MergeMap>
+	public internal::Swappable<MergeMapCore>
 {
 public:
-	typedef TKey Key;
-	typedef TValue Value;
-	typedef TMergeTraits MergeTraits;
-	typedef TMemManager MemManager;
 	typedef TKeyValueTraits KeyValueTraits;
+	typedef TMergeTraits MergeTraits;
 	typedef TSettings Settings;
+	typedef typename KeyValueTraits::Key Key;
+	typedef typename KeyValueTraits::Value Value;
+	typedef typename KeyValueTraits::MemManager MemManager;
 
 private:
 	typedef internal::MergeMapNestedSetItemTraits<KeyValueTraits> MergeSetItemTraits;
@@ -181,8 +182,7 @@ private:
 
 	typedef internal::MergeMapNestedSetSettings<Settings> MergeSetSettings;
 
-	typedef momo::MergeSet<Key, MergeTraits, typename MergeSetItemTraits::MemManager,
-		MergeSetItemTraits, MergeSetSettings> MergeSet;
+	typedef MergeSetCore<MergeSetItemTraits, MergeTraits, MergeSetSettings> MergeSet;
 
 	typedef typename MergeSet::ConstIterator MergeSetConstIterator;
 	typedef typename MergeSet::ConstPosition MergeSetConstPosition;
@@ -197,7 +197,7 @@ public:
 	typedef internal::InsertResult<Position> InsertResult;
 
 private:
-	typedef internal::MapValueReferencer<MergeMap, Position> ValueReferencer;
+	typedef internal::MapValueReferencer<MergeMapCore, Position> ValueReferencer;
 
 public:
 	template<typename KeyReference>
@@ -229,66 +229,66 @@ private:
 	};
 
 public:
-	MergeMap()
-		: MergeMap(MergeTraits())
+	MergeMapCore()
+		: MergeMapCore(MergeTraits())
 	{
 	}
 
-	explicit MergeMap(const MergeTraits& mergeTraits, MemManager memManager = MemManager())
+	explicit MergeMapCore(const MergeTraits& mergeTraits, MemManager memManager = MemManager())
 		: mMergeSet(mergeTraits, std::move(memManager))
 	{
 	}
 
 	template<internal::conceptMapArgIterator<Key> ArgIterator,
 		internal::conceptSentinel<ArgIterator> ArgSentinel>
-	explicit MergeMap(ArgIterator begin, ArgSentinel end,
+	explicit MergeMapCore(ArgIterator begin, ArgSentinel end,
 		const MergeTraits& mergeTraits = MergeTraits(), MemManager memManager = MemManager())
-		: MergeMap(mergeTraits, std::move(memManager))
+		: MergeMapCore(mergeTraits, std::move(memManager))
 	{
 		Insert(std::move(begin), std::move(end));
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
-	MergeMap(std::initializer_list<Pair> pairs)
-		: MergeMap(pairs, MergeTraits())
+	MergeMapCore(std::initializer_list<Pair> pairs)
+		: MergeMapCore(pairs, MergeTraits())
 	{
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
-	explicit MergeMap(std::initializer_list<Pair> pairs, const MergeTraits& mergeTraits,
+	explicit MergeMapCore(std::initializer_list<Pair> pairs, const MergeTraits& mergeTraits,
 		MemManager memManager = MemManager())
-		: MergeMap(pairs.begin(), pairs.end(), mergeTraits, std::move(memManager))
+		: MergeMapCore(pairs.begin(), pairs.end(), mergeTraits, std::move(memManager))
 	{
 	}
 
-	MergeMap(MergeMap&& mergeMap) noexcept
+	MergeMapCore(MergeMapCore&& mergeMap) noexcept
 		: mMergeSet(std::move(mergeMap.mMergeSet))
 	{
 	}
 
-	MergeMap(const MergeMap& mergeMap)
+	MergeMapCore(const MergeMapCore& mergeMap)
 		: mMergeSet(mergeMap.mMergeSet)
 	{
 	}
 
-	explicit MergeMap(const MergeMap& mergeMap, MemManager memManager)
+	explicit MergeMapCore(const MergeMapCore& mergeMap, MemManager memManager)
 		: mMergeSet(mergeMap.mMergeSet, std::move(memManager))
 	{
 	}
 
-	~MergeMap() noexcept = default;
+	~MergeMapCore() noexcept = default;
 
-	MergeMap& operator=(MergeMap&& mergeMap) noexcept
+	MergeMapCore& operator=(MergeMapCore&& mergeMap) noexcept
 	{
 		return internal::ContainerAssigner::Move(std::move(mergeMap), *this);
 	}
 
-	MergeMap& operator=(const MergeMap& mergeMap)
+	MergeMapCore& operator=(const MergeMapCore& mergeMap)
 	{
 		return internal::ContainerAssigner::Copy(mergeMap, *this);
 	}
 
-	void Swap(MergeMap& mergeMap) noexcept
+	void Swap(MergeMapCore& mergeMap) noexcept
 	{
 		mMergeSet.Swap(mergeMap.mMergeSet);
 	}
@@ -564,6 +564,11 @@ private:
 private:
 	MergeSet mMergeSet;
 };
+
+template<conceptObject TKey, conceptObject TValue,
+	conceptMergeTraits<TKey> TMergeTraits = MergeTraits<TKey>,
+	conceptMemManager TMemManager = MemManagerDefault>
+using MergeMap = MergeMapCore<MergeMapKeyValueTraits<TKey, TValue, TMemManager>, TMergeTraits>;
 
 template<conceptObject TKey>
 using MergeMapHash = MergeMap<TKey, MergeTraitsHash<TKey>>;
