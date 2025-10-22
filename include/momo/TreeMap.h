@@ -101,6 +101,7 @@ namespace internal
 		static const CheckMode checkMode = TreeMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = TreeMapSettings::extraCheckMode;
 		static const bool checkVersion = TreeMapSettings::checkVersion;
+		static const bool allowExceptionSuppression = TreeMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -173,6 +174,7 @@ public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	static const bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -839,16 +841,5 @@ using TreeMap = TreeMapCore<TreeMapKeyValueTraits<TKey, TValue, TMemManager>, TT
 
 template<conceptObject TKey, conceptObject TValue>
 using TreeMultiMap = TreeMap<TKey, TValue, TreeTraits<TKey, true>>;
-
-namespace internal
-{
-	class NestedTreeMapSettings : public TreeMapSettings
-	{
-	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkVersion = false;
-	};
-}
 
 } // namespace momo

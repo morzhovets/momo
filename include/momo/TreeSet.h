@@ -242,6 +242,7 @@ public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	static const bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -281,6 +282,9 @@ private:
 
 	static const size_t nodeMaxCapacity = Node::maxCapacity;
 	static_assert(nodeMaxCapacity > 0);
+
+	static const bool allowExceptionSuppression = Settings::allowExceptionSuppression
+		&& internal::Catcher::allowExceptionSuppression;
 
 public:
 	typedef internal::TreeSetIterator<Node, Settings> Iterator;
@@ -1127,12 +1131,16 @@ private:
 
 	bool pvExtraCheck(ConstIterator iter) const noexcept
 	{
-		bool res = false;
-		internal::Catcher::CatchAll([this, &res, iter] ()
-			{
-				res = (iter == GetBegin() || pvIsOrdered(std::prev(iter), iter))
-					&& (iter == std::prev(GetEnd()) || pvIsOrdered(iter, std::next(iter)));
-			});
+		bool res = true;
+		if constexpr (allowExceptionSuppression)	//? noexcept(IsLess)
+		{
+			res = false;
+			internal::Catcher::CatchAll([this, &res, iter] ()
+				{
+					res = (iter == GetBegin() || pvIsOrdered(std::prev(iter), iter))
+						&& (iter == std::prev(GetEnd()) || pvIsOrdered(iter, std::next(iter)));
+				});
+		}
 		return res;
 	}
 
@@ -1568,26 +1576,31 @@ private:
 			mRootNode->GetParent()->Destroy(*mNodeParams);
 			mRootNode->SetParent(nullptr);
 		}
-		internal::Catcher::CatchAll([this, node, savedNode, fast] ()
+		auto rebalancer = [this, node, savedNode, fast] ()
+		{
+			Node* curNode = node;
+			while (true)
 			{
-				Node* curNode = node;
-				while (true)
-				{
-					Node* parentNode = curNode->GetParent();
-					MOMO_ASSERT(parentNode != savedNode);
-					if (parentNode == nullptr)
-						break;
-					size_t index = parentNode->GetChildIndex(curNode);
-					bool stop = !pvRebalance(parentNode, index + 1, savedNode)
-						&& !pvRebalance(parentNode, index, savedNode) && fast;
-					if (stop)
-						break;
-					curNode = parentNode;
-				}
-			});
+				Node* parentNode = curNode->GetParent();
+				MOMO_ASSERT(parentNode != savedNode);
+				if (parentNode == nullptr)
+					break;
+				size_t index = parentNode->GetChildIndex(curNode);
+				bool stop = !pvRebalance(parentNode, index + 1, savedNode)
+					&& !pvRebalance(parentNode, index, savedNode) && fast;
+				if (stop)
+					break;
+				curNode = parentNode;
+			}
+		};
+		if constexpr (ItemTraits::isNothrowRelocatable)
+			rebalancer();
+		else if constexpr (allowExceptionSuppression)
+			internal::Catcher::CatchAll(rebalancer);
 	}
 
 	bool pvRebalance(Node* parentNode, size_t index, Node* savedNode)
+		noexcept(ItemTraits::isNothrowRelocatable)
 	{
 		if (index == 0 || index > parentNode->GetCount())
 			return false;
