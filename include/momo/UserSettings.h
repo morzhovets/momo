@@ -150,6 +150,7 @@
 # define MOMO_THROW(exception) std::terminate()
 #else
 # define MOMO_THROW(exception) throw exception
+// Undefine MOMO_CATCH_ALL macro if you want to disable internal exception suppression
 # define MOMO_CATCH_ALL catch (...) {}
 #endif
 

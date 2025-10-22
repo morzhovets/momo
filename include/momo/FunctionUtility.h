@@ -277,6 +277,14 @@ namespace internal
 	class Catcher
 	{
 	public:
+#if defined(MOMO_CATCH_ALL) || defined(MOMO_DISABLE_EXCEPTIONS)
+		static const bool allowExceptionSuppression = true;
+#else
+		static const bool allowExceptionSuppression = false;
+#endif
+
+	public:
+#if defined(MOMO_CATCH_ALL) || defined(MOMO_DISABLE_EXCEPTIONS)
 		template<conceptExecutor Executor>
 		static void CatchAll(Executor&& exec) noexcept
 		{
@@ -308,6 +316,7 @@ namespace internal
 			}
 #endif
 		}
+#endif // defined(MOMO_CATCH_ALL) || defined(MOMO_DISABLE_EXCEPTIONS)
 	};
 }
 
