@@ -656,7 +656,7 @@ public:
 
 	void Shrink(size_t capacity = 0)
 	{
-		if (GetCapacity() <= std::minmax(capacity, internalCapacity).second)
+		if (GetCapacity() <= std::minmax(capacity, size_t{internalCapacity}).second)
 			return;
 		size_t count = GetCount();
 		if (capacity < count)
@@ -685,7 +685,7 @@ public:
 				Shrink(capacity);
 				return true;
 			}
-			return GetCapacity() <= std::minmax(capacity, internalCapacity).second;
+			return GetCapacity() <= std::minmax(capacity, size_t{internalCapacity}).second;
 		}
 	}
 
