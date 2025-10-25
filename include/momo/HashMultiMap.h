@@ -350,7 +350,8 @@ namespace internal
 		typedef ArrayBucket<HashMultiMapArrayBucketItemTraits<HashMultiMapKeyValueTraits>,
 			HashMultiMapSettings::valueArrayMaxFastCount,
 			typename HashMultiMapSettings::ValueArrayMemPoolParams,
-			typename HashMultiMapSettings::ValueArraySettings> Value;
+			NestedArraySettings<typename HashMultiMapSettings::ValueArraySettings,
+				HashMultiMapSettings::allowExceptionSuppression>> Value;
 
 		static const bool useValuePtr = false;
 		static const bool useSafeValueReference = false;
@@ -567,6 +568,7 @@ public:
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;
 	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
+	static const bool allowExceptionSuppression = true;
 
 	static const size_t valueArrayMaxFastCount = 7;
 	typedef MemPoolParams<> ValueArrayMemPoolParams;
