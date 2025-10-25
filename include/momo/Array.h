@@ -151,6 +151,7 @@ class ArraySettings
 {
 public:
 	static const CheckMode checkMode = CheckMode::bydefault;
+	static const bool allowExceptionSuppression = true;
 
 	static const size_t internalCapacity = tInternalCapacity;
 	static const bool growOnReserve = tGrowOnReserve;
@@ -653,13 +654,9 @@ public:
 			pvGrow(capacity, ArrayGrowCause::reserve);
 	}
 
-	//void Shrink()
-	using ArrayBase::Shrink;
-
-	void Shrink(size_t capacity)
+	void Shrink(size_t capacity = 0)
 	{
-		size_t initCapacity = GetCapacity();
-		if (initCapacity <= capacity || initCapacity == internalCapacity)
+		if (GetCapacity() <= std::minmax(capacity, internalCapacity).second)
 			return;
 		size_t count = GetCount();
 		if (capacity < count)
@@ -670,6 +667,25 @@ public:
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
 			mData.template Reset<false>(capacity, count,
 				FastMovableFunctor(std::move(itemsCreator)));
+		}
+	}
+
+	bool TryShrink(size_t capacity = 0) noexcept
+	{
+		if constexpr (Settings::allowExceptionSuppression
+			&& internal::Catcher::allowExceptionSuppression)
+		{
+			return internal::Catcher::CatchAll([this, capacity] () { Shrink(capacity); });
+		}
+		else
+		{
+			capacity = std::minmax(capacity, GetCount()).second;
+			if (capacity == 0 || (capacity <= internalCapacity && ItemTraits::isNothrowRelocatable))
+			{
+				Shrink(capacity);
+				return true;
+			}
+			return GetCapacity() <= std::minmax(capacity, internalCapacity).second;
 		}
 	}
 
@@ -1020,7 +1036,8 @@ using ArrayIntCap = Array<TItem, TMemManager, TItemTraits, ArraySettings<tIntern
 
 namespace internal
 {
-	template<typename TBaseArraySettings = ArraySettings<>>
+	template<typename TBaseArraySettings = ArraySettings<>,
+		bool tAllowExceptionSuppression = false>
 	class NestedArraySettings : public TBaseArraySettings
 	{
 	protected:
@@ -1028,6 +1045,7 @@ namespace internal
 
 	public:
 		static const CheckMode checkMode = CheckMode::assertion;
+		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 
 	template<size_t tInternalCapacity, conceptObject TItem, conceptMemManager TMemManager>

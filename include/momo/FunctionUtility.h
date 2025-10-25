@@ -286,17 +286,20 @@ namespace internal
 	public:
 #if defined(MOMO_CATCH_ALL) || defined(MOMO_DISABLE_EXCEPTIONS)
 		template<conceptExecutor Executor>
-		static void CatchAll(Executor&& exec) noexcept
+		static bool CatchAll(Executor&& exec) noexcept
 		{
+			bool res = false;
 #ifndef MOMO_DISABLE_EXCEPTIONS
 			try
 #endif
 			{
 				std::forward<Executor>(exec)();
+				res = true;
 			}
 #ifndef MOMO_DISABLE_EXCEPTIONS
 			MOMO_CATCH_ALL
 #endif
+			return res;
 		}
 
 		template<typename Exception, conceptExecutor Executor,

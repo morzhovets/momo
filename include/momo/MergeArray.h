@@ -76,6 +76,7 @@ class MergeArraySettings
 {
 public:
 	static const CheckMode checkMode = CheckMode::bydefault;
+	static const bool allowExceptionSuppression = true;
 
 	static const size_t logInitialItemCount = tLogInitialItemCount;
 
@@ -352,10 +353,7 @@ public:
 		}
 	}
 
-	//void Shrink()
-	using ArrayBase::Shrink;
-
-	void Shrink(size_t capacity)
+	void Shrink(size_t capacity = 0)
 	{
 		if (capacity < mCount)
 			capacity = mCount;
@@ -386,6 +384,24 @@ public:
 						pvMakeIterator(mCount - segItemCount), segItemCount);
 				}
 			}
+		}
+	}
+
+	bool TryShrink(size_t capacity = 0) noexcept
+	{
+		if constexpr (Settings::allowExceptionSuppression
+			&& internal::Catcher::allowExceptionSuppression)
+		{
+			return internal::Catcher::CatchAll([this, capacity] () { Shrink(capacity); });
+		}
+		else
+		{
+			if (capacity == 0 && IsEmpty())
+			{
+				Clear(true);
+				return true;
+			}
+			return mCapacity <= pvCeilCapacity(capacity);
 		}
 	}
 

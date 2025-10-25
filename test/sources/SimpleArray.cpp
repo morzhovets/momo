@@ -135,7 +135,7 @@ public:
 
 		ar.Clear();
 		assert(ar.IsEmpty());
-		ar.Shrink();
+		assert(ar.TryShrink());
 
 		ar.AddBack(std::move(s1));
 		ar.Insert(0, 3, ar[0]);

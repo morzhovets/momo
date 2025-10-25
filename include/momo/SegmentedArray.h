@@ -182,7 +182,8 @@ public:
 private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
+	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings,
+		Settings::allowExceptionSuppression> SegmentsSettings;
 
 	typedef Array<Item*, MemManager, ArrayItemTraits<Item*, MemManager>,
 		SegmentsSettings> Segments;
@@ -377,18 +378,20 @@ public:
 			pvIncCapacity(initCapacity, capacity);
 	}
 
-	//void Shrink() noexcept
-	using ArrayBase::Shrink;
-
-	void Shrink(size_t capacity) noexcept
+	void Shrink(size_t capacity = 0) noexcept
 	{
 		if (GetCapacity() <= capacity)
 			return;
 		if (capacity < mCount)
 			capacity = mCount;
 		pvDecCapacity(capacity);
-		if constexpr (Settings::allowExceptionSuppression && internal::Catcher::allowExceptionSuppression)	//?
-			internal::Catcher::CatchAll([this] () { mSegments.Shrink(); });
+		mSegments.TryShrink();
+	}
+
+	bool TryShrink(size_t capacity = 0) noexcept
+	{
+		Shrink(capacity);
+		return true;
 	}
 
 	//const Item& operator[](size_t index) const

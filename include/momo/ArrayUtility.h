@@ -270,12 +270,6 @@ namespace internal
 			return array.GetCount() == 0;
 		}
 
-		template<conceptMutableThis RArray>
-		void Shrink(this RArray&& array) noexcept(noexcept(array.Shrink(size_t{})))
-		{
-			array.Shrink(array.GetCount());
-		}
-
 		template<typename RArray>
 		decltype(auto) GetBackItem(this RArray&& array, size_t revIndex = 0)
 		{
