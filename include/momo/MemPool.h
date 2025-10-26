@@ -47,10 +47,10 @@ public:
 	static constexpr size_t CorrectBlockSize(size_t blockSize, size_t blockAlignment,
 		size_t blockCount) noexcept
 	{
+		typedef internal::UIntMath<> SMath;
 		if (blockCount == 1)
-			return std::minmax(blockSize, size_t{1}).second;
-		return std::minmax(internal::UIntMath<>::Ceil(blockSize, blockAlignment),
-			2 * blockAlignment).second;
+			return SMath::Max(blockSize, 1);
+		return SMath::Max(SMath::Ceil(blockSize, blockAlignment), 2 * blockAlignment);
 	}
 
 	static constexpr bool CheckBlockCount(size_t blockCount) noexcept
@@ -280,8 +280,8 @@ namespace internal
 		size_t pvGetAlignmentAddend() const noexcept
 		{
 			const size_t blockAlignment = Params::GetBlockAlignment();
-			return blockAlignment - std::minmax(size_t{UIntConst::maxAllocAlignment},
-				size_t{1} << std::countr_zero(blockAlignment)).first;
+			return blockAlignment - UIntMath<>::Min(UIntConst::maxAllocAlignment,
+				size_t{1} << std::countr_zero(blockAlignment));
 		}
 
 		static int8_t pvGetNextFreeBlockIndex(Byte* block) noexcept
@@ -780,13 +780,13 @@ private:
 	size_t pvGetAlignmentAddend() const noexcept
 	{
 		const size_t blockAlignment = Params::GetBlockAlignment();
-		return blockAlignment - std::minmax(size_t{internal::UIntConst::maxAllocAlignment},
-			size_t{1} << std::countr_zero(blockAlignment)).first;
+		return blockAlignment - internal::UIntMath<>::Min(internal::UIntConst::maxAllocAlignment,
+			size_t{1} << std::countr_zero(blockAlignment));
 	}
 
 	size_t pvGetChunkSize0() const noexcept
 	{
-		return std::minmax(Params::GetBlockSize(), Params::GetBlockAlignment()).second;
+		return internal::UIntMath<>::Max(Params::GetBlockSize(), Params::GetBlockAlignment());
 	}
 
 	Byte* pvNewBlock1()
@@ -1138,7 +1138,7 @@ namespace internal
 			: mChunks(std::move(memManager)),
 			mBlockHead(nullPtr),
 			mMaxChunkCount(maxTotalBlockCount / blockCount),
-			mBlockSize(std::minmax(blockSize, sizeof(uint32_t)).second),
+			mBlockSize(internal::UIntMath<>::Max(blockSize, sizeof(uint32_t))),
 			mAllocCount(0)
 		{
 			MOMO_ASSERT(maxTotalBlockCount < size_t{UIntConst::max32});

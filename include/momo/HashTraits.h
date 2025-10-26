@@ -174,7 +174,7 @@ public:
 		mEqualComparer(equalComp),
 		mMaxLoadFactor(0.0)
 	{
-		startBucketCount = std::minmax(startBucketCount, size_t{8}).second;
+		startBucketCount = internal::UIntMath<>::Max(startBucketCount, 8);
 		mLogStartBucketCount = static_cast<uint8_t>(std::bit_width(startBucketCount - 1));
 	}
 

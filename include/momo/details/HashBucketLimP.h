@@ -311,7 +311,7 @@ namespace internal
 
 		static const size_t minItemAlignment = (maxCount <= 1) ? 1 : (maxCount <= 2) ? 2
 			: (maxCount <= 4) ? 4 : (maxCount <= 8) ? 8 : 16;
-		static const size_t itemAlignment = std::minmax(ItemTraits::alignment, minItemAlignment).second;
+		static const size_t itemAlignment = UIntMath<>::Max(ItemTraits::alignment, minItemAlignment);
 
 		static const bool skipOddMemPools = (maxCount > 1 && sizeof(Item) <= itemAlignment);	//?
 		static const uintptr_t modMemPoolIndex =

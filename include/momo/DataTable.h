@@ -209,7 +209,7 @@ private:
 		explicit Crew(ColumnList&& columnList)
 		{
 			RawMemPoolParams rawMemPoolParams(
-				std::minmax(columnList.GetTotalSize(), sizeof(void*)).second,
+				internal::UIntMath<>::Max(columnList.GetTotalSize(), sizeof(void*)),
 				columnList.GetAlignment());
 			mData = MemManagerProxy::template Allocate<Data>(columnList.GetMemManager(),
 				sizeof(Data));

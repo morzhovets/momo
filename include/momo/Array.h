@@ -656,7 +656,7 @@ public:
 
 	void Shrink(size_t capacity = 0)
 	{
-		if (GetCapacity() <= std::minmax(capacity, size_t{internalCapacity}).second)
+		if (GetCapacity() <= SMath::Max(capacity, internalCapacity))
 			return;
 		size_t count = GetCount();
 		if (capacity < count)
@@ -679,13 +679,13 @@ public:
 		}
 		else
 		{
-			capacity = std::minmax(capacity, GetCount()).second;
+			capacity = SMath::Max(capacity, GetCount());
 			if (capacity == 0 || (capacity <= internalCapacity && ItemTraits::isNothrowRelocatable))
 			{
 				Shrink(capacity);
 				return true;
 			}
-			return GetCapacity() <= std::minmax(capacity, size_t{internalCapacity}).second;
+			return GetCapacity() <= SMath::Max(capacity, internalCapacity);
 		}
 	}
 

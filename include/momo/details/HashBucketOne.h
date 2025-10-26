@@ -48,8 +48,8 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		typedef typename UIntSelector<std::minmax(minStateSize,
-			std::minmax(ItemTraits::alignment, sizeof(size_t)).first).second>::UInt HashState;
+		typedef typename UIntSelector<UIntMath<>::Max(minStateSize,
+			UIntMath<>::Min(ItemTraits::alignment, sizeof(size_t)))>::UInt HashState;
 
 	public:
 		explicit BucketOne() noexcept

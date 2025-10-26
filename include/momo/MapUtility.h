@@ -554,7 +554,7 @@ namespace internal
 
 		using MapKeyValueTraitsBase::isKeyNothrowRelocatable;
 
-		typedef MemPoolParamsStatic<std::minmax(sizeof(Value), sizeof(void*)).second,
+		typedef MemPoolParamsStatic<UIntMath<>::Max(sizeof(Value), sizeof(void*)),
 			MapKeyValueTraitsBase::valueAlignment> ValueMemPoolParams;
 
 	public:

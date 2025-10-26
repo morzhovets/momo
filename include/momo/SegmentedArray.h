@@ -594,7 +594,7 @@ private:
 				--segIndex;
 				segItemIndex = Settings::GetSegmentItemCount(segIndex);
 			}
-			size_t remCount = std::minmax(segItemIndex, mCount - count).first;
+			size_t remCount = internal::UIntMath<>::Min(segItemIndex, mCount - count);
 			ItemTraits::Destroy(memManager, mSegments[segIndex] + segItemIndex - remCount, remCount);
 			segItemIndex -= remCount;
 			mCount -= remCount;

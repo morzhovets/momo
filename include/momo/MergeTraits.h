@@ -121,7 +121,7 @@ public:
 private:
 	static size_t pvGetByteSize(size_t logMaxCount) noexcept
 	{
-		return size_t{1} << (std::minmax(logMaxCount + logMult, size_t{3}).second - 3);
+		return size_t{1} << (internal::UIntMath<>::Max(logMaxCount + logMult, 3) - 3);
 	}
 
 	static size_t pvGetBitIndex1(size_t hashCode, size_t logMaxCount) noexcept
