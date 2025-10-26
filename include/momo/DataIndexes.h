@@ -416,8 +416,8 @@ namespace internal
 		class UniqueHash
 		{
 		private:
-			typedef HashSetCore<HashSetItemTraits<Raw*, MemManagerPtr>,
-				HashTraits, NestedHashSetSettings> HashSet;
+			typedef HashSetCore<HashSetItemTraits<Raw*, MemManagerPtr>, HashTraits,
+				NestedHashSetSettings<Settings::allowExceptionSuppression>> HashSet;
 
 			typedef typename HashSet::ConstPosition Position;
 
@@ -568,7 +568,7 @@ namespace internal
 		{
 		private:
 			typedef HashMultiMapCore<HashMultiMapKeyValueTraits<Raw*, Raw*, MemManagerPtr>,
-				HashTraits, NestedHashMultiMapSettings> HashMultiMap;
+				HashTraits, NestedHashMultiMapSettings<Settings::allowExceptionSuppression>> HashMultiMap;
 
 			typedef typename HashMultiMap::ConstKeyIterator ConstKeyIterator;
 			typedef typename HashMultiMap::KeyIterator KeyIterator;

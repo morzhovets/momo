@@ -197,8 +197,7 @@ namespace internal
 		static const CheckMode checkMode = HashMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = HashMapSettings::extraCheckMode;
 		static const bool checkVersion = HashMapSettings::checkVersion;
-
-		static const bool overloadIfCannotGrow = HashMapSettings::overloadIfCannotGrow;
+		static const bool allowExceptionSuppression = HashMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -216,8 +215,7 @@ public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-
-	static const bool overloadIfCannotGrow = true;
+	static const bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -870,12 +868,14 @@ using HashMapOpen = HashMap<TKey, TValue, HashTraitsOpen<TKey>>;
 
 namespace internal
 {
+	template<bool tAllowExceptionSuppression>
 	class NestedHashMapSettings : public HashMapSettings
 	{
 	public:
 		static const CheckMode checkMode = CheckMode::assertion;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkVersion = false;
+		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 }
 

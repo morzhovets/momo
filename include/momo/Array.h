@@ -679,8 +679,11 @@ public:
 		}
 		else
 		{
-			capacity = SMath::Max(capacity, GetCount());
-			if (capacity == 0 || (capacity <= internalCapacity && ItemTraits::isNothrowRelocatable))
+			capacity = SMath::Max(capacity, GetCount());	//?
+			bool doShrink = (capacity == 0);
+			if constexpr (internalCapacity > 0)
+				doShrink = doShrink || (capacity <= internalCapacity && ItemTraits::isNothrowRelocatable);
+			if (doShrink)
 			{
 				Shrink(capacity);
 				return true;

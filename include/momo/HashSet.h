@@ -424,8 +424,7 @@ public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-
-	static const bool overloadIfCannotGrow = true;
+	static const bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -1187,7 +1186,7 @@ private:
 			},
 			[this] ([[maybe_unused]] const std::bad_alloc& exception)
 			{
-				if (!Settings::overloadIfCannotGrow || mBuckets == nullptr)
+				if (!Settings::allowExceptionSuppression || mBuckets == nullptr)
 					MOMO_THROW(exception);
 			});
 		if (newBuckets == nullptr)
@@ -1344,12 +1343,14 @@ using HashSetOpen = HashSet<TKey, HashTraitsOpen<TKey>>;
 
 namespace internal
 {
+	template<bool tAllowExceptionSuppression>
 	class NestedHashSetSettings : public HashSetSettings
 	{
 	public:
 		static const CheckMode checkMode = CheckMode::assertion;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkVersion = false;
+		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 }
 

@@ -1122,8 +1122,8 @@ private:
 	void pvAssign(RowIterator begin, RowSentinel end)
 		requires (!Settings::keepRowNumber)
 	{
-		typedef HashMapCore<HashMapKeyValueTraits<void*, size_t, MemManagerPtr>,
-			HashTraits<void*>, internal::NestedHashMapSettings> RawMap;
+		typedef HashMapCore<HashMapKeyValueTraits<void*, size_t, MemManagerPtr>, HashTraits<void*>,
+			internal::NestedHashMapSettings<Settings::allowExceptionSuppression>> RawMap;
 		RawMap rawMap((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		size_t count = 0;
 		for (RowIterator iter = std::move(begin); iter != end; ++iter)
@@ -1174,8 +1174,8 @@ private:
 	void pvRemove(RowIterator begin, RowSentinel end)
 		requires (!Settings::keepRowNumber)
 	{
-		typedef HashSetCore<HashSetItemTraits<void*, MemManagerPtr>,
-			HashTraits<void*>, internal::NestedHashSetSettings> RawSet;
+		typedef HashSetCore<HashSetItemTraits<void*, MemManagerPtr>, HashTraits<void*>,
+			internal::NestedHashSetSettings<Settings::allowExceptionSuppression>> RawSet;
 		RawSet rawSet((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
@@ -1209,8 +1209,8 @@ private:
 	void pvRemove(FastCopyableFunctor<RowFilter> rowFilter)
 		requires (!Settings::keepRowNumber)
 	{
-		typedef HashSetCore<HashSetItemTraits<void*, MemManagerPtr>,
-			HashTraits<void*>, internal::NestedHashSetSettings> RawSet;
+		typedef HashSetCore<HashSetItemTraits<void*, MemManagerPtr>, HashTraits<void*>,
+			internal::NestedHashSetSettings<Settings::allowExceptionSuppression>> RawSet;
 		RawSet rawSet((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		for (Raw* raw : mRaws)
 		{

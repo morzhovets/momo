@@ -460,6 +460,7 @@ namespace internal
 		static const CheckMode checkMode = HashMultiMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = HashMultiMapSettings::extraCheckMode;
 		static const bool checkVersion = HashMultiMapSettings::checkKeyVersion;
+		static const bool allowExceptionSuppression = HashMultiMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -1292,6 +1293,7 @@ using HashMultiMapOpen = HashMultiMap<TKey, TValue, HashTraitsOpen<TKey>>;
 
 namespace internal
 {
+	template<bool tAllowExceptionSuppression>
 	class NestedHashMultiMapSettings : public HashMultiMapSettings
 	{
 	public:
@@ -1299,6 +1301,7 @@ namespace internal
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkKeyVersion = false;
 		static const bool checkValueVersion = false;
+		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 }
 
