@@ -24,7 +24,7 @@ namespace momo
 
 namespace internal
 {
-	class MemManagerDictBlockDictSettings
+	class MemManagerDictBlockDictSettings //: public TreeMapSettings
 	{
 	public:
 		static const CheckMode checkMode = CheckMode::assertion;

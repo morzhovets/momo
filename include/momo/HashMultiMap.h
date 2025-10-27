@@ -451,7 +451,7 @@ namespace internal
 	};
 
 	template<typename THashMultiMapSettings>
-	class HashMultiMapNestedMapSettings : public HashMapSettings
+	class HashMultiMapNestedMapSettings //: public HashMapSettings
 	{
 	protected:
 		typedef THashMultiMapSettings HashMultiMapSettings;
