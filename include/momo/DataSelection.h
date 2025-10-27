@@ -775,21 +775,21 @@ namespace internal
 			};
 			Array<size_t, MemManagerPtr<MemManager>> hashCodes(
 				(MemManagerPtr<MemManager>(GetMemManager())));
-			Catcher::Catch<std::bad_alloc>(
-				[this, &hashCodes] ()
-				{
-					hashCodes.Reserve(mRaws.GetCount());
-				},
-				[this, rawHasher, rawEqualComp] (const std::bad_alloc&)
-				{
-					HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawHasher, rawEqualComp);
-				});
+			if constexpr (Settings::allowExceptionSuppression
+				&& internal::Catcher::allowExceptionSuppression)
+			{
+				Catcher::CatchAll([this, &hashCodes] () { hashCodes.Reserve(mRaws.GetCount()); });
+			}
 			if (hashCodes.GetCapacity() >= mRaws.GetCount())
 			{
 				for (Raw* raw : mRaws)
 					hashCodes.AddBackNogrow(rawHasher(raw));
 				HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
 					hashCodes.GetBegin(), rawEqualComp);
+			}
+			else
+			{
+				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawHasher, rawEqualComp);
 			}
 		}
 

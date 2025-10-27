@@ -465,6 +465,9 @@ private:
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
+	static const bool allowExceptionSuppression = Settings::allowExceptionSuppression
+		&& internal::Catcher::allowExceptionSuppression;
+
 public:
 	typedef internal::HashSetIterator<Bucket, Settings> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
@@ -1055,9 +1058,13 @@ private:
 
 	bool pvExtraCheck(ConstPosition pos) const noexcept
 	{
-		bool res = false;
-		internal::Catcher::CatchAll([this, &res, pos] ()
-			{ res = (pos == pvFind(ItemTraits::GetKey(*pos))); });
+		bool res = true;
+		if constexpr (allowExceptionSuppression)
+		{
+			res = false;
+			internal::Catcher::CatchAll([this, &res, pos] ()
+				{ res = (pos == pvFind(ItemTraits::GetKey(*pos))); });
+		}
 		return res;
 	}
 
@@ -1178,17 +1185,15 @@ private:
 			bucketMaxItemCount);
 		MOMO_CHECK(newCapacity > mCount);
 		Buckets* newBuckets = nullptr;
-		internal::Catcher::Catch<std::bad_alloc>(
-			[this, &newBuckets, newLogBucketCount] ()
-			{
-				newBuckets = Buckets::Create(GetMemManager(), newLogBucketCount,
-					(mBuckets != nullptr) ? &mBuckets->GetBucketParams() : nullptr);
-			},
-			[this] ([[maybe_unused]] const std::bad_alloc& exception)
-			{
-				if (!Settings::allowExceptionSuppression || mBuckets == nullptr)
-					MOMO_THROW(exception);
-			});
+		auto newBucketsCreator = [this, &newBuckets, newLogBucketCount] ()
+		{
+			newBuckets = Buckets::Create(GetMemManager(), newLogBucketCount,
+				(mBuckets != nullptr) ? &mBuckets->GetBucketParams() : nullptr);
+		};
+		if (mBuckets == nullptr || !allowExceptionSuppression)
+			newBucketsCreator();
+		else if constexpr (allowExceptionSuppression)
+			internal::Catcher::CatchAll(newBucketsCreator);
 		if (newBuckets == nullptr)
 			return pvAddNogrow<true>(*mBuckets, hashCode, std::move(itemCreator));
 		Position resPos;

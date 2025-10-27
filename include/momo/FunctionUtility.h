@@ -301,24 +301,6 @@ namespace internal
 #endif
 			return res;
 		}
-
-		template<typename Exception, conceptExecutor Executor,
-			conceptMoveFunctor<void, const Exception&> CatchExecutor>
-		static void Catch(Executor&& exec, [[maybe_unused]] CatchExecutor&& catchExec)
-		{
-#ifndef MOMO_DISABLE_EXCEPTIONS
-			try
-#endif
-			{
-				std::forward<Executor>(exec)();
-			}
-#ifndef MOMO_DISABLE_EXCEPTIONS
-			catch (const Exception& exception)
-			{
-				std::forward<CatchExecutor>(catchExec)(exception);
-			}
-#endif
-		}
 #endif // defined(MOMO_CATCH_ALL) || defined(MOMO_DISABLE_EXCEPTIONS)
 	};
 }
