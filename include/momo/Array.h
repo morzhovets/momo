@@ -407,21 +407,16 @@ private:
 
 		void pvInit(Data&& data) noexcept
 		{
-			bool inited = false;
-			if constexpr (internalCapacity > 0)
-			{
-				static_assert(ItemTraits::isNothrowRelocatable);
-				if (data.pvIsInternal())
-				{
-					mItems = pvActivateInternalItems();
-					ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
-					inited = true;
-				}
-			}
-			if (!inited)
+			if (!data.pvIsInternal())
 			{
 				mItems = data.mItems;
 				mCapacity = data.mCapacity;
+			}
+			else if constexpr (internalCapacity > 0)
+			{
+				static_assert(ItemTraits::isNothrowRelocatable);
+				mItems = pvActivateInternalItems();
+				ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
 			}
 			mCount = data.mCount;
 			data.pvInit();

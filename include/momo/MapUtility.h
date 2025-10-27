@@ -942,24 +942,20 @@ namespace internal
 		{
 			Key& srcKey = srcItem.GetKey();
 			Value* srcValuePtr = srcItem.GetValuePtr();
-			bool done = false;
-			if constexpr (!std::is_null_pointer_v<SrcMemManagerOrNullPtr>
-				&& !std::is_null_pointer_v<DstMemManagerOrNullPtr>)
-			{
-				if (srcMemManager != dstMemManager)
-				{
-					Item::template CreateRelocate<KeyValueTraits>(dstItem,
-						srcMemManager, *dstMemManager, srcKey, *srcValuePtr);
-					srcMemManager->GetMemPool().Deallocate(srcValuePtr);
-					done = true;
-				}
-			}
-			if (!done)
+			if (std::is_null_pointer_v<SrcMemManagerOrNullPtr>
+				|| std::is_null_pointer_v<DstMemManagerOrNullPtr> || srcMemManager == dstMemManager)
 			{
 				Item::Create(dstItem);
 				KeyValueTraits::RelocateKey(srcMemManager, dstMemManager,
 					srcKey, dstItem->GetKeyPtr());
 				dstItem->GetValuePtr() = srcValuePtr;
+			}
+			else if constexpr (!std::is_null_pointer_v<SrcMemManagerOrNullPtr>
+				&& !std::is_null_pointer_v<DstMemManagerOrNullPtr>)
+			{
+				Item::template CreateRelocate<KeyValueTraits>(dstItem,
+					srcMemManager, *dstMemManager, srcKey, *srcValuePtr);
+				srcMemManager->GetMemPool().Deallocate(srcValuePtr);
 			}
 		}
 
