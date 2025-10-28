@@ -283,8 +283,7 @@ private:
 	static const size_t nodeMaxCapacity = Node::maxCapacity;
 	static_assert(nodeMaxCapacity > 0);
 
-	static const bool allowExceptionSuppression = Settings::allowExceptionSuppression
-		&& internal::Catcher::allowExceptionSuppression;
+	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
 
 public:
 	typedef internal::TreeSetIterator<Node, Settings> Iterator;

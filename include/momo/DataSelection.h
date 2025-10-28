@@ -775,11 +775,8 @@ namespace internal
 			};
 			Array<size_t, MemManagerPtr<MemManager>> hashCodes(
 				(MemManagerPtr<MemManager>(GetMemManager())));
-			if constexpr (Settings::allowExceptionSuppression
-				&& internal::Catcher::allowExceptionSuppression)
-			{
+			if constexpr (internal::Catcher::allowExceptionSuppression<Settings>)
 				Catcher::CatchAll([this, &hashCodes] () { hashCodes.Reserve(mRaws.GetCount()); });
-			}
 			if (hashCodes.GetCapacity() >= mRaws.GetCount())
 			{
 				for (Raw* raw : mRaws)

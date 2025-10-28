@@ -465,8 +465,7 @@ private:
 
 	typedef internal::HashSetBuckets<Bucket> Buckets;
 
-	static const bool allowExceptionSuppression = Settings::allowExceptionSuppression
-		&& internal::Catcher::allowExceptionSuppression;
+	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
 
 public:
 	typedef internal::HashSetIterator<Bucket, Settings> Iterator;

@@ -277,8 +277,11 @@ namespace internal
 	class Catcher
 	{
 	public:
-#if defined(MOMO_CATCH_ALL) || defined(MOMO_DISABLE_EXCEPTIONS)
+		template<typename Settings>
+#if defined(MOMO_DISABLE_EXCEPTIONS)
 		static const bool allowExceptionSuppression = true;
+#elif defined(MOMO_CATCH_ALL)
+		static const bool allowExceptionSuppression = Settings::allowExceptionSuppression;
 #else
 		static const bool allowExceptionSuppression = false;
 #endif

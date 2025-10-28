@@ -667,8 +667,7 @@ public:
 
 	bool TryShrink(size_t capacity = 0) noexcept
 	{
-		if constexpr (Settings::allowExceptionSuppression
-			&& internal::Catcher::allowExceptionSuppression)
+		if constexpr (internal::Catcher::allowExceptionSuppression<Settings>)
 		{
 			return internal::Catcher::CatchAll([this, capacity] () { Shrink(capacity); });
 		}
