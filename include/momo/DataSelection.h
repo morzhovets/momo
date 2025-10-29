@@ -773,10 +773,10 @@ namespace internal
 				const size_t* offsetPtr = offsets.data();
 				return (pvIsEqual<Items>(raw1, raw2, *offsetPtr++) && ...);
 			};
-			Array<size_t, MemManagerPtr<MemManager>> hashCodes(
-				(MemManagerPtr<MemManager>(GetMemManager())));
+			typedef Array<size_t, MemManagerPtr<MemManager>> HashCodes;
+			HashCodes hashCodes((MemManagerPtr<MemManager>(GetMemManager())));
 			if constexpr (internal::Catcher::allowExceptionSuppression<Settings>)
-				Catcher::CatchAll([this, &hashCodes] () { hashCodes.Reserve(mRaws.GetCount()); });
+				Catcher::CatchAll(&HashCodes::Reserve, hashCodes, mRaws.GetCount());
 			if (hashCodes.GetCapacity() >= mRaws.GetCount())
 			{
 				for (Raw* raw : mRaws)

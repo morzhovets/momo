@@ -669,7 +669,7 @@ public:
 	{
 		if constexpr (internal::Catcher::allowExceptionSuppression<Settings>)
 		{
-			return internal::Catcher::CatchAll([this, capacity] () { Shrink(capacity); });
+			return internal::Catcher::CatchAll(&Array::Shrink, *this, capacity);
 		}
 		else
 		{

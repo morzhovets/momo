@@ -1285,27 +1285,30 @@ private:
 			Buckets* buckets = mBuckets->GetNextBuckets();
 			if (buckets == nullptr)
 				break;
-			bool done = true;
 			if constexpr (areItemsNothrowRelocatable || !allowExceptionSuppression)
-				pvRelocateItems(buckets);
+			{
+				pvRelocateItems(*buckets);
+			}
 			else if constexpr (allowExceptionSuppression)
-				done = internal::Catcher::CatchAll([this, buckets] () { pvRelocateItems(buckets); });
-			if (!done)
-				break;
+			{
+				void (HashSetCore::*relocator)(Buckets&) = &HashSetCore::pvRelocateItems;
+				if (!internal::Catcher::CatchAll(relocator, *this, *buckets))
+					break;
+			}
 			Buckets* nextBuckets = buckets->ExtractNextBuckets();
 			mBuckets->ExtractNextBuckets()->Destroy(memManager, false);
 			mBuckets->SetNextBuckets(nextBuckets);
 		}
 	}
 
-	void pvRelocateItems(Buckets* buckets) noexcept(areItemsNothrowRelocatable)
+	void pvRelocateItems(Buckets& buckets) noexcept(areItemsNothrowRelocatable)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
-		BucketParams& bucketParams = buckets->GetBucketParams();
-		size_t bucketCount = buckets->GetCount();
+		BucketParams& bucketParams = buckets.GetBucketParams();
+		size_t bucketCount = buckets.GetCount();
 		for (size_t i = 0; i < bucketCount; ++i)
 		{
-			Bucket& bucket = (*buckets)[i];
+			Bucket& bucket = buckets[i];
 			BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
 			BucketIterator bucketIter = bucketBounds.GetEnd();
 			auto hashCodeFullGetter = [&hashTraits, &bucketIter] ()
@@ -1314,7 +1317,7 @@ private:
 			{
 				--bucketIter;
 				size_t hashCode = bucket.GetHashCodePart(FastCopyableFunctor(hashCodeFullGetter),
-					bucketIter, i, buckets->GetLogCount(), mBuckets->GetLogCount());
+					bucketIter, i, buckets.GetLogCount(), mBuckets->GetLogCount());
 				auto itemReplacer = [this, hashCode] ([[maybe_unused]] Item& srcItem, Item& dstItem)
 				{
 					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));

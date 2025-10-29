@@ -287,8 +287,8 @@ namespace internal
 #endif
 
 	public:
-		template<conceptExecutor Executor>
-		static bool CatchAll(Executor&& exec) noexcept
+		template<typename... Args, std::invocable<Args...> Func>
+		static bool CatchAll(Func&& func, Args&&... args) noexcept
 		{
 #if !defined(MOMO_DISABLE_EXCEPTIONS) && !defined(MOMO_CATCH_ALL)
 			static_assert(false);
@@ -298,7 +298,7 @@ namespace internal
 			try
 #endif
 			{
-				std::forward<Executor>(exec)();
+				std::invoke(std::forward<Func>(func), std::forward<Args>(args)...);
 				res = true;
 			}
 #if !defined(MOMO_DISABLE_EXCEPTIONS) && defined(MOMO_CATCH_ALL)
