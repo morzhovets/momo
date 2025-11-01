@@ -12,21 +12,21 @@ jobs:
 #        - gcc_ver: '15'
 #          macos_ver: '15'
 #          build_type: 'Release'
-#          test_extra: 'Off'
+#          no_exceptions_rtti: 'Off'
 #          flags: '-std=c++23 -Werror -Wno-psabi'
 #          path_prefix: '/opt/homebrew'
 
         - gcc_ver: '15'
           macos_ver: '15'
           build_type: 'Release'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++26 -Werror -Wno-psabi'
           path_prefix: '/opt/homebrew'
 
         - gcc_ver: '15'
           macos_ver: '15'
           build_type: 'Debug'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++26 -Werror -Wno-psabi'
           path_prefix: '/opt/homebrew'
 
@@ -34,21 +34,21 @@ jobs:
 #        - gcc_ver: '15'
 #          macos_ver: '15-intel'
 #          build_type: 'Release'
-#          test_extra: 'Off'
+#          no_exceptions_rtti: 'Off'
 #          flags: '-std=c++23'
 #          path_prefix: '/usr/local'
 
         - gcc_ver: '15'
           macos_ver: '15-intel'
           build_type: 'Release'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++26'
           path_prefix: '/usr/local'
 
         - gcc_ver: '15'
           macos_ver: '15-intel'
           build_type: 'Debug'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++26 -Werror'
           path_prefix: '/usr/local'
 
@@ -69,7 +69,8 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DMOMO_TEST_NO_EXCEPTIONS_RTTI=${{ matrix.no_exceptions_rtti }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test

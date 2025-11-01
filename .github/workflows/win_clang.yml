@@ -10,40 +10,40 @@ jobs:
 
         # x64
 #        - build_type: 'Release'
-#          test_extra: 'Off'
+#          no_exceptions_rtti: 'Off'
 #          flags: '-std=c++23 -Werror'
 #
 #        - build_type: 'Release'
-#          test_extra: 'Off'
+#          no_exceptions_rtti: 'Off'
 #          flags: '-std=c++26 -Werror'
 #
 #        - build_type: 'Debug'
-#          test_extra: 'Off'
+#          no_exceptions_rtti: 'Off'
 #          flags: '-std=c++26 -Werror'
 
         # x86
         - build_type: 'Release'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-m32 -std=c++23 -Werror'
 
         - build_type: 'Release'
-          test_extra: 'On'
+          no_exceptions_rtti: 'On'
           flags: '-m32 -std=c++23 -Werror'
 
         - build_type: 'Release'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-m32 -std=c++26 -Werror'
 
         - build_type: 'Release'
-          test_extra: 'On'
+          no_exceptions_rtti: 'On'
           flags: '-m32 -std=c++26 -Werror'
 
         - build_type: 'Debug'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-m32 -std=c++26 -Werror'
 
         - build_type: 'Debug'
-          test_extra: 'On'
+          no_exceptions_rtti: 'On'
           flags: '-m32 -std=c++26 -Werror'
 
     runs-on: windows-latest
@@ -62,7 +62,8 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
+          -DMOMO_TEST_NO_EXCEPTIONS_RTTI=${{ matrix.no_exceptions_rtti }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test.exe

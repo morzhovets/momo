@@ -12,74 +12,74 @@ jobs:
         - gcc_ver: '14'
           ubuntu_ver: '24.04'
           build_type: 'Release'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++23 -Werror'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04'
           build_type: 'Release'
-          test_extra: 'On'
+          no_exceptions_rtti: 'On'
           flags: '-std=c++23 -Werror'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04'
           build_type: 'Release'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++26 -Werror'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04'
           build_type: 'Release'
-          test_extra: 'On'
+          no_exceptions_rtti: 'On'
           flags: '-std=c++26 -Werror'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04'
           build_type: 'Debug'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++26 -Werror'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04'
           build_type: 'Debug'
-          test_extra: 'On'
+          no_exceptions_rtti: 'On'
           flags: '-std=c++26 -Werror'
 
         # ARM64
         - gcc_ver: '14'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++23 -Werror -Wno-psabi'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
-          test_extra: 'On'
+          no_exceptions_rtti: 'On'
           flags: '-std=c++23 -Werror -Wno-psabi'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++26 -Werror -Wno-psabi'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
-          test_extra: 'On'
+          no_exceptions_rtti: 'On'
           flags: '-std=c++26 -Werror -Wno-psabi'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04-arm'
           build_type: 'Debug'
-          test_extra: 'Off'
+          no_exceptions_rtti: 'Off'
           flags: '-std=c++26 -Werror -Wno-psabi'
 
         - gcc_ver: '14'
           ubuntu_ver: '24.04-arm'
           build_type: 'Debug'
-          test_extra: 'On'
+          no_exceptions_rtti: 'On'
           flags: '-std=c++26 -Werror -Wno-psabi'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
@@ -107,7 +107,8 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DMOMO_TEST_NO_EXCEPTIONS_RTTI=${{ matrix.no_exceptions_rtti }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test
