@@ -497,13 +497,13 @@ private:
 
 	size_t pvGetAlignmentAddend() const noexcept
 	{
-		return Params::blockAlignment - std::minmax(size_t{internal::UIntConst::maxAllocAlignment},
-			Params::blockAlignment & (~Params::blockAlignment + 1)).first;
+		return Params::blockAlignment - internal::UIntMath<>::Min(internal::UIntConst::maxAllocAlignment,
+			Params::blockAlignment & (~Params::blockAlignment + 1));
 	}
 
 	size_t pvGetChunkSize0() const noexcept
 	{
-		return std::minmax(size_t{Params::blockSize}, size_t{Params::blockAlignment}).second;
+		return internal::UIntMath<>::Max(Params::blockSize, Params::blockAlignment);
 	}
 
 	Byte* pvNewBlock1()
@@ -845,7 +845,7 @@ namespace internal
 			: mChunks(std::move(memManager)),
 			mBlockHead(nullPtr),
 			mMaxChunkCount(maxTotalBlockCount / blockCount),
-			mBlockSize(std::minmax(blockSize, sizeof(uint32_t)).second),
+			mBlockSize(UIntMath<>::Max(blockSize, sizeof(uint32_t))),
 			mAllocCount(0)
 		{
 			MOMO_ASSERT(maxTotalBlockCount < size_t{UIntConst::max32});

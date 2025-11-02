@@ -417,7 +417,7 @@ public:
 
 	void rehash(size_type bucketCount)
 	{
-		bucketCount = std::minmax(bucketCount, size_t{2}).second;
+		bucketCount = momo::internal::UIntMath<>::Max(bucketCount, 2);
 		size_t logBucketCount = momo::internal::UIntMath<>::Log2(bucketCount - 1) + 1;
 		bucketCount = size_t{1} << logBucketCount;
 		reserve(mHashMap.GetHashTraits().CalcCapacity(bucketCount, HashMap::bucketMaxItemCount));

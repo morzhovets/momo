@@ -333,6 +333,18 @@ namespace internal
 		};
 
 	public:
+		static constexpr UInt Min(UInt value1, UInt value2) noexcept
+		{
+			// `std::min` has some issues
+			return (value1 < value2) ? value1 : value2;
+		}
+
+		static constexpr UInt Max(UInt value1, UInt value2) noexcept
+		{
+			// `std::max` has some issues
+			return (value1 > value2) ? value1 : value2;
+		}
+
 		static constexpr UInt Ceil(UInt value, UInt mod) noexcept
 		{
 			return ((value + mod - 1) / mod) * mod;

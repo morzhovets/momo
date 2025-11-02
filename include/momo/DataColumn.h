@@ -1203,7 +1203,7 @@ private:
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(*columnCodes, codeParam);
 		graph.AddEdges(vertices.first, vertices.second, offset);
 		offset += size;
-		maxAlignment = std::minmax(maxAlignment, size_t{alignment}).second;
+		maxAlignment = internal::UIntMath<>::Max(maxAlignment, alignment);
 		pvAddEdges<void, Items...>(graph, offset, maxAlignment, codeParam, columnCodes + 1);
 	}
 

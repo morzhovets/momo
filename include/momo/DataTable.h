@@ -937,7 +937,7 @@ private:
 	RawMemPool pvCreateRawMemPool()
 	{
 		const ColumnList& columnList = GetColumnList();
-		size_t size = std::minmax(columnList.GetTotalSize(), sizeof(void*)).second;
+		size_t size = internal::UIntMath<>::Max(columnList.GetTotalSize(), sizeof(void*));
 		return RawMemPool(typename RawMemPool::Params(size, columnList.GetAlignment()),
 			MemManagerPtr(GetMemManager()));
 	}
