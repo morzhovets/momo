@@ -287,7 +287,7 @@ namespace internal
 #endif
 
 	public:
-		template<typename... Args, std::invocable<Args...> Func>
+		template<typename... Args, std::invocable<Args&&...> Func>
 		static bool CatchAll(Func&& func, Args&&... args) noexcept
 		{
 #if !defined(MOMO_DISABLE_EXCEPTIONS) && !defined(MOMO_CATCH_ALL)
@@ -298,13 +298,23 @@ namespace internal
 			try
 #endif
 			{
-				std::invoke(std::forward<Func>(func), std::forward<Args>(args)...);
+				if constexpr (std::is_member_pointer_v<std::decay_t<Func>>)
+					pvInvoke(std::forward<Func>(func), std::forward<Args>(args)...);
+				else
+					std::forward<Func>(func)(std::forward<Args>(args)...);
 				res = true;
 			}
 #if !defined(MOMO_DISABLE_EXCEPTIONS) && defined(MOMO_CATCH_ALL)
 			MOMO_CATCH_ALL
 #endif
 			return res;
+		}
+
+	private:
+		template<typename Object, typename... Args, std::invocable<Object&&, Args&&...> Func>
+		static void pvInvoke(Func&& func, Object&& object, Args&&... args)
+		{
+			(std::forward<Object>(object).*func)(std::forward<Args>(args)...);
 		}
 	};
 }
