@@ -23,6 +23,17 @@
 namespace momo
 {
 
+namespace internal
+{
+	class MemManagerDictBlockDictSettings : public TreeMapSettings
+	{
+	public:
+		static const CheckMode checkMode = CheckMode::assertion;
+		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		static const bool checkVersion = false;
+	};
+}
+
 class MemManagerDictSettings
 {
 public:
@@ -48,7 +59,7 @@ private:
 
 	typedef TreeMap<void*, size_t, BlockDictTreeTraits, BaseMemManager,
 		TreeMapKeyValueTraits<void*, size_t, BaseMemManager>,
-		internal::NestedTreeMapSettings> BlockDict;
+		internal::MemManagerDictBlockDictSettings> BlockDict;
 
 public:
 	explicit MemManagerDict(BaseMemManager baseMemManager = BaseMemManager())
