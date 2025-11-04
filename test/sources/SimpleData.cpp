@@ -50,11 +50,17 @@ private:
 		static const size_t selectEqualityMaxCount = 1;
 	};
 
+	class DataSettings1 : public momo::DataSettings<true>
+	{
+	public:
+		static const bool allowExceptionSuppression = false;
+	};
+
 public:
 	static void TestAll()
 	{
 		{
-			std::cout << "momo::DataColumnListNative (-RowNumber): " << std::flush;
+			std::cout << "momo::DataColumnListNative: " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfoNative<Struct>,
 				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
@@ -66,7 +72,7 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnListStatic (-RowNumber): " << std::flush;
+			std::cout << "momo::DataColumnListStatic: " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
 				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
@@ -78,9 +84,9 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnListStatic (+RowNumber): " << std::flush;
+			std::cout << "momo::DataColumnListStatic (+RowNumber, -allowExceptionSuppression): " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
-				momo::MemManagerDict<>, momo::DataSettings<true>> DataColumnList;
+				momo::MemManagerDict<>, DataSettings1> DataColumnList;
 			DataColumnList columnList;
 			columnList.SetMutable(intStruct);
 			columnList.ResetMutable();
@@ -92,7 +98,7 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnList (struct, -RowNumber): " << std::flush;
+			std::cout << "momo::DataColumnList (struct): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<Struct, 4>,
 				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList = { dblStruct.Mutable(), intStruct };
@@ -103,23 +109,23 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnList (string, +RowNumber): " << std::flush;
-			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct, 12>, momo::MemManagerDict<>,
-				momo::DataItemTraits<momo::MemManagerDict<>>, momo::DataSettings<true>> DataColumnList;
-			DataColumnList columnList;
-			columnList.Add(dblString.Mutable());
-			columnList.Add(intString);
-			columnList.Add(strString);
-			momo::DataTable<DataColumnList, DataTraits1> table(std::move(columnList));
+			std::cout << "momo::DataColumnList: " << std::flush;
+			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct>,
+				momo::MemManagerDict<>> DataColumnList;
+			momo::DataTable<DataColumnList> table({ intString, strString, dblString.Mutable() });
 			TestData<true>(table, intString, dblString, strString);
 			std::cout << "ok" << std::endl;
 		}
 
 		{
-			std::cout << "momo::DataColumnList (string, -RowNumber): " << std::flush;
-			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct>,
-				momo::MemManagerDict<>> DataColumnList;
-			momo::DataTable<DataColumnList> table({ intString, strString, dblString.Mutable() });
+			std::cout << "momo::DataColumnList (+RowNumber, -allowExceptionSuppression): " << std::flush;
+			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct, 12>, momo::MemManagerDict<>,
+				momo::DataItemTraits<momo::MemManagerDict<>>, DataSettings1> DataColumnList;
+			DataColumnList columnList;
+			columnList.Add(dblString.Mutable());
+			columnList.Add(intString);
+			columnList.Add(strString);
+			momo::DataTable<DataColumnList, DataTraits1> table(std::move(columnList));
 			TestData<true>(table, intString, dblString, strString);
 			std::cout << "ok" << std::endl;
 		}
