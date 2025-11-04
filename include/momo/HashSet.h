@@ -1285,16 +1285,13 @@ private:
 			Buckets* buckets = mBuckets->GetNextBuckets();
 			if (buckets == nullptr)
 				break;
+			bool done = true;
 			if constexpr (areItemsNothrowRelocatable || !allowExceptionSuppression)
-			{
 				pvRelocateItems(*buckets);
-			}
 			else if constexpr (allowExceptionSuppression)
-			{
-				void (HashSetCore::*relocator)(Buckets&) = &HashSetCore::pvRelocateItems;
-				if (!internal::Catcher::CatchAll(relocator, *this, *buckets))
-					break;
-			}
+				done = internal::Catcher::CatchAll([this, buckets] () { pvRelocateItems(*buckets); });	//?
+			if (!done)
+				break;
 			Buckets* nextBuckets = buckets->ExtractNextBuckets();
 			mBuckets->ExtractNextBuckets()->Destroy(memManager, false);
 			mBuckets->SetNextBuckets(nextBuckets);
