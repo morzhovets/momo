@@ -283,7 +283,8 @@ public:
 
 		ar.Reserve(count * 3);
 
-		assert(ar.TryShrink() == (Array::Settings::allowExceptionSuppression
+		assert(ar.TryShrink() ==
+			(momo::internal::Catcher::allowExceptionSuppression<typename Array::Settings>
 			|| std::is_base_of_v<momo::internal::SegmentedArraySettingsBase, typename Array::Settings>));
 
 		for (size_t i = 0; i < count; ++i)
