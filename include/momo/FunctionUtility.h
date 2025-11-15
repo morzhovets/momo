@@ -287,8 +287,8 @@ namespace internal
 #endif
 
 	public:
-		template<typename... Args, std::invocable<Args&&...> Func>
-		static bool CatchAll(Func&& func, Args&&... args) noexcept
+		template<typename... Args, std::invocable<Args&&...> Functor>
+		static bool CatchAll(Functor&& func, Args&&... args) noexcept
 		{
 #if !defined(MOMO_DISABLE_EXCEPTIONS) && !defined(MOMO_CATCH_ALL)
 			static_assert(false);
@@ -298,10 +298,10 @@ namespace internal
 			try
 #endif
 			{
-				if constexpr (std::is_member_pointer_v<std::decay_t<Func>>)
-					pvInvoke(std::forward<Func>(func), std::forward<Args>(args)...);
+				if constexpr (std::is_member_pointer_v<std::decay_t<Functor>>)
+					pvInvoke(std::forward<Functor>(func), std::forward<Args>(args)...);
 				else
-					std::forward<Func>(func)(std::forward<Args>(args)...);
+					std::forward<Functor>(func)(std::forward<Args>(args)...);
 				res = true;
 			}
 #if !defined(MOMO_DISABLE_EXCEPTIONS) && defined(MOMO_CATCH_ALL)
@@ -311,10 +311,10 @@ namespace internal
 		}
 
 	private:
-		template<typename Class, typename... Args, std::invocable<Class&&, Args&&...> Func>
-		static void pvInvoke(Func&& func, Class&& object, Args&&... args)
+		template<typename Class, typename... Args>
+		static void pvInvoke(void (Class::*func)(Args...), Class& object, Args... args)
 		{
-			(std::forward<Class>(object).*func)(std::forward<Args>(args)...);
+			(object.*func)(args...);
 		}
 	};
 }
