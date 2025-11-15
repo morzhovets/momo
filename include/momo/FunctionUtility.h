@@ -125,9 +125,9 @@ namespace internal
 			func(arg);
 		}
 
-		template<typename Object = std::decay_t<Arg>>
-		requires std::is_class_v<Object>
-		void ptExecute(void (Object::*func)() noexcept) noexcept
+		template<typename Class = std::decay_t<Arg>>
+		requires std::is_class_v<Class>
+		void ptExecute(void (Class::*func)() noexcept) noexcept
 		{
 			(arg.*func)();
 		}
@@ -145,9 +145,9 @@ namespace internal
 			func(arg0, arg1);
 		}
 
-		template<typename Object = std::decay_t<Arg0>>
-		requires std::is_class_v<Object>
-		void ptExecute(void (Object::*func)(Arg1) noexcept) noexcept
+		template<typename Class = std::decay_t<Arg0>>
+		requires std::is_class_v<Class>
+		void ptExecute(void (Class::*func)(Arg1) noexcept) noexcept
 		{
 			(arg0.*func)(arg1);
 		}
@@ -166,9 +166,9 @@ namespace internal
 			func(arg0, arg1, arg2);
 		}
 
-		template<typename Object = std::decay_t<Arg0>>
-		requires std::is_class_v<Object>
-		void ptExecute(void (Object::*func)(Arg1, Arg2) noexcept) noexcept
+		template<typename Class = std::decay_t<Arg0>>
+		requires std::is_class_v<Class>
+		void ptExecute(void (Class::*func)(Arg1, Arg2) noexcept) noexcept
 		{
 			(arg0.*func)(arg1, arg2);
 		}
@@ -224,18 +224,18 @@ namespace internal
 	Finalizer(void (*)(Args...) noexcept, std::type_identity_t<Args>...)
 		-> Finalizer<void (*)(Args...) noexcept>;
 
-	template<typename Object, typename... Args>
-	class Finalizer<void (Object::*)(Args...) noexcept>
-		: private FinalizerArgs<Object&, Args...>
+	template<typename Class, typename... Args>
+	class Finalizer<void (Class::*)(Args...) noexcept>
+		: private FinalizerArgs<Class&, Args...>
 	{
 	public:
-		typedef void (Object::*Functor)(Args...) noexcept;
+		typedef void (Class::*Functor)(Args...) noexcept;
 
 	private:
-		typedef internal::FinalizerArgs<Object&, Args...> FinalizerArgs;
+		typedef internal::FinalizerArgs<Class&, Args...> FinalizerArgs;
 
 	public:
-		[[nodiscard]] explicit Finalizer(Functor func, Object& object, Args... args) noexcept
+		[[nodiscard]] explicit Finalizer(Functor func, Class& object, Args... args) noexcept
 			: FinalizerArgs(object, args...),
 			mFunctor(func)
 		{
@@ -265,14 +265,14 @@ namespace internal
 		Functor mFunctor;
 	};
 
-	template<typename Object, typename... Args>
-	Finalizer(void (Object::*)(Args...) noexcept,
-		std::type_identity_t<Object>&, std::type_identity_t<Args>...)
-		-> Finalizer<void (Object::*)(Args...) noexcept>;
+	template<typename Class, typename... Args>
+	Finalizer(void (Class::*)(Args...) noexcept,
+		std::type_identity_t<Class>&, std::type_identity_t<Args>...)
+		-> Finalizer<void (Class::*)(Args...) noexcept>;
 
-	template<typename Object>
-	Finalizer(std::type_identity_t<void (Object::*)() noexcept>, Object&)
-		-> Finalizer<void (Object::*)() noexcept>;
+	template<typename Class>
+	Finalizer(std::type_identity_t<void (Class::*)() noexcept>, Class&)
+		-> Finalizer<void (Class::*)() noexcept>;
 
 	class Catcher
 	{
@@ -311,10 +311,10 @@ namespace internal
 		}
 
 	private:
-		template<typename Object, typename... Args, std::invocable<Object&&, Args&&...> Func>
-		static void pvInvoke(Func&& func, Object&& object, Args&&... args)
+		template<typename Class, typename... Args, std::invocable<Class&&, Args&&...> Func>
+		static void pvInvoke(Func&& func, Class&& object, Args&&... args)
 		{
-			(std::forward<Object>(object).*func)(std::forward<Args>(args)...);
+			(std::forward<Class>(object).*func)(std::forward<Args>(args)...);
 		}
 	};
 }

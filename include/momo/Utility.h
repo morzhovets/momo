@@ -51,22 +51,22 @@
 #define MOMO_EXTRA_CHECK(expr) \
 	MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
 
-#define MOMO_DECLARE_PROXY_CONSTRUCTOR(Object) \
+#define MOMO_DECLARE_PROXY_CONSTRUCTOR(Class) \
 	template<typename... Args> \
-	explicit Object##Proxy(Args&&... args) \
-		noexcept(std::is_nothrow_constructible_v<Object, Args&&...>) \
-		: Object(std::forward<Args>(args)...) \
+	explicit Class##Proxy(Args&&... args) \
+		noexcept(std::is_nothrow_constructible_v<Class, Args&&...>) \
+		: Class(std::forward<Args>(args)...) \
 	{ \
 	}
 
-#define MOMO_DECLARE_PROXY_FUNCTION(Object, Func) \
-	template<typename RObject, typename... Args> \
-	static decltype(auto) Func(RObject&& object, Args&&... args) \
-		noexcept(noexcept((std::forward<RObject>(object).*&Object##Proxy::pt##Func) \
+#define MOMO_DECLARE_PROXY_FUNCTION(Class, Func) \
+	template<typename RClass, typename... Args> \
+	static decltype(auto) Func(RClass&& object, Args&&... args) \
+		noexcept(noexcept((std::forward<RClass>(object).*&Class##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		static_assert(std::is_same_v<Object, std::decay_t<RObject>>); \
-		return (std::forward<RObject>(object).*&Object##Proxy::pt##Func) \
+		static_assert(std::is_same_v<Class, std::decay_t<RClass>>); \
+		return (std::forward<RClass>(object).*&Class##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
 
@@ -91,6 +91,9 @@ namespace internal
 			{ begin != end } -> std::convertible_to<bool>;
 		};
 
+	template<typename RClass>
+	concept conceptMutableThis = !std::is_const_v<std::remove_reference_t<RClass>>;
+
 	template<typename Object,
 		size_t maxSize = sizeof(void*)>
 	concept conceptSmallAndTriviallyCopyable =
@@ -98,9 +101,6 @@ namespace internal
 		std::is_trivially_move_constructible_v<Object> &&
 		std::is_trivially_copy_constructible_v<Object> &&
 		sizeof(Object) <= maxSize;
-
-	template<typename RObject>
-	concept conceptMutableThis = !std::is_const_v<std::remove_reference_t<RObject>>;
 
 	template<typename Object, typename RSrcObject>
 	requires (!std::is_reference_v<Object>)
@@ -306,12 +306,12 @@ namespace internal
 		static const uint32_t max32 = UINT32_MAX;
 	};
 
-	template<template<typename...> typename ObjectTempl>	// vs
+	template<template<typename...> typename ClassTempl>	// vs
 	class Swappable
 	{
 	public:
 		template<typename... Params>
-		friend void swap(ObjectTempl<Params...>& object1, ObjectTempl<Params...>& object2)
+		friend void swap(ClassTempl<Params...>& object1, ClassTempl<Params...>& object2)
 			noexcept(noexcept(object1.Swap(object2)))
 			requires requires { { object1.Swap(object2) }; }
 		{
@@ -319,7 +319,7 @@ namespace internal
 		}
 
 		template<typename... Params>
-		friend void swap(ObjectTempl<Params...>& object1, ObjectTempl<Params...>& object2)	//?
+		friend void swap(ClassTempl<Params...>& object1, ClassTempl<Params...>& object2)	//?
 			noexcept(noexcept(object1.swap(object2)))
 			requires requires { { object1.swap(object2) }; }
 		{
@@ -330,20 +330,20 @@ namespace internal
 	class Rangeable
 	{
 	public:
-		template<std::derived_from<Rangeable> Object>
-		friend auto size(const Object& object) noexcept(noexcept(object.GetCount()))
+		template<std::derived_from<Rangeable> Class>
+		friend auto size(const Class& object) noexcept(noexcept(object.GetCount()))
 		{
 			return object.GetCount();
 		}
 
-		template<std::derived_from<Rangeable> Object>
-		friend auto begin(Object& object) noexcept(noexcept(object.GetBegin()))
+		template<std::derived_from<Rangeable> Class>
+		friend auto begin(Class& object) noexcept(noexcept(object.GetBegin()))
 		{
 			return object.GetBegin();
 		}
 
-		template<std::derived_from<Rangeable> Object>
-		friend auto end(Object& object) noexcept(noexcept(object.GetEnd()))
+		template<std::derived_from<Rangeable> Class>
+		friend auto end(Class& object) noexcept(noexcept(object.GetEnd()))
 		{
 			return object.GetEnd();
 		}
