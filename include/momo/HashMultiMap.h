@@ -1104,12 +1104,10 @@ public:
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter));
 		ValueArray& valueArray = hashMapIter->value;
-		ValueArray tempValueArray(std::move(valueArray));
-		auto valueArrayReverter = [&valueArray, &tempValueArray] () noexcept
-			{ valueArray = std::move(tempValueArray); };
-		for (internal::Finalizer fin = valueArrayReverter; fin; fin.Detach())
+		ValueArray remValueArray(std::move(valueArray));
+		for (internal::FinalizerAssign fin(std::move(remValueArray), valueArray); fin; fin.Detach())
 			hashMapIter = mHashMap.Remove(hashMapIter);
-		pvRemoveValues(tempValueArray);
+		pvRemoveValues(remValueArray);
 		return KeyIteratorProxy(hashMapIter);
 	}
 
