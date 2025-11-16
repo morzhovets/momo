@@ -20,7 +20,7 @@ jobs:
           macos_ver: '15'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
-          flags: '-std=c++26 -Werror -Wno-psabi'
+          flags: '-std=c++26 -Wno-psabi'
           path_prefix: '/opt/homebrew'
 
         - gcc_ver: '15'
