@@ -949,9 +949,9 @@ private:
 		}
 	}
 
-	void pvDestroyExtraItems(Item* items, size_t initCount, size_t& count) noexcept
+	void pvDestroyExtraItems(Item* items, size_t initCount, size_t& lastIndex) noexcept
 	{
-		ItemTraits::Destroy(GetMemManager(), items + initCount, count - initCount);
+		ItemTraits::Destroy(GetMemManager(), items + initCount, lastIndex - initCount);
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>

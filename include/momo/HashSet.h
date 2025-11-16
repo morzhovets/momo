@@ -1192,13 +1192,13 @@ private:
 		mCapacity = newCapacity;
 		if constexpr (!allowExceptionSuppression)
 		{
-			internal::Finalizer itemFin(&ItemTraits::template Destroy<MemManager*>,
+			internal::Finalizer fin(&ItemTraits::template Destroy<MemManager*>,
 				&memManager, itemBuffer.Get());
 			pvRelocateItems();
 			auto itemRelocateCreator = [&memManager, &itemBuffer] (Item* newItem)
 				{ ItemTraits::Relocate(&memManager, &memManager, itemBuffer.Get(), newItem); };
 			resPos = pvAddNogrow(*mBuckets, hashCode, FastMovableFunctor(std::move(itemRelocateCreator)));
-			itemFin.Detach();
+			fin.Detach();
 		}
 		return resPos;
 	}

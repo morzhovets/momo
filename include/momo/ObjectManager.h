@@ -706,8 +706,8 @@ namespace internal
 			else
 			{
 				size_t index = 0;
-				for (Finalizer fin = [&memManager, dstBegin, &index] () noexcept
-						{ Destroy(memManager, dstBegin, index); };
+				for (Finalizer fin(&ObjectManager::template pvDestroyExtra<DstIterator>,
+						memManager, dstBegin, index);
 					fin; fin.Detach())
 				{
 					SrcIterator srcIter = srcBegin;
@@ -729,6 +729,12 @@ namespace internal
 		}
 
 	private:
+		template<conceptIncIterator<Object> Iterator>
+		static void pvDestroyExtra(MemManager& memManager, Iterator begin, size_t& lastIndex) noexcept
+		{
+			Destroy(memManager, begin, lastIndex);
+		}
+
 		template<conceptIncIterator<Object> Iterator>
 		static void pvShiftNothrow(MemManager& memManager, Iterator begin, size_t shift) noexcept
 		{

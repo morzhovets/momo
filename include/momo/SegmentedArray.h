@@ -557,28 +557,24 @@ private:
 		size_t initCount = mCount;
 		if (count > initCapacity)
 			pvIncCapacity(initCapacity, count);
-		auto incReverter = [this, initCount, initCapacity] () noexcept
+		internal::Finalizer capacityFin(&SegmentedArray::pvDecCapacity, *this, initCapacity);
+		internal::Finalizer countFin(&SegmentedArray::pvDecCount, *this, initCount);
+		size_t segIndex, segItemIndex;
+		Settings::GetSegmentItemIndexes(mCount, segIndex, segItemIndex);
+		while (mCount < count)
 		{
-			pvDecCount(initCount);
-			pvDecCapacity(initCapacity);
-		};
-		for (internal::Finalizer fin = incReverter; fin; fin.Detach())
-		{
-			size_t segIndex, segItemIndex;
-			Settings::GetSegmentItemIndexes(mCount, segIndex, segItemIndex);
-			while (mCount < count)
+			Item* segment = mSegments[segIndex];
+			size_t segItemCount = Settings::GetSegmentItemCount(segIndex);
+			for (; segItemIndex < segItemCount && mCount < count; ++segItemIndex, ++mCount)
+				itemMultiCreator(segment + segItemIndex);
+			if (segItemIndex == segItemCount)
 			{
-				Item* segment = mSegments[segIndex];
-				size_t segItemCount = Settings::GetSegmentItemCount(segIndex);
-				for (; segItemIndex < segItemCount && mCount < count; ++segItemIndex, ++mCount)
-					itemMultiCreator(segment + segItemIndex);
-				if (segItemIndex == segItemCount)
-				{
-					++segIndex;
-					segItemIndex = 0;
-				}
+				++segIndex;
+				segItemIndex = 0;
 			}
 		}
+		countFin.Detach();
+		capacityFin.Detach();
 	}
 
 	void pvDecCount(size_t count) noexcept

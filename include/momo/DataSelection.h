@@ -566,16 +566,14 @@ namespace internal
 			conceptSentinel<RowIterator> RowSentinel>
 		void Add(RowIterator begin, RowSentinel end)
 		{
-			size_t initCount = GetCount();
-			for (Finalizer fin = [this, initCount] { mRaws.SetCount(initCount); }; fin; fin.Detach())
+			Finalizer fin(&DataSelection::pvDecCount, *this, GetCount());
+			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
-				for (RowIterator iter = std::move(begin); iter != end; ++iter)
-				{
-					RowReference rowRef = *iter;
-					MOMO_CHECK(&rowRef.GetColumnList() == mColumnList);
-					mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
-				}
+				RowReference rowRef = *iter;
+				MOMO_CHECK(&rowRef.GetColumnList() == mColumnList);
+				mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
 			}
+			fin.Detach();
 		}
 
 		void Insert(size_t index, RowReference rowRef)
@@ -713,6 +711,12 @@ namespace internal
 		RowReference pvMakeRowReference(Raw* raw) const noexcept
 		{
 			return RowReferenceProxy(mColumnList, raw, *this);
+		}
+
+		void pvDecCount(size_t count) noexcept
+		{
+			MOMO_ASSERT(count <= mRaws.GetCount());
+			mRaws.SetCount(count);
 		}
 
 		void pvReverse() noexcept

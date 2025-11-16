@@ -955,9 +955,9 @@ private:
 	Raw* pvCreateRaw(FastMovableFunctor<RawCreator> rawCreator)
 	{
 		Raw* raw = mCrew.GetRawMemPool().template Allocate<Raw>();
-		internal::Finalizer deallocFin(&RawMemPool::template Deallocate<Raw>, mCrew.GetRawMemPool(), raw);
+		internal::Finalizer fin(&RawMemPool::template Deallocate<Raw>, mCrew.GetRawMemPool(), raw);
 		std::move(rawCreator)(raw);
-		deallocFin.Detach();
+		fin.Detach();
 		return raw;
 	}
 
@@ -995,8 +995,9 @@ private:
 	Row pvNewRow(const Assignment<Items, ItemArgs>&... assigns)
 	{
 		Raw* raw = pvCreateRaw();
-		for (internal::Finalizer fin(&DataTable::pvDestroyRaw, *this, raw); fin; fin.Detach())
-			(pvFillRaw(raw, assigns), ...);
+		internal::Finalizer fin(&DataTable::pvDestroyRaw, *this, raw);
+		(pvFillRaw(raw, assigns), ...);
+		fin.Detach();
 		return pvMakeRow(raw);
 	}
 

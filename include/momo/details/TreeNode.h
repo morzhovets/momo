@@ -261,10 +261,10 @@ namespace internal
 			{
 				ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
 				std::reverse_iterator<Item*> revIter(GetItemPtr(count));
-				Finalizer shiftFin(&ItemTraits::template ShiftNothrow<decltype(revIter)>,
+				Finalizer fin(&ItemTraits::template ShiftNothrow<decltype(revIter)>,
 					params.GetMemManager(), revIter, count - index - 1);
 				std::move(itemRemover)(*revIter);
-				shiftFin.Detach();
+				fin.Detach();
 			}
 			else
 			{

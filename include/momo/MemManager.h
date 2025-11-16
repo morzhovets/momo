@@ -391,9 +391,9 @@ namespace internal
 		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
 		{
 			ResObject* ptr = Allocate<ResObject>(memManager, sizeof(ResObject));
-			Finalizer deallocFin(&Deallocate<ResObject>, memManager, ptr, sizeof(ResObject));
+			Finalizer fin(&Deallocate<ResObject>, memManager, ptr, sizeof(ResObject));
 			ptr = std::construct_at(ptr, std::forward<ResObjectArgs>(resObjectArgs)...);
-			deallocFin.Detach();
+			fin.Detach();
 			return ptr;
 		}
 

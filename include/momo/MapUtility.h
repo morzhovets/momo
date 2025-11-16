@@ -494,15 +494,9 @@ namespace internal
 			{
 				size_t keyIndex = 0;
 				size_t valueIndex = 0;
-				auto keyValueDestroyer = [&memManager, &keyIndex, &valueIndex,
-					dstKeyBegin, dstValueBegin] () noexcept
-				{
-					for (DstKeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex)
-						KeyManager::Destroy(&memManager, *itd++);
-					for (DstValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex)
-						ValueManager::Destroy(&memManager, *itd++);
-				};
-				for (internal::Finalizer fin = keyValueDestroyer; fin; fin.Detach())
+				for (Finalizer fin(&MapKeyValueTraits::template pvDestroyExtra<DstKeyIterator, DstValueIterator>,
+						memManager, dstKeyBegin, dstValueBegin, keyIndex, valueIndex);
+					fin; fin.Detach())
 				{
 					SrcKeyIterator srcKeyIter = srcKeyBegin;
 					DstKeyIterator dstKeyIter = dstKeyBegin;
@@ -530,6 +524,18 @@ namespace internal
 			dstKey = std::move(srcKey);
 			KeyManager::Destroy(&memManager, srcKey);
 			ValueManager::Destroy(&memManager, srcValue);
+		}
+
+		template<conceptIncIterator<Key> KeyIterator, conceptIncIterator<Value> ValueIterator>
+		static void pvDestroyExtra(MemManager& memManager, KeyIterator keyBegin, ValueIterator valueBegin,
+			size_t& lastKeyIndex, size_t& lastValueIndex) noexcept
+		{
+			KeyIterator keyIter = keyBegin;
+			for (size_t i = 0; i < lastKeyIndex; ++i)
+				KeyManager::Destroy(&memManager, *keyIter++);
+			ValueIterator valueIter = valueBegin;
+			for (size_t i = 0; i < lastValueIndex; ++i)
+				ValueManager::Destroy(&memManager, *valueIter++);
 		}
 	};
 
@@ -681,11 +687,12 @@ namespace internal
 		explicit MapKeyValuePtrPair(MemManager& memManager,
 			FastMovableFunctor<PairCreator> pairCreator)
 		{
-			mValuePtr = memManager.GetMemPool().template Allocate<Value>();
-			auto allocReverter = [this, &memManager] () noexcept
-				{ memManager.GetMemPool().Deallocate(mValuePtr); };
-			for (internal::Finalizer fin = allocReverter; fin; fin.Detach())
-				std::move(pairCreator)(GetKeyPtr(), mValuePtr);
+			typedef typename MemManager::MemPool MemPool;
+			MemPool& memPool = memManager.GetMemPool();
+			mValuePtr = memPool.template Allocate<Value>();
+			Finalizer fin(&MemPool::template Deallocate<Value>, memPool, mValuePtr);
+			std::move(pairCreator)(GetKeyPtr(), mValuePtr);
+			fin.Detach();
 		}
 
 		MapKeyValuePtrPair(const MapKeyValuePtrPair&) = delete;

@@ -203,8 +203,7 @@ namespace internal
 				FastMemory memory(params.GetFastMemPool(memPoolIndex));
 				Item* items = pvGetFastItems(memory.Get());
 				size_t index = 0;
-				for (internal::Finalizer fin = [&memManager, items, &index] () noexcept
-						{ ItemTraits::Destroy(memManager, items, index); };
+				for (internal::Finalizer fin(&ArrayBucket::pvDestroyExtraItems, memManager, items, index);
 					fin; fin.Detach())
 				{
 					for (; index < count; ++index)
@@ -398,6 +397,11 @@ namespace internal
 		static Array* pvGetArrayPtr(std::byte* ptr) noexcept
 		{
 			return PtrCaster::FromBytePtr<Array, isWithinLifetime, true>(ptr + arrayAlignment);
+		}
+
+		static void pvDestroyExtraItems(MemManager& memManager, Item* items, size_t& lastIndex) noexcept
+		{
+			ItemTraits::Destroy(memManager, items, lastIndex);
 		}
 
 		Bounds pvGetBounds() const noexcept

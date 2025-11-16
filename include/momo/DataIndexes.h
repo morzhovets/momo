@@ -909,28 +909,24 @@ namespace internal
 			MOMO_ASSERT(mUniqueHashes.IsEmpty());
 			MOMO_ASSERT(mMultiHashes.IsEmpty());
 			const MemManagerPtr& memManagerPtr = mUniqueHashes.GetMemManager();
-			auto indexRemover = [this] () noexcept
+			Finalizer uniqueFin(&DataIndexes::RemoveUniqueHashIndexes, *this);
+			Finalizer multiFin(&DataIndexes::RemoveMultiHashIndexes, *this);
+			mUniqueHashes.Reserve(indexes.mUniqueHashes.GetCount());
+			mMultiHashes.Reserve(indexes.mMultiHashes.GetCount());
+			for (const UniqueHash& uniqueHash : indexes.mUniqueHashes)
 			{
-				RemoveUniqueHashIndexes();
-				RemoveMultiHashIndexes();
-			};
-			for (Finalizer fin = indexRemover; fin; fin.Detach())
-			{
-				mUniqueHashes.Reserve(indexes.mUniqueHashes.GetCount());
-				mMultiHashes.Reserve(indexes.mMultiHashes.GetCount());
-				for (const UniqueHash& uniqueHash : indexes.mUniqueHashes)
-				{
-					mUniqueHashes.AddBackNogrowVar(
-						HashTraits(uniqueHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
-						Offsets(uniqueHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
-				}
-				for (const MultiHash& multiHash : indexes.mMultiHashes)
-				{
-					mMultiHashes.AddBackNogrowVar(
-						HashTraits(multiHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
-						Offsets(multiHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
-				}
+				mUniqueHashes.AddBackNogrowVar(
+					HashTraits(uniqueHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
+					Offsets(uniqueHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
 			}
+			for (const MultiHash& multiHash : indexes.mMultiHashes)
+			{
+				mMultiHashes.AddBackNogrowVar(
+					HashTraits(multiHash.GetHashTraits(), MemManagerPtr(memManagerPtr)),
+					Offsets(multiHash.GetSortedOffsets(), MemManagerPtr(memManagerPtr)));
+			}
+			multiFin.Detach();
+			uniqueFin.Detach();
 		}
 
 		UniqueHashRawBounds FindRaws(UniqueHashIndex uniqueHashIndex, Raw* raw,

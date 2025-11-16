@@ -1127,14 +1127,12 @@ private:
 		mColumnRecords.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
 		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
-		auto codeInsertReverter = [this, &columnCodes] () noexcept
+		for (internal::Finalizer fin(&DataColumnList::template pvRemoveColumnCodes<columnCount>,
+				*this, columnCodes);
+			fin; fin.Detach())
 		{
-			for (ColumnCode columnCode : columnCodes)
-				mColumnCodeSet.Remove(columnCode);	// no throw
-			//mMutableOffsets.SetCount((mTotalSize + 7) / 8);
-		};
-		for (internal::Finalizer fin = codeInsertReverter; fin; fin.Detach())
 			mColumnCodeSet.Insert(columnCodes.begin(), columnCodes.end());
+		}
 		mCodeParam = codeParam;
 		mAddends = addends;
 		mTotalSize = offset;
@@ -1186,6 +1184,14 @@ private:
 		graph.AddEdges(vertices.first, vertices.second, offset);
 		offset += size;
 		maxAlignment = internal::UIntMath<>::Max(maxAlignment, alignment);
+	}
+
+	template<size_t columnCount>
+	void pvRemoveColumnCodes(const std::array<ColumnCode, columnCount>& columnCodes) noexcept
+	{
+		for (ColumnCode columnCode : columnCodes)
+			mColumnCodeSet.Remove(columnCode);	// no throw
+		//mMutableOffsets.SetCount((mTotalSize + 7) / 8);
 	}
 
 	template<typename... Items>
@@ -1260,23 +1266,24 @@ private:
 		const Raw* srcRaw, Raw* raw) const
 	{
 		size_t funcIndex = 0;
-		auto rawItemsDestroyer = [this, &funcIndex, &memManager, raw] () noexcept
+		internal::Finalizer fin(&DataColumnList::pvDestroyRawExtraItems, *this, memManager, raw, funcIndex);
+		size_t funcCount = mFuncRecords.GetCount();
+		for (; funcIndex < funcCount; ++funcIndex)
 		{
-			for (size_t i = 0; i < funcIndex; ++i)
-			{
-				const FuncRecord& funcRec = mFuncRecords[i];
-				funcRec.rawItemsDestroyer(&memManager, &mColumnRecords[funcRec.columnIndex], raw);
-			}
-		};
-		for (internal::Finalizer fin = rawItemsDestroyer; fin; fin.Detach())
+			const FuncRecord& funcRec = mFuncRecords[funcIndex];
+			funcRec.rawItemsCreator(memManager, &mColumnRecords[funcRec.columnIndex],
+				srcColumnList, srcRaw, raw);
+		}
+		fin.Detach();
+	}
+
+	static void pvDestroyRawExtraItems(const DataColumnList& columnList,
+		MemManager& memManager, Raw* raw, size_t& lastFuncIndex) noexcept
+	{
+		for (size_t i = 0; i < lastFuncIndex; ++i)
 		{
-			size_t funcCount = mFuncRecords.GetCount();
-			for (; funcIndex < funcCount; ++funcIndex)
-			{
-				const FuncRecord& funcRec = mFuncRecords[funcIndex];
-				funcRec.rawItemsCreator(memManager, &mColumnRecords[funcRec.columnIndex],
-					srcColumnList, srcRaw, raw);
-			}
+			const FuncRecord& funcRec = columnList.mFuncRecords[i];
+			funcRec.rawItemsDestroyer(&memManager, &columnList.mColumnRecords[funcRec.columnIndex], raw);
 		}
 	}
 
