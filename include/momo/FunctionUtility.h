@@ -47,54 +47,6 @@ namespace internal
 	template<typename Predicate, typename... Args>
 	concept conceptPredicate = conceptConstFunctor<Predicate, bool, Args...>;
 
-	template<typename TFunctor>
-	class Finalizer;
-
-	template<conceptExecutor TFunctor>
-	requires (std::is_nothrow_destructible_v<TFunctor> &&
-		std::is_nothrow_move_constructible_v<TFunctor> &&
-		!std::is_reference_v<TFunctor> /*&& std::is_nothrow_invocable_v<TFunctor>*/)
-	class Finalizer<TFunctor>
-	{
-	public:
-		typedef TFunctor Functor;
-
-	public:
-		[[nodiscard]] Finalizer(Functor func) noexcept
-			: mFunctor(std::move(func)),
-			mIsEmpty(false)
-		{
-		}
-
-		Finalizer(const Finalizer&) = delete;
-
-		~Finalizer() noexcept
-		{
-			if (!mIsEmpty)
-				std::move(mFunctor)();
-		}
-
-		Finalizer& operator=(const Finalizer&) = delete;
-
-		explicit operator bool() const noexcept
-		{
-			return !mIsEmpty;
-		}
-
-		void Detach() noexcept
-		{
-			mIsEmpty = true;
-		}
-
-	private:
-		Functor mFunctor;
-		bool mIsEmpty;
-	};
-
-	template<conceptExecutor Functor>
-	Finalizer(Functor)
-		-> Finalizer<Functor>;
-
 	template<typename... Args>
 	requires ((std::is_nothrow_destructible_v<Args> && std::is_nothrow_copy_constructible_v<Args>) && ...)
 	class FinalizerArgs
@@ -179,20 +131,23 @@ namespace internal
 		Arg2 arg2;
 	};
 
+	template<typename TFunction>
+	class Finalizer;
+
 	template<typename... Args>
 	class Finalizer<void (*)(Args...) noexcept>
 		: private FinalizerArgs<Args...>
 	{
 	public:
-		typedef void (*Functor)(Args...) noexcept;
+		typedef void (*Function)(Args...) noexcept;
 
 	private:
 		typedef internal::FinalizerArgs<Args...> FinalizerArgs;
 
 	public:
-		[[nodiscard]] explicit Finalizer(Functor func, Args... args) noexcept
+		[[nodiscard]] explicit Finalizer(Function func, Args... args) noexcept
 			: FinalizerArgs(args...),
-			mFunctor(func)
+			mFunction(func)
 		{
 		}
 
@@ -200,24 +155,24 @@ namespace internal
 
 		~Finalizer() noexcept
 		{
-			if (mFunctor != nullptr)
-				FinalizerArgs::ptExecute(mFunctor);
+			if (mFunction != nullptr)
+				FinalizerArgs::ptExecute(mFunction);
 		}
 
 		Finalizer& operator=(const Finalizer&) = delete;
 
 		explicit operator bool() const noexcept
 		{
-			return mFunctor != nullptr;
+			return mFunction != nullptr;
 		}
 
 		void Detach() noexcept
 		{
-			mFunctor = nullptr;
+			mFunction = nullptr;
 		}
 
 	private:
-		Functor mFunctor;
+		Function mFunction;
 	};
 
 	template<typename... Args>
@@ -229,15 +184,15 @@ namespace internal
 		: private FinalizerArgs<Class&, Args...>
 	{
 	public:
-		typedef void (Class::*Functor)(Args...) noexcept;
+		typedef void (Class::*Function)(Args...) noexcept;
 
 	private:
 		typedef internal::FinalizerArgs<Class&, Args...> FinalizerArgs;
 
 	public:
-		[[nodiscard]] explicit Finalizer(Functor func, Class& object, Args... args) noexcept
+		[[nodiscard]] explicit Finalizer(Function func, Class& object, Args... args) noexcept
 			: FinalizerArgs(object, args...),
-			mFunctor(func)
+			mFunction(func)
 		{
 		}
 
@@ -245,24 +200,24 @@ namespace internal
 
 		~Finalizer() noexcept
 		{
-			if (mFunctor != nullptr)
-				FinalizerArgs::ptExecute(mFunctor);
+			if (mFunction != nullptr)
+				FinalizerArgs::ptExecute(mFunction);
 		}
 
 		Finalizer& operator=(const Finalizer&) = delete;
 
 		explicit operator bool() const noexcept
 		{
-			return mFunctor != nullptr;
+			return mFunction != nullptr;
 		}
 
 		void Detach() noexcept
 		{
-			mFunctor = nullptr;
+			mFunction = nullptr;
 		}
 
 	private:
-		Functor mFunctor;
+		Function mFunction;
 	};
 
 	template<typename Class, typename... Args>

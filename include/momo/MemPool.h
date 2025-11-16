@@ -820,7 +820,7 @@ private:
 	Byte* pvNewBlock()
 	{
 		if (mFreeChunkHead == nullptr)
-			mFreeChunkHead = pvNewChunk(nullptr);
+			mFreeChunkHead = pvNewChunk();
 		size_t freeBlockCount;
 		Byte* block = Chunker::NewBlock(mFreeChunkHead, freeBlockCount);
 		if (freeBlockCount == 0)
@@ -828,7 +828,9 @@ private:
 			Byte* nextChunk = Chunker::GetNextChunk(mFreeChunkHead);
 			if (nextChunk == nullptr)
 			{
-				nextChunk = pvNewChunk(block);
+				internal::Finalizer fin(&MemPool::template pvDeleteBlock<false>, *this, block);
+				nextChunk = pvNewChunk();
+				fin.Detach();
 				Chunker::SetNextChunk(mFreeChunkHead, nextChunk);
 				Chunker::SetPrevChunk(nextChunk, mFreeChunkHead);
 			}
@@ -837,42 +839,35 @@ private:
 		return block;
 	}
 
+	template<bool processChunks = true>
 	void pvDeleteBlock(Byte* block) noexcept
 	{
 		Byte* chunk;
 		size_t freeBlockCount;
 		Chunker::DeleteBlock(block, chunk, freeBlockCount);
-		if (freeBlockCount == 1)
-			pvMoveChunkToHead(chunk);
-		if (freeBlockCount == Params::GetBlockCount())
+		if constexpr (processChunks)
 		{
-			bool del = true;
-			if (chunk == mFreeChunkHead)
+			if (freeBlockCount == 1)
+				pvMoveChunkToHead(chunk);
+			if (freeBlockCount == Params::GetBlockCount())
 			{
-				Byte* nextChunk = Chunker::GetNextChunk(chunk);
-				del = (nextChunk != nullptr);
+				bool del = true;
+				if (chunk == mFreeChunkHead)
+				{
+					Byte* nextChunk = Chunker::GetNextChunk(chunk);
+					del = (nextChunk != nullptr);
+					if (del)
+						mFreeChunkHead = nextChunk;
+				}
 				if (del)
-					mFreeChunkHead = nextChunk;
+					pvDeleteChunk(chunk);
 			}
-			if (del)
-				pvDeleteChunk(chunk);
 		}
 	}
 
-	MOMO_NOINLINE Byte* pvNewChunk(Byte* delBlock)
+	MOMO_NOINLINE Byte* pvNewChunk()
 	{
-		internal::Finalizer delBlockFin = [this, delBlock] () noexcept
-		{
-			if (delBlock)
-			{
-				Byte* chunk;
-				size_t freeBlockCount;
-				Chunker::DeleteBlock(delBlock, chunk, freeBlockCount);
-			}
-		};
-		Byte* chunk = Chunker::NewChunk(GetMemManager());
-		delBlockFin.Detach();
-		return chunk;
+		return Chunker::NewChunk(GetMemManager());
 	}
 
 	MOMO_NOINLINE void pvDeleteChunk(Byte* chunk) noexcept

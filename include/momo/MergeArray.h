@@ -590,14 +590,18 @@ private:
 		else //if (count <= mCapacity)
 		{
 			Reserve(count);	//?
-			size_t initCount = mCount;
-			for (internal::Finalizer fin = [this, initCount] { pvRemoveBack(mCount - initCount); };
-				fin; fin.Detach())
+			for (internal::Finalizer fin(&MergeArray::pvDecCount, *this, mCount); fin; fin.Detach())
 			{
-				for (size_t i = initCount; i < count; ++i)
+				for (size_t i = mCount; i < count; ++i)
 					pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(itemMultiCreator)));
 			}
 		}
+	}
+
+	void pvDecCount(size_t count) noexcept
+	{
+		MOMO_ASSERT(count <= mCount);
+		pvRemoveBack(mCount - count);
 	}
 
 	Item* pvGetItemPtr(size_t index) const noexcept
