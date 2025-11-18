@@ -70,16 +70,16 @@ if(MOMO_TEST_PRINT_BIN_SIZES)
   if(WIN32)
     add_custom_command(TARGET momo_test POST_BUILD
       COMMAND cmd /c "dir *.obj /s"
-      COMMAND cmd /c "dir *.exe /s")
+      COMMAND cmd /c "for %F in (\"$<TARGET_FILE:momo_test>\") do @echo %~zF %~fF")
   endif()
   if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_custom_command(TARGET momo_test POST_BUILD
-      COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -c '%s %n' {} +"
+      COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -c '%s %n' {} + | sort -k2"
       COMMAND sh -c "stat -c '%s %n' \"$<TARGET_FILE:momo_test>\"")
   endif()
   if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     add_custom_command(TARGET momo_test POST_BUILD
-      COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -f '%z %N' {} +"
+      COMMAND sh -c "find \"${CMAKE_CURRENT_BINARY_DIR}\" -type f -name '*.o' -exec stat -f '%z %N' {} + | sort -k2"
       COMMAND sh -c "stat -f '%z %N' \"$<TARGET_FILE:momo_test>\"")
   endif()
 endif()
