@@ -58,8 +58,7 @@ namespace internal
 		}
 
 	protected:
-		template<typename Function>
-		void ptExecute(Function func) noexcept
+		void ptExecute(void (*func)(Args...) noexcept) noexcept
 		{
 			std::apply(func, mArgs);
 		}
@@ -68,24 +67,37 @@ namespace internal
 		std::tuple<Args...> mArgs;
 	};
 
-	template<typename Arg>
-	class FinalizerArgs<Arg>
+	template<>
+	class FinalizerArgs<>
+	{
+	public:
+		FinalizerArgs() = default;
+
+	protected:
+		template<typename Class>
+		void ptExecute(void (Class::*func)() noexcept, Class& object) noexcept
+		{
+			(object.*func)();
+		}
+	};
+
+	template<typename Arg0>
+	class FinalizerArgs<Arg0>
 	{
 	protected:
-		void ptExecute(void (*func)(Arg) noexcept) noexcept
+		void ptExecute(void (*func)(Arg0) noexcept) noexcept
 		{
-			func(arg);
+			func(arg0);
 		}
 
-		template<typename Class = std::decay_t<Arg>>
-		requires std::is_class_v<Class>
-		void ptExecute(void (Class::*func)() noexcept) noexcept
+		template<typename Class>
+		void ptExecute(void (Class::*func)(Arg0) noexcept, Class& object) noexcept
 		{
-			(arg.*func)();
+			(object.*func)(arg0);
 		}
 
 	public:
-		Arg arg;
+		Arg0 arg0;
 	};
 
 	template<typename Arg0, typename Arg1>
@@ -97,11 +109,10 @@ namespace internal
 			func(arg0, arg1);
 		}
 
-		template<typename Class = std::decay_t<Arg0>>
-		requires std::is_class_v<Class>
-		void ptExecute(void (Class::*func)(Arg1) noexcept) noexcept
+		template<typename Class>
+		void ptExecute(void (Class::*func)(Arg0, Arg1) noexcept, Class& object) noexcept
 		{
-			(arg0.*func)(arg1);
+			(object.*func)(arg0, arg1);
 		}
 
 	public:
@@ -118,11 +129,10 @@ namespace internal
 			func(arg0, arg1, arg2);
 		}
 
-		template<typename Class = std::decay_t<Arg0>>
-		requires std::is_class_v<Class>
-		void ptExecute(void (Class::*func)(Arg1, Arg2) noexcept) noexcept
+		template<typename Class>
+		void ptExecute(void (Class::*func)(Arg0, Arg1, Arg2) noexcept, Class& object) noexcept
 		{
-			(arg0.*func)(arg1, arg2);
+			(object.*func)(arg0, arg1, arg2);
 		}
 
 	public:
@@ -181,17 +191,18 @@ namespace internal
 
 	template<typename Class, typename... Args>
 	class Finalizer<void (Class::*)(Args...) noexcept>
-		: private FinalizerArgs<Class&, Args...>
+		: private FinalizerArgs<Args...>
 	{
 	public:
 		typedef void (Class::*Function)(Args...) noexcept;
 
 	private:
-		typedef internal::FinalizerArgs<Class&, Args...> FinalizerArgs;
+		typedef internal::FinalizerArgs<Args...> FinalizerArgs;
 
 	public:
 		[[nodiscard]] explicit Finalizer(Function func, Class& object, Args... args) noexcept
-			: FinalizerArgs(object, args...),
+			: FinalizerArgs(args...),
+			mObject(object),
 			mFunction(func)
 		{
 		}
@@ -201,7 +212,7 @@ namespace internal
 		~Finalizer() noexcept
 		{
 			if (mFunction != nullptr)
-				FinalizerArgs::ptExecute(mFunction);
+				FinalizerArgs::ptExecute(mFunction, mObject);
 		}
 
 		Finalizer& operator=(const Finalizer&) = delete;
@@ -218,6 +229,7 @@ namespace internal
 
 	private:
 		Function mFunction;
+		Class& mObject;
 	};
 
 	template<typename Class, typename... Args>
