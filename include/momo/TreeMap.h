@@ -249,7 +249,7 @@ private:
 
 	typedef internal::TreeMapNestedSetSettings<Settings> TreeSetSettings;
 
-	typedef momo::TreeSet<Key, TreeTraits, MemManager, TreeSetItemTraits, TreeSetSettings> TreeSet;
+	typedef TreeSetCore<TreeSetItemTraits, TreeTraits, TreeSetSettings> TreeSet;
 
 	typedef typename TreeSet::ConstIterator TreeSetConstIterator;
 
