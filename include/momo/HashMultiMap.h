@@ -11,6 +11,7 @@
   namespace momo:
     class HashMultiMapKeyValueTraits
     class HashMultiMapSettings
+    class HashMultiMapCore
     class HashMultiMap
     class HashMultiMapOpen
 
@@ -544,7 +545,7 @@ public:
 };
 
 /*!
-	All `HashMultiMap` functions and constructors have strong exception
+	All `HashMultiMapCore` functions and constructors have strong exception
 	safety, but not the following cases:
 	1. Functions `Add` receiving many items have basic exception safety.
 	2. Function `Remove` receiving predicate has basic exception safety.
@@ -553,20 +554,18 @@ public:
 	this argument may be changed.
 */
 
-template<typename TKey, typename TValue,
-	typename THashTraits = HashTraits<TKey>,
-	typename TMemManager = MemManagerDefault,
-	typename TKeyValueTraits = HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>,
+template<typename TKeyValueTraits,
+	typename THashTraits = HashTraits<typename TKeyValueTraits::Key>,
 	typename TSettings = HashMultiMapSettings>
-class HashMultiMap
+class HashMultiMapCore
 {
 public:
-	typedef TKey Key;
-	typedef TValue Value;
-	typedef THashTraits HashTraits;
-	typedef TMemManager MemManager;
 	typedef TKeyValueTraits KeyValueTraits;
+	typedef THashTraits HashTraits;
 	typedef TSettings Settings;
+	typedef typename KeyValueTraits::Key Key;
+	typedef typename KeyValueTraits::Value Value;
+	typedef typename KeyValueTraits::MemManager MemManager;
 
 	MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Key>::Check(KeyValueTraits::keyAlignment));
 	MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Value>::Check(KeyValueTraits::valueAlignment));
@@ -718,12 +717,12 @@ private:
 	};
 
 public:
-	HashMultiMap()
-		: HashMultiMap(HashTraits())
+	HashMultiMapCore()
+		: HashMultiMapCore(HashTraits())
 	{
 	}
 
-	explicit HashMultiMap(const HashTraits& hashTraits, MemManager memManager = MemManager())
+	explicit HashMultiMapCore(const HashTraits& hashTraits, MemManager memManager = MemManager())
 		: mHashMap(hashTraits, std::move(memManager)),
 		mValueCount(0),
 		mValueCrew(GetMemManager())
@@ -732,9 +731,9 @@ public:
 
 	template<typename ArgIterator, typename ArgSentinel,
 		typename = decltype(internal::MapPairConverter<ArgIterator>::Convert(*std::declval<ArgIterator>()))>
-	explicit HashMultiMap(ArgIterator begin, ArgSentinel end,
+	explicit HashMultiMapCore(ArgIterator begin, ArgSentinel end,
 		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
-		: HashMultiMap(hashTraits, std::move(memManager))
+		: HashMultiMapCore(hashTraits, std::move(memManager))
 	{
 		try
 		{
@@ -748,19 +747,19 @@ public:
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
-	HashMultiMap(std::initializer_list<Pair> pairs)
-		: HashMultiMap(pairs, HashTraits())
+	HashMultiMapCore(std::initializer_list<Pair> pairs)
+		: HashMultiMapCore(pairs, HashTraits())
 	{
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
-	explicit HashMultiMap(std::initializer_list<Pair> pairs, const HashTraits& hashTraits,
+	explicit HashMultiMapCore(std::initializer_list<Pair> pairs, const HashTraits& hashTraits,
 		MemManager memManager = MemManager())
-		: HashMultiMap(pairs.begin(), pairs.end(), hashTraits, std::move(memManager))
+		: HashMultiMapCore(pairs.begin(), pairs.end(), hashTraits, std::move(memManager))
 	{
 	}
 
-	HashMultiMap(HashMultiMap&& hashMultiMap) noexcept
+	HashMultiMapCore(HashMultiMapCore&& hashMultiMap) noexcept
 		: mHashMap(std::move(hashMultiMap.mHashMap)),
 		mValueCount(hashMultiMap.mValueCount),
 		mValueCrew(std::move(hashMultiMap.mValueCrew))
@@ -768,12 +767,12 @@ public:
 		hashMultiMap.mValueCount = 0;
 	}
 
-	HashMultiMap(const HashMultiMap& hashMultiMap)
-		: HashMultiMap(hashMultiMap, MemManager(hashMultiMap.GetMemManager()))
+	HashMultiMapCore(const HashMultiMapCore& hashMultiMap)
+		: HashMultiMapCore(hashMultiMap, MemManager(hashMultiMap.GetMemManager()))
 	{
 	}
 
-	explicit HashMultiMap(const HashMultiMap& hashMultiMap, MemManager memManager)
+	explicit HashMultiMapCore(const HashMultiMapCore& hashMultiMap, MemManager memManager)
 		: mHashMap(hashMultiMap.GetHashTraits(), std::move(memManager)),
 		mValueCount(hashMultiMap.mValueCount),
 		mValueCrew(GetMemManager())
@@ -792,23 +791,23 @@ public:
 		}
 	}
 
-	~HashMultiMap() noexcept
+	~HashMultiMapCore() noexcept
 	{
 		if (!mValueCrew.IsNull())
 			pvDestroy();
 	}
 
-	HashMultiMap& operator=(HashMultiMap&& hashMultiMap) noexcept
+	HashMultiMapCore& operator=(HashMultiMapCore&& hashMultiMap) noexcept
 	{
 		return internal::ContainerAssigner::Move(std::move(hashMultiMap), *this);
 	}
 
-	HashMultiMap& operator=(const HashMultiMap& hashMultiMap)
+	HashMultiMapCore& operator=(const HashMultiMapCore& hashMultiMap)
 	{
 		return internal::ContainerAssigner::Copy(hashMultiMap, *this);
 	}
 
-	void Swap(HashMultiMap& hashMultiMap) noexcept
+	void Swap(HashMultiMapCore& hashMultiMap) noexcept
 	{
 		mHashMap.Swap(hashMultiMap.mHashMap);
 		std::swap(mValueCount, hashMultiMap.mValueCount);
@@ -835,9 +834,9 @@ public:
 		return Iterator();
 	}
 
-	MOMO_FRIEND_SWAP(HashMultiMap)
-	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(HashMultiMap, ConstIterator)
-	MOMO_FRIENDS_BEGIN_END(HashMultiMap, Iterator)
+	MOMO_FRIEND_SWAP(HashMultiMapCore)
+	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(HashMultiMapCore, ConstIterator)
+	MOMO_FRIENDS_BEGIN_END(HashMultiMapCore, Iterator)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{
@@ -1255,6 +1254,12 @@ private:
 	size_t mValueCount;
 	ValueCrew mValueCrew;
 };
+
+template<typename TKey, typename TValue,
+	typename THashTraits = HashTraits<TKey>,
+	typename TMemManager = MemManagerDefault>
+using HashMultiMap = HashMultiMapCore<
+	HashMultiMapKeyValueTraits<TKey, TValue, TMemManager>, THashTraits>;
 
 template<typename TKey, typename TValue>
 using HashMultiMapOpen = HashMultiMap<TKey, TValue, HashTraitsOpen<TKey>>;

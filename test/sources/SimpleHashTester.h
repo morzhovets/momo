@@ -184,9 +184,9 @@ public:
 	template<typename HashTraits, typename Settings>
 	static void TestStrHashMultiMap()
 	{
-		typedef momo::HashMultiMap<std::string, std::string, HashTraits, momo::MemManagerDefault,
+		typedef momo::HashMultiMapCore<
 			momo::HashMultiMapKeyValueTraits<std::string, std::string, momo::MemManagerDefault>,
-			Settings> HashMultiMap;
+			HashTraits, Settings> HashMultiMap;
 
 		std::string k1 = "k1";
 		std::string k2 = "k2";

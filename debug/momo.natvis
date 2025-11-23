@@ -40,7 +40,7 @@
     </Expand>
 </Type>
 
-<Type Name="momo::HashMultiMap&lt;*&gt;">
+<Type Name="momo::HashMultiMapCore&lt;*&gt;">
     <DisplayString>{{ ValueCount={mValueCount} KeyCount={mHashMap.mHashSet.mCount} }}</DisplayString>
     <Expand>
         <Item Name="[ValueCount]">mValueCount</Item>

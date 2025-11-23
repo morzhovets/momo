@@ -607,9 +607,8 @@ namespace internal
 		class MultiHash
 		{
 		private:
-			typedef momo::HashMultiMap<Raw*, Raw*, HashTraits, MemManagerPtr,
-				HashMultiMapKeyValueTraits<Raw*, Raw*, MemManagerPtr>,
-				NestedHashMultiMapSettings> HashMultiMap;
+			typedef HashMultiMapCore<HashMultiMapKeyValueTraits<Raw*, Raw*, MemManagerPtr>,
+				HashTraits, NestedHashMultiMapSettings> HashMultiMap;
 
 			typedef typename HashMultiMap::ConstKeyIterator ConstKeyIterator;
 			typedef typename HashMultiMap::KeyIterator KeyIterator;
