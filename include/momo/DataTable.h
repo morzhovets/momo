@@ -1210,9 +1210,8 @@ private:
 	internal::EnableIf<!keepRowNumber>
 	pvAssign(RowIterator begin, RowSentinel end)
 	{
-		typedef HashMap<void*, size_t, HashTraits<void*>, MemManagerPtr,
-			HashMapKeyValueTraits<void*, size_t, MemManagerPtr>,
-			internal::NestedHashMapSettings> RawMap;
+		typedef HashMapCore<HashMapKeyValueTraits<void*, size_t, MemManagerPtr>,
+			HashTraits<void*>, internal::NestedHashMapSettings> RawMap;
 		RawMap rawMap((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		size_t count = 0;
 		for (RowIterator iter = std::move(begin); iter != end; ++iter)

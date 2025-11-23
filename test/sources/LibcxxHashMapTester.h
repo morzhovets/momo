@@ -62,10 +62,8 @@ template<typename TKey, typename TMapped,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
-	momo::HashMap<TKey, TMapped, LibcxxHashTraits<TKey, THasher, TEqualComparer>,
-		momo::MemManagerStd<TAllocator>,
-		LibcxxHashMapKeyValueTraits<TKey, TMapped, TAllocator>,
-		LibcxxHashMapSettings>>;
+	momo::HashMapCore<LibcxxHashMapKeyValueTraits<TKey, TMapped, TAllocator>,
+		LibcxxHashTraits<TKey, THasher, TEqualComparer>, LibcxxHashMapSettings>>;
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE

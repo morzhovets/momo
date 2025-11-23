@@ -580,8 +580,7 @@ private:
 
 	typedef internal::HashMultiMapNestedMapSettings<Settings> HashMapSettings;
 
-	typedef momo::HashMap<Key, ValueArray, HashTraits, MemManager,
-		HashMapKeyValueTraits, HashMapSettings> HashMap;
+	typedef HashMapCore<HashMapKeyValueTraits, HashTraits, HashMapSettings> HashMap;
 
 	class ValueCrew
 	{
