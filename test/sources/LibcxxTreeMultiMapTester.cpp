@@ -32,10 +32,8 @@ template<typename TKey, typename TMapped,
 	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using multimap = momo::stdish::multimap<TKey, TMapped, TLessComparer, TAllocator,
-	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessComparer, true,
-		momo::TreeNode<4, 2, momo::MemPoolParams<>, false>>,
-		momo::MemManagerStd<TAllocator>,
-		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
+	momo::TreeMapCore<momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
+		momo::TreeTraitsStd<TKey, TLessComparer, true, momo::TreeNode<4, 2, momo::MemPoolParams<>, false>>,
 		momo::TreeMapSettings>>;
 LIBCXX_NAMESPACE_STD_END
 

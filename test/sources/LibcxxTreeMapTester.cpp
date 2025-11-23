@@ -37,10 +37,8 @@ template<typename TKey, typename TMapped,
 	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
 using map = momo::stdish::map<TKey, TMapped, TLessComparer, TAllocator,
-	momo::TreeMap<TKey, TMapped, momo::TreeTraitsStd<TKey, TLessComparer, false,
-		momo::TreeNode<>>,
-		momo::MemManagerStd<TAllocator>,
-		momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
+	momo::TreeMapCore<momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
+		momo::TreeTraitsStd<TKey, TLessComparer, false, momo::TreeNode<>>,
 		momo::TreeMapSettings>>;
 
 #ifdef TEST_LIBCXX_NEW
