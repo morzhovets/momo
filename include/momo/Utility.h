@@ -51,54 +51,54 @@
 # define MOMO_PARENT_HEADER(file) MOMO_PARENT_HEADER_STRING(../file.h)
 #endif
 
-#define MOMO_FRIEND_SWAP(Object) \
-	friend void swap(Object& object1, Object& object2) \
+#define MOMO_FRIEND_SWAP(Class) \
+	friend void swap(Class& object1, Class& object2) \
 		noexcept(noexcept(object1.Swap(object2))) \
 	{ \
 		object1.Swap(object2); \
 	}
 
-#define MOMO_FRIENDS_SIZE_BEGIN_END_CONST(Object, ConstIterator) \
-	friend size_t size(const Object& object) noexcept \
+#define MOMO_FRIENDS_SIZE_BEGIN_END_CONST(Class, ConstIterator) \
+	friend size_t size(const Class& object) noexcept \
 	{ \
 		return object.GetCount(); \
 	} \
-	friend ConstIterator begin(const Object& object) noexcept \
+	friend ConstIterator begin(const Class& object) noexcept \
 	{ \
 		return object.GetBegin(); \
 	} \
-	friend ConstIterator end(const Object& object) noexcept \
+	friend ConstIterator end(const Class& object) noexcept \
 	{ \
 		return object.GetEnd(); \
 	}
 
-#define MOMO_FRIENDS_BEGIN_END(Object, Iterator) \
-	friend Iterator begin(Object& object) noexcept \
+#define MOMO_FRIENDS_BEGIN_END(Class, Iterator) \
+	friend Iterator begin(Class& object) noexcept \
 	{ \
 		return object.GetBegin(); \
 	} \
-	friend Iterator end(Object& object) noexcept \
+	friend Iterator end(Class& object) noexcept \
 	{ \
 		return object.GetEnd(); \
 	}
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
-# define MOMO_MORE_COMPARISON_OPERATORS(RObject)
+# define MOMO_MORE_COMPARISON_OPERATORS(RClass)
 #else
-# define MOMO_MORE_COMPARISON_OPERATORS(RObject) \
-	friend bool operator!=(RObject obj1, RObject obj2) noexcept(noexcept(obj1 == obj2)) \
+# define MOMO_MORE_COMPARISON_OPERATORS(RClass) \
+	friend bool operator!=(RClass obj1, RClass obj2) noexcept(noexcept(obj1 == obj2)) \
 	{ \
 		return !(obj1 == obj2); \
 	} \
-	friend bool operator>(RObject obj1, RObject obj2) \
+	friend bool operator>(RClass obj1, RClass obj2) \
 	{ \
 		return obj2 < obj1; \
 	} \
-	friend bool operator<=(RObject obj1, RObject obj2) \
+	friend bool operator<=(RClass obj1, RClass obj2) \
 	{ \
 		return !(obj2 < obj1); \
 	} \
-	friend bool operator>=(RObject obj1, RObject obj2) \
+	friend bool operator>=(RClass obj1, RClass obj2) \
 	{ \
 		return obj2 <= obj1; \
 	}
@@ -115,23 +115,23 @@
 #define MOMO_EXTRA_CHECK(expr) \
 	MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
 
-#define MOMO_DECLARE_PROXY_CONSTRUCTOR(Object) \
+#define MOMO_DECLARE_PROXY_CONSTRUCTOR(Class) \
 	template<typename... Args> \
-	explicit Object##Proxy(Args&&... args) \
-		noexcept(std::is_nothrow_constructible<Object, Args&&...>::value) \
-		: Object(std::forward<Args>(args)...) \
+	explicit Class##Proxy(Args&&... args) \
+		noexcept(std::is_nothrow_constructible<Class, Args&&...>::value) \
+		: Class(std::forward<Args>(args)...) \
 	{ \
 	}
 
-#define MOMO_DECLARE_PROXY_FUNCTION(Object, Func) \
-	template<typename RObject, typename... Args, typename Result = decltype( \
-		(std::declval<RObject&&>().*&Object##Proxy::pt##Func)(std::declval<Args&&>()...))> \
-	static Result Func(RObject&& object, Args&&... args) \
-		noexcept(noexcept((std::forward<RObject>(object).*&Object##Proxy::pt##Func) \
+#define MOMO_DECLARE_PROXY_FUNCTION(Class, Func) \
+	template<typename RClass, typename... Args, typename Result = decltype( \
+		(std::declval<RClass&&>().*&Class##Proxy::pt##Func)(std::declval<Args&&>()...))> \
+	static Result Func(RClass&& object, Args&&... args) \
+		noexcept(noexcept((std::forward<RClass>(object).*&Class##Proxy::pt##Func) \
 			(std::forward<Args>(args)...))) \
 	{ \
-		MOMO_STATIC_ASSERT(std::is_same<Object, typename std::decay<RObject>::type>::value); \
-		return (std::forward<RObject>(object).*&Object##Proxy::pt##Func) \
+		MOMO_STATIC_ASSERT(std::is_same<Class, typename std::decay<RClass>::type>::value); \
+		return (std::forward<RClass>(object).*&Class##Proxy::pt##Func) \
 			(std::forward<Args>(args)...); \
 	}
 
