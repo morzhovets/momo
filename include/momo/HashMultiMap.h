@@ -451,7 +451,8 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue, typename TMemManager>
+template<typename TKey, typename TValue,
+	typename TMemManager = MemManagerDefault>
 class HashMultiMapKeyValueTraits
 {
 public:

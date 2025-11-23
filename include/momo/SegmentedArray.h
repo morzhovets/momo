@@ -25,7 +25,8 @@
 namespace momo
 {
 
-template<typename TItem, typename TMemManager>
+template<typename TItem,
+	typename TMemManager = MemManagerDefault>
 class SegmentedArrayItemTraits
 {
 public:

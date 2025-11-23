@@ -324,7 +324,8 @@ namespace internal
 	};
 }
 
-template<typename TKey, typename TValue, typename TMemManager>
+template<typename TKey, typename TValue,
+	typename TMemManager = MemManagerDefault>
 class HashMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, TMemManager>
 {
 };

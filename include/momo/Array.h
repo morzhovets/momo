@@ -91,7 +91,8 @@ namespace internal
 	};
 }
 
-template<typename TItem, typename TMemManager>
+template<typename TItem,
+	typename TMemManager = MemManagerDefault>
 class ArrayItemTraits
 {
 public:
