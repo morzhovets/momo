@@ -426,13 +426,13 @@ private:
 	std::ostream& mProcStream;
 };
 
-void TestSpeedMap()
+static int testSpeedMap = []
 {
 	std::cout << "TestSpeedMap started" << std::endl;
 
 #ifdef NDEBUG
 	const size_t maxKeyCount = 1 << 21;
-	std::ofstream resStream("bench.csv", std::ios_base::app);
+	std::ofstream resStream("SpeedMapTester.csv", std::ios_base::app);
 #else
 	const size_t maxKeyCount = 1 << 12;
 	std::stringstream resStream;
@@ -440,8 +440,8 @@ void TestSpeedMap()
 
 	SpeedMapTester<uint64_t>(maxKeyCount, 3, resStream).TestAll();
 	SpeedMapTester<IntPtr>(maxKeyCount, 3, resStream).TestAll();
-}
 
-static int testSpeedMap = (TestSpeedMap(), 0);
+	return 0;
+}();
 
 #endif // TEST_SPEED_MAP
