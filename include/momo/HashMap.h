@@ -373,7 +373,7 @@ private:
 
 	typedef internal::HashMapNestedSetSettings<Settings> HashSetSettings;
 
-	typedef momo::HashSet<Key, HashTraits, MemManager, HashSetItemTraits, HashSetSettings> HashSet;
+	typedef HashSetCore<HashSetItemTraits, HashTraits, HashSetSettings> HashSet;
 
 	typedef typename HashSet::ConstIterator HashSetConstIterator;
 	typedef typename HashSet::ConstPosition HashSetConstPosition;

@@ -1268,8 +1268,8 @@ private:
 	internal::EnableIf<!keepRowNumber>
 	pvRemove(RowIterator begin, RowSentinel end)
 	{
-		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
-			HashSetItemTraits<void*, MemManagerPtr>, internal::NestedHashSetSettings> RawSet;
+		typedef HashSetCore<HashSetItemTraits<void*, MemManagerPtr>,
+			HashTraits<void*>, internal::NestedHashSetSettings> RawSet;
 		RawSet rawSet((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
@@ -1310,8 +1310,8 @@ private:
 	internal::EnableIf<!keepRowNumber>
 	pvRemove(const RowFilter& rowFilter)
 	{
-		typedef HashSet<void*, HashTraits<void*>, MemManagerPtr,
-			HashSetItemTraits<void*, MemManagerPtr>, internal::NestedHashSetSettings> RawSet;
+		typedef HashSetCore<HashSetItemTraits<void*, MemManagerPtr>,
+			HashTraits<void*>, internal::NestedHashSetSettings> RawSet;
 		RawSet rawSet((HashTraits<void*>()), MemManagerPtr(GetMemManager()));
 		for (Raw* raw : mRaws)
 		{

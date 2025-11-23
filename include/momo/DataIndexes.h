@@ -456,8 +456,8 @@ namespace internal
 		class UniqueHash
 		{
 		private:
-			typedef momo::HashSet<Raw*, HashTraits, MemManagerPtr,
-				HashSetItemTraits<Raw*, MemManagerPtr>, NestedHashSetSettings> HashSet;
+			typedef HashSetCore<HashSetItemTraits<Raw*, MemManagerPtr>,
+				HashTraits, NestedHashSetSettings> HashSet;
 
 			typedef typename HashSet::ConstPosition Position;
 

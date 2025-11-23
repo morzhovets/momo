@@ -11,6 +11,7 @@
   namespace momo:
     class HashSetItemTraits
     class HashSetSettings
+    class HashSetCore
     class HashSet
     class HashSetOpen
 
@@ -450,27 +451,25 @@ public:
 };
 
 /*!
-	All `HashSet` functions and constructors have strong exception safety,
+	All `HashSetCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	1. Functions `Insert` receiving many items have basic exception safety.
 	2. Function `Remove` receiving predicate has basic exception safety.
 	3. Functions `MergeFrom` and `MergeTo` have basic exception safety.
 */
 
-template<typename TKey,
-	typename THashTraits = HashTraits<TKey>,
-	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = HashSetItemTraits<TKey, TMemManager>,
+template<typename TItemTraits,
+	typename THashTraits = HashTraits<typename TItemTraits::Key>,
 	typename TSettings = HashSetSettings>
-class HashSet
+class HashSetCore
 {
 public:
-	typedef TKey Key;
-	typedef THashTraits HashTraits;
-	typedef TMemManager MemManager;
 	typedef TItemTraits ItemTraits;
+	typedef THashTraits HashTraits;
 	typedef TSettings Settings;
+	typedef typename ItemTraits::Key Key;
 	typedef typename ItemTraits::Item Item;
+	typedef typename ItemTraits::MemManager MemManager;
 
 	MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 
@@ -532,12 +531,12 @@ private:
 	};
 
 public:
-	HashSet()
-		: HashSet(HashTraits())
+	HashSetCore()
+		: HashSetCore(HashTraits())
 	{
 	}
 
-	explicit HashSet(const HashTraits& hashTraits, MemManager memManager = MemManager())
+	explicit HashSetCore(const HashTraits& hashTraits, MemManager memManager = MemManager())
 		: mCrew(hashTraits, std::move(memManager)),
 		mCount(0),
 		mCapacity(0),
@@ -547,9 +546,9 @@ public:
 
 	template<typename ArgIterator, typename ArgSentinel,
 		typename = decltype(*std::declval<ArgIterator>())>
-	explicit HashSet(ArgIterator begin, ArgSentinel end,
+	explicit HashSetCore(ArgIterator begin, ArgSentinel end,
 		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
-		: HashSet(hashTraits, std::move(memManager))
+		: HashSetCore(hashTraits, std::move(memManager))
 	{
 		try
 		{
@@ -562,18 +561,18 @@ public:
 		}
 	}
 
-	HashSet(std::initializer_list<Item> items)
-		: HashSet(items, HashTraits())
+	HashSetCore(std::initializer_list<Item> items)
+		: HashSetCore(items, HashTraits())
 	{
 	}
 
-	explicit HashSet(std::initializer_list<Item> items, const HashTraits& hashTraits,
+	explicit HashSetCore(std::initializer_list<Item> items, const HashTraits& hashTraits,
 		MemManager memManager = MemManager())
-		: HashSet(items.begin(), items.end(), hashTraits, std::move(memManager))
+		: HashSetCore(items.begin(), items.end(), hashTraits, std::move(memManager))
 	{
 	}
 
-	HashSet(HashSet&& hashSet) noexcept
+	HashSetCore(HashSetCore&& hashSet) noexcept
 		: mCrew(std::move(hashSet.mCrew)),
 		mCount(hashSet.mCount),
 		mCapacity(hashSet.mCapacity),
@@ -584,13 +583,13 @@ public:
 		hashSet.mBuckets = nullptr;
 	}
 
-	HashSet(const HashSet& hashSet)
-		: HashSet(hashSet, MemManager(hashSet.GetMemManager()))
+	HashSetCore(const HashSetCore& hashSet)
+		: HashSetCore(hashSet, MemManager(hashSet.GetMemManager()))
 	{
 	}
 
-	explicit HashSet(const HashSet& hashSet, MemManager memManager)
-		: HashSet(hashSet.GetHashTraits(), std::move(memManager))
+	explicit HashSetCore(const HashSetCore& hashSet, MemManager memManager)
+		: HashSetCore(hashSet.GetHashTraits(), std::move(memManager))
 	{
 		mCount = hashSet.mCount;
 		if (mCount == 0)
@@ -621,22 +620,22 @@ public:
 		}
 	}
 
-	~HashSet() noexcept
+	~HashSetCore() noexcept
 	{
 		pvDestroy();
 	}
 
-	HashSet& operator=(HashSet&& hashSet) noexcept
+	HashSetCore& operator=(HashSetCore&& hashSet) noexcept
 	{
 		return internal::ContainerAssigner::Move(std::move(hashSet), *this);
 	}
 
-	HashSet& operator=(const HashSet& hashSet)
+	HashSetCore& operator=(const HashSetCore& hashSet)
 	{
 		return internal::ContainerAssigner::Copy(hashSet, *this);
 	}
 
-	void Swap(HashSet& hashSet) noexcept
+	void Swap(HashSetCore& hashSet) noexcept
 	{
 		mCrew.Swap(hashSet.mCrew);
 		std::swap(mCount, hashSet.mCount);
@@ -658,8 +657,8 @@ public:
 		return ConstIterator();
 	}
 
-	MOMO_FRIEND_SWAP(HashSet)
-	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(HashSet, ConstIterator)
+	MOMO_FRIEND_SWAP(HashSetCore)
+	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(HashSetCore, ConstIterator)
 
 	const HashTraits& GetHashTraits() const noexcept
 	{
@@ -926,7 +925,7 @@ public:
 		pvMergeTo(dstSet);
 	}
 
-	void MergeTo(HashSet& dstHashSet)
+	void MergeTo(HashSetCore& dstHashSet)
 	{
 		if (this == &dstHashSet)
 			return;
@@ -1325,6 +1324,11 @@ private:
 	size_t mCapacity;
 	Buckets* mBuckets;
 };
+
+template<typename TKey,
+	typename THashTraits = HashTraits<TKey>,
+	typename TMemManager = MemManagerDefault>
+using HashSet = HashSetCore<HashSetItemTraits<TKey, TMemManager>, THashTraits>;
 
 template<typename TKey>
 using HashSetOpen = HashSet<TKey, HashTraitsOpen<TKey>>;

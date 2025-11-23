@@ -53,8 +53,8 @@ template<typename TKey,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
 using unordered_set = momo::stdish::unordered_set<TKey, THasher, TEqualComparer, TAllocator,
-	momo::HashSet<TKey, LibcxxHashTraits<TKey, THasher, TEqualComparer>, momo::MemManagerStd<TAllocator>,
-		momo::HashSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>, LibcxxHashSetSettings>>;
+	momo::HashSetCore<momo::HashSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
+		LibcxxHashTraits<TKey, THasher, TEqualComparer>, LibcxxHashSetSettings>>;
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE
