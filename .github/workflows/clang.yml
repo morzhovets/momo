@@ -1,6 +1,9 @@
 name: Clang
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
 
 jobs:
   momo-test:

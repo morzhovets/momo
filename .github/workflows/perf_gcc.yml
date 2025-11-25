@@ -1,6 +1,9 @@
 name: Perf GCC
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
 
 jobs:
   momo-perf:

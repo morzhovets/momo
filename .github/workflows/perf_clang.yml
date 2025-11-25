@@ -1,6 +1,9 @@
 name: Perf Clang
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
 
 jobs:
   momo-perf:

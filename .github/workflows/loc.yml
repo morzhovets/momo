@@ -1,6 +1,9 @@
 name: Lines of code
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
 
 jobs:
   calc-loc:
