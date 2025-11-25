@@ -6,6 +6,9 @@ project(momo_test
 option(MOMO_TEST_LIBCXX_NEW "Use new libcxx tests" OFF)
 option(MOMO_TEST_EXTRA "Test extra settings" OFF)
 option(MOMO_TEST_MSVC_CLI "Test C++/CLI" OFF)
+message(STATUS "MOMO_TEST_LIBCXX_NEW: " ${MOMO_TEST_LIBCXX_NEW})
+message(STATUS "MOMO_TEST_EXTRA: " ${MOMO_TEST_EXTRA})
+message(STATUS "MOMO_TEST_MSVC_CLI: " ${MOMO_TEST_MSVC_CLI})
 
 message(STATUS "CMAKE_CXX_COMPILER_ID: " ${CMAKE_CXX_COMPILER_ID})
 message(STATUS "CMAKE_CXX_COMPILER_FRONTEND_VARIANT: " ${CMAKE_CXX_COMPILER_FRONTEND_VARIANT})
@@ -14,9 +17,7 @@ message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 message(STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR})
 message(STATUS "CMAKE_HOST_SYSTEM_PROCESSOR: " ${CMAKE_HOST_SYSTEM_PROCESSOR})
 message(STATUS "CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
-message(STATUS "MOMO_TEST_LIBCXX_NEW: " ${MOMO_TEST_LIBCXX_NEW})
-message(STATUS "MOMO_TEST_EXTRA: " ${MOMO_TEST_EXTRA})
-message(STATUS "MOMO_TEST_MSVC_CLI: " ${MOMO_TEST_MSVC_CLI})
+message(STATUS "CMAKE_GENERATOR: " ${CMAKE_GENERATOR})
 
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
   file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
@@ -46,7 +47,6 @@ if(MOMO_TEST_EXTRA)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-
   string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   target_compile_options(momo_test PRIVATE /W4 /wd4127 /wd4458 /bigobj)
   target_compile_definitions(momo_test PRIVATE _SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
@@ -62,30 +62,24 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
       target_compile_options(momo_test PRIVATE /permissive-)
     endif()
   endif()
-
   if(MOMO_TEST_MSVC_CLI)
     set_target_properties(momo_test PROPERTIES COMMON_LANGUAGE_RUNTIME "")
   endif()
-
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Intel")
-
   include(CheckCXXCompilerFlag)
   check_cxx_compiler_flag("-msse2" HAS_SSE2_FLAG)
   if(HAS_SSE2_FLAG)
     target_compile_options(momo_test PRIVATE -msse2)
   endif()
-
   if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
     target_compile_options(momo_test PRIVATE /W4)
   else()
     target_compile_options(momo_test PRIVATE -Wall -Wextra -pedantic)
   endif()
-
   target_compile_options(momo_test PRIVATE -Wold-style-cast -Wsign-conversion
     -Wno-unused-local-typedefs)
-
   if(WIN32)
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
       target_compile_definitions(momo_test PRIVATE _ITERATOR_DEBUG_LEVEL=0)
@@ -94,16 +88,19 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
       target_compile_options(momo_test PRIVATE -Wa,-mbig-obj)
     endif()
   endif()
-
 endif()
 
-option(MOMO_TEST_PRINT_BIN_SIZES "Print binary file sizes" ON)
+set(USE_NINJA_GENERATOR OFF)
+if(CMAKE_GENERATOR STREQUAL "Ninja")
+  set(USE_NINJA_GENERATOR ON)
+endif()
+option(MOMO_TEST_PRINT_BIN_SIZES "Print binary file sizes" ${USE_NINJA_GENERATOR})
 if(MOMO_TEST_PRINT_BIN_SIZES)
   if(WIN32)
     add_custom_command(TARGET momo_test POST_BUILD
       COMMAND cmd /c dir *.obj /s
       COMMAND cmd /c echo: && echo Executable size:
-      COMMAND cmd /c for %F in ($<TARGET_FILE:momo_test>) do @echo %~zF %~fF)
+      COMMAND cmd /c for %F in ("$<TARGET_FILE:momo_test>") do @echo %~zF %~fF)
   endif()
   if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_custom_command(TARGET momo_test POST_BUILD
