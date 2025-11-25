@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.20...4.0)
 project(momo_test
   LANGUAGES CXX)
 
-option(MOMO_TEST_NO_EXCEPTIONS_RTTI "Test extra settings" OFF)
+option(MOMO_TEST_NO_EXCEPTIONS_RTTI "Test without exceptions and RTTI" OFF)
 message(STATUS "MOMO_TEST_NO_EXCEPTIONS_RTTI: " ${MOMO_TEST_NO_EXCEPTIONS_RTTI})
 
 message(STATUS "CMAKE_CXX_COMPILER_ID: " ${CMAKE_CXX_COMPILER_ID})
@@ -13,6 +13,7 @@ message(STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
 message(STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR})
 message(STATUS "CMAKE_HOST_SYSTEM_PROCESSOR: " ${CMAKE_HOST_SYSTEM_PROCESSOR})
 message(STATUS "CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
+message(STATUS "CMAKE_GENERATOR: " ${CMAKE_GENERATOR})
 
 file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
 add_executable(momo_test ${MOMO_TEST_SOURCES})
@@ -65,13 +66,17 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
   endif()
 endif()
 
-option(MOMO_TEST_PRINT_BIN_SIZES "Print binary file sizes" ON)
+set(USE_NINJA_GENERATOR OFF)
+if(CMAKE_GENERATOR STREQUAL "Ninja")
+  set(USE_NINJA_GENERATOR ON)
+endif()
+option(MOMO_TEST_PRINT_BIN_SIZES "Print binary file sizes" ${USE_NINJA_GENERATOR})
 if(MOMO_TEST_PRINT_BIN_SIZES)
   if(WIN32)
     add_custom_command(TARGET momo_test POST_BUILD
       COMMAND cmd /c dir *.obj /s
       COMMAND cmd /c echo: && echo Executable size:
-      COMMAND cmd /c for %F in ($<TARGET_FILE:momo_test>) do @echo %~zF %~fF)
+      COMMAND cmd /c for %F in ("$<TARGET_FILE:momo_test>") do @echo %~zF %~fF)
   endif()
   if(UNIX AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_custom_command(TARGET momo_test POST_BUILD
