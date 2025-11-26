@@ -28,7 +28,7 @@ namespace
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_assoc;
 
-namespace libcxx_test_tree_map
+namespace libcxx_tree_map
 {
 
 template<typename TKey, typename TMapped, typename TAllocator>
@@ -57,12 +57,12 @@ using vector = momo::stdish::vector<TValue>;
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_SAFE_MAP_BRACKETS
-#define LIBCXX_TEST_PREFIX "libcxx_test_tree_map_sb"
+#define LIBCXX_TEST_PREFIX "libcxx_tree_map_sb"
 #include LIBCXX_HEADER(MapTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SAFE_MAP_BRACKETS
 
-} // namespace libcxx_test_tree_map
+} // namespace libcxx_tree_map
 
 } // namespace
 

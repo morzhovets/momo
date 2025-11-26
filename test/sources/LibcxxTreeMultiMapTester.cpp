@@ -24,7 +24,7 @@ namespace
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_assoc;
 
-namespace libcxx_test_tree_multimap
+namespace libcxx_tree_multimap
 {
 
 LIBCXX_NAMESPACE_STD_BEGIN
@@ -37,11 +37,11 @@ using multimap = momo::stdish::multimap<TKey, TMapped, TLessComparer, TAllocator
 		momo::TreeMapSettings>>;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_tree_multimap"
+#define LIBCXX_TEST_PREFIX "libcxx_tree_multimap"
 #include LIBCXX_HEADER(MultiMapTests.h)
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace libcxx_test_tree_multimap
+} // namespace libcxx_tree_multimap
 
 } // namespace
 

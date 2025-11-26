@@ -25,7 +25,7 @@ namespace
 using namespace libcxx_insert_range_seq;
 using namespace libcxx_from_range_seq;
 
-namespace libcxx_test_segmented_array_sqrt
+namespace libcxx_segmented_array_sqrt
 {
 
 class LibcxxSegmentedArraySettings
@@ -46,15 +46,15 @@ LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_sqrt"
+#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_sqrt"
 #include LIBCXX_HEADER(VectorTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 #undef LIBCXX_TEST_FAILURE
 
-} // namespace libcxx_test_segmented_array_sqrt
+} // namespace libcxx_segmented_array_sqrt
 
-namespace libcxx_test_segmented_array_cnst
+namespace libcxx_segmented_array_cnst
 {
 
 class LibcxxSegmentedArraySettings
@@ -75,13 +75,13 @@ LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_test_segmented_array_cnst"
+#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_cnst"
 #include LIBCXX_HEADER(VectorTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 #undef LIBCXX_TEST_FAILURE
 
-} // namespace libcxx_test_segmented_array_cnst
+} // namespace libcxx_segmented_array_cnst
 
 } // namespace
 

@@ -24,7 +24,7 @@ namespace
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_assoc;
 
-namespace libcxx_test_tree_multiset
+namespace libcxx_tree_multiset
 {
 
 LIBCXX_NAMESPACE_STD_BEGIN
@@ -37,11 +37,11 @@ using multiset = momo::stdish::multiset<TKey, TLessComparer, TAllocator,
 		momo::TreeSetSettings>>;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_tree_multiset"
+#define LIBCXX_TEST_PREFIX "libcxx_tree_multiset"
 #include LIBCXX_HEADER(MultiSetTests.h)
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace libcxx_test_tree_multiset
+} // namespace libcxx_tree_multiset
 
 } // namespace
 

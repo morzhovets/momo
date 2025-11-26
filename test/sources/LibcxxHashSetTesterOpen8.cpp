@@ -31,7 +31,7 @@ namespace
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_unord;
 
-namespace libcxx_test_hash_set
+namespace libcxx_hash_set
 {
 
 LIBCXX_NAMESPACE_STD_BEGIN
@@ -42,11 +42,11 @@ template<typename TKey,
 using unordered_set = momo::stdish::unordered_set_open<TKey, THasher, TEqualComparer, TAllocator>;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_set_open"
+#define LIBCXX_TEST_PREFIX "libcxx_hash_set_open"
 #include LIBCXX_HEADER(UnorderedSetTests.h)
 #undef LIBCXX_TEST_PREFIX
 
-} // namespace libcxx_test_hash_set
+} // namespace libcxx_hash_set
 
 } // namespace
 

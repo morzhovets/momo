@@ -22,7 +22,7 @@ namespace
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_unord;
 
-namespace libcxx_test_hash_map
+namespace libcxx_hash_map
 {
 
 class LibcxxHashMapSettings : public momo::HashMapSettings
@@ -67,11 +67,11 @@ using unordered_map = momo::stdish::unordered_map<TKey, TMapped, THasher, TEqual
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE
-#define LIBCXX_TEST_PREFIX "libcxx_test_hash_map_" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "libcxx_hash_map_" LIBCXX_TEST_PREFIX_TAIL
 #include LIBCXX_HEADER(UnorderedMapTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_FAILURE
 
-} // namespace libcxx_test_hash_map
+} // namespace libcxx_hash_map
 
 } // namespace
