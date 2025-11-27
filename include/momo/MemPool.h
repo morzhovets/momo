@@ -955,7 +955,7 @@ namespace internal
 			typename std::integral_constant<size_t, MemPoolParams::cachedFreeBlockCount>;
 		};
 
-	class NestedMemPoolSettings //: public MemPoolSettings
+	class NestedMemPoolSettings : public MemPoolSettings
 	{
 	public:
 		static const CheckMode checkMode = CheckMode::assertion;
