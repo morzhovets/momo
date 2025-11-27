@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  test/sources/LibcxxHashSetTesterLim4.cpp
+  test/sources/LibcxxHashSetTester_OpenN1.cpp
 
 \**********************************************************/
 
@@ -15,10 +15,10 @@
 #ifdef TEST_LIBCXX_HASH_SET
 #ifdef TEST_OLD_HASH_BUCKETS
 
-#include "../../include/momo/details/HashBucketLim4.h"
+#include "../../include/momo/details/HashBucketOpenN1.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketLim4<>
-#define LIBCXX_TEST_PREFIX_TAIL "lim4"
+#define LIBCXX_TEST_BUCKET momo::HashBucketOpenN1<>
+#define LIBCXX_TEST_PREFIX_TAIL "openn1"
 
 #include "LibcxxHashSetTester.h"
 

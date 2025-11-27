@@ -6,21 +6,21 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  test/sources/LibcxxHashSetTesterUnlimP.cpp
+  test/sources/LibcxxHashMapTester_One.cpp
 
 \**********************************************************/
 
 #include "pch.h"
 
-#ifdef TEST_LIBCXX_HASH_SET
+#ifdef TEST_LIBCXX_HASH_MAP
 #ifdef TEST_OLD_HASH_BUCKETS
 
-#include "../../include/momo/details/HashBucketUnlimP.h"
+#include "../../include/momo/details/HashBucketOne.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketUnlimP<>
-#define LIBCXX_TEST_PREFIX_TAIL "unlimp"
+#define LIBCXX_TEST_BUCKET momo::HashBucketOne<>
+#define LIBCXX_TEST_PREFIX_TAIL "one"
 
-#include "LibcxxHashSetTester.h"
+#include "LibcxxHashMapTester.h"
 
 #endif // TEST_OLD_HASH_BUCKETS
-#endif // TEST_LIBCXX_HASH_SET
+#endif // TEST_LIBCXX_HASH_MAP
