@@ -367,7 +367,7 @@ public:
 		size_t segIndex = pvGetSegmentIndex(mCapacity - 1, initCapacity);
 		if (internal::Finalizer deallocFin(&MergeArray::pvDeallocateSegments, *this); deallocFin)
 		{
-			for (internal::FinalizerAssign capacityFin(std::move(initCapacity), mCapacity);
+			for (internal::ObjectAssignFinalizer capacityFin(std::move(initCapacity), mCapacity);
 				capacityFin; capacityFin.Detach())
 			{
 				for (size_t i = 1; i < segIndex; ++i)

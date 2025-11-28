@@ -1105,7 +1105,7 @@ public:
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter));
 		ValueArray& valueArray = hashMapIter->value;
 		ValueArray remValueArray(std::move(valueArray));
-		for (internal::FinalizerAssign fin(std::move(remValueArray), valueArray); fin; fin.Detach())
+		for (internal::ObjectAssignFinalizer fin(std::move(remValueArray), valueArray); fin; fin.Detach())
 			hashMapIter = mHashMap.Remove(hashMapIter);
 		pvRemoveValues(remValueArray);
 		return KeyIteratorProxy(hashMapIter);

@@ -1286,7 +1286,7 @@ private:
 		}
 		mRootNode = Node::Create(*mNodeParams, true, 0);
 		Node* nullNode = nullptr;	//?
-		internal::FinalizerAssign nullFin(std::move(nullNode), mRootNode);
+		internal::ObjectAssignFinalizer nullFin(std::move(nullNode), mRootNode);
 		internal::Finalizer destroyFin(&Node::Destroy, *mRootNode, *mNodeParams);
 		Iterator resIter = pvAdd<false>(GetEnd(), std::move(itemCreator));
 		destroyFin.Detach();

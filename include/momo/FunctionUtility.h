@@ -241,28 +241,6 @@ namespace internal
 	Finalizer(std::type_identity_t<void (Class::*)() noexcept>, Class&)
 		-> Finalizer<void (Class::*)() noexcept>;
 
-	template<typename TObject>
-	class FinalizerAssign : public Finalizer<void (*)(TObject&, TObject&) noexcept>
-	{
-	public:
-		typedef TObject Object;
-
-	private:
-		typedef internal::Finalizer<void (*)(Object&, Object&) noexcept> Finalizer;
-
-	public:
-		[[nodiscard]] explicit FinalizerAssign(Object&& srcObject, Object& dstObject) noexcept
-			: Finalizer(&pvAssign, srcObject, dstObject)
-		{
-		}
-
-	private:
-		static void pvAssign(Object& srcObject, Object& dstObject) noexcept
-		{
-			dstObject = std::move(srcObject);
-		}
-	};
-
 	class Catcher
 	{
 	public:
