@@ -14,7 +14,7 @@
 
 #include "../../include/momo/UserSettings.h"
 
-#include "Libcxx.h"
+#include "LibcxxTester.h"
 
 int main()
 {

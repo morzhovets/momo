@@ -6,23 +6,19 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/pch.h
+  test/sources/LibcxxHashSetTester_LimP4.cpp
 
 \**********************************************************/
 
-#pragma once
+#include "pch.h"
 
-#include "TestSettings.h"
+#ifdef TEST_LIBCXX_HASH_SET
 
-#ifdef MOMO_USE_MEM_MANAGER_WIN
-# include <Windows.h>
-#endif
+#include "../../include/momo/details/HashBucketLimP4.h"
 
-#include <version>
-#include <string>
-#include <iostream>
-#include <random>
+#define LIBCXX_TEST_CLASS momo::stdish::unordered_set
+#define LIBCXX_TEST_PREFIX_TAIL "_limp4"
 
-#include "../../include/momo/Utility.h"
+#include "LibcxxHashSetTester.h"
 
-#include "LibcxxTester.h"	//?
+#endif // TEST_LIBCXX_HASH_SET
