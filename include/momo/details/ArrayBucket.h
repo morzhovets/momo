@@ -32,10 +32,6 @@ namespace internal
 
 		typedef MemManagerPtr<ArrayBucketMemManager> MemManager;
 
-		static const size_t alignment = ArrayBucketItemTraits::alignment;
-
-		static const bool isTriviallyRelocatable = ArrayBucketItemTraits::isTriviallyRelocatable;
-
 		template<typename ItemArg>
 		requires std::is_same_v<ItemArg, const Item&>
 		class Creator
@@ -58,6 +54,16 @@ namespace internal
 		};
 
 	public:
+		static consteval size_t GetAlignment() noexcept
+		{
+			return ArrayBucketItemTraits::alignment;
+		}
+
+		static consteval bool IsTriviallyRelocatable() noexcept
+		{
+			return ArrayBucketItemTraits::isTriviallyRelocatable;
+		}
+
 		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 		{
 			ArrayBucketItemTraits::Destroy(memManager.GetBaseMemManager(), items, count);

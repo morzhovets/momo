@@ -196,8 +196,6 @@ namespace internal
 
 		typedef typename MergeSetItemTraits::Item Item;
 
-		static const size_t alignment = MergeSetItemTraits::alignment;
-
 	private:
 		typedef typename MergeSetItemTraits::Key Key;
 
@@ -219,6 +217,11 @@ namespace internal
 			ItemPtrCode, MemManagerPtr> ItemPtrCodes;
 
 	public:
+		static consteval size_t GetAlignment() noexcept
+		{
+			return MergeSetItemTraits::alignment;
+		}
+
 		template<conceptIncIterator<Item> Iterator>
 		static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 		{
@@ -323,7 +326,7 @@ namespace internal
 		{
 			for (size_t i = 1; i < 2 * initialItemCount; ++i)
 			{
-				ObjectBuffer<Item, alignment> itemBuffer;
+				ObjectBuffer<Item, GetAlignment()> itemBuffer;
 				pvRelocate(memManager, items[i], itemBuffer.GetPtr());
 				const Key& key = MergeSetItemTraits::GetKey(itemBuffer.Get());
 				size_t j = i;

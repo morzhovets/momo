@@ -30,16 +30,20 @@ public:
 	typedef TItem Item;
 	typedef TMemManager MemManager;
 
+	//template<typename... ItemArgs>
+	//using Creator = typename ItemManager::template Creator<ItemArgs...>;
+	template<typename... ItemArgs>
+	using Creator = internal::ObjectCreator<Item, MemManager, std::index_sequence_for<ItemArgs...>, ItemArgs...>;
+
 private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	static const size_t alignment = ItemManager::alignment;
+	static consteval size_t GetAlignment() noexcept
+	{
+		return ItemManager::alignment;
+	}
 
-	template<typename... ItemArgs>
-	using Creator = typename ItemManager::template Creator<ItemArgs...>;
-
-public:
 	template<internal::conceptIncIterator<Item> Iterator>
 	static void Destroy(MemManager& memManager, Iterator begin, size_t count) noexcept
 	{
@@ -101,10 +105,10 @@ class MOMO_EMPTY_BASES MergeArray
 	public internal::Swappable<MergeArray>
 {
 public:
-	typedef TItem Item;
-	typedef TMemManager MemManager;
 	typedef TItemTraits ItemTraits;
 	typedef TSettings Settings;
+	typedef typename ItemTraits::Item Item;
+	typedef typename ItemTraits::MemManager MemManager;
 
 	typedef internal::ArrayIndexIterator<MergeArray, Item> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
@@ -522,7 +526,7 @@ private:
 		size_t segItemCount = pvGetSegmentItemCount(segIndex);
 		if (segItemCount > internal::UIntConst::maxSize / sizeof(Item))
 			MOMO_THROW(std::bad_array_new_length());
-		static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
+		static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::GetAlignment()));
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 			segItemCount * sizeof(Item));
 	}

@@ -27,7 +27,7 @@ namespace momo
 namespace internal
 {
 	template<typename ItemTraits, size_t count>
-	class ArrayBuffer : public ObjectBuffer<typename ItemTraits::Item, ItemTraits::alignment, count>
+	class ArrayBuffer : public ObjectBuffer<typename ItemTraits::Item, ItemTraits::GetAlignment(), count>
 	{
 	};
 
@@ -98,27 +98,42 @@ public:
 	typedef TItem Item;
 	typedef TMemManager MemManager;
 
+	//template<typename... ItemArgs>
+	//using Creator = typename ItemManager::template Creator<ItemArgs...>;
+	template<typename... ItemArgs>
+	using Creator = internal::ObjectCreator<Item, MemManager, std::index_sequence_for<ItemArgs...>, ItemArgs...>;
+
 private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	static const size_t alignment = ItemManager::alignment;
+	static consteval size_t GetAlignment() noexcept
+	{
+		return ItemManager::alignment;
+	}
 
-	static const bool isNothrowMoveConstructible = ItemManager::isNothrowMoveConstructible;
-	static const bool isTriviallyRelocatable = ItemManager::isTriviallyRelocatable;
-	static const bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
+	static consteval bool IsNothrowMoveConstructible() noexcept
+	{
+		return ItemManager::isNothrowMoveConstructible;
+	}
 
-	template<typename... ItemArgs>
-	using Creator = typename ItemManager::template Creator<ItemArgs...>;
+	static consteval bool IsTriviallyRelocatable() noexcept
+	{
+		return ItemManager::isTriviallyRelocatable;
+	}
 
-public:
+	static consteval bool IsNothrowRelocatable() noexcept
+	{
+		return ItemManager::isNothrowRelocatable;
+	}
+
 	static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 	{
 		ItemManager::Destroy(memManager, items, count);
 	}
 
 	static void Relocate(MemManager& memManager, Item* srcItems, Item* dstItems, size_t count)
-		noexcept(isNothrowRelocatable)
+		noexcept(IsNothrowRelocatable())
 	{
 		ItemManager::Relocate(memManager, srcItems, dstItems, count);
 	}
@@ -195,10 +210,10 @@ class MOMO_EMPTY_BASES Array
 	public internal::Swappable<Array>
 {
 public:
-	typedef TItem Item;
-	typedef TMemManager MemManager;
 	typedef TItemTraits ItemTraits;
 	typedef TSettings Settings;
+	typedef typename ItemTraits::Item Item;
+	typedef typename ItemTraits::MemManager MemManager;
 
 	static const size_t internalCapacity = Settings::internalCapacity;
 
@@ -381,7 +396,7 @@ private:
 		Item* pvAllocate(size_t capacity)
 		{
 			pvCheckCapacity(capacity);
-			static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
+			static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::GetAlignment()));
 			return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 				capacity * sizeof(Item));
 		}
@@ -414,7 +429,7 @@ private:
 			}
 			else if constexpr (internalCapacity > 0)
 			{
-				static_assert(ItemTraits::isNothrowRelocatable);
+				static_assert(ItemTraits::IsNothrowRelocatable());
 				mItems = pvActivateInternalItems();
 				ItemTraits::Relocate(GetMemManager(), data.mItems, mItems, data.mCount);
 			}
@@ -448,7 +463,7 @@ private:
 		static constexpr bool pvCanReallocate() noexcept
 		{
 			if constexpr (MemManagerProxy::canReallocate)
-				return ItemTraits::isTriviallyRelocatable;
+				return ItemTraits::IsTriviallyRelocatable();
 			else
 				return false;
 		}
@@ -676,7 +691,7 @@ public:
 			capacity = SMath::Max(capacity, GetCount());	//?
 			bool doShrink = (capacity == 0);
 			if constexpr (internalCapacity > 0)
-				doShrink = doShrink || (capacity <= internalCapacity && ItemTraits::isNothrowRelocatable);
+				doShrink = doShrink || (capacity <= internalCapacity && ItemTraits::IsNothrowRelocatable());
 			if (doShrink)
 			{
 				Shrink(capacity);
@@ -730,7 +745,7 @@ public:
 		{
 			pvAddBackNogrow(FastMovableFunctor(ItemCreator(memManager, std::move(item))));
 		}
-		else if constexpr (ItemTraits::isNothrowMoveConstructible)
+		else if constexpr (ItemTraits::IsNothrowMoveConstructible())
 		{
 			size_t newCount = initCount + 1;
 			size_t itemIndex = pvIndexOf(std::as_const(item));
@@ -756,7 +771,7 @@ public:
 		{
 			pvAddBackNogrow(FastMovableFunctor(ItemCreator(memManager, item)));
 		}
-		else if constexpr (ItemTraits::isNothrowRelocatable)
+		else if constexpr (ItemTraits::IsNothrowRelocatable())
 		{
 			size_t newCount = initCount + 1;
 			ItemHandler itemHandler(memManager,

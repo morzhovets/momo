@@ -151,7 +151,7 @@ namespace internal
 		}
 
 	private:
-		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
+		ObjectBuffer<Item, ItemTraits::GetAlignment()> mItemBuffer;
 		MemManager* mMemManager;
 	};
 
@@ -280,7 +280,7 @@ namespace internal
 		//void AddBackNogrowCrt(this RArray&& array, ItemCreator itemCreator)
 
 		template<conceptMutableThis RArray, typename... ItemArgs>
-		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
+		requires requires { typename std::decay_t<RArray>::ItemTraits::template Creator<ItemArgs...>; }
 		void AddBackNogrowVar(this RArray&& array, ItemArgs&&... itemArgs)
 		{
 			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
@@ -304,7 +304,7 @@ namespace internal
 		//void AddBackCrt(this RArray&& array, ItemCreator itemCreator)
 
 		template<conceptMutableThis RArray, typename... ItemArgs>
-		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
+		requires requires { typename std::decay_t<RArray>::ItemTraits::template Creator<ItemArgs...>; }
 		void AddBackVar(this RArray&& array, ItemArgs&&... itemArgs)
 		{
 			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
@@ -332,7 +332,7 @@ namespace internal
 		}
 
 		template<conceptMutableThis RArray, typename... ItemArgs>
-		//requires requires { typename ItemTraits::template Creator<ItemArgs...>; }
+		requires requires { typename std::decay_t<RArray>::ItemTraits::template Creator<ItemArgs...>; }
 		void InsertVar(this RArray&& array, size_t index, ItemArgs&&... itemArgs)
 		{
 			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
