@@ -459,7 +459,7 @@ private:
 				: static_cast<void*>(mItems) == &mInternalItems;
 		}
 
-		static constexpr bool pvCanReallocate() noexcept
+		static consteval bool pvCanReallocate() noexcept
 		{
 			if constexpr (MemManagerProxy::canReallocate)
 				return ItemTraits::IsTriviallyRelocatable();

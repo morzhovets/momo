@@ -390,14 +390,14 @@ public:
 	typedef DataColumn<internal::DataMutable<Item>, Struct, Code> MutableColumn;
 
 public:
-	constexpr explicit DataColumn(const char* name) noexcept
+	consteval explicit DataColumn(const char* name) noexcept
 		requires std::is_same_v<Code, uint64_t>
 		: mCode(internal::StrHasher::GetHashCode64(name)),
 		mName(name)
 	{
 	}
 
-	constexpr explicit DataColumn(Code code, const char* name = "") noexcept
+	consteval explicit DataColumn(Code code, const char* name = "") noexcept
 		: mCode(code),
 		mName(name)
 	{
@@ -689,13 +689,13 @@ private:
 
 public:
 	template<typename Item>
-	static constexpr size_t GetSize() noexcept
+	static consteval size_t GetSize() noexcept
 	{
 		return sizeof(Item);
 	}
 
 	template<typename Item>
-	static constexpr size_t GetAlignment() noexcept
+	static consteval size_t GetAlignment() noexcept
 	{
 		return ItemManager<Item>::alignment;
 	}

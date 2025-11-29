@@ -170,7 +170,7 @@ namespace internal
 			? alignof(Object) : UIntConst::maxAlignment;
 
 	public:
-		static constexpr bool Check(size_t alignment, size_t size = sizeof(Object)) noexcept
+		static consteval bool Check(size_t alignment, size_t size = sizeof(Object)) noexcept
 		{
 			return alignment > 0 && size % alignment == 0
 				&& UIntConst::maxAlignment % alignment == 0;

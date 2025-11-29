@@ -354,7 +354,7 @@ namespace internal
 		typedef TMemManager MemManager;
 
 	private:
-		static constexpr size_t pvGetPtrUsefulBitCount() noexcept
+		static consteval size_t pvGetPtrUsefulBitCount() noexcept
 		{
 			if constexpr (conceptMemManagerWithPtrUsefulBitCount<MemManager>)
 			{

@@ -100,7 +100,7 @@ namespace internal
 
 	public:
 		// Fowler-Noll-Vo hash function (1a)
-		static constexpr uint64_t GetHashCode64(const char* str) noexcept
+		static consteval uint64_t GetHashCode64(const char* str) noexcept
 		{
 			uint64_t res = fnvBasis64;
 			for (const char* p = str; *p != '\0'; ++p)
