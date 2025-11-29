@@ -40,14 +40,13 @@ namespace std
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
 	class MOMO_EMPTY_BASES vector
-		: public momo::stdish::vector_adaptor<momo::Array<TValue,
-			momo::MemManagerStd<TAllocator>,
+		: public momo::stdish::vector_adaptor<momo::ArrayCore<
 			momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 			LibcxxArraySettings>>,
 		public momo::internal::Swappable<vector>
 	{
 	private:
-		typedef momo::stdish::vector_adaptor<momo::Array<TValue, momo::MemManagerStd<TAllocator>,
+		typedef momo::stdish::vector_adaptor<momo::ArrayCore<
 			momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 			LibcxxArraySettings>> VectorAdaptor;
 

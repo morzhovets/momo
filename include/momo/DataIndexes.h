@@ -809,7 +809,7 @@ namespace internal
 		};
 
 		template<typename Hash>
-		using Hashes = Array<Hash, MemManagerPtr, ArrayItemTraits<Hash, MemManagerPtr>,
+		using Hashes = ArrayCore<ArrayItemTraits<Hash, MemManagerPtr>,
 			NestedArraySettings<ArraySettings<0, false>>>;
 
 		typedef Hashes<UniqueHash> UniqueHashes;

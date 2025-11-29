@@ -40,8 +40,7 @@ namespace std
 
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::vector_adaptor<momo::SegmentedArray<TValue,
-		momo::MemManagerStd<TAllocator>,
+	using vector = momo::stdish::vector_adaptor<momo::SegmentedArrayCore<
 		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
 }
@@ -72,8 +71,7 @@ namespace std
 
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::vector_adaptor<momo::SegmentedArray<TValue,
-		momo::MemManagerStd<TAllocator>,
+	using vector = momo::stdish::vector_adaptor<momo::SegmentedArrayCore<
 		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
 }

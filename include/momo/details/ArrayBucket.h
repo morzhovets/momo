@@ -109,8 +109,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef momo::Array<Item, MemManagerPtr,
-			ArrayBucketNestedArrayItemTraits<ItemTraits>, ArraySettings> Array;
+		typedef ArrayCore<ArrayBucketNestedArrayItemTraits<ItemTraits>, ArraySettings> Array;
 
 		static const size_t arrayAlignment = ObjectAlignmenter<Array>::alignment;
 		typedef MemPoolParamsStatic<sizeof(Array) + arrayAlignment, arrayAlignment,

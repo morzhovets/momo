@@ -39,8 +39,7 @@ namespace std
 
 	template<typename TValue,
 		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::vector_adaptor<momo::MergeArray<TValue,
-		momo::MemManagerStd<TAllocator>,
+	using vector = momo::stdish::vector_adaptor<momo::MergeArrayCore<
 		momo::MergeArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxMergeArraySettings>>;
 }

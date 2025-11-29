@@ -63,28 +63,28 @@ private:
 		static const bool allowExceptionSuppression = false;
 	};
 
-	template<typename Array, template<typename...> typename ArrayTempl>
-	using ArrayNoExceptionSuppression = ArrayTempl<typename Array::Item, typename Array::MemManager,
-		typename Array::ItemTraits, ArraySettingsNoExceptionSuppression<typename Array::Settings>>;
+	template<typename Array, template<typename...> typename ArrayCore>
+	using ArrayNoExceptionSuppression = ArrayCore<typename Array::ItemTraits,
+		ArraySettingsNoExceptionSuppression<typename Array::Settings>>;
 
 public:
 	static void TestStrAll()
 	{
-		TestStrArray0<momo::Array<std::string>, momo::Array>(
+		TestStrArray0<momo::Array<std::string>, momo::ArrayCore>(
 			"momo::Array<std::string>");
-		TestStrArray0<momo::ArrayIntCap<2, std::string>, momo::Array>(
+		TestStrArray0<momo::ArrayIntCap<2, std::string>, momo::ArrayCore>(
 			"momo::ArrayIntCap<2, std::string>");
 
-		TestStrArray0<momo::SegmentedArray<std::string>, momo::SegmentedArray>(
+		TestStrArray0<momo::SegmentedArray<std::string>, momo::SegmentedArrayCore>(
 			"momo::SegmentedArray<std::string>");
-		TestStrArray0<momo::SegmentedArraySqrt<std::string>, momo::SegmentedArray>(
+		TestStrArray0<momo::SegmentedArraySqrt<std::string>, momo::SegmentedArrayCore>(
 			"momo::SegmentedArraySqrt<std::string>");
 
-		TestStrArray0<momo::MergeArray<std::string>, momo::MergeArray>(
+		TestStrArray0<momo::MergeArray<std::string>, momo::MergeArrayCore>(
 			"momo::MergeArray<std::string>");
 	}
 
-	template<typename Array, template<typename...> typename ArrayTempl>
+	template<typename Array, template<typename...> typename ArrayCore>
 	static void TestStrArray0(const char* arrayName)
 	{
 		std::cout << arrayName << ": " << std::flush;
@@ -92,7 +92,7 @@ public:
 		std::cout << "ok" << std::endl;
 
 		std::cout << arrayName << " (-allowExceptionSuppression): " << std::flush;
-		TestStrArray1<ArrayNoExceptionSuppression<Array, ArrayTempl>>();
+		TestStrArray1<ArrayNoExceptionSuppression<Array, ArrayCore>>();
 		std::cout << "ok" << std::endl;
 	}
 
@@ -181,7 +181,7 @@ public:
 
 		std::cout << "momo::Array<size_t> (-allowExceptionSuppression): " << std::flush;
 		TestTemplArray<ArrayNoExceptionSuppression<
-			momo::Array<size_t, momo::MemManagerDict<>>, momo::Array>>();
+			momo::Array<size_t, momo::MemManagerDict<>>, momo::ArrayCore>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<size_t, momo::MemManagerCpp>: " << std::flush;
@@ -224,7 +224,7 @@ public:
 
 		std::cout << "momo::ArrayIntCap<4, size_t> (-allowExceptionSuppression): " << std::flush;
 		TestTemplArray<ArrayNoExceptionSuppression<
-			momo::ArrayIntCap<4, size_t, momo::MemManagerDict<>>, momo::Array>>();
+			momo::ArrayIntCap<4, size_t, momo::MemManagerDict<>>, momo::ArrayCore>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::ArrayIntCap<8, TemplItem<false>>: " << std::flush;
@@ -241,7 +241,7 @@ public:
 
 		std::cout << "momo::SegmentedArray<size_t> (-allowExceptionSuppression): " << std::flush;
 		TestTemplArray<ArrayNoExceptionSuppression<
-			momo::SegmentedArray<size_t, momo::MemManagerDict<>>, momo::SegmentedArray>>();
+			momo::SegmentedArray<size_t, momo::MemManagerDict<>>, momo::SegmentedArrayCore>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::SegmentedArraySqrt<size_t>: " << std::flush;
@@ -250,7 +250,7 @@ public:
 
 		std::cout << "momo::SegmentedArraySqrt<size_t> (-allowExceptionSuppression): " << std::flush;
 		TestTemplArray<ArrayNoExceptionSuppression<
-			momo::SegmentedArraySqrt<size_t, momo::MemManagerDict<>>, momo::SegmentedArray>>();
+			momo::SegmentedArraySqrt<size_t, momo::MemManagerDict<>>, momo::SegmentedArrayCore>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::MergeArray<size_t>: " << std::flush;
@@ -259,7 +259,7 @@ public:
 
 		std::cout << "momo::MergeArray<size_t> (-allowExceptionSuppression): " << std::flush;
 		TestTemplArray<ArrayNoExceptionSuppression<
-			momo::MergeArray<size_t, momo::MemManagerDict<>>, momo::MergeArray>>();
+			momo::MergeArray<size_t, momo::MemManagerDict<>>, momo::MergeArrayCore>>();
 		std::cout << "ok" << std::endl;
 	}
 

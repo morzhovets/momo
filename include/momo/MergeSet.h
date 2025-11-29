@@ -499,8 +499,7 @@ private:
 	typedef internal::NestedArraySettings<
 		typename MergeTraits::MergeArraySettings> MergeArraySettings;	//?
 
-	typedef momo::MergeArray<Item, MergeArrayMemManager, MergeArrayItemTraits,
-		MergeArraySettings> MergeArray;
+	typedef MergeArrayCore<MergeArrayItemTraits, MergeArraySettings> MergeArray;
 
 	typedef typename MergeTraits::BloomFilter BloomFilter;
 

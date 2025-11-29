@@ -1125,8 +1125,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-		typedef Array<std::byte*, MemManager, ArrayItemTraits<std::byte*, MemManager>,
-			NestedArraySettings<>> Chunks;
+		typedef ArrayCore<ArrayItemTraits<std::byte*, MemManager>, NestedArraySettings<>> Chunks;
 
 	public:
 		explicit MemPoolUInt32(size_t blockSize, MemManager&& memManager, size_t maxTotalBlockCount)

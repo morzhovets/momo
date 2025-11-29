@@ -12,6 +12,7 @@
     class ArrayItemTraits
     enum class ArrayGrowCause
     class ArraySettings
+    class ArrayCore
     class Array
     class ArrayIntCap
 
@@ -195,19 +196,17 @@ public:
 };
 
 /*!
-	All `Array` functions and constructors have strong exception safety,
+	All `ArrayCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	 - Functions `Insert`, `InsertVar`, `InsertCrt`, `Remove` have
 	basic exception safety.
 */
 
-template<conceptObject TItem,
-	conceptMemManager TMemManager = MemManagerDefault,
-	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>,
+template<typename TItemTraits,
 	typename TSettings = ArraySettings<>>
-class MOMO_EMPTY_BASES Array
+class MOMO_EMPTY_BASES ArrayCore
 	: public internal::ArrayBase,
-	public internal::Swappable<Array>
+	public internal::Swappable<ArrayCore>
 {
 public:
 	typedef TItemTraits ItemTraits;
@@ -479,8 +478,8 @@ private:
 	};
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
-	typedef internal::ArrayInserter<Array> ArrayInserter;
-	typedef typename internal::ArrayIteratorSelector<Array> IteratorSelector;
+	typedef internal::ArrayInserter<ArrayCore> ArrayInserter;
+	typedef typename internal::ArrayIteratorSelector<ArrayCore> IteratorSelector;
 
 	typedef internal::UIntMath<> SMath;
 
@@ -489,24 +488,24 @@ public:
 	typedef typename IteratorSelector::Iterator Iterator;
 
 public:
-	Array() noexcept(noexcept(MemManager()))
-		: Array(MemManager())
+	ArrayCore() noexcept(noexcept(MemManager()))
+		: ArrayCore(MemManager())
 	{
 	}
 
-	explicit Array(MemManager memManager) noexcept
+	explicit ArrayCore(MemManager memManager) noexcept
 		: mData(std::move(memManager))
 	{
 	}
 
-	explicit Array(size_t count, MemManager memManager = MemManager())
+	explicit ArrayCore(size_t count, MemManager memManager = MemManager())
 		: mData(count, std::move(memManager))
 	{
 		for (size_t i = 0; i < count; ++i)
 			this->AddBackNogrowVar();
 	}
 
-	explicit Array(size_t count, const Item& item, MemManager memManager = MemManager())
+	explicit ArrayCore(size_t count, const Item& item, MemManager memManager = MemManager())
 		: mData(count, std::move(memManager))
 	{
 		for (size_t i = 0; i < count; ++i)
@@ -514,72 +513,72 @@ public:
 	}
 
 	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
-	explicit Array(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
-		: Array(std::move(begin), std::move(end), std::move(memManager), nullptr)
+	explicit ArrayCore(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
+		: ArrayCore(std::move(begin), std::move(end), std::move(memManager), nullptr)
 	{
 	}
 
-	Array(std::initializer_list<Item> items)
-		: Array(items, MemManager())
+	ArrayCore(std::initializer_list<Item> items)
+		: ArrayCore(items, MemManager())
 	{
 	}
 
-	explicit Array(std::initializer_list<Item> items, MemManager memManager)
-		: Array(items.begin(), items.end(), std::move(memManager))
+	explicit ArrayCore(std::initializer_list<Item> items, MemManager memManager)
+		: ArrayCore(items.begin(), items.end(), std::move(memManager))
 	{
 	}
 
-	Array(Array&&) noexcept = default;
+	ArrayCore(ArrayCore&&) noexcept = default;
 
-	Array(const Array& array)
-		: Array(array, true)
+	ArrayCore(const ArrayCore& array)
+		: ArrayCore(array, true)
 	{
 	}
 
-	explicit Array(const Array& array, bool shrink)
+	explicit ArrayCore(const ArrayCore& array, bool shrink)
 		: mData(shrink ? array.GetCount() : array.GetCapacity(), MemManager(array.GetMemManager()))
 	{
 		for (const Item& item : array)
 			this->AddBackNogrow(item);
 	}
 
-	explicit Array(const Array& array, MemManager memManager)
-		: Array(array.GetBegin(), array.GetEnd(), std::move(memManager))
+	explicit ArrayCore(const ArrayCore& array, MemManager memManager)
+		: ArrayCore(array.GetBegin(), array.GetEnd(), std::move(memManager))
 	{
 	}
 
-	static Array CreateCap(size_t capacity, MemManager memManager = MemManager())
+	static ArrayCore CreateCap(size_t capacity, MemManager memManager = MemManager())
 	{
-		return Array(Data(capacity, std::move(memManager)));
+		return ArrayCore(Data(capacity, std::move(memManager)));
 	}
 
 	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>
-	static Array CreateCrt(size_t count, ItemMultiCreator itemMultiCreator,
+	static ArrayCore CreateCrt(size_t count, ItemMultiCreator itemMultiCreator,
 		MemManager memManager = MemManager())
 	{
-		Array array = CreateCap(count, std::move(memManager));
+		ArrayCore array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
 			array.pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(itemMultiCreator)));
 		return array;
 	}
 
-	~Array() noexcept = default;
+	~ArrayCore() noexcept = default;
 
-	Array& operator=(Array&& array) noexcept
+	ArrayCore& operator=(ArrayCore&& array) noexcept
 	{
 		if (this != &array)
 			mData.template Assign<true>(std::move(array.mData));
 		return *this;
 	}
 
-	Array& operator=(const Array& array)
+	ArrayCore& operator=(const ArrayCore& array)
 	{
 		if (this != &array)
-			mData.template Assign<false>(std::move(Array(array).mData));
+			mData.template Assign<false>(std::move(ArrayCore(array).mData));
 		return *this;
 	}
 
-	void Swap(Array& array) noexcept
+	void Swap(ArrayCore& array) noexcept
 	{
 		if (this != &array)
 		{
@@ -684,7 +683,7 @@ public:
 	{
 		if constexpr (internal::Catcher::allowExceptionSuppression<Settings>)
 		{
-			return internal::Catcher::CatchAll(&Array::Shrink, *this, capacity);
+			return internal::Catcher::CatchAll(&ArrayCore::Shrink, *this, capacity);
 		}
 		else
 		{
@@ -706,7 +705,7 @@ public:
 	template<typename RArray>
 	internal::ConstLike<Item, RArray>& operator[](this RArray&& array, size_t index)
 	{
-		auto& thisArray = static_cast<internal::ConstLike<Array, RArray>&>(array);
+		auto& thisArray = static_cast<internal::ConstLike<ArrayCore, RArray>&>(array);
 		MOMO_CHECK(index < thisArray.GetCount());
 		return thisArray.GetItems()[index];
 	}
@@ -873,17 +872,17 @@ public:
 	//bool Contains(const ItemArg& itemArg, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 	//template<internal::conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
-	//bool IsEqual(const Array& array, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
+	//bool IsEqual(const ArrayCore& array, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 private:
-	explicit Array(Data&& data) noexcept
+	explicit ArrayCore(Data&& data) noexcept
 		: mData(std::move(data))
 	{
 	}
 
 	template<std::forward_iterator ArgIterator,
 		internal::conceptSentinel<ArgIterator> ArgSentinel>
-	explicit Array(ArgIterator begin, ArgSentinel end, MemManager&& memManager, std::nullptr_t)
+	explicit ArrayCore(ArgIterator begin, ArgSentinel end, MemManager&& memManager, std::nullptr_t)
 		: mData(SMath::Dist(begin, end), std::move(memManager))
 	{
 		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
@@ -893,7 +892,7 @@ private:
 	}
 
 	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
-	explicit Array(ArgIterator begin, ArgSentinel end, MemManager&& memManager, std::nullptr_t)
+	explicit ArrayCore(ArgIterator begin, ArgSentinel end, MemManager&& memManager, std::nullptr_t)
 		: mData(std::move(memManager))
 	{
 		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
@@ -937,7 +936,7 @@ private:
 		{
 			Item* items = GetItems();
 			size_t index = initCount;
-			for (internal::Finalizer fin(&Array::pvDestroyExtraItems, *this, items, initCount, index);
+			for (internal::Finalizer fin(&ArrayCore::pvDestroyExtraItems, *this, items, initCount, index);
 				fin; fin.Detach())
 			{
 				for (; index < newCount; ++index)
@@ -951,7 +950,7 @@ private:
 			auto itemsCreator = [this, initCount, newCount, itemMultiCreator] (Item* newItems)
 			{
 				size_t index = initCount;
-				for (internal::Finalizer fin(&Array::pvDestroyExtraItems, *this, newItems, initCount, index);
+				for (internal::Finalizer fin(&ArrayCore::pvDestroyExtraItems, *this, newItems, initCount, index);
 					fin; fin.Detach())
 				{
 					for (; index < newCount; ++index)
@@ -1041,10 +1040,13 @@ private:
 	Data mData;
 };
 
+template<conceptObject TItem,
+	conceptMemManager TMemManager = MemManagerDefault>
+using Array = ArrayCore<ArrayItemTraits<TItem, TMemManager>>;
+
 template<size_t tInternalCapacity, conceptObject TItem,
-	conceptMemManager TMemManager = MemManagerDefault,
-	typename TItemTraits = ArrayItemTraits<TItem, TMemManager>>
-using ArrayIntCap = Array<TItem, TMemManager, TItemTraits, ArraySettings<tInternalCapacity>>;
+	conceptMemManager TMemManager = MemManagerDefault>
+using ArrayIntCap = ArrayCore<ArrayItemTraits<TItem, TMemManager>, ArraySettings<tInternalCapacity>>;
 
 namespace internal
 {
@@ -1061,7 +1063,7 @@ namespace internal
 	};
 
 	template<size_t tInternalCapacity, conceptObject TItem, conceptMemManager TMemManager>
-	using NestedArrayIntCap = Array<TItem, TMemManager, ArrayItemTraits<TItem, TMemManager>,
+	using NestedArrayIntCap = ArrayCore<ArrayItemTraits<TItem, TMemManager>,
 		NestedArraySettings<ArraySettings<tInternalCapacity>>>;
 }
 
@@ -1070,11 +1072,11 @@ namespace internal
 namespace std
 {
 	template<typename... Params>
-	class back_insert_iterator<momo::Array<Params...>>
-		: public momo::internal::BackInsertIteratorStdBase<momo::Array<Params...>>
+	class back_insert_iterator<momo::ArrayCore<Params...>>
+		: public momo::internal::BackInsertIteratorStdBase<momo::ArrayCore<Params...>>
 	{
 	private:
-		typedef momo::internal::BackInsertIteratorStdBase<momo::Array<Params...>>
+		typedef momo::internal::BackInsertIteratorStdBase<momo::ArrayCore<Params...>>
 			BackInsertIteratorStdBase;
 
 	public:

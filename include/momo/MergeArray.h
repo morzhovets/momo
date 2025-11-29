@@ -11,6 +11,7 @@
   namespace momo:
     class MergeArrayItemTraits
     class MergeArraySettings
+    class MergeArrayCore
     class MergeArray
 
 \**********************************************************/
@@ -88,7 +89,7 @@ public:
 };
 
 /*!
-	All `MergeArray` functions and constructors have strong exception safety,
+	All `MergeArrayCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	 - Functions `Insert`, `InsertVar`, `InsertCrt`, `Remove` have
 	basic exception safety.
@@ -96,13 +97,11 @@ public:
 	Swap and move operations invalidate all container iterators.
 */
 
-template<conceptObject TItem,
-	conceptMemManager TMemManager = MemManagerDefault,
-	typename TItemTraits = MergeArrayItemTraits<TItem, TMemManager>,
+template<typename TItemTraits,
 	typename TSettings = MergeArraySettings<>>
-class MOMO_EMPTY_BASES MergeArray
+class MOMO_EMPTY_BASES MergeArrayCore
 	: public internal::ArrayBase,
-	public internal::Swappable<MergeArray>
+	public internal::Swappable<MergeArrayCore>
 {
 public:
 	typedef TItemTraits ItemTraits;
@@ -110,7 +109,7 @@ public:
 	typedef typename ItemTraits::Item Item;
 	typedef typename ItemTraits::MemManager MemManager;
 
-	typedef internal::ArrayIndexIterator<MergeArray, Item> Iterator;
+	typedef internal::ArrayIndexIterator<MergeArrayCore, Item> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
@@ -118,8 +117,7 @@ private:
 
 	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
 
-	typedef Array<Item*, MemManager, ArrayItemTraits<Item*, MemManager>,
-		SegmentsSettings> Segments;
+	typedef ArrayCore<ArrayItemTraits<Item*, MemManager>, SegmentsSettings> Segments;
 
 	static const size_t logInitialItemCount = Settings::logInitialItemCount;
 	static const size_t initialItemCount = size_t{1} << logInitialItemCount;
@@ -135,34 +133,34 @@ private:
 	};
 
 public:
-	MergeArray() noexcept(noexcept(MemManager()))
-		: MergeArray(MemManager())
+	MergeArrayCore() noexcept(noexcept(MemManager()))
+		: MergeArrayCore(MemManager())
 	{
 	}
 
-	explicit MergeArray(MemManager memManager) noexcept
+	explicit MergeArrayCore(MemManager memManager) noexcept
 		: mSegments(std::move(memManager)),
 		mCount(0),
 		mCapacity(0)
 	{
 	}
 
-	explicit MergeArray(size_t count, MemManager memManager = MemManager())
-		: MergeArray(std::move(memManager))
+	explicit MergeArrayCore(size_t count, MemManager memManager = MemManager())
+		: MergeArrayCore(std::move(memManager))
 	{
 		pvInitCapacity(count);
-		for (internal::Finalizer fin(&MergeArray::pvDestroy, *this); fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArrayCore::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (size_t i = 0; i < count; ++i)
 				this->AddBackNogrowVar();
 		}
 	}
 
-	explicit MergeArray(size_t count, const Item& item, MemManager memManager = MemManager())
-		: MergeArray(std::move(memManager))
+	explicit MergeArrayCore(size_t count, const Item& item, MemManager memManager = MemManager())
+		: MergeArrayCore(std::move(memManager))
 	{
 		pvInitCapacity(count);
-		for (internal::Finalizer fin(&MergeArray::pvDestroy, *this); fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArrayCore::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (size_t i = 0; i < count; ++i)
 				this->AddBackNogrow(item);
@@ -170,14 +168,14 @@ public:
 	}
 
 	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
-	explicit MergeArray(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
-		: MergeArray(std::move(memManager))
+	explicit MergeArrayCore(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
+		: MergeArrayCore(std::move(memManager))
 	{
 		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
 		MemManager& thisMemManager = GetMemManager();
 		if constexpr (std::forward_iterator<ArgIterator>)
 			pvInitCapacity(internal::UIntMath<>::Dist(begin, end));
-		for (internal::Finalizer fin(&MergeArray::pvDestroy, *this); fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArrayCore::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 			{
@@ -189,77 +187,77 @@ public:
 		}
 	}
 
-	MergeArray(std::initializer_list<Item> items)
-		: MergeArray(items, MemManager())
+	MergeArrayCore(std::initializer_list<Item> items)
+		: MergeArrayCore(items, MemManager())
 	{
 	}
 
-	explicit MergeArray(std::initializer_list<Item> items, MemManager memManager)
-		: MergeArray(items.begin(), items.end(), std::move(memManager))
+	explicit MergeArrayCore(std::initializer_list<Item> items, MemManager memManager)
+		: MergeArrayCore(items.begin(), items.end(), std::move(memManager))
 	{
 	}
 
-	MergeArray(MergeArray&& array) noexcept
+	MergeArrayCore(MergeArrayCore&& array) noexcept
 		: mSegments(std::move(array.mSegments)),
 		mCount(std::exchange(array.mCount, 0)),
 		mCapacity(std::exchange(array.mCapacity, 0))
 	{
 	}
 
-	MergeArray(const MergeArray& array)
-		: MergeArray(array, true)
+	MergeArrayCore(const MergeArrayCore& array)
+		: MergeArrayCore(array, true)
 	{
 	}
 
-	explicit MergeArray(const MergeArray& array, bool shrink)
-		: MergeArray(MemManager(array.GetMemManager()))
+	explicit MergeArrayCore(const MergeArrayCore& array, bool shrink)
+		: MergeArrayCore(MemManager(array.GetMemManager()))
 	{
 		pvInitCapacity(shrink ? array.GetCount() : array.GetCapacity());
-		for (internal::Finalizer fin(&MergeArray::pvDestroy, *this); fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArrayCore::pvDestroy, *this); fin; fin.Detach())
 		{
 			for (const Item& item : array)
 				this->AddBackNogrow(item);
 		}
 	}
 
-	explicit MergeArray(const MergeArray& array, MemManager memManager)
-		: MergeArray(array.GetBegin(), array.GetEnd(), std::move(memManager))
+	explicit MergeArrayCore(const MergeArrayCore& array, MemManager memManager)
+		: MergeArrayCore(array.GetBegin(), array.GetEnd(), std::move(memManager))
 	{
 	}
 
-	static MergeArray CreateCap(size_t capacity, MemManager memManager = MemManager())
+	static MergeArrayCore CreateCap(size_t capacity, MemManager memManager = MemManager())
 	{
-		MergeArray array(std::move(memManager));
+		MergeArrayCore array(std::move(memManager));
 		array.pvInitCapacity(capacity);
 		return array;
 	}
 
 	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>
-	static MergeArray CreateCrt(size_t count, ItemMultiCreator itemMultiCreator,
+	static MergeArrayCore CreateCrt(size_t count, ItemMultiCreator itemMultiCreator,
 		MemManager memManager = MemManager())
 	{
-		MergeArray array = CreateCap(count, std::move(memManager));
+		MergeArrayCore array = CreateCap(count, std::move(memManager));
 		for (size_t i = 0; i < count; ++i)
 			array.pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(itemMultiCreator)));
 		return array;
 	}
 
-	~MergeArray() noexcept
+	~MergeArrayCore() noexcept
 	{
 		pvDestroy();
 	}
 
-	MergeArray& operator=(MergeArray&& array) noexcept
+	MergeArrayCore& operator=(MergeArrayCore&& array) noexcept
 	{
 		return internal::ContainerAssigner::Move(std::move(array), *this);
 	}
 
-	MergeArray& operator=(const MergeArray& array)
+	MergeArrayCore& operator=(const MergeArrayCore& array)
 	{
 		return internal::ContainerAssigner::Copy(array, *this);
 	}
 
-	void Swap(MergeArray& array) noexcept
+	void Swap(MergeArrayCore& array) noexcept
 	{
 		mSegments.Swap(array.mSegments);
 		std::swap(mCount, array.mCount);
@@ -339,7 +337,7 @@ public:
 		if (mSegments.GetCount() <= segIndex)
 			mSegments.SetCount(segIndex + 1, nullptr);
 		mSegments[segIndex] = pvAllocateSegment(segIndex);
-		if (internal::Finalizer fin(&MergeArray::pvDeallocateSegments, *this); fin)
+		if (internal::Finalizer fin(&MergeArrayCore::pvDeallocateSegments, *this); fin)
 		{
 			for (size_t i = 1; i < segIndex; ++i)
 			{
@@ -369,7 +367,7 @@ public:
 		size_t initCapacity = mCapacity;
 		mCapacity = capacity;
 		size_t segIndex = pvGetSegmentIndex(mCapacity - 1, initCapacity);
-		if (internal::Finalizer deallocFin(&MergeArray::pvDeallocateSegments, *this); deallocFin)
+		if (internal::Finalizer deallocFin(&MergeArrayCore::pvDeallocateSegments, *this); deallocFin)
 		{
 			for (internal::ObjectAssignFinalizer capacityFin(std::move(initCapacity), mCapacity);
 				capacityFin; capacityFin.Detach())
@@ -394,7 +392,7 @@ public:
 	{
 		if constexpr (internal::Catcher::allowExceptionSuppression<Settings>)
 		{
-			return internal::Catcher::CatchAll(&MergeArray::Shrink, *this, capacity);
+			return internal::Catcher::CatchAll(&MergeArrayCore::Shrink, *this, capacity);
 		}
 		else
 		{
@@ -412,7 +410,7 @@ public:
 	template<typename RArray>
 	internal::ConstLike<Item, RArray>& operator[](this RArray&& array, size_t index)
 	{
-		auto& thisArray = static_cast<internal::ConstLike<MergeArray, RArray>&>(array);
+		auto& thisArray = static_cast<internal::ConstLike<MergeArrayCore, RArray>&>(array);
 		MOMO_CHECK(index < thisArray.GetCount());
 		return *thisArray.pvGetItemPtr(index);
 	}
@@ -493,7 +491,7 @@ public:
 	//bool Contains(const ItemArg& itemArg, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 	//template<internal::conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
-	//bool IsEqual(const MergeArray& array, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
+	//bool IsEqual(const MergeArrayCore& array, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 private:
 	static size_t pvGetSegmentItemCount(size_t segIndex) noexcept
@@ -568,7 +566,7 @@ private:
 		capacity = pvCeilCapacity(capacity);
 		size_t segCount = pvGetSegmentIndex(0, capacity) + 1;
 		mSegments.SetCount(segCount, nullptr);
-		for (internal::Finalizer fin(&MergeArray::pvDeallocateSegments, *this); fin; fin.Detach())
+		for (internal::Finalizer fin(&MergeArrayCore::pvDeallocateSegments, *this); fin; fin.Detach())
 		{
 			for (size_t i = 0; i < segCount; ++i)
 			{
@@ -594,7 +592,7 @@ private:
 		else //if (count <= mCapacity)
 		{
 			Reserve(count);	//?
-			for (internal::Finalizer fin(&MergeArray::pvDecCount, *this, mCount); fin; fin.Detach())
+			for (internal::Finalizer fin(&MergeArrayCore::pvDecCount, *this, mCount); fin; fin.Detach())
 			{
 				for (size_t i = mCount; i < count; ++i)
 					pvAddBackNogrow(FastMovableFunctor(FastCopyableFunctor(itemMultiCreator)));
@@ -634,7 +632,7 @@ private:
 			if (mSegments.GetCount() <= 1)
 				mSegments.SetCount(2, nullptr);
 			Item* segment0 = pvAllocateSegment(0);
-			for (internal::Finalizer fin(&MergeArray::pvDeallocateSegment, *this, 0, segment0);
+			for (internal::Finalizer fin(&MergeArrayCore::pvDeallocateSegment, *this, 0, segment0);
 				fin; fin.Detach())
 			{
 				std::move(itemCreator)(segment0);
@@ -649,10 +647,10 @@ private:
 			if (mSegments.GetCount() <= segIndex)
 				mSegments.SetCount(segIndex + 1, nullptr);
 			Item* segment0 = pvAllocateSegment(0);
-			for (internal::Finalizer fin0(&MergeArray::pvDeallocateSegment, *this, 0, segment0);
+			for (internal::Finalizer fin0(&MergeArrayCore::pvDeallocateSegment, *this, 0, segment0);
 				fin0; fin0.Detach())
 			{
-				if (internal::Finalizer fin(&MergeArray::pvDeallocateSegments, *this); fin)
+				if (internal::Finalizer fin(&MergeArrayCore::pvDeallocateSegments, *this); fin)
 				{
 					mSegments[segIndex] = pvAllocateSegment(segIndex);
 					size_t segItemCount = pvGetSegmentItemCount(segIndex);
@@ -685,16 +683,20 @@ private:
 	size_t mCapacity;
 };
 
+template<conceptObject TItem,
+	conceptMemManager TMemManager = MemManagerDefault>
+using MergeArray = MergeArrayCore<MergeArrayItemTraits<TItem, TMemManager>>;
+
 } // namespace momo
 
 namespace std
 {
 	template<typename... Params>
-	class back_insert_iterator<momo::MergeArray<Params...>>
-		: public momo::internal::BackInsertIteratorStdBase<momo::MergeArray<Params...>>
+	class back_insert_iterator<momo::MergeArrayCore<Params...>>
+		: public momo::internal::BackInsertIteratorStdBase<momo::MergeArrayCore<Params...>>
 	{
 	private:
-		typedef momo::internal::BackInsertIteratorStdBase<momo::MergeArray<Params...>>
+		typedef momo::internal::BackInsertIteratorStdBase<momo::MergeArrayCore<Params...>>
 			BackInsertIteratorStdBase;
 
 	public:

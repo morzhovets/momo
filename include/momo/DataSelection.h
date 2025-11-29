@@ -378,7 +378,7 @@ namespace internal
 	protected:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
-		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
+		typedef ArrayCore<ArrayItemTraits<Raw*, MemManager>,
 			NestedArraySettings<typename Settings::SelectionRawsSettings>> Raws;
 
 	private:
