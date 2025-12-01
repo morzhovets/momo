@@ -37,8 +37,7 @@ LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
-	momo::Array<TValue, momo::MemManagerStd<TAllocator>,
-		momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>, LibcxxArraySettings>>;
+	momo::ArrayCore<momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>, LibcxxArraySettings>>;
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE

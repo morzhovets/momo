@@ -110,7 +110,7 @@ public:
 private:
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-	typedef Array<Raw*, MemManagerPtr, ArrayItemTraits<Raw*, MemManagerPtr>,
+	typedef ArrayCore<ArrayItemTraits<Raw*, MemManagerPtr>,
 		internal::NestedArraySettings<typename Settings::TableRawsSettings>> Raws;
 
 	typedef internal::DataIndexes<ColumnList, DataTraits> Indexes;

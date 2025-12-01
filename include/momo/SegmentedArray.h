@@ -178,8 +178,7 @@ private:
 
 	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
 
-	typedef Array<Item*, MemManager, ArrayItemTraits<Item*, MemManager>,
-		SegmentsSettings> Segments;
+	typedef ArrayCore<ArrayItemTraits<Item*, MemManager>, SegmentsSettings> Segments;
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
 	typedef internal::ArrayShifter<SegmentedArray> ArrayShifter;

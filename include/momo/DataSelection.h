@@ -433,7 +433,7 @@ namespace internal
 	protected:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
-		typedef Array<Raw*, MemManager, ArrayItemTraits<Raw*, MemManager>,
+		typedef ArrayCore<ArrayItemTraits<Raw*, MemManager>,
 			NestedArraySettings<typename Settings::SelectionRawsSettings>> Raws;
 
 	private:
@@ -828,8 +828,9 @@ namespace internal
 				{ return pvGetHashCode<void, Items...>(raw, offsets.data()); };
 			auto rawEqualComp = [&offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsEqual<void, Items...>(raw1, raw2, offsets.data()); };
-			Array<size_t, MemManagerPtr<MemManager>> hashCodes(
-				(MemManagerPtr<MemManager>(GetMemManager())));
+			typedef ArrayCore<ArrayItemTraits<size_t, MemManagerPtr<MemManager>>,
+				internal::NestedArraySettings<>> HashCodes;
+			HashCodes hashCodes((MemManagerPtr<MemManager>(GetMemManager())));
 			try
 			{
 				hashCodes.Reserve(mRaws.GetCount());
