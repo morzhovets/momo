@@ -235,6 +235,61 @@ namespace internal
 		MOMO_ALIGNED_STORAGE(sizeof(Object) * count, alignment) mBuffer;
 	};
 
+	template<typename TObject, typename TMemManager, typename... ObjectArgs>
+	class ObjectCreator
+	{
+	public:
+		typedef TObject Object;
+		typedef TMemManager MemManager;
+
+	public:
+		explicit ObjectCreator(MemManager& memManager, ObjectArgs&&... objectArgs) noexcept
+			: mMemManager(memManager),
+			mObjectArgs(std::forward<ObjectArgs>(objectArgs)...)
+		{
+		}
+
+		explicit ObjectCreator(MemManager& memManager, std::tuple<ObjectArgs...>&& objectArgs) noexcept
+			: mMemManager(memManager),
+			mObjectArgs(std::move(objectArgs))
+		{
+		}
+
+		ObjectCreator(const ObjectCreator&) = delete;
+
+		~ObjectCreator() = default;
+
+		ObjectCreator& operator=(const ObjectCreator&) = delete;
+
+		void operator()(Object* newObject) &&
+		{
+			pvCreate(mMemManager, newObject,
+				typename SequenceMaker<sizeof...(ObjectArgs)>::Sequence());
+		}
+
+	private:
+		template<typename MemManager, size_t... sequence>
+		void pvCreate(MemManager& /*memManager*/, Object* newObject,
+			Sequence<sequence...>)
+		{
+			::new(static_cast<void*>(newObject))
+				Object(std::forward<ObjectArgs>(std::get<sequence>(mObjectArgs))...);
+		}
+
+		template<typename Allocator, size_t... sequence>
+		void pvCreate(MemManagerStd<Allocator>& memManager, Object* newObject,
+			Sequence<sequence...>)
+		{
+			std::allocator_traits<Allocator>::template rebind_traits<Byte>::construct(
+				memManager.GetByteAllocator(), newObject,
+				std::forward<ObjectArgs>(std::get<sequence>(mObjectArgs))...);
+		}
+
+	private:
+		MemManager& mMemManager;
+		std::tuple<ObjectArgs&&...> mObjectArgs;
+	};
+
 	template<typename TObject, typename TObjectCreator>
 	class ObjectCreateExecutor
 	{
@@ -318,6 +373,9 @@ namespace internal
 		typedef TObject Object;
 		typedef TMemManager MemManager;
 
+		template<typename... Args>
+		using Creator = ObjectCreator<Object, MemManager, Args...>;
+
 		typedef ObjectDestroyer<Object, MemManager> Destroyer;
 		typedef ObjectRelocator<Object, MemManager> Relocator;
 		typedef ObjectDestroyFinalizer<Object, MemManager> DestroyFinalizer;
@@ -337,57 +395,6 @@ namespace internal
 		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
 		static const size_t alignment = ObjectAlignmenter<Object>::alignment;
-
-		template<typename... Args>
-		class Creator
-		{
-		public:
-			explicit Creator(MemManager& memManager, Args&&... args) noexcept
-				: mMemManager(memManager),
-				mArgs(std::forward<Args>(args)...)
-			{
-			}
-
-			explicit Creator(MemManager& memManager, std::tuple<Args...>&& args) noexcept
-				: mMemManager(memManager),
-				mArgs(std::move(args))
-			{
-			}
-
-			Creator(const Creator&) = delete;
-
-			~Creator() = default;
-
-			Creator& operator=(const Creator&) = delete;
-
-			void operator()(Object* newObject) &&
-			{
-				pvCreate(mMemManager, newObject,
-					typename SequenceMaker<sizeof...(Args)>::Sequence());
-			}
-
-		private:
-			template<typename MemManager, size_t... sequence>
-			void pvCreate(MemManager& /*memManager*/, Object* newObject,
-				Sequence<sequence...>)
-			{
-				::new(static_cast<void*>(newObject))
-					Object(std::forward<Args>(std::get<sequence>(mArgs))...);
-			}
-
-			template<typename Allocator, size_t... sequence>
-			void pvCreate(MemManagerStd<Allocator>& memManager, Object* newObject,
-				Sequence<sequence...>)
-			{
-				std::allocator_traits<Allocator>::template rebind_traits<Byte>::construct(
-					memManager.GetByteAllocator(), newObject,
-					std::forward<Args>(std::get<sequence>(mArgs))...);
-			}
-
-		private:
-			MemManager& mMemManager;
-			std::tuple<Args&&...> mArgs;
-		};
 
 	public:
 		static void Move(MemManager& memManager, Object&& srcObject, Object* dstObject)
