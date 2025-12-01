@@ -28,7 +28,8 @@ namespace momo
 namespace internal
 {
 	template<typename ItemTraits, size_t count>
-	class ArrayBuffer : public ObjectBuffer<typename ItemTraits::Item, ItemTraits::alignment, count>
+	class ArrayBuffer : public ObjectBuffer<typename ItemTraits::Item,
+		ItemTraits::GetAlignment(), count>
 	{
 	};
 
@@ -99,27 +100,40 @@ public:
 	typedef TItem Item;
 	typedef TMemManager MemManager;
 
+	template<typename... ItemArgs>
+	using Creator = internal::ObjectCreator<Item, MemManager, ItemArgs...>;
+
 private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	static const size_t alignment = ItemManager::alignment;
+	static constexpr size_t GetAlignment() noexcept
+	{
+		return ItemManager::alignment;
+	}
 
-	static const bool isNothrowMoveConstructible = ItemManager::isNothrowMoveConstructible;
-	static const bool isTriviallyRelocatable = ItemManager::isTriviallyRelocatable;
-	static const bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
+	static constexpr bool IsNothrowMoveConstructible() noexcept
+	{
+		return ItemManager::isNothrowMoveConstructible;
+	}
 
-	template<typename... ItemArgs>
-	using Creator = typename ItemManager::template Creator<ItemArgs...>;
+	static constexpr bool IsTriviallyRelocatable() noexcept
+	{
+		return ItemManager::isTriviallyRelocatable;
+	}
 
-public:
+	static constexpr bool IsNothrowRelocatable() noexcept
+	{
+		return ItemManager::isNothrowRelocatable;
+	}
+
 	static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 	{
 		ItemManager::Destroy(memManager, items, count);
 	}
 
 	static void Relocate(MemManager& memManager, Item* srcItems, Item* dstItems, size_t count)
-		noexcept(isNothrowRelocatable)
+		noexcept(IsNothrowRelocatable())
 	{
 		ItemManager::Relocate(memManager, srcItems, dstItems, count);
 	}
@@ -193,10 +207,10 @@ template<typename TItem,
 class Array
 {
 public:
-	typedef TItem Item;
-	typedef TMemManager MemManager;
 	typedef TItemTraits ItemTraits;
 	typedef TSettings Settings;
+	typedef typename ItemTraits::Item Item;
+	typedef typename ItemTraits::MemManager MemManager;
 
 	static const size_t internalCapacity = Settings::internalCapacity;
 
@@ -310,7 +324,7 @@ private:
 				return false;
 			static const bool canReallocateInplace = MemManagerProxy::canReallocateInplace;
 			static const bool canReallocate = MemManagerProxy::canReallocate
-				&& ItemTraits::isTriviallyRelocatable;
+				&& ItemTraits::IsTriviallyRelocatable();
 			if (!canReallocate || capacityLin < capacityExp)
 			{
 				if (pvReallocateInplace(capacityLin, internal::BoolConstant<canReallocateInplace>()))
@@ -356,7 +370,7 @@ private:
 
 		Item* pvAllocate(size_t capacity)
 		{
-			MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
+			MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::GetAlignment()));
 			return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 				capacity * sizeof(Item));
 		}
@@ -382,7 +396,7 @@ private:
 		internal::EnableIf<hasInternalCapacity>
 		pvInit(Data&& data) noexcept
 		{
-			MOMO_STATIC_ASSERT(ItemTraits::isNothrowRelocatable);
+			MOMO_STATIC_ASSERT(ItemTraits::IsNothrowRelocatable());
 			if (data.pvIsInternal())
 			{
 				mItems = pvActivateInternalItems();
@@ -1045,7 +1059,7 @@ private:
 	void pvAddBackGrow(Item&& item)
 	{
 		pvAddBackGrow(std::move(item),
-			internal::BoolConstant<ItemTraits::isNothrowMoveConstructible>());
+			internal::BoolConstant<ItemTraits::IsNothrowMoveConstructible()>());
 	}
 
 	void pvAddBackGrow(Item&& item, std::true_type /*isNothrowMoveConstructible*/)
@@ -1070,14 +1084,14 @@ private:
 	void pvAddBackGrow(const Item& item)
 	{
 		pvAddBackGrow(item,
-			internal::BoolConstant<ItemTraits::isNothrowRelocatable>());
+			internal::BoolConstant<ItemTraits::IsNothrowRelocatable()>());
 	}
 
 	void pvAddBackGrow(const Item& item, std::true_type /*isNothrowRelocatable*/)
 	{
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
-		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
+		internal::ObjectBuffer<Item, ItemTraits::GetAlignment()> itemBuffer;
 		MemManager& memManager = GetMemManager();
 		typename ItemTraits::template Creator<const Item&>(memManager, item)(itemBuffer.GetPtr());
 		try

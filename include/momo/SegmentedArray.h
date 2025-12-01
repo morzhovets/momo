@@ -33,16 +33,18 @@ public:
 	typedef TItem Item;
 	typedef TMemManager MemManager;
 
+	template<typename... ItemArgs>
+	using Creator = internal::ObjectCreator<Item, MemManager, ItemArgs...>;
+
 private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	static const size_t alignment = ItemManager::alignment;
+	static constexpr size_t GetAlignment() noexcept
+	{
+		return ItemManager::alignment;
+	}
 
-	template<typename... ItemArgs>
-	using Creator = typename ItemManager::template Creator<ItemArgs...>;
-
-public:
 	static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 	{
 		ItemManager::Destroy(memManager, items, count);
@@ -163,10 +165,10 @@ template<typename TItem,
 class SegmentedArray
 {
 public:
-	typedef TItem Item;
-	typedef TMemManager MemManager;
 	typedef TItemTraits ItemTraits;
 	typedef TSettings Settings;
+	typedef typename ItemTraits::Item Item;
+	typedef typename ItemTraits::MemManager MemManager;
 
 	typedef internal::ArrayIndexIterator<SegmentedArray, Item> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
@@ -611,7 +613,7 @@ private:
 		size_t itemCount = Settings::GetItemCount(segIndex);
 		if (itemCount > internal::UIntConst::maxSize / sizeof(Item))
 			MOMO_THROW(std::length_error("Invalid item count"));
-		MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
+		MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(ItemTraits::GetAlignment()));
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),
 			itemCount * sizeof(Item));
 	}

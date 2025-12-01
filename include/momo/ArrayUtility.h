@@ -180,7 +180,7 @@ namespace internal
 		}
 
 	private:
-		ObjectBuffer<Item, ItemTraits::alignment> mItemBuffer;
+		ObjectBuffer<Item, ItemTraits::GetAlignment()> mItemBuffer;
 		MemManager& mMemManager;
 	};
 
