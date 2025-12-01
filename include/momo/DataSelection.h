@@ -777,7 +777,8 @@ namespace internal
 				const size_t* offsetPtr = offsets.data();
 				return (pvIsEqual<Items>(raw1, raw2, *offsetPtr++) && ...);
 			};
-			typedef Array<size_t, MemManagerPtr<MemManager>> HashCodes;
+			typedef ArrayCore<ArrayItemTraits<size_t, MemManagerPtr<MemManager>>,
+				internal::NestedArraySettings<>> HashCodes;
 			HashCodes hashCodes((MemManagerPtr<MemManager>(GetMemManager())));
 			if constexpr (internal::Catcher::allowExceptionSuppression<Settings>)
 				Catcher::CatchAll(&HashCodes::Reserve, hashCodes, mRaws.GetCount());
