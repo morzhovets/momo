@@ -14,7 +14,7 @@
     </Expand>
 </Type>
 
-<Type Name="momo::SegmentedArray&lt;*&gt;">
+<Type Name="momo::SegmentedArrayCore&lt;*&gt;">
     <DisplayString>{{ Count={mCount} }}</DisplayString>
     <Expand>
         <Item Name="[Count]">mCount</Item>

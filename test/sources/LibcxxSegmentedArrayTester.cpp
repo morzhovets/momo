@@ -39,8 +39,7 @@ LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
-	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
-		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+	momo::SegmentedArrayCore<momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
 LIBCXX_NAMESPACE_STD_END
 
@@ -68,8 +67,7 @@ LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TValue,
 	typename TAllocator = std::allocator<TValue>>
 using vector = momo::stdish::vector<TValue, TAllocator,
-	momo::SegmentedArray<TValue, momo::MemManagerStd<TAllocator>,
-		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+	momo::SegmentedArrayCore<momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
 		LibcxxSegmentedArraySettings>>;
 LIBCXX_NAMESPACE_STD_END
 

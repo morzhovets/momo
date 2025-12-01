@@ -12,6 +12,7 @@
     class SegmentedArrayItemTraits
     enum class SegmentedArrayItemCountFunc
     class SegmentedArraySettings
+    class SegmentedArrayCore
     class SegmentedArray
     class SegmentedArraySqrt
 
@@ -150,7 +151,7 @@ public:
 };
 
 /*!
-	All `SegmentedArray` functions and constructors have strong exception safety,
+	All `SegmentedArrayCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	 - Functions `Insert`, `InsertVar`, `InsertCrt`, `Remove` have
 	basic exception safety.
@@ -158,11 +159,9 @@ public:
 	Swap and move operations invalidate all container iterators.
 */
 
-template<typename TItem,
-	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>,
+template<typename TItemTraits,
 	typename TSettings = SegmentedArraySettings<>>
-class SegmentedArray
+class SegmentedArrayCore
 {
 public:
 	typedef TItemTraits ItemTraits;
@@ -170,7 +169,7 @@ public:
 	typedef typename ItemTraits::Item Item;
 	typedef typename ItemTraits::MemManager MemManager;
 
-	typedef internal::ArrayIndexIterator<SegmentedArray, Item> Iterator;
+	typedef internal::ArrayIndexIterator<SegmentedArrayCore, Item> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 private:
@@ -181,7 +180,7 @@ private:
 	typedef ArrayCore<ArrayItemTraits<Item*, MemManager>, SegmentsSettings> Segments;
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
-	typedef internal::ArrayShifter<SegmentedArray> ArrayShifter;
+	typedef internal::ArrayShifter<SegmentedArrayCore> ArrayShifter;
 
 	struct ConstIteratorProxy : public ConstIterator
 	{
@@ -194,33 +193,33 @@ private:
 	};
 
 public:
-	SegmentedArray() noexcept(std::is_nothrow_default_constructible<MemManager>::value)	// vs2017
-		: SegmentedArray(MemManager())
+	SegmentedArrayCore() noexcept(std::is_nothrow_default_constructible<MemManager>::value)	// vs2017
+		: SegmentedArrayCore(MemManager())
 	{
 	}
 
-	explicit SegmentedArray(MemManager memManager) noexcept
+	explicit SegmentedArrayCore(MemManager memManager) noexcept
 		: mSegments(std::move(memManager)),
 		mCount(0)
 	{
 	}
 
-	explicit SegmentedArray(size_t count, MemManager memManager = MemManager())
-		: SegmentedArray(std::move(memManager))
+	explicit SegmentedArrayCore(size_t count, MemManager memManager = MemManager())
+		: SegmentedArrayCore(std::move(memManager))
 	{
 		SetCount(count);
 	}
 
-	explicit SegmentedArray(size_t count, const Item& item, MemManager memManager = MemManager())
-		: SegmentedArray(std::move(memManager))
+	explicit SegmentedArrayCore(size_t count, const Item& item, MemManager memManager = MemManager())
+		: SegmentedArrayCore(std::move(memManager))
 	{
 		SetCount(count, item);
 	}
 
 	template<typename ArgIterator, typename ArgSentinel,
 		typename = decltype(*std::declval<ArgIterator>())>
-	explicit SegmentedArray(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
-		: SegmentedArray(std::move(memManager))
+	explicit SegmentedArrayCore(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
+		: SegmentedArrayCore(std::move(memManager))
 	{
 		try
 		{
@@ -236,30 +235,30 @@ public:
 		}
 	}
 
-	SegmentedArray(std::initializer_list<Item> items)
-		: SegmentedArray(items, MemManager())
+	SegmentedArrayCore(std::initializer_list<Item> items)
+		: SegmentedArrayCore(items, MemManager())
 	{
 	}
 
-	explicit SegmentedArray(std::initializer_list<Item> items, MemManager memManager)
-		: SegmentedArray(items.begin(), items.end(), std::move(memManager))
+	explicit SegmentedArrayCore(std::initializer_list<Item> items, MemManager memManager)
+		: SegmentedArrayCore(items.begin(), items.end(), std::move(memManager))
 	{
 	}
 
-	SegmentedArray(SegmentedArray&& array) noexcept
+	SegmentedArrayCore(SegmentedArrayCore&& array) noexcept
 		: mSegments(std::move(array.mSegments)),
 		mCount(array.mCount)
 	{
 		array.mCount = 0;
 	}
 
-	SegmentedArray(const SegmentedArray& array)
-		: SegmentedArray(array, true)
+	SegmentedArrayCore(const SegmentedArrayCore& array)
+		: SegmentedArrayCore(array, true)
 	{
 	}
 
-	explicit SegmentedArray(const SegmentedArray& array, bool shrink)
-		: SegmentedArray(MemManager(array.GetMemManager()))
+	explicit SegmentedArrayCore(const SegmentedArrayCore& array, bool shrink)
+		: SegmentedArrayCore(MemManager(array.GetMemManager()))
 	{
 		pvIncCapacity(0, shrink ? array.GetCount() : array.GetCapacity());
 		try
@@ -275,44 +274,44 @@ public:
 		}
 	}
 
-	explicit SegmentedArray(const SegmentedArray& array, MemManager memManager)
-		: SegmentedArray(array.GetBegin(), array.GetEnd(), std::move(memManager))
+	explicit SegmentedArrayCore(const SegmentedArrayCore& array, MemManager memManager)
+		: SegmentedArrayCore(array.GetBegin(), array.GetEnd(), std::move(memManager))
 	{
 	}
 
-	static SegmentedArray CreateCap(size_t capacity, MemManager memManager = MemManager())
+	static SegmentedArrayCore CreateCap(size_t capacity, MemManager memManager = MemManager())
 	{
-		SegmentedArray array(std::move(memManager));
+		SegmentedArrayCore array(std::move(memManager));
 		array.pvIncCapacity(0, capacity);
 		return array;
 	}
 
 	template<typename ItemMultiCreator>
-	static SegmentedArray CreateCrt(size_t count, const ItemMultiCreator& itemMultiCreator,
+	static SegmentedArrayCore CreateCrt(size_t count, const ItemMultiCreator& itemMultiCreator,
 		MemManager memManager = MemManager())
 	{
-		SegmentedArray array = CreateCap(count, std::move(memManager));
+		SegmentedArrayCore array = CreateCap(count, std::move(memManager));
 		array.pvIncCount(count, itemMultiCreator);
 		return array;
 	}
 
-	~SegmentedArray() noexcept
+	~SegmentedArrayCore() noexcept
 	{
 		pvDecCount(0);
 		pvDecCapacity(0);
 	}
 
-	SegmentedArray& operator=(SegmentedArray&& array) noexcept
+	SegmentedArrayCore& operator=(SegmentedArrayCore&& array) noexcept
 	{
 		return internal::ContainerAssigner::Move(std::move(array), *this);
 	}
 
-	SegmentedArray& operator=(const SegmentedArray& array)
+	SegmentedArrayCore& operator=(const SegmentedArrayCore& array)
 	{
 		return internal::ContainerAssigner::Copy(array, *this);
 	}
 
-	void Swap(SegmentedArray& array) noexcept
+	void Swap(SegmentedArrayCore& array) noexcept
 	{
 		mSegments.Swap(array.mSegments);
 		std::swap(mCount, array.mCount);
@@ -338,9 +337,9 @@ public:
 		return IteratorProxy(this, mCount);
 	}
 
-	MOMO_FRIEND_SWAP(SegmentedArray)
-	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(SegmentedArray, ConstIterator)
-	MOMO_FRIENDS_BEGIN_END(SegmentedArray, Iterator)
+	MOMO_FRIEND_SWAP(SegmentedArrayCore)
+	MOMO_FRIENDS_SIZE_BEGIN_END_CONST(SegmentedArrayCore, ConstIterator)
+	MOMO_FRIENDS_BEGIN_END(SegmentedArrayCore, Iterator)
 
 	const MemManager& GetMemManager() const noexcept
 	{
@@ -599,7 +598,7 @@ public:
 	}
 
 	template<typename ItemEqualComparer = std::equal_to<Item>>
-	bool IsEqual(const SegmentedArray& array,
+	bool IsEqual(const SegmentedArrayCore& array,
 		const ItemEqualComparer& itemEqualComp = ItemEqualComparer()) const
 	{
 		return GetCount() == array.GetCount() &&
@@ -742,9 +741,12 @@ private:
 };
 
 template<typename TItem,
-	typename TMemManager = MemManagerDefault,
-	typename TItemTraits = SegmentedArrayItemTraits<TItem, TMemManager>>
-using SegmentedArraySqrt = SegmentedArray<TItem, TMemManager, TItemTraits,
+	typename TMemManager = MemManagerDefault>
+using SegmentedArray = SegmentedArrayCore<SegmentedArrayItemTraits<TItem, TMemManager>>;
+
+template<typename TItem,
+	typename TMemManager = MemManagerDefault>
+using SegmentedArraySqrt = SegmentedArrayCore<SegmentedArrayItemTraits<TItem, TMemManager>,
 	SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt>>;
 
 } // namespace momo
@@ -752,11 +754,11 @@ using SegmentedArraySqrt = SegmentedArray<TItem, TMemManager, TItemTraits,
 namespace std
 {
 	template<typename... Params>
-	class back_insert_iterator<momo::SegmentedArray<Params...>>
-		: public momo::internal::BackInsertIteratorStdBase<momo::SegmentedArray<Params...>>
+	class back_insert_iterator<momo::SegmentedArrayCore<Params...>>
+		: public momo::internal::BackInsertIteratorStdBase<momo::SegmentedArrayCore<Params...>>
 	{
 	private:
-		typedef momo::internal::BackInsertIteratorStdBase<momo::SegmentedArray<Params...>>
+		typedef momo::internal::BackInsertIteratorStdBase<momo::SegmentedArrayCore<Params...>>
 			BackInsertIteratorStdBase;
 
 	public:
