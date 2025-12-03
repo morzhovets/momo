@@ -57,7 +57,7 @@ struct KeyValue {
 template <>
 struct std::hash<KeyValue> {
   std::size_t operator()(const KeyValue& kv) const {
-    return kv.key;
+    return static_cast<std::size_t>(kv.key);
   }
 };
 

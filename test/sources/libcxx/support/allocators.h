@@ -52,7 +52,7 @@ public:
     T* allocate(std::size_t n)
     {
         allocate_called = true;
-        return (T*)n;
+        return reinterpret_cast<T*>(n);
     }
 
     void deallocate(T* p, std::size_t n)
@@ -110,7 +110,7 @@ public:
     T* allocate(std::size_t, const void* hint)
     {
         allocate_called = true;
-        return (T*) const_cast<void *>(hint);
+        return static_cast<T*>(const_cast<void*>(hint));
     }
 };
 

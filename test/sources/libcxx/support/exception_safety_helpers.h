@@ -64,7 +64,7 @@ int ThrowingCopy<N>::destroyed = 0;
 template <int N>
 struct std::hash<ThrowingCopy<N>> {
   std::size_t operator()(const ThrowingCopy<N>& value) const {
-    return value.x;
+    return static_cast<std::size_t>(value.x);
   }
 };
 

@@ -612,8 +612,8 @@ private:
 struct RequireAllocationGuard {
     explicit RequireAllocationGuard(std::size_t RequireAtLeast = 1)
             : m_req_alloc(RequireAtLeast),
-              m_new_count_on_init(globalMemCounter.new_called),
-              m_outstanding_new_on_init(globalMemCounter.outstanding_new),
+              m_new_count_on_init(static_cast<std::size_t>(globalMemCounter.new_called)),
+              m_outstanding_new_on_init(static_cast<std::size_t>(globalMemCounter.outstanding_new)),
               m_exactly(false)
     {
     }

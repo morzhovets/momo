@@ -54,9 +54,10 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     target_compile_options(momo_test PRIVATE -Wall -Wextra -pedantic)
   endif()
   target_compile_options(momo_test PRIVATE -Wold-style-cast -Wsign-conversion
-    -Wno-unused-local-typedefs)
+      -Wno-unused-local-typedefs)
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(momo_test PRIVATE -Wno-unknown-attributes)
+    target_compile_options(momo_test PRIVATE -Wno-unknown-attributes
+        -Wno-missing-designated-field-initializers)
     if(WIN32)
       target_compile_definitions(momo_test PRIVATE _ITERATOR_DEBUG_LEVEL=0)
     endif()
