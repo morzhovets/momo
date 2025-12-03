@@ -14,6 +14,10 @@
 
 #include "TestSettings.h"
 
+#ifndef TEST_LIBCXX_VERSION
+# error "TEST_LIBCXX_VERSION is not defined"
+#endif
+
 #include "../../include/momo/Version.h"
 #include "../../include/momo/UserSettings.h"
 

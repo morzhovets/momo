@@ -42,6 +42,10 @@
 # define TEST_LIBCXX_TREE_MAP
 #endif
 
+#if !defined(TEST_DISABLE_LIBCXX) && !defined(TEST_LIBCXX_VERSION)
+# define TEST_LIBCXX_VERSION 20
+#endif
+
 //#define TEST_NATVIS
 
 #define TEST_OLD_HASH_BUCKETS
@@ -49,6 +53,7 @@
 #endif // TEST_DISABLE_ALL
 
 #undef NDEBUG
+#include <cassert>
 
 #ifdef MOMO_TEST_NO_EXCEPTIONS_RTTI
 # define MOMO_DISABLE_EXCEPTIONS

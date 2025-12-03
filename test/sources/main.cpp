@@ -14,7 +14,11 @@
 
 #include "../../include/momo/UserSettings.h"
 
-#include "LibcxxTester.h"
+#include "TestSettings.h"
+
+#ifdef TEST_LIBCXX_VERSION
+# include "LibcxxTester.h"
+#endif
 
 int main()
 {
@@ -90,7 +94,9 @@ int main()
 #endif
 	std::cout << std::endl;
 
+#ifdef TEST_LIBCXX_VERSION
 	std::cout << "TEST_STD_VER: " << TEST_STD_VER << std::endl;
+#endif
 
 	return 0;
 }
