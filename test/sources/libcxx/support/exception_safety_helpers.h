@@ -68,7 +68,7 @@ struct std::hash<ThrowingCopy<N>> {
   }
 };
 
-template <int ThrowOn, int Size, class Func>
+template <int ThrowOn, std::size_t Size, class Func>
 void test_exception_safety_throwing_copy(Func&& func) {
   using T = ThrowingCopy<ThrowOn>;
   T::reset();
@@ -86,7 +86,7 @@ void test_exception_safety_throwing_copy(Func&& func) {
 
 // Destroys the container outside the user callback to avoid destroying extra elements upon throwing (which would
 // complicate asserting that the expected number of elements was destroyed).
-template <class Container, int ThrowOn, int Size, class Func>
+template <class Container, int ThrowOn, std::size_t Size, class Func>
 void test_exception_safety_throwing_copy_container(Func&& func) {
   using T = ThrowingCopy<ThrowOn>;
   T::throwing_enabled = false;
