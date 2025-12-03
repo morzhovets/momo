@@ -228,8 +228,8 @@ namespace internal
 		}
 
 	private:
-		Function mFunction;
 		Class& mObject;
+		Function mFunction;
 	};
 
 	template<typename Class, typename... Args>
