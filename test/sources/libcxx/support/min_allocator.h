@@ -409,7 +409,7 @@ public:
 
     TEST_CONSTEXPR_CXX20 pointer allocate(std::ptrdiff_t n)
     {
-        return pointer(std::allocator<T>().allocate(n));
+        return pointer(std::allocator<T>().allocate(static_cast<std::size_t>(n)));
     }
 
     TEST_CONSTEXPR_CXX20 void deallocate(pointer p, std::ptrdiff_t n)
@@ -417,7 +417,7 @@ public:
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
         std::allocator<T>().deallocate(p.ptr_, n);
 #else
-        std::allocator<T>().deallocate(p, n);
+        std::allocator<T>().deallocate(p, static_cast<std::size_t>(n));
 #endif
     }
 

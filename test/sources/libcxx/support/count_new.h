@@ -366,15 +366,18 @@ public:
     }
 };
 
-TEST_DIAGNOSTIC_PUSH
-TEST_MSVC_DIAGNOSTIC_IGNORED(4640) // '%s' construction of local static object is not thread safe (/Zc:threadSafeInit-)
-inline MemCounter* getGlobalMemCounter() {
-  static MemCounter counter((MemCounter::MemCounterCtorArg_()));
-  return &counter;
-}
-TEST_DIAGNOSTIC_POP
+inline MemCounter globalMemCounter((MemCounter::MemCounterCtorArg_())); // Windows Clang
 
-inline MemCounter &globalMemCounter = *getGlobalMemCounter();
+//TEST_DIAGNOSTIC_PUSH
+//TEST_MSVC_DIAGNOSTIC_IGNORED(4640) // '%s' construction of local static object is not thread safe (/Zc:threadSafeInit-)
+inline MemCounter* getGlobalMemCounter() {
+  //static MemCounter counter((MemCounter::MemCounterCtorArg_()));
+  //return &counter;
+  return &globalMemCounter;
+}
+//TEST_DIAGNOSTIC_POP
+
+//inline MemCounter &globalMemCounter = *getGlobalMemCounter();
 
 #ifndef DISABLE_NEW_COUNT
 // operator new(size_t[, nothrow_t]) and operator delete(size_t[, nothrow_t])
@@ -612,8 +615,8 @@ private:
 struct RequireAllocationGuard {
     explicit RequireAllocationGuard(std::size_t RequireAtLeast = 1)
             : m_req_alloc(RequireAtLeast),
-              m_new_count_on_init(globalMemCounter.new_called),
-              m_outstanding_new_on_init(globalMemCounter.outstanding_new),
+              m_new_count_on_init(static_cast<std::size_t>(globalMemCounter.new_called)),
+              m_outstanding_new_on_init(static_cast<std::size_t>(globalMemCounter.outstanding_new)),
               m_exactly(false)
     {
     }

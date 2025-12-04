@@ -13,15 +13,15 @@
 #ifndef SUPPORT_TEST_MACROS_HPP
 #define SUPPORT_TEST_MACROS_HPP
 
-#define TEST_IS_CONSTANT_EVALUATED std::is_constant_evaluated()
-
-#define TEST_NOEXCEPT noexcept
+#define TEST_IS_CONSTANT_EVALUATED false //std::is_constant_evaluated()
 
 #define TEST_CONSTEXPR //constexpr
 
 #define TEST_CONSTEXPR_CXX14 //constexpr
 #define TEST_CONSTEXPR_CXX20 //constexpr
 #define TEST_CONSTEXPR_CXX23 //constexpr
+
+#define TEST_NOEXCEPT noexcept
 
 #define TEST_NODISCARD [[nodiscard]]
 

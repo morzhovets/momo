@@ -510,7 +510,7 @@ namespace std {
     typedef std::size_t result_type;
 
     std::size_t operator()(argument_type const& arg) const {
-      return arg.data;
+      return static_cast<std::size_t>(arg.data);
     }
   };
 } // end namespace std
