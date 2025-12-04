@@ -50,12 +50,6 @@ private:
 		static const size_t selectEqualityMaxCount = 1;
 	};
 
-	class DataSettings1 : public momo::DataSettings<true>
-	{
-	public:
-		static const bool allowExceptionSuppression = false;
-	};
-
 public:
 	static void TestAll()
 	{
@@ -84,9 +78,9 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnListStatic (+RowNumber, -allowExceptionSuppression): " << std::flush;
+			std::cout << "momo::DataColumnListStatic (+RowNumber): " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
-				momo::MemManagerDict<>, DataSettings1> DataColumnList;
+				momo::MemManagerDict<>, momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
 			columnList.SetMutable(intStruct);
 			columnList.ResetMutable();
@@ -118,9 +112,9 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnList (+RowNumber, -allowExceptionSuppression): " << std::flush;
+			std::cout << "momo::DataColumnList (+RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct, 12>, momo::MemManagerDict<>,
-				momo::DataItemTraits<momo::MemManagerDict<>>, DataSettings1> DataColumnList;
+				momo::DataItemTraits<momo::MemManagerDict<>>, momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
 			columnList.Add(dblString.Mutable());
 			columnList.Add(intString);
