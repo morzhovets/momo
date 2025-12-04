@@ -57,23 +57,22 @@
 //#define TEST_NATVIS
 //#define TEST_SPEED_MAP
 
-#include "../../include/momo/UserSettings.h"
-
 #ifdef _WIN32
 # define MOMO_USE_MEM_MANAGER_WIN
 # define NOMINMAX
 #endif
 
 #ifdef MOMO_TEST_NO_EXCEPTIONS_RTTI
+# define MOMO_DISABLE_EXCEPTIONS
+# define MOMO_DISABLE_TYPE_INFO
+#endif
 
-#define MOMO_DISABLE_EXCEPTIONS
+#include "../../include/momo/UserSettings.h"
 
-#define MOMO_DISABLE_TYPE_INFO
-
-#undef MOMO_DEFAULT_CHECK_MODE
-#define MOMO_DEFAULT_CHECK_MODE exception
-
-#endif // MOMO_TEST_NO_EXCEPTIONS_RTTI
+#ifdef MOMO_TEST_NO_EXCEPTIONS_RTTI
+# undef MOMO_DEFAULT_CHECK_MODE
+# define MOMO_DEFAULT_CHECK_MODE exception
+#endif
 
 #ifdef MOMO_TEST_EXTRA_SETTINGS
 
