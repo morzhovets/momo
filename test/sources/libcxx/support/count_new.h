@@ -366,15 +366,18 @@ public:
     }
 };
 
-TEST_DIAGNOSTIC_PUSH
-TEST_MSVC_DIAGNOSTIC_IGNORED(4640) // '%s' construction of local static object is not thread safe (/Zc:threadSafeInit-)
-inline MemCounter* getGlobalMemCounter() {
-  static MemCounter counter((MemCounter::MemCounterCtorArg_()));
-  return &counter;
-}
-TEST_DIAGNOSTIC_POP
+inline MemCounter globalMemCounter((MemCounter::MemCounterCtorArg_())); // Windows Clang
 
-inline MemCounter &globalMemCounter = *getGlobalMemCounter();
+//TEST_DIAGNOSTIC_PUSH
+//TEST_MSVC_DIAGNOSTIC_IGNORED(4640) // '%s' construction of local static object is not thread safe (/Zc:threadSafeInit-)
+inline MemCounter* getGlobalMemCounter() {
+  //static MemCounter counter((MemCounter::MemCounterCtorArg_()));
+  //return &counter;
+  return &globalMemCounter;
+}
+//TEST_DIAGNOSTIC_POP
+
+//inline MemCounter &globalMemCounter = *getGlobalMemCounter();
 
 #ifndef DISABLE_NEW_COUNT
 // operator new(size_t[, nothrow_t]) and operator delete(size_t[, nothrow_t])
