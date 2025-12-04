@@ -16,7 +16,7 @@
 
 #include "../../include/momo/stdish/unordered_multimap.h"
 
-#ifdef TEST_LIBCXX_NEW
+#if TEST_LIBCXX_VERSION >= 20
 # include "../../include/momo/stdish/set.h"
 #endif
 
@@ -46,7 +46,7 @@ using unordered_multimap = momo::stdish::unordered_multimap<TKey, TMapped, THash
 		momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>,
 		LibcxxHashMultiMapSettings>>;
 
-#ifdef TEST_LIBCXX_NEW
+#if TEST_LIBCXX_VERSION >= 20
 template<typename TKey>
 using set = momo::stdish::set<TKey>;
 template<typename TKey>

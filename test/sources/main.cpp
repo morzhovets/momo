@@ -14,7 +14,11 @@
 
 #include "../../include/momo/UserSettings.h"
 
-#include "LibcxxTester.h"
+#include "TestSettings.h"
+
+#ifdef TEST_LIBCXX_VERSION
+# include "LibcxxTester.h"
+#endif
 
 int main()
 {
@@ -134,11 +138,15 @@ int main()
 #endif
 	std::cout << std::endl;
 
-#ifdef TEST_LIBCXX_NEW
+#ifdef TEST_LIBCXX_VERSION
+
+	std::cout << "TEST_LIBCXX_VERSION: " << TEST_LIBCXX_VERSION << std::endl;
+
+#if TEST_LIBCXX_VERSION >= 20
 
 	std::cout << "TEST_STD_VER: " << TEST_STD_VER << std::endl;
 
-#else // TEST_LIBCXX_NEW
+#else
 
 	std::cout << "LIBCPP_HAS_NO_TRANSPARENT_OPERATORS: ";
 #ifdef LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
@@ -152,7 +160,9 @@ int main()
 #endif
 	std::cout << std::endl;
 
-#endif // TEST_LIBCXX_NEW
+#endif
+
+#endif // TEST_LIBCXX_VERSION
 
 	return 0;
 }

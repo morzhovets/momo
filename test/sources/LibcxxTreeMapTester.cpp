@@ -18,7 +18,7 @@
 
 #include "../../include/momo/stdish/map.h"
 
-#ifdef TEST_LIBCXX_NEW
+#if TEST_LIBCXX_VERSION >= 20
 # include "../../include/momo/stdish/vector.h"
 #endif
 
@@ -41,7 +41,7 @@ using map = momo::stdish::map<TKey, TMapped, TLessComparer, TAllocator,
 		momo::TreeTraitsStd<TKey, TLessComparer, false, momo::TreeNode<>>,
 		momo::TreeMapSettings>>;
 
-#ifdef TEST_LIBCXX_NEW
+#if TEST_LIBCXX_VERSION >= 20
 template<typename TValue>
 using vector = momo::stdish::vector<TValue>;
 #endif

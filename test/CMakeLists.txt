@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.10...4.0)
 project(momo_test
   LANGUAGES CXX)
 
-option(MOMO_TEST_LIBCXX_NEW "Use new libcxx tests" OFF)
+option(MOMO_TEST_LIBCXX20 "Use libcxx tests for C++20" OFF)
 option(MOMO_TEST_EXTRA "Test extra settings" OFF)
 option(MOMO_TEST_MSVC_CLI "Test C++/CLI" OFF)
-message(STATUS "MOMO_TEST_LIBCXX_NEW: " ${MOMO_TEST_LIBCXX_NEW})
+message(STATUS "MOMO_TEST_LIBCXX20: " ${MOMO_TEST_LIBCXX20})
 message(STATUS "MOMO_TEST_EXTRA: " ${MOMO_TEST_EXTRA})
 message(STATUS "MOMO_TEST_MSVC_CLI: " ${MOMO_TEST_MSVC_CLI})
 
@@ -35,8 +35,10 @@ endif()
 
 target_compile_options(momo_test PRIVATE -UNDEBUG)
 
-if(MOMO_TEST_LIBCXX_NEW)
-  target_compile_definitions(momo_test PRIVATE TEST_LIBCXX_NEW)
+if(MOMO_TEST_LIBCXX20)
+  target_compile_definitions(momo_test PRIVATE TEST_LIBCXX_VERSION=20)
+else()
+  target_compile_definitions(momo_test PRIVATE TEST_LIBCXX_VERSION=11)
 endif()
 
 if(MOMO_TEST_EXTRA)
@@ -81,7 +83,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
   endif()
   target_compile_options(momo_test PRIVATE -Wold-style-cast -Wsign-conversion
       -Wno-unused-local-typedefs)
-  if(MOMO_TEST_LIBCXX_NEW)
+  if(MOMO_TEST_LIBCXX20)
     target_compile_options(momo_test PRIVATE -Wno-missing-field-initializers)
   endif()
   if(WIN32)

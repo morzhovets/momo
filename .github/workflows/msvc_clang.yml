@@ -14,23 +14,23 @@ jobs:
 #        # Clang 18 with MSVC-like command-line
 #        - win_ver: '2022'
 #          build_type: 'Release'
-#          test_libcxx_new: 'On'
+#          test_libcxx20: 'On'
 #          flags: '/std:c++latest /WX'
 
         # Clang 20 with MSVC-like command-line
         - win_ver: '2025'
           build_type: 'Release'
-          test_libcxx_new: 'Off'
+          test_libcxx20: 'Off'
           flags: '/std:c++14 /WX'
 
         - win_ver: '2025'
           build_type: 'Release'
-          test_libcxx_new: 'On'
+          test_libcxx20: 'On'
           flags: '/std:c++latest /WX'
 
         - win_ver: '2025'
           build_type: 'Debug'
-          test_libcxx_new: 'On'
+          test_libcxx20: 'On'
           flags: '/std:c++latest /WX'
 
     runs-on: windows-${{ matrix.win_ver }}
@@ -49,7 +49,7 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
-          -DMOMO_TEST_LIBCXX_NEW=${{ matrix.test_libcxx_new }}
+          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test.exe

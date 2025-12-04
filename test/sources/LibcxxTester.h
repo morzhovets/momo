@@ -14,6 +14,10 @@
 
 #include "TestSettings.h"
 
+#ifndef TEST_LIBCXX_VERSION
+# error "TEST_LIBCXX_VERSION is not defined"
+#endif
+
 #include "../../include/momo/Version.h"
 #include "../../include/momo/UserSettings.h"
 
@@ -21,7 +25,7 @@
 
 #define LIBCXX_TO_STR(expr) #expr
 
-#ifdef TEST_LIBCXX_NEW
+#if TEST_LIBCXX_VERSION >= 20
 
 #define LIBCXX_NAMESPACE_STD_BEGIN namespace std { using namespace ::std;
 
@@ -48,7 +52,7 @@
 
 #define LIBCXX_HEADER(header) LIBCXX_TO_STR(libcxx/header)
 
-#else // TEST_LIBCXX_NEW
+#else // TEST_LIBCXX_VERSION
 
 #define LIBCXX_NAMESPACE_STD_BEGIN
 
@@ -69,11 +73,11 @@
 
 #define LIBCXX_HEADER(header) LIBCXX_TO_STR(libcxx11/header)
 
-#endif // TEST_LIBCXX_NEW
+#endif // TEST_LIBCXX_VERSION
 
 #include LIBCXX_HEADER(Support.h)
 
-#ifdef TEST_LIBCXX_NEW
+#if TEST_LIBCXX_VERSION >= 20
 
 #include "../../include/momo/ObjectManager.h"
 
@@ -100,4 +104,4 @@ namespace momo
 	};
 }
 
-#endif // TEST_LIBCXX_NEW
+#endif // TEST_LIBCXX_VERSION

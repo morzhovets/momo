@@ -41,7 +41,10 @@
 # define TEST_LIBCXX_TREE_MAP
 #endif
 
-//#define TEST_LIBCXX_NEW
+//#define TEST_LIBCXX_VERSION 20
+#if !defined(TEST_DISABLE_LIBCXX) && !defined(TEST_LIBCXX_VERSION)
+# define TEST_LIBCXX_VERSION 11
+#endif
 
 #ifdef NDEBUG
 # error "NDEBUG is defined!"
@@ -60,7 +63,7 @@
 
 #ifdef _WIN32
 # define MOMO_USE_MEM_MANAGER_WIN
-# ifdef TEST_LIBCXX_NEW
+# if defined(TEST_LIBCXX_VERSION) && TEST_LIBCXX_VERSION >= 20
 #  define NOMINMAX
 # endif
 #endif

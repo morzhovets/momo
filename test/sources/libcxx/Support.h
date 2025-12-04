@@ -18,6 +18,8 @@
 #include <optional>
 #include <sstream>
 
+static_assert(TEST_LIBCXX_VERSION >= 20);
+
 //#define LIBCPP_HAS_BAD_NEWS_FOR_MOMO
 
 #if defined(__cpp_lib_containers_ranges)
