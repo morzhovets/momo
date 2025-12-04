@@ -57,14 +57,41 @@
 //#define TEST_NATVIS
 //#define TEST_SPEED_MAP
 
-#ifdef MOMO_TEST_NO_EXCEPTIONS_RTTI
-# define MOMO_DISABLE_EXCEPTIONS
-# define MOMO_DISABLE_TYPE_INFO
-#endif
+#include "../../include/momo/UserSettings.h"
 
 #ifdef _WIN32
 # define MOMO_USE_MEM_MANAGER_WIN
 # define NOMINMAX
 #endif
 
-#include "../../include/momo/UserSettings.h"
+#ifdef MOMO_TEST_NO_EXCEPTIONS_RTTI
+
+#define MOMO_DISABLE_EXCEPTIONS
+
+#define MOMO_DISABLE_TYPE_INFO
+
+#undef MOMO_DEFAULT_CHECK_MODE
+#define MOMO_DEFAULT_CHECK_MODE exception
+
+#endif // MOMO_TEST_NO_EXCEPTIONS_RTTI
+
+#ifdef MOMO_TEST_EXTRA_SETTINGS
+
+#undef MOMO_DEFAULT_EXTRA_CHECK_MODE
+#define MOMO_DEFAULT_EXTRA_CHECK_MODE nothing
+
+#undef MOMO_CHECK_ITERATOR_VERSION
+#define MOMO_CHECK_ITERATOR_VERSION (checkMode != CheckMode::assertion)
+
+#undef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
+
+#undef MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD
+
+#undef MOMO_USE_SSE2
+
+#undef MOMO_ASSERT
+#define MOMO_ASSERT(expr) void()
+
+#undef MOMO_CATCH_ALL
+
+#endif // MOMO_TEST_EXTRA_SETTINGS

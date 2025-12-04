@@ -4,7 +4,9 @@ project(momo_test
   LANGUAGES CXX)
 
 option(MOMO_TEST_NO_EXCEPTIONS_RTTI "Test without exceptions and RTTI" OFF)
+option(MOMO_TEST_EXTRA_SETTINGS "Test extra settings" OFF)
 message(STATUS "MOMO_TEST_NO_EXCEPTIONS_RTTI: " ${MOMO_TEST_NO_EXCEPTIONS_RTTI})
+message(STATUS "MOMO_TEST_EXTRA_SETTINGS: " ${MOMO_TEST_EXTRA_SETTINGS})
 
 message(STATUS "CMAKE_CXX_COMPILER_ID: " ${CMAKE_CXX_COMPILER_ID})
 message(STATUS "CMAKE_CXX_COMPILER_FRONTEND_VARIANT: " ${CMAKE_CXX_COMPILER_FRONTEND_VARIANT})
@@ -34,6 +36,10 @@ if(MOMO_TEST_NO_EXCEPTIONS_RTTI)
   else()
     target_compile_options(momo_test PRIVATE -fno-exceptions -fno-rtti)
   endif()
+endif()
+
+if(MOMO_TEST_EXTRA_SETTINGS)
+  target_compile_definitions(momo_test PRIVATE MOMO_TEST_EXTRA_SETTINGS)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
