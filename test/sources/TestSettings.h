@@ -20,9 +20,9 @@
 # define TEST_MSVC
 #endif
 
-#ifndef TEST_DISABLE_ALL
+#if !defined(TEST_DISABLE_ALL)
 
-#ifndef TEST_DISABLE_SIMPLE
+#if !defined(TEST_DISABLE_SIMPLE)
 # define TEST_SIMPLE_ARRAY
 # define TEST_SIMPLE_HASH
 # define TEST_SIMPLE_TREE
@@ -32,7 +32,7 @@
 # define TEST_SIMPLE_OBJECT
 #endif
 
-#ifndef TEST_DISABLE_LIBCXX
+#if !defined(TEST_DISABLE_LIBCXX)
 # define TEST_LIBCXX_ARRAY
 # define TEST_LIBCXX_HASH_SET
 # define TEST_LIBCXX_HASH_MAP
@@ -43,13 +43,16 @@
 
 //#define TEST_LIBCXX_NEW
 
-//#define TEST_NATVIS
-
-#define TEST_OLD_HASH_BUCKETS
+#ifdef NDEBUG
+# error "NDEBUG is defined!"
+#endif
 
 #endif // TEST_DISABLE_ALL
 
-#undef NDEBUG
+#define TEST_OLD_HASH_BUCKETS
+
+//#define TEST_NATVIS
+//#define TEST_SPEED_MAP
 
 #ifdef TEST_EXTRA_SETTINGS
 # define MOMO_DISABLE_TYPE_INFO

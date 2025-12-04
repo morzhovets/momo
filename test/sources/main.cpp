@@ -128,6 +128,12 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "NDEBUG: ";
+#ifdef NDEBUG
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
 #ifdef TEST_LIBCXX_NEW
 
 	std::cout << "TEST_STD_VER: " << TEST_STD_VER << std::endl;

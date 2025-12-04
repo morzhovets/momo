@@ -33,6 +33,8 @@ endif()
 
 #target_compile_features(momo_test PRIVATE cxx_std_11)
 
+target_compile_options(momo_test PRIVATE -UNDEBUG)
+
 if(MOMO_TEST_LIBCXX_NEW)
   target_compile_definitions(momo_test PRIVATE TEST_LIBCXX_NEW)
 endif()
