@@ -11,20 +11,34 @@ jobs:
       matrix:
         include:
 
-        # GNU 14
         - win_ver: '2025'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++23'
 
         - win_ver: '2025'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26'
 
         - win_ver: '2025'
           build_type: 'Debug'
           no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26'
+
+        - win_ver: '2025'
+          build_type: 'Release'
+          no_exceptions_rtti: 'On'
+          extra_settings: 'Off'
+          flags: '-std=c++26'
+
+        - win_ver: '2025'
+          build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'On'
           flags: '-std=c++26'
 
     runs-on: windows-${{ matrix.win_ver }}
@@ -43,7 +57,8 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
-          -DMOMO_TEST_NO_EXCEPTIONS_RTTI=${{ matrix.no_exceptions_rtti }}
+          -DMOMO_TEST_NO_EXCEPTIONS_RTTI=${{ matrix.no_exceptions_rtti }} `
+          -DMOMO_TEST_EXTRA_SETTINGS=${{ matrix.extra_settings }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test.exe
