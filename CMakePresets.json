@@ -342,7 +342,7 @@
     {
       "name": "MSVC_2015-x64-std14-Release",
       "configurePreset": "Test-MSVC_2015-x64-std14",
-      "configuration": "Release"
+      "configuration": "RelWithDebInfo"
     },
     {
       "name": "MSVC_2017-x64-std17-Debug",
@@ -352,7 +352,7 @@
     {
       "name": "MSVC_2017-x64-std17-Release",
       "configurePreset": "Test-MSVC_2017-x64-std17",
-      "configuration": "Release"
+      "configuration": "RelWithDebInfo"
     },
     {
       "name": "MSVC_2019-x64-std20-Debug",
@@ -362,7 +362,7 @@
     {
       "name": "MSVC_2019-x64-std20-Release",
       "configurePreset": "Test-MSVC_2019-x64-std20",
-      "configuration": "Release"
+      "configuration": "RelWithDebInfo"
     },
     {
       "name": "MSVC_2022-x64-std23-Debug",
@@ -372,7 +372,7 @@
     {
       "name": "MSVC_2022-x64-std23-Release",
       "configurePreset": "Test-MSVC_2022-x64-std23",
-      "configuration": "Release"
+      "configuration": "RelWithDebInfo"
     },
     {
       "name": "MSVC_CLI_2022-x64-std17-Debug",
@@ -382,7 +382,7 @@
     {
       "name": "MSVC_CLI_2022-x64-std17-Release",
       "configurePreset": "Test-MSVC_CLI_2022-x64-std17",
-      "configuration": "Release"
+      "configuration": "RelWithDebInfo"
     }
   ]
 }
