@@ -205,7 +205,7 @@
     {
       "name": "MSVC_2022-x64-std23-Release",
       "configurePreset": "Test-MSVC_2022-x64-std23",
-      "configuration": "Release"
+      "configuration": "RelWithDebInfo"
     }
   ]
 }
