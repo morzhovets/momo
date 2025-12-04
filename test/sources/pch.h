@@ -51,6 +51,7 @@
 # include <emmintrin.h>
 #endif
 
+#include <cassert>
 #include <iostream>
 #include <sstream>
 #include <string>
