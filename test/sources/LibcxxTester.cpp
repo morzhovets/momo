@@ -12,9 +12,9 @@
 
 #include "pch.h"
 
-#include "LibcxxTester.h"
+#if defined(TEST_LIBCXX_VERSION) && TEST_LIBCXX_VERSION < 20
 
-#if TEST_LIBCXX_VERSION < 20
+#include "LibcxxTester.h"
 
 int DefaultOnly::count = 0;
 

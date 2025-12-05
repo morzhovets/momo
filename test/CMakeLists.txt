@@ -37,8 +37,6 @@ target_compile_options(momo_test PRIVATE -UNDEBUG)
 
 if(MOMO_TEST_LIBCXX20)
   target_compile_definitions(momo_test PRIVATE TEST_LIBCXX_VERSION=20)
-else()
-  target_compile_definitions(momo_test PRIVATE TEST_LIBCXX_VERSION=11)
 endif()
 
 if(MOMO_TEST_EXTRA)
