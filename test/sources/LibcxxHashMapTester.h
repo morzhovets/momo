@@ -66,6 +66,7 @@ class LibcxxHashMapSettings : public momo::HashMapSettings
 public:
 #ifdef LIBCXX_TEST_FAILURE
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
 #endif
 };
 
