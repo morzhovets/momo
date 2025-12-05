@@ -57,9 +57,7 @@
 //#define TEST_NATVIS
 //#define TEST_SPEED_MAP
 
-#ifdef TEST_EXTRA_SETTINGS
-# define MOMO_DISABLE_TYPE_INFO
-#endif
+//#define MOMO_TEST_EXTRA_SETTINGS
 
 #ifdef _WIN32
 # define MOMO_USE_MEM_MANAGER_WIN
@@ -68,4 +66,25 @@
 # endif
 #endif
 
+#ifdef MOMO_TEST_EXTRA_SETTINGS	//?
+# define MOMO_DISABLE_TYPE_INFO
+#endif
+
 #include "../../include/momo/UserSettings.h"
+
+#ifdef MOMO_TEST_EXTRA_SETTINGS
+
+#undef MOMO_DEFAULT_EXTRA_CHECK_MODE
+#define MOMO_DEFAULT_EXTRA_CHECK_MODE nothing
+
+#undef MOMO_CHECK_ITERATOR_VERSION
+#define MOMO_CHECK_ITERATOR_VERSION (checkMode != momo::CheckMode::assertion)
+
+#undef MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD
+
+#undef MOMO_USE_SSE2
+
+#undef MOMO_ASSERT
+#define MOMO_ASSERT(expr) void()
+
+#endif // MOMO_TEST_EXTRA_SETTINGS

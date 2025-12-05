@@ -78,7 +78,7 @@
 
 // Checking iterators for invalidation
 #ifdef NDEBUG
-# define MOMO_CHECK_ITERATOR_VERSION (checkMode != CheckMode::assertion)
+# define MOMO_CHECK_ITERATOR_VERSION (checkMode != momo::CheckMode::assertion)
 #else
 # define MOMO_CHECK_ITERATOR_VERSION true
 #endif

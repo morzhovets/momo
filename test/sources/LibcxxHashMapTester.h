@@ -29,6 +29,7 @@ class LibcxxHashMapSettings : public momo::HashMapSettings
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
 
 template<typename TKey, typename THasher, typename TEqualComparer>

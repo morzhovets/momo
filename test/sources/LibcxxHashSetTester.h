@@ -29,8 +29,8 @@ class LibcxxHashSetSettings : public momo::HashSetSettings
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
-
 
 template<typename TKey, typename THasher, typename TEqualComparer>
 class LibcxxHashTraits : public momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>

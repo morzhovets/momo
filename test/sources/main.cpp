@@ -70,9 +70,33 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "MOMO_DISABLE_TYPE_INFO: ";
+#ifdef MOMO_DISABLE_TYPE_INFO
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
 	std::cout << "MOMO_MAX_ALIGNMENT: ";
 #ifdef MOMO_MAX_ALIGNMENT
 	std::cout << MOMO_MAX_ALIGNMENT;
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION: ";
+#ifdef MOMO_USE_HASH_TRAITS_STRING_SPECIALIZATION
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD: ";
+#ifdef MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_USE_MEM_MANAGER_WIN: ";
+#ifdef MOMO_USE_MEM_MANAGER_WIN
+	std::cout << "defined";
 #endif
 	std::cout << std::endl;
 
@@ -120,14 +144,8 @@ int main()
 #endif
 	std::cout << std::endl;
 
-	std::cout << "MOMO_USE_MEM_MANAGER_WIN: ";
-#ifdef MOMO_USE_MEM_MANAGER_WIN
-	std::cout << "defined";
-#endif
-	std::cout << std::endl;
-
-	std::cout << "MOMO_DISABLE_TYPE_INFO: ";
-#ifdef MOMO_DISABLE_TYPE_INFO
+	std::cout << "MOMO_TEST_EXTRA_SETTINGS: ";
+#ifdef MOMO_TEST_EXTRA_SETTINGS
 	std::cout << "defined";
 #endif
 	std::cout << std::endl;

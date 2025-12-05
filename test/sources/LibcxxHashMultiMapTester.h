@@ -33,6 +33,8 @@ class LibcxxHashMultiMapSettings : public momo::HashMultiMapSettings
 {
 public:
 	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+	static const bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;
+	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
 
 LIBCXX_NAMESPACE_STD_BEGIN

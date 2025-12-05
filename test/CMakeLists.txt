@@ -40,7 +40,7 @@ if(MOMO_TEST_LIBCXX20)
 endif()
 
 if(MOMO_TEST_EXTRA)
-  target_compile_definitions(momo_test PRIVATE TEST_EXTRA_SETTINGS)
+  target_compile_definitions(momo_test PRIVATE MOMO_TEST_EXTRA_SETTINGS)
   if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC" OR CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
     string(REPLACE "/GR " "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     target_compile_options(momo_test PRIVATE /GR-)
