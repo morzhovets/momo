@@ -16,7 +16,7 @@ jobs:
           macos_ver: '15'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++11'
           path_prefix: '/opt/homebrew'
 
@@ -24,7 +24,7 @@ jobs:
           macos_ver: '15'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
           path_prefix: '/opt/homebrew'
 
@@ -32,7 +32,7 @@ jobs:
 #          macos_ver: '15'
 #          build_type: 'Debug'
 #          test_libcxx20: 'On'
-#          test_extra: 'Off'
+#          extra_settings: 'Off'
 #          flags: '-std=c++26 -Werror'
 #          path_prefix: '/opt/homebrew'
 
@@ -41,7 +41,7 @@ jobs:
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++11'
           path_prefix: '/usr/local'
 
@@ -49,7 +49,7 @@ jobs:
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
           path_prefix: '/usr/local'
 
@@ -57,7 +57,7 @@ jobs:
 #          macos_ver: '15-intel'
 #          build_type: 'Debug'
 #          test_libcxx20: 'On'
-#          test_extra: 'Off'
+#          extra_settings: 'Off'
 #          flags: '-std=c++26 -Werror'
 #          path_prefix: '/usr/local'
 
@@ -80,7 +80,7 @@ jobs:
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
-          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_EXTRA_SETTINGS=${{ matrix.extra_settings }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test

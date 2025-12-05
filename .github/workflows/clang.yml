@@ -16,7 +16,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
           cont_ver: '18.04'
 
@@ -24,7 +24,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '-std=c++11 -Werror'
           cont_ver: '18.04'
 
@@ -32,7 +32,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
           cont_ver: '18.04'
 
@@ -40,7 +40,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
           cont_ver: '18.04'
 
@@ -48,7 +48,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '18.04'
 
@@ -56,7 +56,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '20.04'
 
@@ -64,7 +64,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '20.04'
 
@@ -72,7 +72,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
           cont_ver: '20.04'
 
@@ -80,7 +80,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
           cont_ver: '20.04'
 
@@ -88,7 +88,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '20.04'
 
@@ -96,7 +96,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '22.04'
 
@@ -104,7 +104,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '22.04'
 
@@ -112,7 +112,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '22.04'
 
@@ -120,7 +120,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '24.04'
 
@@ -128,7 +128,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '24.04'
 
@@ -136,7 +136,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '24.04'
 
@@ -144,7 +144,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
           cont_ver: '24.04'
 
@@ -152,7 +152,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
           cont_ver: '24.04'
 
@@ -160,7 +160,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
           cont_ver: '24.04'
 
@@ -168,7 +168,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
           cont_ver: '24.04'
 
@@ -176,7 +176,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '24.04'
 
@@ -184,7 +184,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
           cont_ver: '24.04'
 
@@ -192,7 +192,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
           cont_ver: '24.04'
 
@@ -200,7 +200,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Debug'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror -fsanitize=address,undefined'
           cont_ver: '24.04'
 
@@ -208,7 +208,7 @@ jobs:
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '-std=c++26 -Werror'
           cont_ver: '24.04'
 
@@ -217,7 +217,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
           cont_ver: '18.04'
 
@@ -225,7 +225,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '-std=c++11 -Werror'
           cont_ver: '18.04'
 
@@ -233,7 +233,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
           cont_ver: '18.04'
 
@@ -241,7 +241,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
           cont_ver: '18.04'
 
@@ -249,7 +249,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '18.04'
 
@@ -257,7 +257,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '20.04'
 
@@ -265,7 +265,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '20.04'
 
@@ -273,7 +273,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
           cont_ver: '20.04'
 
@@ -281,7 +281,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
           cont_ver: '20.04'
 
@@ -289,7 +289,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '20.04'
 
@@ -297,7 +297,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '22.04'
 
@@ -305,7 +305,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '22.04'
 
@@ -313,7 +313,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '22.04'
 
@@ -321,7 +321,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '24.04'
 
@@ -329,7 +329,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '24.04'
 
@@ -337,7 +337,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '24.04'
 
@@ -345,7 +345,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
           cont_ver: '24.04'
 
@@ -353,7 +353,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
           cont_ver: '24.04'
 
@@ -361,7 +361,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
           cont_ver: '24.04'
 
@@ -369,7 +369,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
           cont_ver: '24.04'
 
@@ -377,7 +377,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
           cont_ver: '24.04'
 
@@ -385,7 +385,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
           cont_ver: '24.04'
 
@@ -393,7 +393,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
           cont_ver: '24.04'
 
@@ -401,7 +401,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Debug'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror -fsanitize=address,undefined'
           cont_ver: '24.04'
 
@@ -409,7 +409,7 @@ jobs:
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '-std=c++26 -Werror'
           cont_ver: '24.04'
 
@@ -443,7 +443,7 @@ jobs:
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_VERBOSE_MAKEFILE=On \
           -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
-          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_EXTRA_SETTINGS=${{ matrix.extra_settings }}
         cmake --build .
     - name: Test
       run: test/build/momo_test

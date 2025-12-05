@@ -13,37 +13,37 @@ jobs:
 
         - build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
 
         - build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '-std=c++11 -Werror'
 
         - build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
 
         - build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
 
         - build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
         - build_type: 'Debug'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
         - build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '-std=c++20 -Werror'
 
     runs-on: ubuntu-latest
@@ -73,7 +73,7 @@ jobs:
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
-          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_EXTRA_SETTINGS=${{ matrix.extra_settings }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test

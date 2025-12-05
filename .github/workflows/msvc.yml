@@ -16,7 +16,7 @@ jobs:
 #          arch: 'x64'
 #          build_type: 'Release'
 #          test_libcxx20: 'Off'
-#          test_extra: 'Off'
+#          extra_settings: 'Off'
 #          flags: '/WX'
 #          win_ver: '2019'
 #
@@ -24,7 +24,7 @@ jobs:
 #          arch: 'x64'
 #          build_type: 'Release'
 #          test_libcxx20: 'Off'
-#          test_extra: 'On'
+#          extra_settings: 'On'
 #          flags: '/WX'
 #          win_ver: '2019'
 #
@@ -33,7 +33,7 @@ jobs:
 #          arch: 'x64_x86'
 #          build_type: 'Release'
 #          test_libcxx20: 'Off'
-#          test_extra: 'Off'
+#          extra_settings: 'Off'
 #          flags: '/WX'
 #          win_ver: '2019'
 #
@@ -41,7 +41,7 @@ jobs:
 #          arch: 'x64_x86'
 #          build_type: 'Release'
 #          test_libcxx20: 'Off'
-#          test_extra: 'On'
+#          extra_settings: 'On'
 #          flags: '/WX'
 #          win_ver: '2019'
 #
@@ -50,7 +50,7 @@ jobs:
 #          arch: 'x64'
 #          build_type: 'Release'
 #          test_libcxx20: 'Off'
-#          test_extra: 'Off'
+#          extra_settings: 'Off'
 #          flags: '/std:c++17 /WX'
 #          win_ver: '2019'
 
@@ -59,7 +59,7 @@ jobs:
           arch: 'x64'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++20 /WX'
           win_ver: '2025'
 
@@ -68,7 +68,7 @@ jobs:
           arch: 'x64'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++14 /WX'
           win_ver: '2025'
 
@@ -76,7 +76,7 @@ jobs:
           arch: 'x64'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++17 /WX'
           win_ver: '2025'
 
@@ -84,7 +84,7 @@ jobs:
           arch: 'x64'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++20 /WX'
           win_ver: '2025'
 
@@ -92,7 +92,7 @@ jobs:
           arch: 'x64'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++latest /WX'
           win_ver: '2025'
 
@@ -100,7 +100,7 @@ jobs:
           arch: 'x64'
           build_type: 'Debug'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++latest /WX'
           win_ver: '2025'
 
@@ -108,7 +108,7 @@ jobs:
           arch: 'x64'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '/std:c++latest /WX'
           win_ver: '2025'
 
@@ -117,7 +117,7 @@ jobs:
           arch: 'x64_x86'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++14 /WX'
           win_ver: '2025'
 
@@ -125,7 +125,7 @@ jobs:
           arch: 'x64_x86'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++17 /WX'
           win_ver: '2025'
 
@@ -133,7 +133,7 @@ jobs:
           arch: 'x64_x86'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++20 /WX'
           win_ver: '2025'
 
@@ -141,7 +141,7 @@ jobs:
           arch: 'x64_x86'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++latest /WX'
           win_ver: '2025'
 
@@ -149,7 +149,7 @@ jobs:
           arch: 'x64_x86'
           build_type: 'Debug'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++latest /WX'
           win_ver: '2025'
 
@@ -157,7 +157,7 @@ jobs:
           arch: 'x64_x86'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '/std:c++latest /WX'
           win_ver: '2025'
 
@@ -166,7 +166,7 @@ jobs:
           arch: 'arm64'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++14 /WX'
           win_ver: '11-arm'
 
@@ -174,7 +174,7 @@ jobs:
           arch: 'arm64'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++17 /WX'
           win_ver: '11-arm'
 
@@ -182,7 +182,7 @@ jobs:
           arch: 'arm64'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++20 /WX'
           win_ver: '11-arm'
 
@@ -190,7 +190,7 @@ jobs:
           arch: 'arm64'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++latest /WX'
           win_ver: '11-arm'
 
@@ -198,7 +198,7 @@ jobs:
           arch: 'arm64'
           build_type: 'Debug'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '/std:c++latest /WX'
           win_ver: '11-arm'
 
@@ -206,7 +206,7 @@ jobs:
           arch: 'arm64'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '/std:c++latest /WX'
           win_ver: '11-arm'
 
@@ -232,7 +232,7 @@ jobs:
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
           -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} `
-          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_EXTRA_SETTINGS=${{ matrix.extra_settings }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test.exe

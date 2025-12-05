@@ -16,7 +16,7 @@ jobs:
           macos_ver: '14'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
         # AppleClang 16.0.0 ARM64
@@ -24,7 +24,7 @@ jobs:
           macos_ver: '14'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
         # AppleClang 17.0.0 ARM64
@@ -32,56 +32,56 @@ jobs:
           macos_ver: '15'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15'
           build_type: 'Debug'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '-std=c++26 -Werror'
 
         # AppleClang 17.0.0 x64
@@ -89,56 +89,56 @@ jobs:
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'Off'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15-intel'
           build_type: 'Debug'
           test_libcxx20: 'On'
-          test_extra: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
         - xcode_ver: '16.4'
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
-          test_extra: 'On'
+          extra_settings: 'On'
           flags: '-std=c++26 -Werror'
 
     runs-on: macos-${{ matrix.macos_ver }}
@@ -162,7 +162,7 @@ jobs:
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
-          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_EXTRA_SETTINGS=${{ matrix.extra_settings }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test
