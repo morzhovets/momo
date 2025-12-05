@@ -72,13 +72,6 @@ jobs:
 
         - xcode_ver: '16.4'
           macos_ver: '15'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          test_extra: 'On'
-          flags: '-std=c++26 -Werror'
-
-        - xcode_ver: '16.4'
-          macos_ver: '15'
           build_type: 'Debug'
           test_libcxx20: 'On'
           test_extra: 'Off'
@@ -86,7 +79,7 @@ jobs:
 
         - xcode_ver: '16.4'
           macos_ver: '15'
-          build_type: 'Debug'
+          build_type: 'Release'
           test_libcxx20: 'On'
           test_extra: 'On'
           flags: '-std=c++26 -Werror'
@@ -136,13 +129,6 @@ jobs:
 
         - xcode_ver: '16.4'
           macos_ver: '15-intel'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          test_extra: 'On'
-          flags: '-std=c++26 -Werror'
-
-        - xcode_ver: '16.4'
-          macos_ver: '15-intel'
           build_type: 'Debug'
           test_libcxx20: 'On'
           test_extra: 'Off'
@@ -150,7 +136,7 @@ jobs:
 
         - xcode_ver: '16.4'
           macos_ver: '15-intel'
-          build_type: 'Debug'
+          build_type: 'Release'
           test_libcxx20: 'On'
           test_extra: 'On'
           flags: '-std=c++26 -Werror'
@@ -175,7 +161,8 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
+          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test

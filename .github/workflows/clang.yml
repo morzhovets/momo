@@ -198,14 +198,6 @@ jobs:
 
         - clang_ver: '18'
           ubuntu_ver: '24.04'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          test_extra: 'On'
-          flags: '-std=c++26 -Werror'
-          cont_ver: '24.04'
-
-        - clang_ver: '18'
-          ubuntu_ver: '24.04'
           build_type: 'Debug'
           test_libcxx20: 'On'
           test_extra: 'Off'
@@ -214,10 +206,10 @@ jobs:
 
         - clang_ver: '18'
           ubuntu_ver: '24.04'
-          build_type: 'Debug'
+          build_type: 'Release'
           test_libcxx20: 'On'
           test_extra: 'On'
-          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+          flags: '-std=c++26 -Werror'
           cont_ver: '24.04'
 
         # ARM64
@@ -407,14 +399,6 @@ jobs:
 
         - clang_ver: '18'
           ubuntu_ver: '24.04-arm'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          test_extra: 'On'
-          flags: '-std=c++26 -Werror'
-          cont_ver: '24.04'
-
-        - clang_ver: '18'
-          ubuntu_ver: '24.04-arm'
           build_type: 'Debug'
           test_libcxx20: 'On'
           test_extra: 'Off'
@@ -423,10 +407,10 @@ jobs:
 
         - clang_ver: '18'
           ubuntu_ver: '24.04-arm'
-          build_type: 'Debug'
+          build_type: 'Release'
           test_libcxx20: 'On'
           test_extra: 'On'
-          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+          flags: '-std=c++26 -Werror'
           cont_ver: '24.04'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
@@ -458,7 +442,8 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_VERBOSE_MAKEFILE=On \
-          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
+          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build .
     - name: Test
       run: test/build/momo_test

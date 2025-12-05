@@ -159,7 +159,8 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
+          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test

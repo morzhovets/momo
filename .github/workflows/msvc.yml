@@ -98,14 +98,6 @@ jobs:
 
         - toolset: '14.4'
           arch: 'x64'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          test_extra: 'On'
-          flags: '/std:c++latest /WX'
-          win_ver: '2025'
-
-        - toolset: '14.4'
-          arch: 'x64'
           build_type: 'Debug'
           test_libcxx20: 'On'
           test_extra: 'Off'
@@ -114,7 +106,7 @@ jobs:
 
         - toolset: '14.4'
           arch: 'x64'
-          build_type: 'Debug'
+          build_type: 'Release'
           test_libcxx20: 'On'
           test_extra: 'On'
           flags: '/std:c++latest /WX'
@@ -155,14 +147,6 @@ jobs:
 
         - toolset: '14.4'
           arch: 'x64_x86'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          test_extra: 'On'
-          flags: '/std:c++latest /WX'
-          win_ver: '2025'
-
-        - toolset: '14.4'
-          arch: 'x64_x86'
           build_type: 'Debug'
           test_libcxx20: 'On'
           test_extra: 'Off'
@@ -171,7 +155,7 @@ jobs:
 
         - toolset: '14.4'
           arch: 'x64_x86'
-          build_type: 'Debug'
+          build_type: 'Release'
           test_libcxx20: 'On'
           test_extra: 'On'
           flags: '/std:c++latest /WX'
@@ -212,14 +196,6 @@ jobs:
 
         - toolset: '14.4'
           arch: 'arm64'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          test_extra: 'On'
-          flags: '/std:c++latest /WX'
-          win_ver: '11-arm'
-
-        - toolset: '14.4'
-          arch: 'arm64'
           build_type: 'Debug'
           test_libcxx20: 'On'
           test_extra: 'Off'
@@ -228,7 +204,7 @@ jobs:
 
         - toolset: '14.4'
           arch: 'arm64'
-          build_type: 'Debug'
+          build_type: 'Release'
           test_libcxx20: 'On'
           test_extra: 'On'
           flags: '/std:c++latest /WX'
@@ -255,7 +231,8 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
-          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} `
+          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test.exe

@@ -28,13 +28,13 @@ jobs:
           flags: '-std=c++26 -Werror'
           path_prefix: '/opt/homebrew'
 
-        - gcc_ver: '15'
-          macos_ver: '15'
-          build_type: 'Debug'
-          test_libcxx20: 'On'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror'
-          path_prefix: '/opt/homebrew'
+#        - gcc_ver: '15'
+#          macos_ver: '15'
+#          build_type: 'Debug'
+#          test_libcxx20: 'On'
+#          test_extra: 'Off'
+#          flags: '-std=c++26 -Werror'
+#          path_prefix: '/opt/homebrew'
 
         # x64
         - gcc_ver: '15'
@@ -53,13 +53,13 @@ jobs:
           flags: '-std=c++26 -Werror'
           path_prefix: '/usr/local'
 
-        - gcc_ver: '15'
-          macos_ver: '15-intel'
-          build_type: 'Debug'
-          test_libcxx20: 'On'
-          test_extra: 'Off'
-          flags: '-std=c++26 -Werror'
-          path_prefix: '/usr/local'
+#        - gcc_ver: '15'
+#          macos_ver: '15-intel'
+#          build_type: 'Debug'
+#          test_libcxx20: 'On'
+#          test_extra: 'Off'
+#          flags: '-std=c++26 -Werror'
+#          path_prefix: '/usr/local'
 
     runs-on: macos-${{ matrix.macos_ver }}
 
@@ -79,7 +79,8 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
+          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test

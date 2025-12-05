@@ -11,7 +11,6 @@ jobs:
       matrix:
         include:
 
-        # GNU 12
         - win_ver: '2022'
           build_type: 'Release'
           test_libcxx20: 'Off'
@@ -22,9 +21,8 @@ jobs:
           build_type: 'Release'
           test_libcxx20: 'On'
           test_extra: 'Off'
-          flags: '-std=c++23'
+          flags: '-std=c++26'
 
-        # GNU 14
         - win_ver: '2025'
           build_type: 'Release'
           test_libcxx20: 'On'
@@ -35,6 +33,12 @@ jobs:
           build_type: 'Debug'
           test_libcxx20: 'On'
           test_extra: 'Off'
+          flags: '-std=c++26'
+
+        - win_ver: '2025'
+          build_type: 'Release'
+          test_libcxx20: 'On'
+          test_extra: 'On'
           flags: '-std=c++26'
 
     runs-on: windows-${{ matrix.win_ver }}
@@ -53,7 +57,8 @@ jobs:
         mkdir build
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} `
-          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
+          -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} `
+          -DMOMO_TEST_EXTRA=${{ matrix.test_extra }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test.exe
