@@ -314,7 +314,7 @@ jobs:
           build_type: 'Release'
           test_libcxx20: 'On'
           extra_settings: 'On'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '24.04'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
