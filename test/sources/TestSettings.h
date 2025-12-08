@@ -57,6 +57,9 @@
 //#define TEST_NATVIS
 //#define TEST_SPEED_MAP
 
+//#define MOMO_TEST_NO_EXCEPTIONS_RTTI
+//#define MOMO_TEST_EXTRA_SETTINGS
+
 #ifdef _WIN32
 # define MOMO_USE_MEM_MANAGER_WIN
 # define NOMINMAX
