@@ -22,7 +22,7 @@
 #pragma once
 
 #include "KeyUtility.h"
-#include "MergeArray.h"
+#include "ObjectManager.h"
 
 namespace momo
 {
@@ -178,8 +178,8 @@ concept conceptMergeTraits =
 	conceptMergeBloomFilter<typename MergeTraits::BloomFilter> &&
 	requires (const MergeTraits& mergeTraits, const Key& key)
 	{
-		typename MergeTraits::MergeArraySettings;
 		typename std::integral_constant<MergeTraitsFunc, MergeTraits::func>;
+		typename std::integral_constant<size_t, MergeTraits::logInitialItemCount>;
 		//{ mergeTraits.GetHashCode(key) } -> std::same_as<size_t>;
 		//{ mergeTraits.IsLess(key, key) } -> std::same_as<bool>;
 		{ mergeTraits.IsEqual(key, key) } -> std::same_as<bool>;
@@ -188,16 +188,16 @@ concept conceptMergeTraits =
 template<conceptObject TKey,
 	MergeTraitsFunc tFunc = noexcept(std::declval<const TKey&>() < std::declval<const TKey&>())
 		? MergeTraitsFunc::lessNothrow : MergeTraitsFunc::lessThrow,
-	typename TMergeArraySettings = MergeArraySettings<3>,
+	size_t tLogInitialItemCount = 3,
 	typename TBloomFilter = MergeBloomFilterEmpty>
 class MergeTraits
 {
 public:
 	typedef TKey Key;
-	typedef TMergeArraySettings MergeArraySettings;
 	typedef TBloomFilter BloomFilter;
 
 	static const MergeTraitsFunc func = tFunc;
+	static const size_t logInitialItemCount = tLogInitialItemCount;
 
 public:
 	explicit MergeTraits() noexcept = default;

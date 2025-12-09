@@ -130,6 +130,7 @@ namespace internal
 		static const CheckMode checkMode = MergeMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = MergeMapSettings::extraCheckMode;
 		static const bool checkVersion = MergeMapSettings::checkVersion;
+		static const bool allowExceptionSuppression = MergeMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -146,6 +147,7 @@ public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	static const bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -154,8 +156,6 @@ public:
 	1. Functions `Insert` receiving many items have basic exception safety.
 	2. In case default `KeyValueTraits`: if insert/add function receiving
 	argument `Key&& key` throws exception, this argument may be changed.
-
-	Swap and move operations invalidate all container iterators.
 */
 
 template<typename TKeyValueTraits,

@@ -22,7 +22,6 @@
 
 class SimpleMergeTester
 {
-
 public:
 	static void TestAll()
 	{
@@ -68,7 +67,7 @@ public:
 			array[i] = i;
 
 		typedef momo::MergeTraits<size_t, mergeTraitsFunc,
-			momo::MergeArraySettings<logInitialItemCount>, MergeBloomFilter> MergeTraits;
+			logInitialItemCount, MergeBloomFilter> MergeTraits;
 		typedef momo::MergeMapCore<
 			momo::MergeMapKeyValueTraits<size_t, size_t, momo::MemManagerDict<>, useValuePtr>,
 				MergeTraits> MergeMap;
