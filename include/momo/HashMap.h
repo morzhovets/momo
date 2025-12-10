@@ -27,101 +27,6 @@ namespace momo
 
 namespace internal
 {
-	template<typename THashSetPosition,
-		bool tIsConst = false>
-	class HashMapPosition : public ForwardIteratorBase
-	{
-	protected:
-		typedef THashSetPosition HashSetPosition;
-
-		static const bool isConst = tIsConst;
-
-	public:
-		typedef MapForwardIterator<typename HashSetPosition::Iterator, isConst> Iterator;
-
-		typedef typename Iterator::Reference Reference;
-		typedef typename Iterator::Pointer Pointer;
-
-		typedef HashMapPosition<HashSetPosition, true> ConstPosition;
-
-	private:
-		struct ReferenceProxy : public Reference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
-		};
-
-		struct ConstPositionProxy : public ConstPosition
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
-		};
-
-		struct IteratorProxy : public Iterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-			MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetSetIterator)
-		};
-
-	public:
-		explicit HashMapPosition() noexcept
-			: mHashSetPosition()
-		{
-		}
-
-		template<typename ArgIterator>
-		requires std::is_convertible_v<ArgIterator, Iterator>
-		HashMapPosition(ArgIterator iter) noexcept
-			: mHashSetPosition(IteratorProxy::GetSetIterator(static_cast<Iterator>(iter)))
-		{
-		}
-
-		operator ConstPosition() const noexcept
-		{
-			return ConstPositionProxy(mHashSetPosition);
-		}
-
-		template<typename ResIterator>
-		requires std::is_convertible_v<Iterator, ResIterator>
-		operator ResIterator() const noexcept
-		{
-			Iterator iter = IteratorProxy(mHashSetPosition);
-			return static_cast<ResIterator>(iter);
-		}
-
-		Pointer operator->() const
-		{
-			return Pointer(ReferenceProxy(*mHashSetPosition));
-		}
-
-		friend bool operator==(HashMapPosition pos1, HashMapPosition pos2) noexcept
-		{
-			return pos1.mHashSetPosition == pos2.mHashSetPosition;
-		}
-
-		friend bool operator==(HashMapPosition pos1, Iterator iter2) noexcept
-		{
-			return pos1 == static_cast<HashMapPosition>(iter2);
-		}
-
-		friend bool operator==(Iterator iter1, HashMapPosition pos2) noexcept
-		{
-			return pos2 == iter1;
-		}
-
-	protected:
-		explicit HashMapPosition(HashSetPosition hashSetPos) noexcept
-			: mHashSetPosition(hashSetPos)
-		{
-		}
-
-		HashSetPosition ptGetHashSetPosition() const noexcept
-		{
-			return mHashSetPosition;
-		}
-
-	private:
-		HashSetPosition mHashSetPosition;
-	};
-
 	template<typename THashSetBucketBounds,
 		bool tIsConst = false>
 	class HashMapBucketBounds : public Rangeable
@@ -267,7 +172,7 @@ public:
 	typedef internal::MapForwardIterator<HashSetConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
-	typedef internal::HashMapPosition<HashSetConstPosition> Position;
+	typedef internal::MapPosition<HashSetConstPosition> Position;
 	typedef typename Position::ConstPosition ConstPosition;
 
 	typedef internal::InsertResult<Position> InsertResult;
@@ -310,7 +215,7 @@ private:
 	struct ConstPositionProxy : public ConstPosition
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashSetPosition)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetSetPosition)
 	};
 
 	struct PositionProxy : public Position
@@ -671,7 +576,7 @@ public:
 				return pvAdd<true>(pos, FastMovableFunctor(std::move(pairCreator)));
 			}
 		}
-		return PositionProxy(mHashSet.Add(ConstPositionProxy::GetHashSetPosition(pos),
+		return PositionProxy(mHashSet.Add(ConstPositionProxy::GetSetPosition(pos),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
@@ -754,7 +659,7 @@ public:
 		bool extraCheck = true>
 	void ResetKey(ConstPosition pos, KeyArg&& keyArg)
 	{
-		mHashSet.template ResetKey<KeyArg, extraCheck>(ConstPositionProxy::GetHashSetPosition(pos),
+		mHashSet.template ResetKey<KeyArg, extraCheck>(ConstPositionProxy::GetSetPosition(pos),
 			std::forward<KeyArg>(keyArg));
 	}
 
@@ -827,7 +732,7 @@ private:
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
 			{ std::construct_at(newItem, mHashSet.GetMemManager(), std::move(pairCreator)); };
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
+			ConstPositionProxy::GetSetPosition(pos), std::move(itemCreator)));
 	}
 
 	template<bool extraCheck, typename RKey, internal::conceptObjectCreator<Value> ValueCreator>
@@ -840,7 +745,7 @@ private:
 				std::forward<RKey>(key), std::move(valueCreator));
 		};
 		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
+			ConstPositionProxy::GetSetPosition(pos), std::move(itemCreator)));
 	}
 
 	template<typename RKey, typename ValueArg>

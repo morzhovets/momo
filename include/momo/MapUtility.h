@@ -286,6 +286,101 @@ namespace internal
 		SetIterator mSetIterator;
 	};
 
+	template<typename TSetPosition,
+		bool tIsConst = false>
+	class MapPosition : public ForwardIteratorBase
+	{
+	protected:
+		typedef TSetPosition SetPosition;
+
+		static const bool isConst = tIsConst;
+
+	public:
+		typedef MapForwardIterator<typename SetPosition::Iterator, isConst> Iterator;
+
+		typedef typename Iterator::Reference Reference;
+		typedef typename Iterator::Pointer Pointer;
+
+		typedef MapPosition<SetPosition, true> ConstPosition;
+
+	private:
+		struct ReferenceProxy : public Reference
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
+		};
+
+		struct ConstPositionProxy : public ConstPosition
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
+		};
+
+		struct IteratorProxy : public Iterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+			MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetSetIterator)
+		};
+
+	public:
+		explicit MapPosition() noexcept
+			: mSetPosition()
+		{
+		}
+
+		template<typename ArgIterator>
+		requires std::is_convertible_v<ArgIterator, Iterator>
+		MapPosition(ArgIterator iter) noexcept
+			: mSetPosition(IteratorProxy::GetSetIterator(static_cast<Iterator>(iter)))
+		{
+		}
+
+		operator ConstPosition() const noexcept
+		{
+			return ConstPositionProxy(mSetPosition);
+		}
+
+		template<typename ResIterator>
+		requires std::is_convertible_v<Iterator, ResIterator>
+		operator ResIterator() const noexcept
+		{
+			Iterator iter = IteratorProxy(mSetPosition);
+			return static_cast<ResIterator>(iter);
+		}
+
+		Pointer operator->() const
+		{
+			return Pointer(ReferenceProxy(*mSetPosition));
+		}
+
+		friend bool operator==(MapPosition pos1, MapPosition pos2) noexcept
+		{
+			return pos1.mSetPosition == pos2.mSetPosition;
+		}
+
+		friend bool operator==(MapPosition pos1, Iterator iter2) noexcept
+		{
+			return pos1 == static_cast<MapPosition>(iter2);
+		}
+
+		friend bool operator==(Iterator iter1, MapPosition pos2) noexcept
+		{
+			return pos2 == iter1;
+		}
+
+	protected:
+		explicit MapPosition(SetPosition setPos) noexcept
+			: mSetPosition(setPos)
+		{
+		}
+
+		SetPosition ptGetSetPosition() const noexcept
+		{
+			return mSetPosition;
+		}
+
+	private:
+		SetPosition mSetPosition;
+	};
+
 	template<conceptObject TKey, conceptObject TValue, conceptMemManager TMemManager>
 	class MapKeyValueTraitsBase
 	{
