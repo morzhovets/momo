@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/LibcxxMergeSetTester_Hash.cpp
+  test/sources/LibcxxMergeSetTester.cpp
 
 \**********************************************************/
 
@@ -14,8 +14,7 @@
 
 #ifdef TEST_LIBCXX_MERGE_SET
 
-#define LIBCXX_TEST_MERGE_HASH
-#define LIBCXX_TEST_PREFIX_TAIL "_hash"
+#define LIBCXX_TEST_PREFIX_TAIL ""
 
 #include "LibcxxMergeSetTester.h"
 
