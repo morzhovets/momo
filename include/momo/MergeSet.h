@@ -38,6 +38,13 @@ namespace internal
 		bool isLast;
 	};
 
+	template<typename Item>
+	struct MergeSetItemPtrCode
+	{
+		Item* itemPtr;
+		size_t hashCode;
+	};
+
 	template<typename TItem, typename TSettings>
 	class MOMO_EMPTY_BASES MergeSetIterator;
 
@@ -60,29 +67,10 @@ namespace internal
 
 		typedef MergeSetIterator<Item, Settings> Iterator;
 
-	private:
-		struct IteratorProxy : public Iterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-			MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetItemPtr)
-		};
-
 	public:
 		explicit MergeSetPosition() noexcept
 			: mItemPtr(nullptr)
 		{
-		}
-
-		MergeSetPosition(Iterator iter) noexcept
-			: mItemPtr(IteratorProxy::GetItemPtr(iter))
-		{
-		}
-
-		//operator ConstPosition() const noexcept
-
-		operator Iterator() const noexcept
-		{
-			return IteratorProxy(mItemPtr, *this);
 		}
 
 		Pointer operator->() const
@@ -104,33 +92,43 @@ namespace internal
 		{
 		}
 
+		Item* ptGetItemPtr() const noexcept
+		{
+			return mItemPtr;
+		}
+
+		void ptReset(Item* itemPtr) noexcept
+		{
+			mItemPtr = itemPtr;
+		}
+
 	private:
 		Item* mItemPtr;
 	};
 
 	template<typename TItem, typename TSettings>
-	class MOMO_EMPTY_BASES MergeSetIterator
-		: private VersionKeeper<TSettings>,
-		public ForwardIteratorBase
+	class MergeSetIterator : public MergeSetPosition<TItem, TSettings>
 	{
-	protected:
-		typedef TItem Item;
-		typedef TSettings Settings;
+	public:
+		typedef MergeSetPosition<TItem, TSettings> Position;
 
-		typedef internal::VersionKeeper<Settings> VersionKeeper;
+		typedef MergeSetIterator ConstIterator;
+
+	protected:
+		using typename Position::Item;
+		//using typename Position::Settings;
 
 		typedef MergeSetSegment<Item> Segment;
 
 	public:
-		typedef const Item& Reference;
-		typedef const Item* Pointer;
-
-		typedef MergeSetIterator ConstIterator;
-
-	public:
 		explicit MergeSetIterator() noexcept
-			: mSegment(nullptr),
-			mItemPtr(nullptr)
+			: mSegment(nullptr)
+		{
+		}
+
+		MergeSetIterator(Position pos) noexcept
+			: Position(pos),
+			mSegment(nullptr)
 		{
 		}
 
@@ -138,70 +136,45 @@ namespace internal
 
 		MergeSetIterator& operator++()
 		{
-			operator->();	// check
-			if (!pvInc())
+			Position::operator->();	// check
+			if (Item* itemPtr = pvInc(); itemPtr != nullptr)
+				Position::ptReset(itemPtr);
+			else
 				*this = MergeSetIterator();
 			return *this;
 		}
 
 		using ForwardIteratorBase::operator++;
 
-		Pointer operator->() const
-		{
-			VersionKeeper::Check();
-			MOMO_CHECK(*this != MergeSetIterator());
-			return mItemPtr;
-		}
-
-		friend bool operator==(MergeSetIterator iter1, MergeSetIterator iter2) noexcept
-		{
-			return iter1.mItemPtr == iter2.mItemPtr;
-		}
-
 	protected:
 		explicit MergeSetIterator(const Segment* segment, const size_t* version) noexcept
-			: VersionKeeper(version),
-			mSegment(segment),
-			mItemPtr(segment->items)
+			: Position(segment->items, version),
+			mSegment(segment)
 		{
 			MOMO_ASSERT(segment->itemCount > 0);
 		}
 
-		explicit MergeSetIterator(Item* itemPtr, VersionKeeper version) noexcept
-			: VersionKeeper(version),
-			mSegment(nullptr),
-			mItemPtr(itemPtr)
-		{
-		}
-
-		Item* ptGetItemPtr() const noexcept
-		{
-			return mItemPtr;
-		}
-
 	private:
-		bool pvInc() noexcept
+		Item* pvInc() noexcept
 		{
 			if (mSegment == nullptr)
-				return false;
-			++mItemPtr;
-			if (mItemPtr != mSegment->items + mSegment->itemCount)
-				return true;
+				return nullptr;
+			Item* itemPtr = std::next(Position::ptGetItemPtr());
+			if (itemPtr != mSegment->items + mSegment->itemCount)
+				return itemPtr;
 			while (true)
 			{
 				if (mSegment->isLast)
-					return false;
+					return nullptr;
 				--mSegment;
 				if (mSegment->itemCount > 0)
 					break;
 			}
-			mItemPtr = mSegment->items;
-			return true;
+			return mSegment->items;
 		}
 
 	private:
 		const Segment* mSegment;
-		Item* mItemPtr;
 	};
 }
 
@@ -292,12 +265,7 @@ private:
 	typedef ArrayCore<ArrayItemTraits<Segment, MemManagerPtr>,
 		internal::NestedArraySettings<ArraySettings<0, false>>> Segments;
 
-	struct ItemPtrCode
-	{
-		Item* itemPtr;
-		size_t hashCode;
-	};
-
+	typedef internal::MergeSetItemPtrCode<Item> ItemPtrCode;
 	typedef internal::NestedArrayIntCap<initialItemCount <= 32 ? 32 : 0,
 		Item*, MemManagerPtr> ItemPtrs;
 	typedef internal::NestedArrayIntCap<initialItemCount <= 32 ? 32 : 0,	//?

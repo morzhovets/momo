@@ -27,94 +27,6 @@ namespace momo
 
 namespace internal
 {
-	template<typename TMergeSetPosition,
-		bool tIsConst = false>
-	class MergeMapPosition : public ForwardIteratorBase
-	{
-	protected:
-		typedef TMergeSetPosition MergeSetPosition;
-
-		static const bool isConst = tIsConst;
-
-	public:
-		//typedef MapForwardIterator<typename MergeSetPosition::Iterator, isConst> Iterator;
-
-		//typedef typename Iterator::Reference Reference;
-		//typedef typename Iterator::Pointer Pointer;
-
-		typedef MapReference<decltype(*MergeSetPosition()), isConst> Reference;
-		typedef IteratorPointer<Reference> Pointer;
-
-		typedef MergeMapPosition<MergeSetPosition, true> ConstPosition;
-
-	private:
-		struct ReferenceProxy : public Reference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
-		};
-
-		struct ConstPositionProxy : public ConstPosition
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
-		};
-
-		//struct IteratorProxy : public Iterator
-		//{
-		//	MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-		//	MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetSetIterator)
-		//};
-
-	public:
-		explicit MergeMapPosition() noexcept
-			: mMergeSetPosition()
-		{
-		}
-
-		//template<typename ArgIterator>
-		//requires std::is_convertible_v<ArgIterator, Iterator>
-		//MergeMapPosition(ArgIterator iter) noexcept
-		//	: mMergeSetPosition(IteratorProxy::GetSetIterator(static_cast<Iterator>(iter)))
-		//{
-		//}
-
-		operator ConstPosition() const noexcept
-		{
-			return ConstPositionProxy(mMergeSetPosition);
-		}
-
-		//template<typename ResIterator>
-		//requires std::is_convertible_v<Iterator, ResIterator>
-		//operator ResIterator() const noexcept
-		//{
-		//	Iterator iter = IteratorProxy(mMergeSetPosition);
-		//	return static_cast<ResIterator>(iter);
-		//}
-
-		Pointer operator->() const
-		{
-			return Pointer(ReferenceProxy(*mMergeSetPosition));
-		}
-
-		friend bool operator==(MergeMapPosition pos1, MergeMapPosition pos2) noexcept
-		{
-			return pos1.mMergeSetPosition == pos2.mMergeSetPosition;
-		}
-
-	protected:
-		explicit MergeMapPosition(MergeSetPosition mergeSetPos) noexcept
-			: mMergeSetPosition(mergeSetPos)
-		{
-		}
-
-		MergeSetPosition ptGetMergeSetPosition() const noexcept
-		{
-			return mMergeSetPosition;
-		}
-
-	private:
-		MergeSetPosition mMergeSetPosition;
-	};
-
 	template<typename TKeyValueTraits>
 	class MergeMapNestedSetItemTraits : public MapNestedSetItemTraits<TKeyValueTraits>
 	{
@@ -191,7 +103,7 @@ public:
 	typedef internal::MapForwardIterator<MergeSetConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
-	typedef internal::MergeMapPosition<MergeSetConstPosition> Position;
+	typedef internal::MapPosition<MergeSetConstPosition> Position;
 	typedef typename Position::ConstPosition ConstPosition;
 
 	typedef internal::InsertResult<Position> InsertResult;
@@ -220,7 +132,7 @@ private:
 	struct ConstPositionProxy : public ConstPosition
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetMergeSetPosition)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetSetPosition)
 	};
 
 	struct PositionProxy : public Position
@@ -534,7 +446,7 @@ private:
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
 			{ std::construct_at(newItem, mMergeSet.GetMemManager(), std::move(pairCreator)); };
 		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstPositionProxy::GetHashSetPosition(pos), std::move(itemCreator)));
+			ConstPositionProxy::GetSetPosition(pos), std::move(itemCreator)));
 	}
 
 	template<bool extraCheck, typename RKey, internal::conceptObjectCreator<Value> ValueCreator>
@@ -547,7 +459,7 @@ private:
 				std::forward<RKey>(key), std::move(valueCreator));
 		};
 		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstPositionProxy::GetMergeSetPosition(pos), std::move(itemCreator)));
+			ConstPositionProxy::GetSetPosition(pos), std::move(itemCreator)));
 	}
 
 	template<typename RKey, typename ValueArg>
