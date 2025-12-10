@@ -15,12 +15,16 @@ jobs:
         - gcc_ver: '15'
           macos_ver: '15'
           build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26 -Wno-psabi'
           path_prefix: '/opt/homebrew'
 
 #        - gcc_ver: '15'
 #          macos_ver: '15'
 #          build_type: 'Debug'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'Off'
 #          flags: '-std=c++26 -Werror -Wno-psabi'
 #          path_prefix: '/opt/homebrew'
 
@@ -28,12 +32,16 @@ jobs:
         - gcc_ver: '15'
           macos_ver: '15-intel'
           build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
           flags: '-std=c++26'
           path_prefix: '/usr/local'
 
 #        - gcc_ver: '15'
 #          macos_ver: '15-intel'
 #          build_type: 'Debug'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'Off'
 #          flags: '-std=c++26 -Werror'
 #          path_prefix: '/usr/local'
 
@@ -54,7 +62,9 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -DMOMO_TEST_NO_EXCEPTIONS_RTTI=${{ matrix.no_exceptions_rtti }} \
+          -DMOMO_TEST_EXTRA_SETTINGS=${{ matrix.extra_settings }}
         cmake --build . -v
     - name: Test
       run: test/build/momo_test
