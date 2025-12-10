@@ -60,13 +60,30 @@ namespace internal
 
 		typedef MergeSetIterator<Item, Settings> Iterator;
 
+	private:
+		struct IteratorProxy : public Iterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+			MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetItemPtr)
+		};
+
 	public:
 		explicit MergeSetPosition() noexcept
 			: mItemPtr(nullptr)
 		{
 		}
 
+		MergeSetPosition(Iterator iter) noexcept
+			: mItemPtr(IteratorProxy::GetItemPtr(iter))
+		{
+		}
+
 		//operator ConstPosition() const noexcept
+
+		operator Iterator() const noexcept
+		{
+			return IteratorProxy(mItemPtr, *this);
+		}
 
 		Pointer operator->() const
 		{
@@ -148,6 +165,18 @@ namespace internal
 			mItemPtr(segment->items)
 		{
 			MOMO_ASSERT(segment->itemCount > 0);
+		}
+
+		explicit MergeSetIterator(Item* itemPtr, VersionKeeper version) noexcept
+			: VersionKeeper(version),
+			mSegment(nullptr),
+			mItemPtr(itemPtr)
+		{
+		}
+
+		Item* ptGetItemPtr() const noexcept
+		{
+			return mItemPtr;
 		}
 
 	private:
@@ -233,21 +262,35 @@ public:
 	typedef typename ItemTraits::Item Item;
 	typedef typename ItemTraits::MemManager MemManager;
 
+	typedef internal::MergeSetIterator<Item, Settings> Iterator;
+	typedef typename Iterator::ConstIterator ConstIterator;
+
+	typedef internal::MergeSetPosition<Item, Settings> Position;
+	typedef typename Position::ConstPosition ConstPosition;
+
+	typedef internal::InsertResult<Position> InsertResult;
+
+	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
+
 private:
+	typedef typename MergeTraits::BloomFilter BloomFilter;
+
+	static const size_t initialItemCount = size_t{1} << MergeTraits::logInitialItemCount;
+
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
+	template<typename... ItemArgs>
+	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
+
+	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
 
 	typedef internal::SetCrew<MergeTraits, MemManager, Settings::checkVersion> Crew;
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
 	typedef internal::MergeSetSegment<Item> Segment;
-
 	typedef ArrayCore<ArrayItemTraits<Segment, MemManagerPtr>,
 		internal::NestedArraySettings<ArraySettings<0, false>>> Segments;
-
-	typedef typename MergeTraits::BloomFilter BloomFilter;
-
-	static const size_t initialItemCount = size_t{1} << MergeTraits::logInitialItemCount;
 
 	struct ItemPtrCode
 	{
@@ -259,21 +302,6 @@ private:
 		Item*, MemManagerPtr> ItemPtrs;
 	typedef internal::NestedArrayIntCap<initialItemCount <= 32 ? 32 : 0,	//?
 		ItemPtrCode, MemManagerPtr> ItemPtrCodes;
-
-	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
-
-public:
-	typedef internal::MergeSetIterator<Item, Settings> Iterator;
-	typedef typename Iterator::ConstIterator ConstIterator;
-
-	typedef internal::MergeSetPosition<Item, Settings> Position;
-	typedef typename Position::ConstPosition ConstPosition;
-
-	typedef internal::InsertResult<Position> InsertResult;
-
-private:
-	template<typename... ItemArgs>
-	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
 	struct PositionProxy : public Position
 	{
@@ -442,6 +470,18 @@ public:
 	{
 		return InsertCrt<Creator<const Item&>, false>(ItemTraits::GetKey(item),
 			Creator<const Item&>(GetMemManager(), item));
+	}
+
+	InsertResult Insert(ExtractedItem&& extItem)
+	{
+		auto itemCreator = [this, &extItem] (Item* newItem)
+		{
+			auto itemRemover = [this, newItem] (Item& item)
+				{ ItemTraits::Relocate(nullptr, &GetMemManager(), item, newItem); };
+			extItem.Remove(itemRemover);
+		};
+		return pvInsert<false>(ItemTraits::GetKey(extItem.GetItem()),
+			FastMovableFunctor(std::move(itemCreator)));
 	}
 
 	template<internal::conceptSetArgIterator<Item> ArgIterator,
