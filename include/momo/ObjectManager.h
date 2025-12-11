@@ -112,7 +112,8 @@ public:
 		if constexpr (isTriviallyRelocatable &&
 			!(std::is_nothrow_move_constructible_v<Object> && std::is_nothrow_destructible_v<Object>))	//?
 		{
-			std::memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
+			internal::MemCopyer::CopyBuffer(std::addressof(srcObject), dstObject,
+				std::integral_constant<size_t, sizeof(Object)>());
 		}
 		else
 		{
@@ -131,7 +132,7 @@ public:
 		size_t count) noexcept requires isTriviallyRelocatable
 	{
 		if (count > 0)
-			std::memcpy(dstObjects, srcObjects, sizeof(Object) * count);
+			internal::MemCopyer::CopyBuffer(srcObjects, dstObjects, sizeof(Object) * count);
 	}
 };
 

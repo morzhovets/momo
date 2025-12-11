@@ -15,7 +15,10 @@
 #pragma once
 
 //#include <version>	// feature macros
-#include <cassert>
+#include <cassert>	// assert
+#include <cstring>	// memcpy
+#include <exception>
+#include <stdexcept>
 
 // Disable C++ exceptions. Use this macro when `-fno-exceptions` option is enabled.
 //#define MOMO_DISABLE_EXCEPTIONS
@@ -161,6 +164,8 @@
 
 #define MOMO_CHECK_EXCEPTION(expr) \
 	do { if (!(expr)) MOMO_THROW(std::invalid_argument(#expr)); } while (false)
+
+#define MOMO_COPY_MEMORY(dst, src, size) std::memcpy(dst, src, size)
 
 #define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
 	((isWithinLifetime) ? std::launder(reinterpret_cast<ResObject*>(ptr)) : reinterpret_cast<ResObject*>(ptr))

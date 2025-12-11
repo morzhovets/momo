@@ -20,22 +20,18 @@
 
 #include <version>
 #include <cstddef>
-#include <cstring>
-#include <cstdlib>
-#include <cstdint>
 #include <memory>
-#include <exception>
-#include <stdexcept>
 #include <algorithm>
 #include <functional>
 #include <utility>
 #include <new>
 #include <iterator>
 #include <type_traits>
+#include <cstdint>
 #include <array>
 #include <tuple>
 #include <initializer_list>
-#include <optional>
+#include <optional>	//?
 #include <concepts>
 #include <compare>
 #include <bit>
@@ -145,7 +141,7 @@ namespace internal
 		requires (std::is_trivially_copyable_v<Object>)
 		static void ToBuffer(Object object, void* buffer) noexcept
 		{
-			std::memcpy(buffer, &object, sizeof(Object));
+			CopyBuffer(&object, buffer, std::integral_constant<size_t, sizeof(Object)>());
 		}
 
 		template<typename ResObject>
@@ -154,8 +150,15 @@ namespace internal
 		static ResObject FromBuffer(const void* buffer) noexcept
 		{
 			ResObject object{};
-			std::memcpy(&object, buffer, sizeof(ResObject));
+			CopyBuffer(buffer, &object, std::integral_constant<size_t, sizeof(ResObject)>());
 			return object;
+		}
+
+		template<std::convertible_to<size_t> Size>
+		static void CopyBuffer(const void* srcBuffer, void* dstBuffer, Size size) noexcept
+		{
+			MOMO_ASSERT(srcBuffer != nullptr && dstBuffer != nullptr && size > 0);
+			MOMO_COPY_MEMORY(dstBuffer, srcBuffer, size);
 		}
 	};
 
