@@ -41,6 +41,7 @@
 # define TEST_LIBCXX_TREE_SET
 # define TEST_LIBCXX_TREE_MAP
 # define TEST_LIBCXX_MERGE_SET
+# define TEST_LIBCXX_MERGE_MAP
 #endif
 
 #if !defined(TEST_DISABLE_LIBCXX) && !defined(TEST_LIBCXX_VERSION)
