@@ -250,6 +250,9 @@ private:
 
 	static const size_t initialItemCount = size_t{1} << MergeTraits::logInitialItemCount;
 
+	template<typename KeyArg>
+	using IsValidKeyArg = MergeTraits::template IsValidKeyArg<KeyArg>;
+
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
 	template<typename... ItemArgs>
@@ -407,9 +410,23 @@ public:
 		return pvFind(key);
 	}
 
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value
+	Position Find(const KeyArg& key) const
+	{
+		return pvFind(key);
+	}
+
 	bool ContainsKey(const Key& key) const
 	{
-		return pvFind(key) != Position();
+		return !!pvFind(key);
+	}
+
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value
+	bool ContainsKey(const KeyArg& key) const
+	{
+		return !!pvFind(key);
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator,
@@ -561,7 +578,8 @@ private:
 		return res;
 	}
 
-	Position pvFind(const Key& key) const
+	template<typename KeyArg>
+	Position pvFind(const KeyArg& key) const
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
 		size_t hashCode = 0;
@@ -583,7 +601,7 @@ private:
 				auto equalComp = [&mergeTraits] (const Item& item1, const auto& item2)
 				{
 					const Key& key1 = ItemTraits::GetKey(item1);
-					if constexpr (std::is_same_v<decltype(item2), const Key&>)
+					if constexpr (std::is_same_v<decltype(item2), const KeyArg&>)
 						return mergeTraits.IsEqual(key1, item2);
 					else
 						return mergeTraits.IsEqual(key1, ItemTraits::GetKey(item2));
@@ -594,7 +612,7 @@ private:
 			}
 			else
 			{
-				auto lessComp = [&mergeTraits] (const Item& item1, const Key& key2)
+				auto lessComp = [&mergeTraits] (const Item& item1, const KeyArg& key2)
 					{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
 				Item* itemPtr = std::lower_bound(segItems,
 					segItems + segItemCount - 1, key, FastCopyableFunctor(lessComp));

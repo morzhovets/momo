@@ -34,21 +34,17 @@ LIBCXX_TEST_BEGIN(contains)
 #include "unord.set/contains.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_SET
 LIBCXX_TEST_BEGIN(contains_transparent)
 #include "unord.set/contains.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(count)
 #include "unord.set/count.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_SET
 LIBCXX_TEST_BEGIN(count_transparent)
 #include "unord.set/count.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(emplace)
 #include "unord.set/emplace.pass.cpp"
@@ -70,11 +66,9 @@ LIBCXX_TEST_BEGIN(eq)
 #include "unord.set/eq.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_SET
 LIBCXX_TEST_BEGIN(equal_range_transparent)
 #include "unord.set/equal_range.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(equal_range_const)
 #include "unord.set/equal_range_const.pass.cpp"
@@ -110,11 +104,11 @@ LIBCXX_TEST_BEGIN(extract_key)
 #include "unord.set/extract_key.pass.cpp"
 LIBCXX_TEST_END
 
+#endif // LIBCXX_TEST_MERGE_SET
+
 LIBCXX_TEST_BEGIN(find_transparent)
 #include "unord.set/find.transparent.pass.cpp"
 LIBCXX_TEST_END
-
-#endif // LIBCXX_TEST_MERGE_SET
 
 LIBCXX_TEST_BEGIN(find_const)
 #include "unord.set/find_const.pass.cpp"

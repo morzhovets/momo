@@ -199,6 +199,9 @@ public:
 	static const MergeTraitsFunc func = tFunc;
 	static const size_t logInitialItemCount = tLogInitialItemCount;
 
+	template<typename KeyArg>
+	using IsValidKeyArg = std::false_type;	//?
+
 public:
 	explicit MergeTraits() noexcept = default;
 

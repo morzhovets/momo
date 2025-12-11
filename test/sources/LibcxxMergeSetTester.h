@@ -45,16 +45,20 @@ public:
 #ifdef LIBCXX_TEST_MERGE_HASH
 	static const momo::MergeTraitsFunc func = momo::MergeTraitsFunc::hash;
 #else
-	static const momo::MergeTraitsFunc func = momo::MergeTraitsFunc::lessThrow;
+	static const momo::MergeTraitsFunc func = momo::MergeTraitsFunc::lessNothrow;
 #endif
 
 public:
 	using HashTraitsStd::HashTraitsStd;
 
 #ifndef LIBCXX_TEST_MERGE_HASH
-	bool IsLess(const Key& key1, const Key& key2) const
+	template<typename KeyArg>
+	bool IsLess(const Key& key1, const KeyArg& key2) const
 	{
-		return std::less<>()(key1, key2);
+		if constexpr (requires { key1 < key2; })
+			return std::less<>()(key1, key2);
+		else
+			return HashTraitsStd::GetHashCode(key1) < HashTraitsStd::GetHashCode(key2);
 	}
 #endif
 };
