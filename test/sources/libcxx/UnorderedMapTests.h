@@ -34,21 +34,17 @@ LIBCXX_TEST_BEGIN(contains)
 #include "unord.map/contains.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_MAP
 LIBCXX_TEST_BEGIN(contains_transparent)
 #include "unord.map/contains.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(count)
 #include "unord.map/count.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_MAP
 LIBCXX_TEST_BEGIN(count_transparent)
 #include "unord.map/count.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(empty)
 #include "unord.map/empty.pass.cpp"
@@ -62,11 +58,9 @@ LIBCXX_TEST_BEGIN(eq)
 #include "unord.map/eq.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_MAP
 LIBCXX_TEST_BEGIN(equal_range_transparent)
 #include "unord.map/equal_range.transparent.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(equal_range_const)
 #include "unord.map/equal_range_const.pass.cpp"
@@ -77,16 +71,14 @@ LIBCXX_TEST_BEGIN(equal_range_non_const)
 LIBCXX_TEST_END
 
 #ifndef LIBCXX_TEST_MERGE_MAP
-
 LIBCXX_TEST_BEGIN(erase_if_)
 #include "unord.map/erase_if.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(find_transparent)
 #include "unord.map/find.transparent.pass.cpp"
 LIBCXX_TEST_END
-
-#endif // LIBCXX_TEST_MERGE_MAP
 
 LIBCXX_TEST_BEGIN(find_const)
 #include "unord.map/find_const.pass.cpp"

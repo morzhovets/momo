@@ -122,6 +122,9 @@ private:
 	template<typename... ValueArgs>
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 
+	template<typename KeyArg>
+	using IsValidKeyArg = MergeTraits::template IsValidKeyArg<KeyArg>;
+
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
@@ -274,7 +277,28 @@ public:
 		return PositionProxy(mMergeSet.Find(key));
 	}
 
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value
+	ConstPosition Find(const KeyArg& key) const
+	{
+		return ConstPositionProxy(mMergeSet.Find(key));
+	}
+
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value
+	Position Find(const KeyArg& key)
+	{
+		return PositionProxy(mMergeSet.Find(key));
+	}
+
 	bool ContainsKey(const Key& key) const
+	{
+		return mMergeSet.ContainsKey(key);
+	}
+
+	template<typename KeyArg>
+	requires IsValidKeyArg<KeyArg>::value
+	bool ContainsKey(const KeyArg& key) const
 	{
 		return mMergeSet.ContainsKey(key);
 	}

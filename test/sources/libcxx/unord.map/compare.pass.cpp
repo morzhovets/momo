@@ -22,9 +22,6 @@
 struct Key {
   template <typename T> Key(const T&) {}
   bool operator== (const Key&) const { return true; }
-#ifdef LIBCXX_TEST_MERGE_MAP
-  auto operator<=>(const Key&) const = default;
-#endif
 };
 
 struct Hasher

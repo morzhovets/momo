@@ -52,9 +52,13 @@ public:
 	using HashTraitsStd::HashTraitsStd;
 
 #ifndef LIBCXX_TEST_MERGE_HASH
-	bool IsLess(const Key& key1, const Key& key2) const
+	template<typename KeyArg>
+	bool IsLess(const Key& key1, const KeyArg& key2) const
 	{
-		return std::less<>()(key1, key2);
+		if constexpr (requires { key1 < key2; })
+			return std::less<>()(key1, key2);
+		else
+			return HashTraitsStd::GetHashCode(key1) < HashTraitsStd::GetHashCode(key2);
 	}
 #endif
 };
