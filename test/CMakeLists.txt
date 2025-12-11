@@ -46,7 +46,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   target_compile_options(momo_test PRIVATE /W4 /wd4127 /wd4458 /bigobj /Zc:__cplusplus)
   target_compile_options(momo_test PRIVATE $<$<NOT:$<CONFIG:Debug>>:/wd4702>)
-  target_compile_definitions(momo_test PRIVATE _SCL_SECURE_NO_WARNINGS _CRT_SECURE_NO_WARNINGS)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Intel")
