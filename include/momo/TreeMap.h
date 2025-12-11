@@ -242,9 +242,7 @@ private:
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 
 	template<typename KeyArg>
-	struct IsValidKeyArg : public TreeTraits::template IsValidKeyArg<KeyArg>
-	{
-	};
+	using IsValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>;
 
 	struct ConstIteratorProxy : public ConstIterator
 	{

@@ -490,9 +490,7 @@ private:
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
 	template<typename KeyArg>
-	struct IsValidKeyArg : public HashTraits::template IsValidKeyArg<KeyArg>
-	{
-	};
+	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
 
 	struct ConstIteratorProxy : private ConstIterator
 	{

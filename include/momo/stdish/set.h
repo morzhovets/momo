@@ -68,9 +68,7 @@ public:
 
 private:
 	template<typename KeyArg>
-	struct IsValidKeyArg : public TreeTraits::template IsValidKeyArg<KeyArg>
-	{
-	};
+	using IsValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>;
 
 	struct NodeTypeProxy : private node_type
 	{

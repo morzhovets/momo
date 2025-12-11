@@ -713,9 +713,7 @@ private:
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 
 	template<typename KeyArg>
-	struct IsValidKeyArg : public HashTraits::template IsValidKeyArg<KeyArg>
-	{
-	};
+	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
 
 	struct ConstIteratorProxy : public ConstIterator
 	{

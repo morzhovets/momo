@@ -67,9 +67,7 @@ public:
 
 private:
 	template<typename KeyArg>
-	struct IsValidKeyArg : public HashTraits::template IsValidKeyArg<KeyArg>
-	{
-	};
+	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
 
 	struct NodeTypeProxy : private node_type
 	{

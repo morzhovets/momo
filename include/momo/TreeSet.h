@@ -298,9 +298,7 @@ private:
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
 	template<typename KeyArg>
-	struct IsValidKeyArg : public TreeTraits::template IsValidKeyArg<KeyArg>
-	{
-	};
+	using IsValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>;
 
 	struct ConstIteratorProxy : private ConstIterator
 	{
