@@ -22,6 +22,24 @@
 
 class SimpleMergeTester
 {
+private:
+	template<momo::MergeTraitsFunc tMergeTraitsFunc, size_t tLogInitialItemCount, typename TMergeBloomFilter>
+	class MergeTraits
+		: public momo::MergeTraits<size_t, tMergeTraitsFunc, tLogInitialItemCount, TMergeBloomFilter>
+	{
+	public:
+		static const size_t logInitialItemCount = tLogInitialItemCount;
+
+	public:
+		size_t GetSegmentItemCount(size_t segIndex) const noexcept
+		{
+			if (logInitialItemCount < 3)
+				return size_t{1} << (logInitialItemCount + segIndex * 2);
+			else
+				return size_t{1} << (logInitialItemCount + ((segIndex > 0) ? segIndex - 1 : 0));
+		}
+	};
+
 public:
 	static void TestAll()
 	{
@@ -59,18 +77,16 @@ public:
 			std::cout << "empty";
 		else
 			std::cout << MergeBloomFilter::logMult;
-		std::cout << "> (" << (useValuePtr ? "+" : "-") << "useValuePtr): " << std::flush;
+		std::cout << ">" << (useValuePtr ? " (+useValuePtr)" : "") << ": " << std::flush;
 
 		static const size_t count = 1 << 10;
 		static size_t array[count];
 		for (size_t i = 0; i < count; ++i)
 			array[i] = i;
 
-		typedef momo::MergeTraits<size_t, mergeTraitsFunc,
-			logInitialItemCount, MergeBloomFilter> MergeTraits;
 		typedef momo::MergeMapCore<
 			momo::MergeMapKeyValueTraits<size_t, size_t, momo::MemManagerDict<>, useValuePtr>,
-				MergeTraits> MergeMap;
+				MergeTraits<mergeTraitsFunc, logInitialItemCount, MergeBloomFilter>> MergeMap;
 		MergeMap map;
 
 		std::shuffle(array, array + count, mt);

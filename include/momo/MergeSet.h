@@ -34,7 +34,8 @@ namespace internal
 	struct MergeSetSegment
 	{
 		Item* items;
-		size_t itemCount;
+		size_t capacity;
+		size_t count;
 		bool isLast;
 	};
 
@@ -151,7 +152,7 @@ namespace internal
 			: Position(segment->items, version),
 			mSegment(segment)
 		{
-			MOMO_ASSERT(segment->itemCount > 0);
+			MOMO_ASSERT(segment->count > 0);
 		}
 
 	private:
@@ -160,14 +161,14 @@ namespace internal
 			if (mSegment == nullptr)
 				return nullptr;
 			Item* itemPtr = std::next(Position::ptGetItemPtr());
-			if (itemPtr != mSegment->items + mSegment->itemCount)
+			if (itemPtr != mSegment->items + mSegment->count)
 				return itemPtr;
 			while (true)
 			{
 				if (mSegment->isLast)
 					return nullptr;
 				--mSegment;
-				if (mSegment->itemCount > 0)
+				if (mSegment->count > 0)
 					break;
 			}
 			return mSegment->items;
@@ -246,9 +247,7 @@ public:
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
 private:
-	typedef typename MergeTraits::BloomFilter BloomFilter;
-
-	static const size_t initialItemCount = size_t{1} << MergeTraits::logInitialItemCount;
+	//typedef typename MergeTraits::BloomFilter BloomFilter;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = MergeTraits::template IsValidKeyArg<KeyArg>;
@@ -269,10 +268,8 @@ private:
 		internal::NestedArraySettings<ArraySettings<0, false>>> Segments;
 
 	typedef internal::MergeSetItemPtrCode<Item> ItemPtrCode;
-	typedef internal::NestedArrayIntCap<initialItemCount <= 32 ? 32 : 0,
-		Item*, MemManagerPtr> ItemPtrs;
-	typedef internal::NestedArrayIntCap<initialItemCount <= 32 ? 32 : 0,	//?
-		ItemPtrCode, MemManagerPtr> ItemPtrCodes;
+	typedef internal::NestedArrayIntCap<0, Item*, MemManagerPtr> ItemPtrs;
+	typedef internal::NestedArrayIntCap<0, ItemPtrCode, MemManagerPtr> ItemPtrCodes;
 
 	struct PositionProxy : public Position
 	{
@@ -363,7 +360,7 @@ public:
 		if (IsEmpty())
 			return Iterator();
 		size_t segIndex = mSegments.GetCount() - 1;
-		while (mSegments[segIndex].itemCount == 0)
+		while (mSegments[segIndex].count == 0)
 			--segIndex;
 		return IteratorProxy(&mSegments[segIndex], mCrew.GetVersion());
 	}
@@ -513,25 +510,18 @@ public:
 	}
 
 private:
-	static size_t pvGetSegmentItemCount(size_t segIndex) noexcept
+	Item* pvAllocateSegment(size_t capacity)
 	{
-		return initialItemCount << ((segIndex > 0) ? segIndex - 1 : 0);
-	}
-
-	Item* pvAllocateSegment(size_t segIndex)
-	{
-		size_t segItemCount = pvGetSegmentItemCount(segIndex);
-		if (segItemCount > internal::UIntConst::maxSize / sizeof(Item))
+		if (capacity > internal::UIntConst::maxSize / sizeof(Item))
 			MOMO_THROW(std::bad_array_new_length());
 		static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),
-			segItemCount * sizeof(Item));
+			capacity * sizeof(Item));
 	}
 
-	void pvDeallocateSegment(size_t segIndex, Item* segItems) noexcept
+	void pvDeallocateSegment(Item* segItems, size_t capacity) noexcept
 	{
-		size_t segItemCount = pvGetSegmentItemCount(segIndex);
-		MemManagerProxy::Deallocate(GetMemManager(), segItems, segItemCount * sizeof(Item));
+		MemManagerProxy::Deallocate(GetMemManager(), segItems, capacity * sizeof(Item));
 	}
 
 	void pvDeallocateSegments(size_t segCount) noexcept
@@ -539,10 +529,11 @@ private:
 		for (size_t s = 0; s < segCount; ++s)
 		{
 			Segment& segment = mSegments[s];
-			MOMO_ASSERT(segment.itemCount == 0);
+			MOMO_ASSERT(segment.count == 0);
 			if (segment.items != nullptr)
-				pvDeallocateSegment(s, segment.items);
+				pvDeallocateSegment(segment.items, segment.capacity);
 			segment.items = nullptr;
+			segment.capacity = 0;
 		}
 	}
 
@@ -553,9 +544,9 @@ private:
 		for (size_t s = 0; s < segCount; ++s)
 		{
 			Segment& segment = mSegments[s];
-			for (size_t i = 0; i < segment.itemCount; ++i)
+			for (size_t i = 0; i < segment.count; ++i)
 				ItemTraits::Destroy(&memManager, segment.items[i]);
-			segment.itemCount = 0;
+			segment.count = 0;
 		}
 		pvDeallocateSegments(segCount);
 		mSegments.Clear(true);
@@ -590,7 +581,7 @@ private:
 		for (size_t s = mSegments.GetCount(); s > 1; --s)
 		{
 			size_t segIndex = s - 1;
-			size_t segItemCount = mSegments[segIndex].itemCount;
+			size_t segItemCount = mSegments[segIndex].count;
 			if (segItemCount == 0)
 				continue;
 			Item* segItems = mSegments[segIndex].items;
@@ -623,7 +614,7 @@ private:
 		if (!mSegments.IsEmpty())
 		{
 			Item* segItems = mSegments[0].items;
-			size_t segItemCount = mSegments[0].itemCount;
+			size_t segItemCount = mSegments[0].count;
 			Item* itemPtr = std::find_if(segItems, segItems + segItemCount, FastCopyableFunctor(itemPred));
 			if (itemPtr != segItems + segItemCount)
 				return pvMakePosition(itemPtr);
@@ -662,13 +653,18 @@ private:
 			mSegments[0].isLast = true;
 		}
 		Segment& segment0 = mSegments[0];
-		if (segment0.itemCount < initialItemCount)
+		if (segment0.items == nullptr)
 		{
-			if (segment0.items == nullptr)
-				segment0.items = pvAllocateSegment(0);
-			std::move(itemCreator)(segment0.items + segment0.itemCount);
-			++segment0.itemCount;
-			return segment0.items + segment0.itemCount - 1;
+			size_t capacity0 = GetMergeTraits().GetSegmentItemCount(0);
+			MOMO_ASSERT(capacity0 > 0);
+			segment0.items = pvAllocateSegment(capacity0);
+			segment0.capacity = capacity0;
+		}
+		if (segment0.count < segment0.capacity)
+		{
+			std::move(itemCreator)(segment0.items + segment0.count);
+			++segment0.count;
+			return segment0.items + segment0.count - 1;
 		}
 		else
 		{
@@ -681,44 +677,46 @@ private:
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
 		MemManager& memManager = GetMemManager();
-		size_t relItemCount = initialItemCount;
+		Item* items0 = mSegments[0].items;
+		size_t itemCount0 = mSegments[0].count;
+		size_t relItemCount = itemCount0;
 		size_t segIndex = 1;
 		while (true)
 		{
 			if (segIndex < mSegments.GetCount())
-				relItemCount += mSegments[segIndex].itemCount;
-			if (relItemCount <= pvGetSegmentItemCount(segIndex))
+				relItemCount += mSegments[segIndex].count;
+			if (relItemCount <= mergeTraits.GetSegmentItemCount(segIndex))
 				break;
 			++segIndex;
 		}
 		if (mSegments.GetCount() <= segIndex)
 			mSegments.SetCount(segIndex + 1, Segment());
-		Item* newItems0 = pvAllocateSegment(0);
-		internal::Finalizer fin0(&MergeSetCore::pvDeallocateSegment, *this, 0, newItems0);
-		Item* newItems = pvAllocateSegment(segIndex);
-		internal::Finalizer fin(&MergeSetCore::pvDeallocateSegment, *this, segIndex, newItems);
-		Item* items0 = mSegments[0].items;
+		size_t capacity0 = mergeTraits.GetSegmentItemCount(0);
+		Item* newItems0 = pvAllocateSegment(capacity0);
+		internal::Finalizer fin0(&MergeSetCore::pvDeallocateSegment, *this, newItems0, capacity0);
+		Item* newItems = pvAllocateSegment(relItemCount);
+		internal::Finalizer fin(&MergeSetCore::pvDeallocateSegment, *this, newItems, relItemCount);
 		if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
 		{
 			ItemPtrCodes itemPtrCodes(relItemCount, MemManagerPtr(memManager));
-			for (size_t i = 0; i < initialItemCount; ++i)
+			for (size_t i = 0; i < itemCount0; ++i)
 			{
 				Item* itemPtr = items0 + i;
-				itemPtrCodes[relItemCount - initialItemCount + i] =
+				itemPtrCodes[relItemCount - itemCount0 + i] =
 					{ itemPtr, mergeTraits.GetHashCode(ItemTraits::GetKey(*itemPtr)) };
 			}
 			auto lessComp = [] (ItemPtrCode itemPtrCode1, ItemPtrCode itemPtrCode2) noexcept
 				{ return itemPtrCode1.hashCode < itemPtrCode2.hashCode; };
-			pvSortPtrs(&itemPtrCodes[relItemCount - initialItemCount], lessComp);
-			size_t curItemCount = initialItemCount;
+			pvSortPtrs(&itemPtrCodes[relItemCount - itemCount0], itemCount0, lessComp);
+			size_t curItemCount = itemCount0;
 			for (size_t s = 1; s <= segIndex; ++s)
 			{
-				size_t segItemCount = mSegments[s].itemCount;
+				size_t segItemCount = mSegments[s].count;
 				if (segItemCount == 0)
 					continue;
 				curItemCount += segItemCount;
-				pvMergePtrCodes(mSegments[s].items,
-					&itemPtrCodes[relItemCount - curItemCount], segItemCount);
+				pvMergePtrCodes(mSegments[s].items, segItemCount,
+					&itemPtrCodes[relItemCount - curItemCount], curItemCount);
 			}
 			internal::IncIterator srcIter = [iter = itemPtrCodes.GetItems()] () mutable noexcept
 				{ return (iter++)->itemPtr; };
@@ -729,38 +727,39 @@ private:
 			&& ItemTraits::isNothrowRelocatable)
 		{
 			std::move(itemCreator)(newItems0);
-			for (size_t i = 0; i < initialItemCount; ++i)
-				pvRelocate(items0[i], newItems + relItemCount - initialItemCount + i);
-			pvSortRelocate(newItems + relItemCount - initialItemCount);
-			size_t curItemCount = initialItemCount;
+			for (size_t i = 0; i < itemCount0; ++i)
+				pvRelocate(items0[i], newItems + relItemCount - itemCount0 + i);
+			pvSortRelocate(newItems + relItemCount - itemCount0, itemCount0);
+			size_t curItemCount = itemCount0;
 			for (size_t s = 1; s <= segIndex; ++s)
 			{
-				size_t segItemCount = mSegments[s].itemCount;
+				size_t segItemCount = mSegments[s].count;
 				if (segItemCount == 0)
 					continue;
 				curItemCount += segItemCount;
-				pvMergeRelocate(mSegments[s].items,
-					newItems + relItemCount - curItemCount, segItemCount);
+				pvMergeRelocate(mSegments[s].items, segItemCount,
+					newItems + relItemCount - curItemCount, curItemCount);
 			}
 		}
 		else
 		{
 			ItemPtrs itemPtrs(relItemCount, MemManagerPtr(memManager));
-			for (size_t i = 0; i < initialItemCount; ++i)
-				itemPtrs[relItemCount - initialItemCount + i] = items0 + i;
+			for (size_t i = 0; i < itemCount0; ++i)
+				itemPtrs[relItemCount - itemCount0 + i] = items0 + i;
 			auto lessComp = [&mergeTraits] (Item* itemPtr1, Item* itemPtr2)
 			{
 				return mergeTraits.IsLess(ItemTraits::GetKey(*itemPtr1), ItemTraits::GetKey(*itemPtr2));
 			};
-			pvSortPtrs(&itemPtrs[relItemCount - initialItemCount], lessComp);
-			size_t curItemCount = initialItemCount;
+			pvSortPtrs(&itemPtrs[relItemCount - itemCount0], itemCount0, lessComp);
+			size_t curItemCount = itemCount0;
 			for (size_t s = 1; s <= segIndex; ++s)
 			{
-				size_t segItemCount = mSegments[s].itemCount;
+				size_t segItemCount = mSegments[s].count;
 				if (segItemCount == 0)
 					continue;
 				curItemCount += segItemCount;
-				pvMergePtrs(mSegments[s].items, &itemPtrs[relItemCount - curItemCount], segItemCount);
+				pvMergePtrs(mSegments[s].items, segItemCount,
+					&itemPtrs[relItemCount - curItemCount], curItemCount);
 			}
 			internal::IncIterator srcIter = [iter = itemPtrs.GetItems()] () mutable noexcept
 				{ return *iter++; };
@@ -768,21 +767,23 @@ private:
 				srcIter, newItems, relItemCount, std::move(itemCreator), newItems0);
 		}
 		for (size_t s = 0; s <= segIndex; ++s)
-			mSegments[s].itemCount = 0;
+			mSegments[s].count = 0;
 		pvDeallocateSegments(segIndex + 1);
 		mSegments[segIndex].items = newItems;
-		mSegments[segIndex].itemCount = relItemCount;
+		mSegments[segIndex].capacity = relItemCount;
+		mSegments[segIndex].count = relItemCount;
 		fin.Detach();
 		mSegments[0].items = newItems0;
-		mSegments[0].itemCount = 1;
+		mSegments[0].capacity = capacity0;
+		mSegments[0].count = 1;
 		fin0.Detach();
 		return newItems0;
 	}
 
-	void pvSortRelocate(Item* items) noexcept
+	void pvSortRelocate(Item* items, size_t count) noexcept
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
-		for (size_t i = 1; i < initialItemCount; ++i)
+		for (size_t i = 1; i < count; ++i)
 		{
 			internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
 			pvRelocate(items[i], itemBuffer.GetPtr());
@@ -799,9 +800,9 @@ private:
 	}
 		
 	template<typename ItemPtr, typename LessComparer>
-	void pvSortPtrs(ItemPtr* itemPtrs, const LessComparer& lessComp)
+	void pvSortPtrs(ItemPtr* itemPtrs, size_t count, const LessComparer& lessComp)
 	{
-		for (size_t i = 1; i < initialItemCount; ++i)
+		for (size_t i = 1; i < count; ++i)
 		{
 			ItemPtr itemPtr = itemPtrs[i];
 			size_t j = i;
@@ -815,16 +816,17 @@ private:
 		}
 	}
 
-	void pvMergeRelocate(Item* srcItems1, Item* dstItems, size_t count)
+	void pvMergeRelocate(Item* srcItems1, size_t srcCount1, Item* dstItems, size_t dstCount)
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
-		Item* srcItems2 = dstItems + count;
+		Item* srcItems2 = dstItems + srcCount1;
+		size_t srcCount2 = dstCount - srcCount1;
 		size_t srcIndex1 = 0;
 		size_t srcIndex2 = 0;
 		size_t dstIndex = 0;
-		while (srcIndex1 < count)
+		while (srcIndex1 < srcCount1)
 		{
-			if (srcIndex2 < count && mergeTraits.IsLess(
+			if (srcIndex2 < srcCount2 && mergeTraits.IsLess(
 				ItemTraits::GetKey(srcItems2[srcIndex2]),
 				ItemTraits::GetKey(srcItems1[srcIndex1])))
 			{
@@ -840,16 +842,17 @@ private:
 		}
 	}
 
-	void pvMergePtrs(Item* srcItems1, Item** dstItemPtrs, size_t count)
+	void pvMergePtrs(Item* srcItems1, size_t srcCount1, Item** dstItemPtrs, size_t dstCount)
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
-		Item** srcItemPtrs2 = dstItemPtrs + count;
+		Item** srcItemPtrs2 = dstItemPtrs + srcCount1;
+		size_t srcCount2 = dstCount - srcCount1;
 		size_t srcIndex1 = 0;
 		size_t srcIndex2 = 0;
 		size_t dstIndex = 0;
-		while (srcIndex1 < count)
+		while (srcIndex1 < srcCount1)
 		{
-			if (srcIndex2 < count && mergeTraits.IsLess(
+			if (srcIndex2 < srcCount2 && mergeTraits.IsLess(
 				ItemTraits::GetKey(*srcItemPtrs2[srcIndex2]),
 				ItemTraits::GetKey(srcItems1[srcIndex1])))
 			{
@@ -865,17 +868,18 @@ private:
 		}
 	}
 
-	void pvMergePtrCodes(Item* srcItems1, ItemPtrCode* dstItemPtrCodes, size_t count)
+	void pvMergePtrCodes(Item* srcItems1, size_t srcCount1, ItemPtrCode* dstItemPtrCodes, size_t dstCount)
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
-		ItemPtrCode* srcItemPtrCodes2 = dstItemPtrCodes + count;
+		ItemPtrCode* srcItemPtrCodes2 = dstItemPtrCodes + srcCount1;
+		size_t srcCount2 = dstCount - srcCount1;
 		size_t srcIndex1 = 0;
 		size_t srcIndex2 = 0;
 		size_t dstIndex = 0;
-		while (srcIndex1 < count)
+		while (srcIndex1 < srcCount1)
 		{
 			size_t srcHashCode1 = mergeTraits.GetHashCode(ItemTraits::GetKey(srcItems1[srcIndex1]));
-			while (srcIndex2 < count && srcItemPtrCodes2[srcIndex2].hashCode < srcHashCode1)
+			while (srcIndex2 < srcCount2 && srcItemPtrCodes2[srcIndex2].hashCode < srcHashCode1)
 			{
 				dstItemPtrCodes[dstIndex] = srcItemPtrCodes2[srcIndex2];
 				++srcIndex2;

@@ -40,8 +40,6 @@ public:
 
 	typedef momo::MergeBloomFilterEmpty BloomFilter;
 
-	static const size_t logInitialItemCount = 0;
-
 #ifdef LIBCXX_TEST_MERGE_HASH
 	static const momo::MergeTraitsFunc func = momo::MergeTraitsFunc::hash;
 #else
@@ -50,6 +48,11 @@ public:
 
 public:
 	using HashTraitsStd::HashTraitsStd;
+
+	size_t GetSegmentItemCount(size_t segIndex) const noexcept
+	{
+		return size_t{1} << ((segIndex > 0) ? segIndex - 1 : 0);
+	}
 
 #ifndef LIBCXX_TEST_MERGE_HASH
 	template<typename KeyArg>

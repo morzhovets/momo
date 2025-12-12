@@ -179,7 +179,7 @@ concept conceptMergeTraits =
 	requires (const MergeTraits& mergeTraits, const Key& key)
 	{
 		typename std::integral_constant<MergeTraitsFunc, MergeTraits::func>;
-		typename std::integral_constant<size_t, MergeTraits::logInitialItemCount>;
+		{ mergeTraits.GetSegmentItemCount(size_t{}) } -> std::same_as<size_t>;
 		//{ mergeTraits.GetHashCode(key) } -> std::same_as<size_t>;
 		//{ mergeTraits.IsLess(key, key) } -> std::same_as<bool>;
 		{ mergeTraits.IsEqual(key, key) } -> std::same_as<bool>;
@@ -204,6 +204,11 @@ public:
 
 public:
 	explicit MergeTraits() noexcept = default;
+
+	size_t GetSegmentItemCount(size_t segIndex) const noexcept
+	{
+		return size_t{1} << (logInitialItemCount + ((segIndex > 0) ? segIndex - 1 : 0));
+	}
 
 	size_t GetHashCode(const Key& key) const
 		requires requires { { HashCoder<Key>()(key) } -> std::convertible_to<size_t>; }
