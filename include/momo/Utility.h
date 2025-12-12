@@ -26,6 +26,8 @@
 #include <utility>
 #include <new>
 #include <iterator>
+#include <exception>	//?
+#include <stdexcept>
 #include <type_traits>
 #include <cstdint>
 #include <array>

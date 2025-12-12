@@ -17,8 +17,6 @@
 //#include <version>	// feature macros
 #include <cassert>	// assert
 #include <cstring>	// memcpy
-#include <exception>
-#include <stdexcept>
 
 // Disable C++ exceptions. Use this macro when `-fno-exceptions` option is enabled.
 //#define MOMO_DISABLE_EXCEPTIONS

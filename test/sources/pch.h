@@ -22,6 +22,8 @@
 #include <utility>
 #include <new>
 #include <iterator>
+#include <exception>
+#include <stdexcept>
 #include <type_traits>
 #include <cstdint>
 #include <array>
@@ -53,7 +55,6 @@
 #include <sstream>
 #include <string>
 #include <cstring>
-#include <stdexcept>
 #include <cerrno>
 #include <cmath>
 #include <limits>
