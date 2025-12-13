@@ -128,6 +128,7 @@ private:
 	struct ConstIteratorProxy : public ConstIterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetSetIterator)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -482,6 +483,61 @@ public:
 		Position pos = Find(key);
 		return !!pos ? ValueReferencer::template GetReference<const Key&>(*this, pos)
 			: ValueReferencer::template GetReference<const Key&>(*this, pos, key);
+	}
+
+	Iterator Remove(ConstIterator iter)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		return IteratorProxy(mMergeSet.Remove(ConstIteratorProxy::GetSetIterator(iter)));
+	}
+
+	Iterator Remove(Iterator iter)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		return Remove(static_cast<ConstIterator>(iter));
+	}
+
+	void Remove(ConstPosition pos)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		Remove(static_cast<ConstIterator>(pos));
+	}
+
+	void Remove(Position pos)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		Remove(static_cast<ConstIterator>(pos));
+	}
+
+	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		Iterator resIter = IteratorProxy(mMergeSet.Remove(ConstIteratorProxy::GetSetIterator(iter),
+			ExtractedPairProxy::GetSetExtractedItem(extPair)));
+		if constexpr (KeyValueTraits::useValuePtr)
+			ExtractedPairProxy::GetValueMemPool(extPair) = &mMergeSet.GetMemManager().GetMemPool();
+		return resIter;
+	}
+
+	bool Remove(const Key& key)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		return mMergeSet.Remove(key);
+	}
+
+	template<internal::conceptMapPairPredicate<Key, Value> PairFilter>
+	size_t Remove(PairFilter pairFilter)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		auto itemFilter = [fastPairFilter = FastCopyableFunctor(pairFilter)] (const KeyValuePair& item)
+			{ return fastPairFilter(item.GetKey(), std::as_const(item.GetValue())); };
+		return mMergeSet.Remove(itemFilter);
+	}
+
+	ExtractedPair Extract(ConstPosition pos)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		return ExtractedPair(*this, static_cast<ConstIterator>(pos));
 	}
 
 	Iterator MakeMutableIterator(ConstIterator iter)

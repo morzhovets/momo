@@ -431,26 +431,30 @@ public:
 
 	MOMO_FORCEINLINE std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
-		return { find(key), end() };
+		const_iterator iter = find(key);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	MOMO_FORCEINLINE std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
-		return { find(key), end() };
+		iterator iter = find(key);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
 	MOMO_FORCEINLINE std::pair<const_iterator, const_iterator> equal_range(const KeyArg& key) const
 	{
-		return { find(key), end() };
+		const_iterator iter = find(key);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
 	MOMO_FORCEINLINE std::pair<iterator, iterator> equal_range(const KeyArg& key)
 	{
-		return { find(key), end() };
+		iterator iter = find(key);
+		return { iter, (iter != end()) ? std::next(iter) : iter };
 	}
 
 	template<typename ValueArg = std::pair<key_type, mapped_type>>

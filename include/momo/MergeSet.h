@@ -34,6 +34,7 @@ namespace internal
 	struct MergeSetSegment
 	{
 		Item* items;
+		uint8_t* itemFlags;
 		size_t capacity;
 		size_t count;
 		bool isLast;
@@ -46,11 +47,50 @@ namespace internal
 		size_t hashCode;
 	};
 
-	template<typename TItem, typename TSettings>
-	class MOMO_EMPTY_BASES MergeSetIterator;
+	template<typename TItem>
+	class MergeSetSegmentByteIterator : public ArrayIteratorBase
+	{
+	public:
+		typedef TItem Item;
+
+		typedef std::byte& Reference;
+		typedef std::byte* Pointer;
+
+	public:
+		explicit MergeSetSegmentByteIterator(Item* itemPtr = nullptr) noexcept
+			: mItemPtr(itemPtr)
+		{
+		}
+
+		MergeSetSegmentByteIterator& operator+=(ptrdiff_t diff)
+		{
+			mItemPtr += diff;
+			return *this;
+		}
+
+		friend ptrdiff_t operator-(MergeSetSegmentByteIterator iter1,
+			MergeSetSegmentByteIterator iter2) noexcept
+		{
+			return iter1.mItemPtr - iter2.mItemPtr;
+		}
+
+		Pointer operator->() const
+		{
+			return PtrCaster::ToBytePtr(mItemPtr);
+		}
+
+		friend bool operator==(MergeSetSegmentByteIterator iter1,
+			MergeSetSegmentByteIterator iter2) noexcept
+		{
+			return iter1.mItemPtr == iter2.mItemPtr;
+		}
+
+	private:
+		Item* mItemPtr;
+	};
 
 	template<typename TItem, typename TSettings>
-	class MOMO_EMPTY_BASES MergeSetPosition
+	class MOMO_EMPTY_BASES MergeSetIterator
 		: private VersionKeeper<TSettings>,
 		public ForwardIteratorBase
 	{
@@ -60,19 +100,22 @@ namespace internal
 
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
+		typedef MergeSetSegment<Item> Segment;
+
 	public:
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
 
-		typedef MergeSetPosition ConstPosition;
-
-		typedef MergeSetIterator<Item, Settings> Iterator;
+		typedef MergeSetIterator ConstIterator;
 
 	public:
-		explicit MergeSetPosition() noexcept
-			: mItemPtr(nullptr)
+		explicit MergeSetIterator() noexcept
+			: mItemPtr(nullptr),
+			mSegment(nullptr)
 		{
 		}
+
+		//operator ConstIterator() const noexcept
 
 		Pointer operator->() const
 		{
@@ -81,16 +124,29 @@ namespace internal
 			return mItemPtr;
 		}
 
-		friend bool operator==(MergeSetPosition pos1, MergeSetPosition pos2) noexcept
+		MergeSetIterator& operator++()
 		{
-			return pos1.mItemPtr == pos2.mItemPtr;
+			operator->();	// check
+			++mItemPtr;
+			pvMove();
+			return *this;
+		}
+
+		using ForwardIteratorBase::operator++;
+
+		friend bool operator==(MergeSetIterator iter1, MergeSetIterator iter2) noexcept
+		{
+			return iter1.mItemPtr == iter2.mItemPtr;
 		}
 
 	protected:
-		explicit MergeSetPosition(Item* itemPtr, const size_t* version) noexcept
+		explicit MergeSetIterator(const Segment* segment, Item* itemPtr,
+			const size_t* version) noexcept
 			: VersionKeeper(version),
-			mItemPtr(itemPtr)
+			mItemPtr(itemPtr),
+			mSegment(segment)
 		{
+			pvMove();
 		}
 
 		Item* ptGetItemPtr() const noexcept
@@ -98,84 +154,63 @@ namespace internal
 			return mItemPtr;
 		}
 
-		void ptReset(Item* itemPtr) noexcept
+		const Segment* ptGetSegment() const noexcept
 		{
-			mItemPtr = itemPtr;
+			return mSegment;
+		}
+
+	private:
+		void pvMove() noexcept
+		{
+			while (true)
+			{
+				if (mSegment->itemFlags == nullptr)
+				{
+					if (mItemPtr != mSegment->items + mSegment->count)
+						return;
+				}
+				else
+				{
+					Item* segEnd = mSegment->items + mSegment->capacity;
+					while (mItemPtr != segEnd && UIntMath<uint8_t>::GetBit(
+						mSegment->itemFlags, UIntMath<>::Dist(mSegment->items, mItemPtr)))
+					{
+						++mItemPtr;
+					}
+					if (mItemPtr != segEnd)
+						return;
+				}
+				if (mSegment->isLast)
+					break;
+				--mSegment;
+				mItemPtr = mSegment->items;
+			}
+			*this = MergeSetIterator();
 		}
 
 	private:
 		Item* mItemPtr;
+		const Segment* mSegment;
 	};
 
 	template<typename TItem, typename TSettings>
-	class MergeSetIterator : public MergeSetPosition<TItem, TSettings>
+	class MOMO_EMPTY_BASES MergeSetPosition : public MergeSetIterator<TItem, TSettings>
 	{
 	public:
-		typedef MergeSetPosition<TItem, TSettings> Position;
+		typedef MergeSetIterator<TItem, TSettings> Iterator;
 
-		typedef MergeSetIterator ConstIterator;
-
-	protected:
-		using typename Position::Item;
-		//using typename Position::Settings;
-
-		typedef MergeSetSegment<Item> Segment;
+		typedef MergeSetPosition ConstPosition;
 
 	public:
-		explicit MergeSetIterator() noexcept
-			: mSegment(nullptr)
+		using Iterator::Iterator;
+
+		MergeSetPosition(Iterator iter) noexcept
+			: Iterator(iter)
 		{
-		}
-
-		MergeSetIterator(Position pos) noexcept
-			: Position(pos),
-			mSegment(nullptr)
-		{
-		}
-
-		//operator ConstIterator() const noexcept
-
-		MergeSetIterator& operator++()
-		{
-			Position::operator->();	// check
-			if (Item* itemPtr = pvInc(); itemPtr != nullptr)
-				Position::ptReset(itemPtr);
-			else
-				*this = MergeSetIterator();
-			return *this;
-		}
-
-		using ForwardIteratorBase::operator++;
-
-	protected:
-		explicit MergeSetIterator(const Segment* segment, const size_t* version) noexcept
-			: Position(segment->items, version),
-			mSegment(segment)
-		{
-			MOMO_ASSERT(segment->count > 0);
 		}
 
 	private:
-		Item* pvInc() noexcept
-		{
-			if (mSegment == nullptr)
-				return nullptr;
-			Item* itemPtr = std::next(Position::ptGetItemPtr());
-			if (itemPtr != mSegment->items + mSegment->count)
-				return itemPtr;
-			while (true)
-			{
-				if (mSegment->isLast)
-					return nullptr;
-				--mSegment;
-				if (mSegment->count > 0)
-					break;
-			}
-			return mSegment->items;
-		}
-
-	private:
-		const Segment* mSegment;
+		using Iterator::operator++;	//?
 	};
 }
 
@@ -271,14 +306,25 @@ private:
 	typedef internal::NestedArrayIntCap<0, Item*, MemManagerPtr> ItemPtrs;
 	typedef internal::NestedArrayIntCap<0, ItemPtrCode, MemManagerPtr> ItemPtrCodes;
 
-	struct PositionProxy : public Position
+	typedef internal::UIntMath<> SMath;
+	typedef internal::UIntMath<uint8_t> BMath;
+
+	static const size_t hashCodeSize = SMath::Min(sizeof(size_t), sizeof(Item));
+
+	struct ConstIteratorProxy : private ConstIterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Position)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetSegment)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetItemPtr)
 	};
 
 	struct IteratorProxy : public Iterator
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+	};
+
+	struct PositionProxy : public Position
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(Position)
 	};
 
 public:
@@ -359,10 +405,8 @@ public:
 	{
 		if (IsEmpty())
 			return Iterator();
-		size_t segIndex = mSegments.GetCount() - 1;
-		while (mSegments[segIndex].count == 0)
-			--segIndex;
-		return IteratorProxy(&mSegments[segIndex], mCrew.GetVersion());
+		const Segment& backSegment = mSegments.GetBackItem();
+		return IteratorProxy(&backSegment, backSegment.items, mCrew.GetVersion());
 	}
 
 	Iterator GetEnd() const noexcept
@@ -509,8 +553,68 @@ public:
 		return AddVar(pos, item);
 	}
 
+	Iterator Remove(ConstIterator iter)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		auto itemRemover = [this] (Item& item)
+			{ ItemTraits::Destroy(&GetMemManager(), item); };
+		return pvRemove(iter, FastMovableFunctor(std::move(itemRemover)));
+	}
+
+	void Remove(ConstPosition pos)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		Remove(static_cast<ConstIterator>(pos));
+	}
+
+	Iterator Remove(ConstIterator iter, ExtractedItem& extItem)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		Iterator resIter;
+		auto itemCreator = [this, iter, &resIter] (Item* newItem)
+		{
+			auto itemRemover = [this, newItem] (Item& item)
+				{ ItemTraits::Relocate(&GetMemManager(), nullptr, item, newItem); };
+			resIter = pvRemove(iter, FastMovableFunctor(std::move(itemRemover)));
+		};
+		extItem.Create(itemCreator);
+		return resIter;
+	}
+
+	bool Remove(const Key& key)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		Position pos = pvFind(key);
+		if (!pos)
+			return false;
+		Remove(pos);
+		return true;
+	}
+
+	template<internal::conceptObjectPredicate<Item> ItemFilter>
+	size_t Remove(ItemFilter itemFilter)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		size_t initCount = GetCount();
+		Iterator iter = GetBegin();
+		while (!!iter)
+		{
+			if (itemFilter(*iter))	//?
+				iter = Remove(iter);
+			else
+				++iter;
+		}
+		return initCount - GetCount();
+	}
+
+	ExtractedItem Extract(ConstPosition pos)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		return ExtractedItem(*this, static_cast<ConstIterator>(pos));
+	}
+
 private:
-	Item* pvAllocateSegment(size_t capacity)
+	Item* pvAllocateSegmentItems(size_t capacity)
 	{
 		if (capacity > internal::UIntConst::maxSize / sizeof(Item))
 			MOMO_THROW(std::bad_array_new_length());
@@ -519,9 +623,22 @@ private:
 			capacity * sizeof(Item));
 	}
 
-	void pvDeallocateSegment(Item* segItems, size_t capacity) noexcept
+	void pvDeallocateSegmentItems(Item* segItems, size_t capacity) noexcept
 	{
 		MemManagerProxy::Deallocate(GetMemManager(), segItems, capacity * sizeof(Item));
+	}
+
+	uint8_t* pvAllocateSegmentFlags(size_t capacity)
+	{
+		size_t length = SMath::Ceil(capacity, 8);
+		uint8_t* segItemFlags = MemManagerProxy::template Allocate<uint8_t>(GetMemManager(), length);
+		std::fill_n(segItemFlags, length, uint8_t{0});
+		return segItemFlags;
+	}
+
+	void pvDeallocateSegmentFlags(uint8_t* segItemFlags, size_t capacity) noexcept
+	{
+		MemManagerProxy::Deallocate(GetMemManager(), segItemFlags, SMath::Ceil(capacity, 8));
 	}
 
 	void pvDeallocateSegments(size_t segCount) noexcept
@@ -531,8 +648,11 @@ private:
 			Segment& segment = mSegments[s];
 			MOMO_ASSERT(segment.count == 0);
 			if (segment.items != nullptr)
-				pvDeallocateSegment(segment.items, segment.capacity);
+				pvDeallocateSegmentItems(segment.items, segment.capacity);
+			if (MergeTraits::func == MergeTraitsFunc::hash && segment.itemFlags != nullptr)
+				pvDeallocateSegmentFlags(segment.itemFlags, segment.capacity);
 			segment.items = nullptr;
+			segment.itemFlags = nullptr;
 			segment.capacity = 0;
 		}
 	}
@@ -544,17 +664,31 @@ private:
 		for (size_t s = 0; s < segCount; ++s)
 		{
 			Segment& segment = mSegments[s];
-			for (size_t i = 0; i < segment.count; ++i)
-				ItemTraits::Destroy(&memManager, segment.items[i]);
+			if (MergeTraits::func == MergeTraitsFunc::hash && segment.itemFlags != nullptr)
+			{
+				for (size_t i = 0; i < segment.capacity; ++i)
+				{
+					if (BMath::GetBit(segment.itemFlags, i))
+						continue;
+					ItemTraits::Destroy(&memManager, segment.items[i]);
+				}
+				pvDeallocateSegmentFlags(segment.itemFlags, segment.capacity);
+				segment.itemFlags = nullptr;
+			}
+			else
+			{
+				for (size_t i = 0; i < segment.count; ++i)
+					ItemTraits::Destroy(&memManager, segment.items[i]);
+			}
 			segment.count = 0;
 		}
 		pvDeallocateSegments(segCount);
 		mSegments.Clear(true);
 	}
 
-	Position pvMakePosition(Item* itemPtr) const noexcept
+	Position pvMakePosition(const Segment& segment, Item* itemPtr) const noexcept
 	{
-		return PositionProxy(itemPtr, mCrew.GetVersion());
+		return PositionProxy(&segment, itemPtr, mCrew.GetVersion());
 	}
 
 	bool pvExtraCheck(ConstPosition pos) const noexcept
@@ -570,54 +704,110 @@ private:
 	}
 
 	template<typename KeyArg>
+	size_t pvGetHashCode(const KeyArg& key) const
+	{
+		size_t hashCode = GetMergeTraits().GetHashCode(key);
+		size_t resHashCode = 0;
+		internal::MemCopyer::CopyBuffer(&hashCode, &resHashCode,
+			std::integral_constant<size_t, hashCodeSize>());
+		return resHashCode;
+	}
+
+	template<typename KeyArg>
 	Position pvFind(const KeyArg& key) const
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
 		size_t hashCode = 0;
 		if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
-			hashCode = mergeTraits.GetHashCode(key);
+			hashCode = pvGetHashCode(key);
 		auto itemPred = [&mergeTraits, &key] (const Item& item)
 			{ return mergeTraits.IsEqual(ItemTraits::GetKey(item), key); };
 		for (size_t s = mSegments.GetCount(); s > 1; --s)
 		{
-			size_t segIndex = s - 1;
-			size_t segItemCount = mSegments[segIndex].count;
-			if (segItemCount == 0)
+			const Segment& segment = mSegments[s - 1];
+			if (segment.count == 0)
 				continue;
-			Item* segItems = mSegments[segIndex].items;
+			Item* segItems = segment.items;
 			if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
 			{
-				auto hasher = [&mergeTraits] (const Item& item)
-					{ return mergeTraits.GetHashCode(ItemTraits::GetKey(item)); };
-				auto equalComp = [&mergeTraits] (const Item& item1, const auto& item2)
+				internal::MergeSetSegmentByteIterator<Item> segByteItems(segItems);
+				uint8_t* segItemFlags = segment.itemFlags;
+				auto hasher = [this, segItemFlags, segItems] (const std::byte& byteItem)
 				{
-					const Key& key1 = ItemTraits::GetKey(item1);
-					if constexpr (std::is_same_v<decltype(item2), const KeyArg&>)
-						return mergeTraits.IsEqual(key1, item2);
-					else
-						return mergeTraits.IsEqual(key1, ItemTraits::GetKey(item2));
+					if (segItemFlags != nullptr)
+					{
+						size_t segItemIndex = SMath::Dist(segItems,
+							internal::PtrCaster::FromBytePtr<Item>(&byteItem));
+						if (BMath::GetBit(segItemFlags, segItemIndex))
+						{
+							size_t hashCode = 0;
+							internal::MemCopyer::CopyBuffer(&byteItem, &hashCode,
+								std::integral_constant<size_t, hashCodeSize>());
+							return hashCode;
+						}
+					}
+					return pvGetHashCode(ItemTraits::GetKey(
+						*internal::PtrCaster::FromBytePtr<Item, true, true>(&byteItem)));
 				};
-				auto findRes = HashSorter::Find(segItems, segItemCount, key, hashCode, hasher, equalComp);
+				auto equalComp = [&mergeTraits, segItemFlags, segItems]
+					(const std::byte& item1, auto item2)
+				{
+					if constexpr (std::is_same_v<decltype(item2), const KeyArg*>)
+					{
+						if (segItemFlags != nullptr)
+						{
+							size_t segItemIndex = SMath::Dist(segItems,
+								internal::PtrCaster::FromBytePtr<Item>(&item1));
+							if (BMath::GetBit(segItemFlags, segItemIndex))
+								return false;
+						}
+						return mergeTraits.IsEqual(
+							ItemTraits::GetKey(*internal::PtrCaster::FromBytePtr<Item, true, true>(&item1)),
+							*item2);
+					}
+					else
+					{
+						static_assert(std::is_same_v<decltype(item2), std::byte>);
+						return false;
+					}
+				};
+				auto findRes = HashSorter::Find(segByteItems,
+					segItemFlags == nullptr ? segment.count : segment.capacity,
+					std::addressof(key), hashCode, hasher, equalComp);
 				if (findRes.found)
-					return pvMakePosition(findRes.iterator);
+					return pvMakePosition(segment, segItems + (findRes.iterator - segByteItems));
 			}
 			else
 			{
 				auto lessComp = [&mergeTraits] (const Item& item1, const KeyArg& key2)
 					{ return mergeTraits.IsLess(ItemTraits::GetKey(item1), key2); };
 				Item* itemPtr = std::lower_bound(segItems,
-					segItems + segItemCount - 1, key, FastCopyableFunctor(lessComp));
+					segItems + segment.count - 1, key, FastCopyableFunctor(lessComp));
 				if (itemPred(*itemPtr))
-					return pvMakePosition(itemPtr);
+					return pvMakePosition(segment, itemPtr);
 			}
 		}
 		if (!mSegments.IsEmpty())
 		{
-			Item* segItems = mSegments[0].items;
-			size_t segItemCount = mSegments[0].count;
-			Item* itemPtr = std::find_if(segItems, segItems + segItemCount, FastCopyableFunctor(itemPred));
-			if (itemPtr != segItems + segItemCount)
-				return pvMakePosition(itemPtr);
+			const Segment& segment0 = mSegments[0];
+			Item* segItems = segment0.items;
+			uint8_t* segItemFlags = segment0.itemFlags;
+			if (MergeTraits::func == MergeTraitsFunc::hash && segItemFlags != nullptr)
+			{
+				for (size_t i = 0; i < segment0.capacity; ++i)
+				{
+					if (!BMath::GetBit(segItemFlags, i) && itemPred(segItems[i]))
+						return pvMakePosition(segment0, segItems + i);
+				}
+			}
+			else
+			{
+				for (size_t i = 0; i < segment0.count; ++i)
+				{
+					if (itemPred(segItems[i]))
+						return pvMakePosition(segment0, segItems + i);
+				}
+			}
 		}
 		return Position();
 	}
@@ -639,7 +829,7 @@ private:
 		Item* itemPtr = pvAdd(std::move(itemCreator));
 		++mCount;
 		mCrew.IncVersion();
-		Position resPos = pvMakePosition(itemPtr);
+		Position resPos = pvMakePosition(mSegments[0], itemPtr);
 		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resPos));
 		return resPos;
 	}
@@ -657,14 +847,24 @@ private:
 		{
 			size_t capacity0 = GetMergeTraits().GetSegmentItemCount(0);
 			MOMO_ASSERT(capacity0 > 0);
-			segment0.items = pvAllocateSegment(capacity0);
+			segment0.items = pvAllocateSegmentItems(capacity0);
 			segment0.capacity = capacity0;
 		}
 		if (segment0.count < segment0.capacity)
 		{
-			std::move(itemCreator)(segment0.items + segment0.count);
+			uint8_t* segItemFlags = segment0.itemFlags;
+			size_t segItemIndex = segment0.count;
+			if (MergeTraits::func == MergeTraitsFunc::hash && segItemFlags != nullptr)
+			{
+				segItemIndex = 0;
+				while (!BMath::GetBit(segItemFlags, segItemIndex))
+					++segItemIndex;
+			}
+			std::move(itemCreator)(segment0.items + segItemIndex);
 			++segment0.count;
-			return segment0.items + segment0.count - 1;
+			if (MergeTraits::func == MergeTraitsFunc::hash && segItemFlags != nullptr)
+				BMath::SetBit(segItemFlags, segItemIndex, false);
+			return segment0.items + segItemIndex;
 		}
 		else
 		{
@@ -692,10 +892,10 @@ private:
 		if (mSegments.GetCount() <= segIndex)
 			mSegments.SetCount(segIndex + 1, Segment());
 		size_t capacity0 = mergeTraits.GetSegmentItemCount(0);
-		Item* newItems0 = pvAllocateSegment(capacity0);
-		internal::Finalizer fin0(&MergeSetCore::pvDeallocateSegment, *this, newItems0, capacity0);
-		Item* newItems = pvAllocateSegment(relItemCount);
-		internal::Finalizer fin(&MergeSetCore::pvDeallocateSegment, *this, newItems, relItemCount);
+		Item* newItems0 = pvAllocateSegmentItems(capacity0);
+		internal::Finalizer fin0(&MergeSetCore::pvDeallocateSegmentItems, *this, newItems0, capacity0);
+		Item* newItems = pvAllocateSegmentItems(relItemCount);
+		internal::Finalizer fin(&MergeSetCore::pvDeallocateSegmentItems, *this, newItems, relItemCount);
 		if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
 		{
 			ItemPtrCodes itemPtrCodes(relItemCount, MemManagerPtr(memManager));
@@ -703,7 +903,7 @@ private:
 			{
 				Item* itemPtr = items0 + i;
 				itemPtrCodes[relItemCount - itemCount0 + i] =
-					{ itemPtr, mergeTraits.GetHashCode(ItemTraits::GetKey(*itemPtr)) };
+					{ itemPtr, pvGetHashCode(ItemTraits::GetKey(*itemPtr)) };
 			}
 			auto lessComp = [] (ItemPtrCode itemPtrCode1, ItemPtrCode itemPtrCode2) noexcept
 				{ return itemPtrCode1.hashCode < itemPtrCode2.hashCode; };
@@ -715,8 +915,8 @@ private:
 				if (segItemCount == 0)
 					continue;
 				curItemCount += segItemCount;
-				pvMergePtrCodes(mSegments[s].items, segItemCount,
-					&itemPtrCodes[relItemCount - curItemCount], curItemCount);
+				pvMergePtrCodes(mSegments[s].items, mSegments[s].itemFlags, segItemCount,
+					mSegments[s].capacity, &itemPtrCodes[relItemCount - curItemCount], curItemCount);
 			}
 			internal::IncIterator srcIter = [iter = itemPtrCodes.GetItems()] () mutable noexcept
 				{ return (iter++)->itemPtr; };
@@ -780,6 +980,23 @@ private:
 		return newItems0;
 	}
 
+	template<typename ItemPtr, typename LessComparer>
+	void pvSortPtrs(ItemPtr* itemPtrs, size_t count, const LessComparer& lessComp)
+	{
+		for (size_t i = 1; i < count; ++i)
+		{
+			ItemPtr itemPtr = itemPtrs[i];
+			size_t j = i;
+			for (; j > 0; --j)
+			{
+				if (!lessComp(itemPtr, itemPtrs[j - 1]))
+					break;
+				itemPtrs[j] = itemPtrs[j - 1];
+			}
+			itemPtrs[j] = itemPtr;
+		}
+	}
+
 	void pvSortRelocate(Item* items, size_t count) noexcept
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
@@ -799,20 +1016,38 @@ private:
 		}
 	}
 		
-	template<typename ItemPtr, typename LessComparer>
-	void pvSortPtrs(ItemPtr* itemPtrs, size_t count, const LessComparer& lessComp)
+	void pvMergePtrCodes(Item* srcItems1, uint8_t* srcItemFlags1, size_t srcCount1, size_t srcCapacity1,
+		ItemPtrCode* dstItemPtrCodes, size_t dstCount)
 	{
-		for (size_t i = 1; i < count; ++i)
+		ItemPtrCode* srcItemPtrCodes2 = dstItemPtrCodes + srcCount1;
+		size_t srcCount2 = dstCount - srcCount1;
+		size_t srcIndex1 = 0;
+		size_t srcIndex2 = 0;
+		size_t dstIndex = 0;
+		while (true)
 		{
-			ItemPtr itemPtr = itemPtrs[i];
-			size_t j = i;
-			for (; j > 0; --j)
+			if (srcItemFlags1 == nullptr)
 			{
-				if (!lessComp(itemPtr, itemPtrs[j - 1]))
+				if (srcIndex1 >= srcCount1)
 					break;
-				itemPtrs[j] = itemPtrs[j - 1];
 			}
-			itemPtrs[j] = itemPtr;
+			else
+			{
+				while (srcIndex1 < srcCapacity1 && BMath::GetBit(srcItemFlags1, srcIndex1))
+					++srcIndex1;
+				if (srcIndex1 >= srcCapacity1)
+					break;
+			}
+			size_t srcHashCode1 = pvGetHashCode(ItemTraits::GetKey(srcItems1[srcIndex1]));
+			while (srcIndex2 < srcCount2 && srcItemPtrCodes2[srcIndex2].hashCode < srcHashCode1)
+			{
+				dstItemPtrCodes[dstIndex] = srcItemPtrCodes2[srcIndex2];
+				++srcIndex2;
+				++dstIndex;
+			}
+			dstItemPtrCodes[dstIndex] = { srcItems1 + srcIndex1, srcHashCode1 };
+			++srcIndex1;
+			++dstIndex;
 		}
 	}
 
@@ -868,33 +1103,44 @@ private:
 		}
 	}
 
-	void pvMergePtrCodes(Item* srcItems1, size_t srcCount1, ItemPtrCode* dstItemPtrCodes, size_t dstCount)
-	{
-		const MergeTraits& mergeTraits = GetMergeTraits();
-		ItemPtrCode* srcItemPtrCodes2 = dstItemPtrCodes + srcCount1;
-		size_t srcCount2 = dstCount - srcCount1;
-		size_t srcIndex1 = 0;
-		size_t srcIndex2 = 0;
-		size_t dstIndex = 0;
-		while (srcIndex1 < srcCount1)
-		{
-			size_t srcHashCode1 = mergeTraits.GetHashCode(ItemTraits::GetKey(srcItems1[srcIndex1]));
-			while (srcIndex2 < srcCount2 && srcItemPtrCodes2[srcIndex2].hashCode < srcHashCode1)
-			{
-				dstItemPtrCodes[dstIndex] = srcItemPtrCodes2[srcIndex2];
-				++srcIndex2;
-				++dstIndex;
-			}
-			dstItemPtrCodes[dstIndex] = { srcItems1 + srcIndex1, srcHashCode1 };
-			++srcIndex1;
-			++dstIndex;
-		}
-	}
-
 	void pvRelocate(Item& srcItem, Item* dstItem) noexcept(ItemTraits::isNothrowRelocatable)
 	{
 		MemManager& memManager = GetMemManager();
 		ItemTraits::Relocate(&memManager, &memManager, srcItem, dstItem);
+	}
+
+	template<internal::conceptObjectRemover<Item> ItemRemover>
+	Iterator pvRemove(ConstIterator iter, FastMovableFunctor<ItemRemover> itemRemover)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		// check iter version
+		iter.operator->();
+		Segment& segment = mSegments[SMath::Dist(&mSegments[0], ConstIteratorProxy::GetSegment(iter))];
+		Item* itemPtr = ConstIteratorProxy::GetItemPtr(iter);
+		bool useFlags = (segment.itemFlags != nullptr || itemPtr != segment.items + segment.count - 1);
+		size_t hashCode = useFlags ? pvGetHashCode(ItemTraits::GetKey(*itemPtr)) : 0;
+		if (useFlags && segment.itemFlags == nullptr)
+		{
+			segment.itemFlags = pvAllocateSegmentFlags(segment.capacity);
+			for (size_t i = segment.count; i < segment.capacity; ++i)
+				BMath::SetBit(segment.itemFlags, i);
+		}
+		std::move(itemRemover)(*itemPtr);
+		--segment.count;
+		if (useFlags)
+		{
+			internal::MemCopyer::CopyBuffer(&hashCode, itemPtr, hashCodeSize);
+			BMath::SetBit(segment.itemFlags, SMath::Dist(segment.items, itemPtr));
+			if (segment.count == 0)
+			{
+				pvDeallocateSegmentFlags(segment.itemFlags, segment.capacity);
+				segment.itemFlags = nullptr;
+				itemPtr = segment.items;
+			}
+		}
+		--mCount;
+		mCrew.IncVersion();
+		return IteratorProxy(&segment, itemPtr, mCrew.GetVersion());
 	}
 
 private:
@@ -916,9 +1162,16 @@ using MergeSetHash = MergeSet<TKey, MergeTraitsHash<TKey>>;
 
 namespace std
 {
-	template<typename AI, typename S>
-	struct iterator_traits<momo::internal::MergeSetIterator<AI, S>>
-		: public momo::internal::IteratorTraitsStd<momo::internal::MergeSetIterator<AI, S>,
+	template<typename I>
+	struct iterator_traits<momo::internal::MergeSetSegmentByteIterator<I>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::MergeSetSegmentByteIterator<I>,
+			random_access_iterator_tag>
+	{
+	};
+
+	template<typename I, typename S>
+	struct iterator_traits<momo::internal::MergeSetIterator<I, S>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::MergeSetIterator<I, S>,
 			forward_iterator_tag>
 	{
 	};

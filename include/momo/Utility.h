@@ -257,10 +257,15 @@ namespace internal
 			return (data[bitIndex / bitSize] & (UInt{1} << static_cast<UInt>(bitIndex % bitSize))) != 0;
 		}
 
-		static void SetBit(UInt* data, size_t bitIndex)
+		static void SetBit(UInt* data, size_t bitIndex, bool bit = true)
 		{
 			static const size_t bitSize = sizeof(UInt) * 8;
-			data[bitIndex / bitSize] |= UInt{1} << static_cast<UInt>(bitIndex % bitSize);
+			UInt& value = data[bitIndex / bitSize];
+			UInt mask = UInt{1} << static_cast<UInt>(bitIndex % bitSize);
+			if (bit)
+				value |= mask;
+			else
+				value &= ~mask;
 		}
 
 		template<UInt mod>

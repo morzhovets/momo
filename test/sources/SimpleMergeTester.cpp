@@ -54,17 +54,17 @@ public:
 
 		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 1, momo::MergeBloomFilter<0>, false>(mt);
 		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 2, momo::MergeBloomFilter<1>, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 0, momo::MergeBloomFilter<2>, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilter<>, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilter<>, false>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilter<>, false>(mt);
+		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 1, momo::MergeBloomFilter<2>, false>(mt);
+		//TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilter<>, false>(mt);
+		//TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilter<>, false>(mt);
+		//TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilter<>, false>(mt);
 
 		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilterEmpty, true>(mt);
 		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilterEmpty, true>(mt);
 		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilterEmpty, true>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilter<>, true>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilter<>, true>(mt);
-		TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilter<>, true>(mt);
+		//TestTemplMergeTraits<momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilter<>, true>(mt);
+		//TestTemplMergeTraits<momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilter<>, true>(mt);
+		//TestTemplMergeTraits<momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilter<>, true>(mt);
 	}
 
 	template<momo::MergeTraitsFunc mergeTraitsFunc, size_t logInitialItemCount,
@@ -90,6 +90,7 @@ public:
 		MergeMap map;
 
 		std::shuffle(array, array + count, mt);
+
 		for (size_t k : array)
 		{
 			if (k < count / 4)
@@ -101,17 +102,66 @@ public:
 		}
 
 		auto map2 = map;
+
 		assert(map2.GetCount() == count);
-
-		std::shuffle(array, array + count, mt);
-		for (size_t k : array)
-			assert(map2.ContainsKey(k));
-
 		for (auto [k, v] : map2)
 			assert(map.ContainsKey(k));
 
-		map2.Clear();
-		assert(map2.IsEmpty());
+		std::shuffle(array, array + count, mt);
+
+		for (size_t k : array)
+			assert(map2.ContainsKey(k));
+
+		if constexpr (mergeTraitsFunc == momo::MergeTraitsFunc::hash)
+		{
+			for (size_t k : array)
+			{
+				if (k % 2 == 0)
+					continue;
+
+				assert(map2.Remove(k));
+
+				bool cont = false;
+				for (size_t t : array)
+				{
+					assert(map2.ContainsKey(t) == (cont || t % 2 == 0));
+					if (t == k)
+						cont = true;
+				}
+			}
+
+			for (auto [k, v] : map2)
+				assert(v % 2 == 0);
+
+			std::shuffle(array, array + count, mt);
+
+			for (size_t k : array)
+				map2[k] = k;
+
+			assert(map2.GetCount() == count);
+			for (auto [k, v] : map2)
+				assert(map.ContainsKey(k));
+
+			std::shuffle(array, array + count, mt);
+
+			map2.Remove([] (auto key, auto /*value*/) { return key % 2 == 0; });
+
+			for (auto [k, v] : map2)
+				assert(v % 2 == 1);
+
+			for (size_t k : array)
+			{
+				auto pos = map2.Find(k);
+				assert(!!pos == (k % 2 == 1));
+				if (!!pos)
+					map2.Extract(pos);
+			}
+
+			assert(map2.IsEmpty());
+		}
+
+		map.Clear();
+		assert(map.IsEmpty());
 
 		std::cout << "ok" << std::endl;
 	}

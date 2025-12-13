@@ -10,7 +10,7 @@
 
 \**********************************************************/
 
-#ifndef LIBCXX_TEST_MERGE_SET
+#if !defined(LIBCXX_TEST_MERGE_SET)
 
 LIBCXX_TEST_BEGIN(bucket)
 #include "unord.set/bucket.pass.cpp"
@@ -78,7 +78,7 @@ LIBCXX_TEST_BEGIN(equal_range_non_const)
 #include "unord.set/equal_range_non_const.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_SET
+#if !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
 
 LIBCXX_TEST_BEGIN(erase_const_iter)
 #include "unord.set/erase_const_iter.pass.cpp"
@@ -104,7 +104,7 @@ LIBCXX_TEST_BEGIN(extract_key)
 #include "unord.set/extract_key.pass.cpp"
 LIBCXX_TEST_END
 
-#endif // LIBCXX_TEST_MERGE_SET
+#endif // !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
 
 LIBCXX_TEST_BEGIN(find_transparent)
 #include "unord.set/find.transparent.pass.cpp"
@@ -156,7 +156,7 @@ LIBCXX_TEST_BEGIN(insert_iter_iter)
 #include "unord.set/insert_iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_SET
+#if !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
 
 LIBCXX_TEST_BEGIN(insert_node_type)
 #include "unord.set/insert_node_type.pass.cpp"
@@ -166,7 +166,7 @@ LIBCXX_TEST_BEGIN(insert_node_type_hint)
 #include "unord.set/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
 
-#endif // LIBCXX_TEST_MERGE_SET
+#endif // !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
 
 #if TEST_STD_VER >= 23
 LIBCXX_TEST_BEGIN(insert_range)
@@ -194,7 +194,7 @@ LIBCXX_TEST_BEGIN(load_factor)
 #include "unord.set/load_factor.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_SET
+#if !defined(LIBCXX_TEST_MERGE_SET)
 LIBCXX_TEST_BEGIN(local_iterators)
 #include "unord.set/local_iterators.pass.cpp"
 LIBCXX_TEST_END
@@ -212,7 +212,7 @@ LIBCXX_TEST_BEGIN(max_size)
 #include "unord.set/max_size.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_SET
+#if !defined(LIBCXX_TEST_MERGE_SET)
 LIBCXX_TEST_BEGIN(merge)
 #include "unord.set/merge.pass.cpp"
 LIBCXX_TEST_END
@@ -255,7 +255,7 @@ LIBCXX_TEST_END
 #ifndef TEST_HAS_NO_EXCEPTIONS
 #ifdef LIBCXX_TEST_FAILURE
 
-#ifndef LIBCXX_TEST_MERGE_SET
+#if !defined(LIBCXX_TEST_MERGE_SET)
 
 LIBCXX_TEST_BEGIN(spec_assert_bucket)
 #include "unord.set/spec/assert.bucket.pass.cpp"
@@ -271,7 +271,7 @@ LIBCXX_TEST_BEGIN(spec_assert_max_load_factor)
 #include "unord.set/spec/assert.max_load_factor.pass.cpp"
 LIBCXX_TEST_END
 
-#ifndef LIBCXX_TEST_MERGE_SET
+#if !defined(LIBCXX_TEST_MERGE_SET)
 
 LIBCXX_TEST_BEGIN(spec_debug_erase_iter)
 #include "unord.set/spec/debug.erase.iter.pass.cpp"
@@ -301,7 +301,7 @@ LIBCXX_TEST_BEGIN(spec_debug_local_iterator_dereference)
 LIBCXX_TEST_END
 #endif
 
-#ifndef LIBCXX_TEST_MERGE_SET
+#if !defined(LIBCXX_TEST_MERGE_SET)
 
 LIBCXX_TEST_BEGIN(spec_debug_local_iterator_increment)
 #include "unord.set/spec/debug.local_iterator.increment.pass.cpp"
