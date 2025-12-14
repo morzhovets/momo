@@ -112,8 +112,7 @@ public:
 		if constexpr (isTriviallyRelocatable &&
 			!(std::is_nothrow_move_constructible_v<Object> && std::is_nothrow_destructible_v<Object>))	//?
 		{
-			internal::MemCopyer::CopyBuffer(std::addressof(srcObject), dstObject,
-				std::integral_constant<size_t, sizeof(Object)>());
+			internal::MemCopyer::CopyBuffer<sizeof(Object)>(std::addressof(srcObject), dstObject);
 		}
 		else
 		{

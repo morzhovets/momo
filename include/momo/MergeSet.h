@@ -714,8 +714,7 @@ private:
 	{
 		size_t hashCode = GetMergeTraits().GetHashCode(key);
 		size_t resHashCode = 0;
-		internal::MemCopyer::CopyBuffer(&hashCode, &resHashCode,
-			std::integral_constant<size_t, hashCodeSize>());
+		internal::MemCopyer::CopyBuffer<hashCodeSize>(&hashCode, &resHashCode);
 		return resHashCode;
 	}
 
@@ -746,8 +745,7 @@ private:
 						if (BMath::GetBit(segItemFlags, segItemIndex))
 						{
 							size_t hashCode = 0;
-							internal::MemCopyer::CopyBuffer(&byteItem, &hashCode,
-								std::integral_constant<size_t, hashCodeSize>());
+							internal::MemCopyer::CopyBuffer<hashCodeSize>(&byteItem, &hashCode);
 							return hashCode;
 						}
 					}
@@ -1143,10 +1141,7 @@ private:
 		{
 			BMath::SetBit(segment.itemFlags, SMath::Dist(segment.items, itemPtr));
 			if (!isLastSeg)
-			{
-				internal::MemCopyer::CopyBuffer(&hashCode, itemPtr,
-					std::integral_constant<size_t, hashCodeSize>());
-			}
+				internal::MemCopyer::CopyBuffer<hashCodeSize>(&hashCode, itemPtr);
 		}
 		if (dealloc)
 		{

@@ -143,7 +143,7 @@ namespace internal
 		requires (std::is_trivially_copyable_v<Object>)
 		static void ToBuffer(Object object, void* buffer) noexcept
 		{
-			CopyBuffer(&object, buffer, std::integral_constant<size_t, sizeof(Object)>());
+			CopyBuffer<sizeof(Object)>(&object, buffer);
 		}
 
 		template<typename ResObject>
@@ -152,8 +152,14 @@ namespace internal
 		static ResObject FromBuffer(const void* buffer) noexcept
 		{
 			ResObject object{};
-			CopyBuffer(buffer, &object, std::integral_constant<size_t, sizeof(ResObject)>());
+			CopyBuffer<sizeof(ResObject)>(buffer, &object);
 			return object;
+		}
+
+		template<size_t size>
+		static void CopyBuffer(const void* srcBuffer, void* dstBuffer) noexcept
+		{
+			CopyBuffer(srcBuffer, dstBuffer, std::integral_constant<size_t, size>());
 		}
 
 		template<std::convertible_to<size_t> Size>
