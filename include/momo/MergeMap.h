@@ -542,8 +542,13 @@ public:
 
 	Iterator MakeMutableIterator(ConstIterator iter)
 	{
-		//CheckIterator(iter);
+		CheckIterator(iter);
 		return IteratorProxy(ConstIteratorProxy::GetSetIterator(iter));
+	}
+
+	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
+	{
+		mMergeSet.CheckIterator(ConstIteratorProxy::GetSetIterator(iter), allowEmpty);
 	}
 
 private:

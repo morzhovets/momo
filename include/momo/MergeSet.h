@@ -159,6 +159,12 @@ namespace internal
 			return mSegment;
 		}
 
+		void ptCheck(const size_t* version, bool allowEmpty) const
+		{
+			VersionKeeper::Check(version, allowEmpty);
+			MOMO_CHECK(allowEmpty || mItemPtr != nullptr);
+		}
+
 	private:
 		void pvMove() noexcept
 		{
@@ -315,6 +321,7 @@ private:
 	{
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetSegment)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetItemPtr)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check)
 	};
 
 	struct IteratorProxy : public Iterator
@@ -613,6 +620,11 @@ public:
 		return ExtractedItem(*this, static_cast<ConstIterator>(pos));
 	}
 
+	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
+	{
+		ConstIteratorProxy::Check(iter, mCrew.GetVersion(), allowEmpty);
+	}
+
 private:
 	Item* pvAllocateSegmentItems(size_t capacity)
 	{
@@ -641,20 +653,16 @@ private:
 		MemManagerProxy::Deallocate(GetMemManager(), segItemFlags, SMath::Ceil(capacity, 8));
 	}
 
-	void pvDeallocateSegments(size_t segCount) noexcept
+	void pvDeallocateSegment(Segment& segment) noexcept
 	{
-		for (size_t s = 0; s < segCount; ++s)
-		{
-			Segment& segment = mSegments[s];
-			MOMO_ASSERT(segment.count == 0);
-			if (segment.items != nullptr)
-				pvDeallocateSegmentItems(segment.items, segment.capacity);
-			if (MergeTraits::func == MergeTraitsFunc::hash && segment.itemFlags != nullptr)
-				pvDeallocateSegmentFlags(segment.itemFlags, segment.capacity);
-			segment.items = nullptr;
-			segment.itemFlags = nullptr;
-			segment.capacity = 0;
-		}
+		MOMO_ASSERT(segment.count == 0);
+		if (segment.items != nullptr)
+			pvDeallocateSegmentItems(segment.items, segment.capacity);
+		if (MergeTraits::func == MergeTraitsFunc::hash && segment.itemFlags != nullptr)
+			pvDeallocateSegmentFlags(segment.itemFlags, segment.capacity);
+		segment.items = nullptr;
+		segment.itemFlags = nullptr;
+		segment.capacity = 0;
 	}
 
 	void pvDestroy() noexcept
@@ -672,8 +680,6 @@ private:
 						continue;
 					ItemTraits::Destroy(&memManager, segment.items[i]);
 				}
-				pvDeallocateSegmentFlags(segment.itemFlags, segment.capacity);
-				segment.itemFlags = nullptr;
 			}
 			else
 			{
@@ -681,8 +687,8 @@ private:
 					ItemTraits::Destroy(&memManager, segment.items[i]);
 			}
 			segment.count = 0;
+			pvDeallocateSegment(segment);
 		}
-		pvDeallocateSegments(segCount);
 		mSegments.Clear(true);
 	}
 
@@ -730,7 +736,6 @@ private:
 			Item* segItems = segment.items;
 			if constexpr (MergeTraits::func == MergeTraitsFunc::hash)
 			{
-				internal::MergeSetSegmentByteIterator<Item> segByteItems(segItems);
 				uint8_t* segItemFlags = segment.itemFlags;
 				auto hasher = [this, segItemFlags, segItems] (const std::byte& byteItem)
 				{
@@ -771,6 +776,7 @@ private:
 						return false;
 					}
 				};
+				internal::MergeSetSegmentByteIterator<Item> segByteItems(segItems);
 				auto findRes = HashSorter::Find(segByteItems,
 					segItemFlags == nullptr ? segment.count : segment.capacity,
 					std::addressof(key), hashCode, hasher, equalComp);
@@ -967,8 +973,10 @@ private:
 				srcIter, newItems, relItemCount, std::move(itemCreator), newItems0);
 		}
 		for (size_t s = 0; s <= segIndex; ++s)
+		{
 			mSegments[s].count = 0;
-		pvDeallocateSegments(segIndex + 1);
+			pvDeallocateSegment(mSegments[s]);
+		}
 		mSegments[segIndex].items = newItems;
 		mSegments[segIndex].capacity = relItemCount;
 		mSegments[segIndex].count = relItemCount;
@@ -1113,30 +1121,37 @@ private:
 	Iterator pvRemove(ConstIterator iter, FastMovableFunctor<ItemRemover> itemRemover)
 		requires (MergeTraits::func == MergeTraitsFunc::hash)
 	{
-		// check iter version
-		iter.operator->();
+		CheckIterator(iter, false);
 		Segment& segment = mSegments[SMath::Dist(&mSegments[0], ConstIteratorProxy::GetSegment(iter))];
 		Item* itemPtr = ConstIteratorProxy::GetItemPtr(iter);
-		bool useFlags = (segment.itemFlags != nullptr || itemPtr != segment.items + segment.count - 1);
-		size_t hashCode = useFlags ? pvGetHashCode(ItemTraits::GetKey(*itemPtr)) : 0;
+		bool isLastSeg = segment.isLast;
+		bool dealloc = (segment.count == 1 && !isLastSeg);
+		bool useFlags = !dealloc
+			&& !(isLastSeg && segment.itemFlags == nullptr && itemPtr == segment.items + segment.count - 1);
+		size_t hashCode = (useFlags && !isLastSeg) ? pvGetHashCode(ItemTraits::GetKey(*itemPtr)) : 0;
 		if (useFlags && segment.itemFlags == nullptr)
 		{
-			segment.itemFlags = pvAllocateSegmentFlags(segment.capacity);
-			for (size_t i = segment.count; i < segment.capacity; ++i)
+			size_t segCapacity = segment.capacity;
+			segment.itemFlags = pvAllocateSegmentFlags(segCapacity);
+			MOMO_ASSERT(segment.count == segCapacity || isLastSeg);
+			for (size_t i = segment.count; i < segCapacity; ++i)
 				BMath::SetBit(segment.itemFlags, i);
 		}
 		std::move(itemRemover)(*itemPtr);
 		--segment.count;
 		if (useFlags)
 		{
-			internal::MemCopyer::CopyBuffer(&hashCode, itemPtr, hashCodeSize);
 			BMath::SetBit(segment.itemFlags, SMath::Dist(segment.items, itemPtr));
-			if (segment.count == 0)
+			if (!isLastSeg)
 			{
-				pvDeallocateSegmentFlags(segment.itemFlags, segment.capacity);
-				segment.itemFlags = nullptr;
-				itemPtr = segment.items;
+				internal::MemCopyer::CopyBuffer(&hashCode, itemPtr,
+					std::integral_constant<size_t, hashCodeSize>());
 			}
+		}
+		if (dealloc)
+		{
+			pvDeallocateSegment(segment);
+			itemPtr = nullptr;
 		}
 		--mCount;
 		mCrew.IncVersion();
