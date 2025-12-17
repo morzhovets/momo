@@ -111,14 +111,15 @@ public:
 		Object* srcObjects, Object* dstObjects, size_t count) noexcept
 	{
 		if (count > 0)
-			std::memcpy(dstObjects, srcObjects, sizeof(Object) * count);
+			internal::MemCopyer::CopyBuffer(srcObjects, dstObjects, sizeof(Object) * count);
 	}
 
 private:
 	static void pvRelocate(Object& srcObject, Object* dstObject,
 		std::true_type /*isTriviallyRelocatable*/) noexcept
 	{
-		std::memcpy(dstObject, std::addressof(srcObject), sizeof(Object));
+		internal::MemCopyer::CopyBuffer(std::addressof(srcObject), dstObject,
+			std::integral_constant<size_t, sizeof(Object)>());
 	}
 
 	static void pvRelocate(Object& srcObject, Object* dstObject,

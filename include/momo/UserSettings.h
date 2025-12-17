@@ -178,6 +178,8 @@
 #define MOMO_CHECK_EXCEPTION(expr) \
 	do { if (!(expr)) MOMO_THROW(std::invalid_argument(#expr)); } while (false)
 
+#define MOMO_COPY_MEMORY(dst, src, size) std::memcpy(dst, src, size)
+
 #define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
 	((isWithinLifetime) ? std::launder(reinterpret_cast<ResObject*>(ptr)) : reinterpret_cast<ResObject*>(ptr))
 #if !defined(__cpp_lib_launder) || (defined(_MSC_VER) && defined(_M_CEE))
