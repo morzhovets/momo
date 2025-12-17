@@ -48,6 +48,8 @@
 
 #include "Utility.h"
 
+#include <cstdlib>	// malloc, free, realloc
+
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 # include <Windows.h>
 #endif

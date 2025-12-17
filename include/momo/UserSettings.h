@@ -21,7 +21,8 @@
 # endif
 #endif
 
-#include <cassert>
+#include <cassert>	// assert
+#include <cstring>	// memcpy
 
 #if defined(__cpp_lib_bitops)
 # include <bit>

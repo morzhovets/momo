@@ -20,18 +20,16 @@
 #include "UserSettings.h"
 
 #include <cstddef>
-#include <cstring>
-#include <cstdlib>
-#include <cstdint>
 #include <memory>
-#include <exception>
-#include <stdexcept>
 #include <algorithm>
 #include <functional>
 #include <utility>
 #include <new>
 #include <iterator>
+#include <exception>	//?
+#include <stdexcept>
 #include <type_traits>
+#include <cstdint>
 #include <array>
 #include <tuple>
 #include <initializer_list>
