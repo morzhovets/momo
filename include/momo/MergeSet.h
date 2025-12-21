@@ -709,12 +709,21 @@ private:
 		return res;
 	}
 
+	static std::byte* pvGetHashCodePtr(size_t* hashCode) noexcept
+	{
+		std::byte* ptr = internal::PtrCaster::ToBytePtr(hashCode);
+		if constexpr (std::endian::native == std::endian::little)
+			ptr += sizeof(size_t) - hashCodeSize;
+		return ptr;
+	}
+
 	template<typename KeyArg>
 	size_t pvGetHashCode(const KeyArg& key) const
 	{
 		size_t hashCode = GetMergeTraits().GetHashCode(key);
 		size_t resHashCode = 0;
-		internal::MemCopyer::CopyBuffer<hashCodeSize>(&hashCode, &resHashCode);
+		internal::MemCopyer::CopyBuffer<hashCodeSize>(
+			pvGetHashCodePtr(&hashCode), pvGetHashCodePtr(&resHashCode));
 		return resHashCode;
 	}
 
@@ -745,7 +754,8 @@ private:
 						if (BMath::GetBit(segItemFlags, segItemIndex))
 						{
 							size_t hashCode = 0;
-							internal::MemCopyer::CopyBuffer<hashCodeSize>(&byteItem, &hashCode);
+							internal::MemCopyer::CopyBuffer<hashCodeSize>(
+								&byteItem, pvGetHashCodePtr(&hashCode));
 							return hashCode;
 						}
 					}
@@ -1141,7 +1151,7 @@ private:
 		{
 			BMath::SetBit(segment.itemFlags, SMath::Dist(segment.items, itemPtr));
 			if (!isLastSeg)
-				internal::MemCopyer::CopyBuffer<hashCodeSize>(&hashCode, itemPtr);
+				internal::MemCopyer::CopyBuffer<hashCodeSize>(pvGetHashCodePtr(&hashCode), itemPtr);
 		}
 		if (dealloc)
 		{
