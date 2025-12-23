@@ -212,7 +212,7 @@ LIBCXX_TEST_BEGIN(max_size)
 #include "unord.set/max_size.pass.cpp"
 LIBCXX_TEST_END
 
-#if !defined(LIBCXX_TEST_MERGE_SET)
+#if !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
 LIBCXX_TEST_BEGIN(merge)
 #include "unord.set/merge.pass.cpp"
 LIBCXX_TEST_END

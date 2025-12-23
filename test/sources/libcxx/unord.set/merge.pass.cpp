@@ -48,6 +48,17 @@ struct throw_hasher
 };
 #endif
 
+template<typename TKey,
+	typename THasher = momo::HashCoder<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>>
+#ifdef LIBCXX_TEST_MERGE_SET
+using unordered_set2 = std::unordered_set<TKey, THasher, TEqualComparer>;
+#else
+using unordered_set2 = momo::stdish::unordered_set_adaptor<momo::HashSetCore<
+	typename std::unordered_set<TKey, THasher, TEqualComparer>::nested_container_type::ItemTraits,
+	momo::HashTraitsStd<TKey, THasher, TEqualComparer>>>;
+#endif
+
 int main(int, char**)
 {
     {
@@ -99,7 +110,7 @@ int main(int, char**)
     {
         typedef std::unordered_set<Counter<int>, std::hash<Counter<int>>, std::equal_to<Counter<int>>> first_set_type;
         typedef std::unordered_set<Counter<int>, hasher, equal> second_set_type;
-        typedef momo::stdish::unordered_set<Counter<int>, hasher, equal> third_set_type;
+        typedef unordered_set2<Counter<int>, hasher, equal> third_set_type;
 
         {
             first_set_type first{1, 2, 3};
@@ -144,7 +155,7 @@ int main(int, char**)
             first.merge(std::move(second));
         }
         {
-            momo::stdish::unordered_set<int> second;
+            unordered_set2<int> second;
             first.merge(second);
             first.merge(std::move(second));
         }

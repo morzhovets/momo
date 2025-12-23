@@ -66,7 +66,9 @@ public:
 	All `MergeMapCore` functions and constructors have strong exception safety,
 	but not the following cases:
 	1. Functions `Insert` receiving many items have basic exception safety.
-	2. In case default `KeyValueTraits`: if insert/add function receiving
+	2. Function `Remove` receiving predicate has basic exception safety.
+	3. Functions `MergeFrom` and `MergeTo` have basic exception safety.
+	4. In case default `KeyValueTraits`: if insert/add function receiving
 	argument `Key&& key` throws exception, this argument may be changed.
 */
 
@@ -538,6 +540,23 @@ public:
 		requires (MergeTraits::func == MergeTraitsFunc::hash)
 	{
 		return ExtractedPair(*this, static_cast<ConstIterator>(pos));
+	}
+
+	//template<typename KeyArg,
+	//	bool extraCheck = true>
+	//void ResetKey(ConstPosition pos, KeyArg&& keyArg)
+
+	template<typename RMap>
+	void MergeFrom(RMap&& srcMap)
+	{
+		srcMap.MergeTo(mMergeSet);
+	}
+
+	template<typename Map>
+	void MergeTo(Map& dstMap)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		dstMap.MergeFrom(mMergeSet);
 	}
 
 	Iterator MakeMutableIterator(ConstIterator iter)

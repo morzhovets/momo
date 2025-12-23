@@ -102,12 +102,14 @@ public:
 	{
 	}
 
+#ifndef LIBCXX_TEST_MERGE_HASH
 	void MergeFrom(LibcxxMergeMap& srcMap)
 	{
 		assert(MergeMap::IsEmpty());
 		MergeMap::Insert(srcMap.GetBegin(), srcMap.GetEnd());
 		srcMap.Clear();
 	}
+#endif
 };
 
 namespace std

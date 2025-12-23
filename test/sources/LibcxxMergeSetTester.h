@@ -100,12 +100,14 @@ public:
 	{
 	}
 
+#ifndef LIBCXX_TEST_MERGE_HASH
 	void MergeFrom(LibcxxMergeSet& srcSet)
 	{
 		assert(MergeSet::IsEmpty());
 		MergeSet::Insert(srcSet.GetBegin(), srcSet.GetEnd());
 		srcSet.Clear();
 	}
+#endif
 };
 
 namespace std

@@ -258,7 +258,9 @@ public:
 /*!
 	All `MergeSetCore` functions and constructors have strong exception safety,
 	but not the following cases:
-	 - Functions `Insert` receiving many items have basic exception safety.
+	1. Functions `Insert` receiving many items have basic exception safety.
+	2. Function `Remove` receiving predicate has basic exception safety.
+	3. Functions `MergeFrom` and `MergeTo` have basic exception safety.
 */
 
 template<typename TItemTraits,
@@ -618,6 +620,32 @@ public:
 		requires (MergeTraits::func == MergeTraitsFunc::hash)
 	{
 		return ExtractedItem(*this, static_cast<ConstIterator>(pos));
+	}
+
+	//template<typename KeyArg,
+	//	bool extraCheck = true>
+	//void ResetKey(ConstPosition pos, KeyArg&& keyArg)
+
+	template<typename RSet>
+	void MergeFrom(RSet&& srcSet)
+	{
+		srcSet.MergeTo(*this);
+	}
+
+	template<typename Set>
+	requires std::is_same_v<ItemTraits, typename Set::ItemTraits>
+	void MergeTo(Set& dstSet)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		pvMergeTo(dstSet);
+	}
+
+	void MergeTo(MergeSetCore& dstMergeSet)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		if (this == &dstMergeSet)
+			return;
+		pvMergeTo(dstMergeSet);
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
@@ -1161,6 +1189,26 @@ private:
 		--mCount;
 		mCrew.IncVersion();
 		return IteratorProxy(&segment, itemPtr, mCrew.GetVersion());
+	}
+
+	template<typename Set>
+	void pvMergeTo(Set& dstSet)
+		requires (MergeTraits::func == MergeTraitsFunc::hash)
+	{
+		MemManager& memManager = GetMemManager();
+		MemManager& dstMemManager = dstSet.GetMemManager();
+		Iterator iter = GetBegin();
+		while (!!iter)
+		{
+			auto itemCreator = [this, &memManager, &dstMemManager, &iter] (Item* newItem)
+			{
+				auto itemRemover = [&memManager, &dstMemManager, newItem] (Item& item)
+					{ ItemTraits::Relocate(&memManager, &dstMemManager, item, newItem); };
+				iter = pvRemove(iter, FastMovableFunctor(std::move(itemRemover)));
+			};
+			if (!dstSet.InsertCrt(ItemTraits::GetKey(*iter), std::move(itemCreator)).inserted)
+				++iter;
+		}
 	}
 
 private:

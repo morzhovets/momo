@@ -488,7 +488,7 @@ LIBCXX_TEST_BEGIN(modifiers_insert_rvalue)
 #include "unord.map/unord.map.modifiers/insert_rvalue.pass.cpp"
 LIBCXX_TEST_END
 
-#if !defined(LIBCXX_TEST_MERGE_MAP)
+#if !defined(LIBCXX_TEST_MERGE_MAP) || defined(LIBCXX_TEST_MERGE_HASH)
 LIBCXX_TEST_BEGIN(modifiers_merge)
 #include "unord.map/unord.map.modifiers/merge.pass.cpp"
 LIBCXX_TEST_END
