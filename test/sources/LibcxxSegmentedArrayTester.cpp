@@ -47,7 +47,7 @@ namespace std
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_sqrt_0"
+#define LIBCXX_TEST_PREFIX "segmented_array_sqrt_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
@@ -78,7 +78,7 @@ namespace std
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_cnst_0"
+#define LIBCXX_TEST_PREFIX "segmented_array_cnst_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
@@ -100,7 +100,7 @@ namespace std
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_CLASS momo::stdish::segmented_vector
-#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_cnst"
+#define LIBCXX_TEST_PREFIX "segmented_array_cnst"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS
@@ -122,7 +122,7 @@ namespace std
 
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_CLASS momo::stdish::segmented_vector_sqrt
-#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_sqrt"
+#define LIBCXX_TEST_PREFIX "segmented_array_sqrt"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS

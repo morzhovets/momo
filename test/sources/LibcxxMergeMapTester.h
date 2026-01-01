@@ -128,7 +128,7 @@ namespace std
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_MERGE_MAP
-#define LIBCXX_TEST_PREFIX "libcxx_merge_map" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "merge_map" LIBCXX_TEST_PREFIX_TAIL
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_MERGE_MAP

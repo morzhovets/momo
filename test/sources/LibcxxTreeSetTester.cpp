@@ -38,7 +38,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_CLASS momo::stdish::set
-#define LIBCXX_TEST_PREFIX "libcxx_tree_set"
+#define LIBCXX_TEST_PREFIX "tree_set"
 #include "libcxx/SetTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS

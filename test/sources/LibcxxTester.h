@@ -58,7 +58,7 @@ namespace momo
 		template<typename Main> \
 		int TestLibcxx(Main main) \
 		{ \
-			std::cout << LIBCXX_TEST_PREFIX << "_" << #name << ": " << std::flush; \
+			std::cout << "libcxx_" LIBCXX_TEST_PREFIX "_" #name ": " << std::flush; \
 			if constexpr (std::is_same_v<Main, void (*)()>) \
 				main(); \
 			else \

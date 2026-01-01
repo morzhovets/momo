@@ -89,7 +89,7 @@ namespace std
 #endif
 }
 
-#define LIBCXX_TEST_PREFIX "libcxx_hash_map" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "hash_map" LIBCXX_TEST_PREFIX_TAIL
 #include "libcxx/UnorderedMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 

@@ -60,7 +60,7 @@ namespace std
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_ARRAY
 #define LIBCXX_TEST_CLASS momo::stdish::vector
-#define LIBCXX_TEST_PREFIX "libcxx_array_0"
+#define LIBCXX_TEST_PREFIX "array_0"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS
@@ -96,7 +96,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_INTCAP_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_array_5"
+#define LIBCXX_TEST_PREFIX "array_5"
 #include "libcxx/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_INTCAP_ARRAY

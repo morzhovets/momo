@@ -38,7 +38,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_CLASS momo::stdish::multiset
-#define LIBCXX_TEST_PREFIX "libcxx_tree_multiset"
+#define LIBCXX_TEST_PREFIX "tree_multiset"
 #include "libcxx/MultiSetTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS
