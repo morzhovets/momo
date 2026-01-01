@@ -37,7 +37,7 @@
 		template<typename Main> \
 		int TestLibcxx(Main main) \
 		{ \
-			std::cout << LIBCXX_TEST_PREFIX << "_" << #name << ": " << std::flush; \
+			std::cout << "libcxx_" LIBCXX_TEST_PREFIX "_" #name ": " << std::flush; \
 			if constexpr (std::is_same_v<Main, void (*)()>) \
 				main(); \
 			else \
@@ -63,7 +63,7 @@
 		void main(); \
 		static int testLibcxx = [] \
 		{ \
-			std::cout << LIBCXX_TEST_PREFIX << "_" << #name << ": " << std::flush; \
+			std::cout << "libcxx11_" LIBCXX_TEST_PREFIX "_" #name ": " << std::flush; \
 			main(); \
 			std::cout << "ok" << std::endl; \
 			return 0; \

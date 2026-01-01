@@ -43,7 +43,7 @@ using unordered_map = momo::stdish::unordered_map_open<TKey, TMapped,
 	THasher, TEqualComparer, TAllocator>;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_PREFIX "libcxx_hash_map_open"
+#define LIBCXX_TEST_PREFIX "hash_map_open"
 #include LIBCXX_HEADER(UnorderedMapTests.h)
 #undef LIBCXX_TEST_PREFIX
 

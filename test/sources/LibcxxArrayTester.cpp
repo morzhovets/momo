@@ -42,7 +42,7 @@ LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_array_0"
+#define LIBCXX_TEST_PREFIX "array_0"
 #include LIBCXX_HEADER(VectorTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_ARRAY
@@ -60,7 +60,7 @@ using vector = momo::stdish::vector_intcap<5, TValue, TAllocator>;
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_INTCAP_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_array_5"
+#define LIBCXX_TEST_PREFIX "array_5"
 #include LIBCXX_HEADER(VectorTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_INTCAP_ARRAY

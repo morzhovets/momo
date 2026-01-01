@@ -48,7 +48,7 @@ using vector = momo::stdish::vector<TValue>;
 
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_PREFIX "libcxx_tree_map"
+#define LIBCXX_TEST_PREFIX "tree_map"
 #include LIBCXX_HEADER(MapTests.h)
 #undef LIBCXX_TEST_PREFIX
 

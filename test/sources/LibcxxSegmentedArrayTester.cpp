@@ -45,7 +45,7 @@ LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_sqrt"
+#define LIBCXX_TEST_PREFIX "segmented_array_sqrt"
 #include LIBCXX_HEADER(VectorTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
@@ -73,7 +73,7 @@ LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "libcxx_segmented_array_cnst"
+#define LIBCXX_TEST_PREFIX "segmented_array_cnst"
 #include LIBCXX_HEADER(VectorTests.h)
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY

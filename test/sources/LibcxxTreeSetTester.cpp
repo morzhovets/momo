@@ -37,7 +37,7 @@ using set = momo::stdish::set<TKey, TLessComparer, TAllocator,
 		momo::TreeSetSettings>>;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_PREFIX "libcxx_tree_set"
+#define LIBCXX_TEST_PREFIX "tree_set"
 #include LIBCXX_HEADER(SetTests.h)
 #undef LIBCXX_TEST_PREFIX
 
