@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10...4.0)
 project(momo_test
   LANGUAGES CXX)
 
-option(MOMO_TEST_LIBCXX20 "Use libcxx tests for C++20" OFF)
+option(MOMO_TEST_LIBCXX20 "Use libcxx20 tests" OFF)
 option(MOMO_TEST_EXTRA_SETTINGS "Test extra settings" OFF)
 option(MOMO_TEST_MSVC_CLI "Test C++/CLI" OFF)
 message(STATUS "MOMO_TEST_LIBCXX20: " ${MOMO_TEST_LIBCXX20})

@@ -37,7 +37,7 @@
 		template<typename Main> \
 		int TestLibcxx(Main main) \
 		{ \
-			std::cout << "libcxx_" LIBCXX_TEST_PREFIX "_" #name ": " << std::flush; \
+			std::cout << "libcxx20_" LIBCXX_TEST_PREFIX "_" #name ": " << std::flush; \
 			if constexpr (std::is_same_v<Main, void (*)()>) \
 				main(); \
 			else \
@@ -50,7 +50,7 @@
 		static int testLibcxx = TestLibcxx(&main); \
 	}
 
-#define LIBCXX_HEADER(header) LIBCXX_TO_STR(libcxx/header)
+#define LIBCXX_HEADER(header) LIBCXX_TO_STR(libcxx20/header)
 
 #else // TEST_LIBCXX_VERSION
 
