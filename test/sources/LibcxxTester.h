@@ -21,7 +21,7 @@
 #include "../../include/momo/Version.h"
 #include "../../include/momo/UserSettings.h"
 
-#include "libcxx/Support.h"
+#include "libcxx20/Support.h"
 
 #include "../../include/momo/ObjectManager.h"
 
@@ -58,7 +58,7 @@ namespace momo
 		template<typename Main> \
 		int TestLibcxx(Main main) \
 		{ \
-			std::cout << "libcxx_" LIBCXX_TEST_PREFIX "_" #name ": " << std::flush; \
+			std::cout << "libcxx20_" LIBCXX_TEST_PREFIX "_" #name ": " << std::flush; \
 			if constexpr (std::is_same_v<Main, void (*)()>) \
 				main(); \
 			else \

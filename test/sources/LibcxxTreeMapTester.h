@@ -63,7 +63,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_PREFIX "tree_map" LIBCXX_TEST_PREFIX_TAIL
-#include "libcxx/MapTests.h"
+#include "libcxx20/MapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace libcxx_tree_map

@@ -47,7 +47,7 @@ namespace std
 #define LIBCXX_TEST_FAILURE
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_PREFIX "merge_array_0"
-#include "libcxx/VectorTests.h"
+#include "libcxx20/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_SEGMENTED_ARRAY
 #undef LIBCXX_TEST_FAILURE
@@ -69,7 +69,7 @@ namespace std
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_CLASS momo::stdish::merge_vector
 #define LIBCXX_TEST_PREFIX "merge_array"
-#include "libcxx/VectorTests.h"
+#include "libcxx20/VectorTests.h"
 #undef LIBCXX_TEST_PREFIX
 #undef LIBCXX_TEST_CLASS
 #undef LIBCXX_TEST_SEGMENTED_ARRAY

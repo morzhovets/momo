@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/master/LICENSE
   for details.
 
-  test/sources/libcxx/VectorTests.h
+  test/sources/libcxx20/VectorTests.h
 
 \**********************************************************/
 

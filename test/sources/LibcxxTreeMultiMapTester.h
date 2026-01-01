@@ -57,7 +57,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_PREFIX "tree_multimap" LIBCXX_TEST_PREFIX_TAIL
-#include "libcxx/MultiMapTests.h"
+#include "libcxx20/MultiMapTests.h"
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace libcxx_tree_multimap

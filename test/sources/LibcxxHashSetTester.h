@@ -76,7 +76,7 @@ namespace std
 }
 
 #define LIBCXX_TEST_PREFIX "hash_set" LIBCXX_TEST_PREFIX_TAIL
-#include "libcxx/UnorderedSetTests.h"
+#include "libcxx20/UnorderedSetTests.h"
 #undef LIBCXX_TEST_PREFIX
 
 } // namespace libcxx_hash_set
