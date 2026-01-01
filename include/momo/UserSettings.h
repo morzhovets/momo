@@ -141,6 +141,8 @@
 // One more pointer which doesn't point to anything but is not equal to `nullptr`
 #define MOMO_INVALID_UINTPTR (MOMO_NULL_UINTPTR + 1)
 
+#define MOMO_DIV_BY_SMALL_SWITCH(CASE) CASE(1) CASE(2) CASE(3) CASE(4)
+
 #if defined(_MSC_VER)
 // MSVC compiler has limited support for Empty Base Optimization by default
 # define MOMO_EMPTY_BASES __declspec(empty_bases)
