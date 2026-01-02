@@ -505,7 +505,6 @@ private:
 		const TreeTraits& mTreeTraits;
 	};
 
-#if !(defined(_MSC_VER) && defined(__clang__))	// msvc-clang 19.1.1
 	template<typename KeyArg, bool includeEqual>
 	requires requires (const KeyArg& key1, const Key& key2)
 	{
@@ -531,7 +530,6 @@ private:
 	private:
 		const KeyArg& mKey;
 	};
-#endif
 
 public:
 	TreeSetCore()
