@@ -32,12 +32,14 @@ namespace momo
 namespace internal
 {
 	template<typename TMemPool, typename TPointer,
-		TPointer nullPtr = TPointer(nullptr)>
+		TPointer tNullPtr = TPointer(nullptr)>
 	class BucketMemory
 	{
 	public:
 		typedef TMemPool MemPool;
 		typedef TPointer Pointer;
+
+		static constexpr Pointer nullPtr = tNullPtr;
 
 	public:
 		explicit BucketMemory(MemPool& memPool)
