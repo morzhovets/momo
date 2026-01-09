@@ -24,37 +24,6 @@ namespace
 using namespace libcxx_insert_range_seq;
 using namespace libcxx_from_range_seq;
 
-namespace libcxx_segmented_array_sqrt_0
-{
-
-class LibcxxSegmentedArraySettings
-	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt, 0>
-{
-public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
-};
-
-namespace std
-{
-	using namespace ::std;
-
-	template<typename TValue,
-		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::vector_adaptor<momo::SegmentedArrayCore<
-		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
-		LibcxxSegmentedArraySettings>>;
-}
-
-#define LIBCXX_TEST_FAILURE
-#define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "segmented_array_sqrt_0"
-#include "libcxx20/VectorTests.h"
-#undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_SEGMENTED_ARRAY
-#undef LIBCXX_TEST_FAILURE
-
-} // namespace libcxx_segmented_array_sqrt_0
-
 namespace libcxx_segmented_array_cnst_0
 {
 
@@ -85,6 +54,37 @@ namespace std
 #undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_segmented_array_cnst_0
+
+namespace libcxx_segmented_array_sqrt_0
+{
+
+class LibcxxSegmentedArraySettings
+	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt, 0>
+{
+public:
+	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+};
+
+namespace std
+{
+	using namespace ::std;
+
+	template<typename TValue,
+		typename TAllocator = std::allocator<TValue>>
+	using vector = momo::stdish::vector_adaptor<momo::SegmentedArrayCore<
+		momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+		LibcxxSegmentedArraySettings>>;
+}
+
+#define LIBCXX_TEST_FAILURE
+#define LIBCXX_TEST_SEGMENTED_ARRAY
+#define LIBCXX_TEST_PREFIX "segmented_array_sqrt_0"
+#include "libcxx20/VectorTests.h"
+#undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_SEGMENTED_ARRAY
+#undef LIBCXX_TEST_FAILURE
+
+} // namespace libcxx_segmented_array_sqrt_0
 
 namespace libcxx_segmented_array_cnst
 {
