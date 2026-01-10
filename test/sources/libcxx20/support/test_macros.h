@@ -20,6 +20,7 @@
 #define TEST_CONSTEXPR_CXX14 //constexpr
 #define TEST_CONSTEXPR_CXX20 //constexpr
 #define TEST_CONSTEXPR_CXX23 //constexpr
+#define TEST_CONSTEXPR_CXX26 //constexpr
 
 #define TEST_NOEXCEPT noexcept
 

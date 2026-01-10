@@ -56,6 +56,7 @@ static_assert(TEST_LIBCXX_VERSION >= 20);
 #include "support/check_consecutive.h"
 #include "support/set_allocator_requirement_test_templates.h"
 #include "support/map_allocator_requirement_test_templates.h"
+#include "support/counting_predicates.h"
 #include "support/asan_testing.h"
 #include "support/increasing_allocator.h"
 #include "support/min_allocator.h"
