@@ -34,7 +34,9 @@ TEST_CONSTEXPR_CXX26 bool test() {
   }
   {
     typedef std::list<char> C;
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     const C::size_type max_dist = static_cast<C::size_type>(std::numeric_limits<C::difference_type>::max());
+#endif
     C c;
 #ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(c.max_size() <= max_dist);
