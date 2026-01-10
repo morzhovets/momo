@@ -1,0 +1,87 @@
+//===----------------------------------------------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+//
+// Modified for https://github.com/morzhovets/momo project.
+//
+//===----------------------------------------------------------------------===//
+
+// UNSUPPORTED: c++03
+
+// <list>
+
+// list(list&& c, const allocator_type& a); // constexpr since C++26
+
+TEST_CONSTEXPR_CXX26 bool test() {
+  {
+    std::list<MoveOnly, test_allocator<MoveOnly> > l(test_allocator<MoveOnly>(5));
+    std::list<MoveOnly, test_allocator<MoveOnly> > lo(test_allocator<MoveOnly>(5));
+    for (int i = 1; i <= 3; ++i) {
+      l.push_back(i);
+      lo.push_back(i);
+    }
+    std::list<MoveOnly, test_allocator<MoveOnly> > l2(std::move(l), test_allocator<MoveOnly>(6));
+    assert(l2 == lo);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+    assert(!l.empty());
+#else
+    assert(l.empty());
+#endif
+    assert(l2.get_allocator() == test_allocator<MoveOnly>(6));
+  }
+  {
+    std::list<MoveOnly, test_allocator<MoveOnly> > l(test_allocator<MoveOnly>(5));
+    std::list<MoveOnly, test_allocator<MoveOnly> > lo(test_allocator<MoveOnly>(5));
+    for (int i = 1; i <= 3; ++i) {
+      l.push_back(i);
+      lo.push_back(i);
+    }
+    std::list<MoveOnly, test_allocator<MoveOnly> > l2(std::move(l), test_allocator<MoveOnly>(5));
+    assert(l2 == lo);
+    assert(l.empty());
+    assert(l2.get_allocator() == test_allocator<MoveOnly>(5));
+  }
+  {
+    std::list<MoveOnly, other_allocator<MoveOnly> > l(other_allocator<MoveOnly>(5));
+    std::list<MoveOnly, other_allocator<MoveOnly> > lo(other_allocator<MoveOnly>(5));
+    for (int i = 1; i <= 3; ++i) {
+      l.push_back(i);
+      lo.push_back(i);
+    }
+    std::list<MoveOnly, other_allocator<MoveOnly> > l2(std::move(l), other_allocator<MoveOnly>(4));
+    assert(l2 == lo);
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+    assert(!l.empty());
+#else
+    assert(l.empty());
+#endif
+    assert(l2.get_allocator() == other_allocator<MoveOnly>(4));
+  }
+  {
+    std::list<MoveOnly, min_allocator<MoveOnly> > l(min_allocator<MoveOnly>{});
+    std::list<MoveOnly, min_allocator<MoveOnly> > lo(min_allocator<MoveOnly>{});
+    for (int i = 1; i <= 3; ++i) {
+      l.push_back(i);
+      lo.push_back(i);
+    }
+    std::list<MoveOnly, min_allocator<MoveOnly> > l2(std::move(l), min_allocator<MoveOnly>());
+    assert(l2 == lo);
+    assert(l.empty());
+    assert(l2.get_allocator() == min_allocator<MoveOnly>());
+  }
+
+  return true;
+}
+
+int main(int, char**) {
+  assert(test());
+#if TEST_STD_VER >= 26
+  static_assert(test());
+#endif
+
+  return 0;
+}
