@@ -551,8 +551,7 @@ public:
 		const TreeTraits& treeTraits = TreeTraits(), MemManager memManager = MemManager())
 		: TreeSetCore(treeTraits, std::move(memManager))
 	{
-		for (internal::Finalizer fin(&TreeSetCore::pvDestroy, *this); fin; fin.Detach())
-			Insert(std::move(begin), std::move(end));
+		Insert(std::move(begin), std::move(end));
 	}
 
 	TreeSetCore(std::initializer_list<Item> items)
@@ -582,14 +581,13 @@ public:
 	explicit TreeSetCore(const TreeSetCore& treeSet, MemManager memManager)
 		: TreeSetCore(treeSet.GetTreeTraits(), std::move(memManager))
 	{
-		mCount = treeSet.mCount;
-		if (mCount == 0)
+		if (treeSet.IsEmpty())
 			return;
 		MemManager& thisMemManager = GetMemManager();
 		mNodeParams = MemManagerProxy::template AllocateCreate<NodeParams>(
 			thisMemManager, thisMemManager);
-		for (internal::Finalizer fin(&TreeSetCore::pvDestroy, *this); fin; fin.Detach())
-			mRootNode = pvCopy(treeSet.mRootNode);
+		mRootNode = pvCopy(treeSet.mRootNode);
+		mCount = treeSet.mCount;
 		if (!mRootNode->IsLeaf())
 			pvUpdateParents(mRootNode);
 	}

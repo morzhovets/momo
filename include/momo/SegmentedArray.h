@@ -228,14 +228,10 @@ public:
 	explicit SegmentedArrayCore(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
 		: SegmentedArrayCore(std::move(memManager))
 	{
-		for (internal::Finalizer fin(&SegmentedArrayCore::pvDestroy, *this); fin; fin.Detach())
-		{
-			typedef typename ItemTraits::template Creator<
-				std::iter_reference_t<ArgIterator>> IterCreator;
-			MemManager& thisMemManager = GetMemManager();
-			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
-				pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
-		}
+		typedef typename ItemTraits::template Creator<std::iter_reference_t<ArgIterator>> IterCreator;
+		MemManager& thisMemManager = GetMemManager();
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
+			pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 	}
 
 	SegmentedArrayCore(std::initializer_list<Item> items)
@@ -263,11 +259,8 @@ public:
 		: SegmentedArrayCore(MemManager(array.GetMemManager()))
 	{
 		pvIncCapacity(0, shrink ? array.GetCount() : array.GetCapacity());
-		for (internal::Finalizer fin(&SegmentedArrayCore::pvDestroy, *this); fin; fin.Detach())
-		{
-			for (const Item& item : array)
-				this->AddBackNogrow(item);
-		}
+		for (const Item& item : array)
+			this->AddBackNogrow(item);
 	}
 
 	explicit SegmentedArrayCore(const SegmentedArrayCore& array, MemManager memManager)
@@ -293,7 +286,8 @@ public:
 
 	~SegmentedArrayCore() noexcept
 	{
-		pvDestroy();
+		pvDecCount(0);
+		pvDecCapacity(0);
 	}
 
 	SegmentedArrayCore& operator=(SegmentedArrayCore&& array) noexcept
@@ -502,12 +496,6 @@ private:
 	{
 		size_t segItemCount = Settings::GetSegmentItemCount(segIndex);
 		MemManagerProxy::Deallocate(GetMemManager(), segment, segItemCount * sizeof(Item));
-	}
-
-	void pvDestroy() noexcept
-	{
-		pvDecCount(0);
-		pvDecCapacity(0);
 	}
 
 	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>

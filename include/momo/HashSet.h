@@ -576,8 +576,7 @@ public:
 		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
 		: HashSetCore(hashTraits, std::move(memManager))
 	{
-		for (internal::Finalizer fin(&HashSetCore::pvDestroy, *this); fin; fin.Detach())
-			Insert(std::move(begin), std::move(end));
+		Insert(std::move(begin), std::move(end));
 	}
 
 	HashSetCore(std::initializer_list<Item> items)
@@ -607,28 +606,27 @@ public:
 	explicit HashSetCore(const HashSetCore& hashSet, MemManager memManager)
 		: HashSetCore(hashSet.GetHashTraits(), std::move(memManager))
 	{
-		mCount = hashSet.mCount;
-		if (mCount == 0)
+		if (hashSet.IsEmpty())
 			return;
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t logBucketCount = hashTraits.GetLogStartBucketCount();
+		size_t capacity;
 		while (true)
 		{
-			mCapacity = hashTraits.CalcCapacity(size_t{1} << logBucketCount, bucketMaxItemCount);
-			if (mCapacity >= mCount)
+			capacity = hashTraits.CalcCapacity(size_t{1} << logBucketCount, bucketMaxItemCount);
+			if (capacity >= hashSet.mCount)
 				break;
 			++logBucketCount;
 		}
 		mBuckets = Buckets::Create(GetMemManager(), logBucketCount, nullptr);
-		for (internal::Finalizer fin(&HashSetCore::pvDestroy, *this); fin; fin.Detach())
+		for (const Item& item : hashSet)
 		{
-			for (const Item& item : hashSet)
-			{
-				size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
-				pvAddInternal(*mBuckets, hashCode,
-					FastMovableFunctor(Creator<const Item&>(GetMemManager(), item)));
-			}
+			size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
+			pvAddInternal(*mBuckets, hashCode,
+				FastMovableFunctor(Creator<const Item&>(GetMemManager(), item)));
 		}
+		mCount = hashSet.mCount;
+		mCapacity = capacity;
 	}
 
 	~HashSetCore() noexcept

@@ -149,22 +149,16 @@ public:
 		: MergeArrayCore(std::move(memManager))
 	{
 		pvInitCapacity(count);
-		for (internal::Finalizer fin(&MergeArrayCore::pvDestroy, *this); fin; fin.Detach())
-		{
-			for (size_t i = 0; i < count; ++i)
-				this->AddBackNogrowVar();
-		}
+		for (size_t i = 0; i < count; ++i)
+			this->AddBackNogrowVar();
 	}
 
 	explicit MergeArrayCore(size_t count, const Item& item, MemManager memManager = MemManager())
 		: MergeArrayCore(std::move(memManager))
 	{
 		pvInitCapacity(count);
-		for (internal::Finalizer fin(&MergeArrayCore::pvDestroy, *this); fin; fin.Detach())
-		{
-			for (size_t i = 0; i < count; ++i)
-				this->AddBackNogrow(item);
-		}
+		for (size_t i = 0; i < count; ++i)
+			this->AddBackNogrow(item);
 	}
 
 	template<std::input_iterator ArgIterator, internal::conceptSentinel<ArgIterator> ArgSentinel>
@@ -175,15 +169,12 @@ public:
 		MemManager& thisMemManager = GetMemManager();
 		if constexpr (std::forward_iterator<ArgIterator>)
 			pvInitCapacity(internal::UIntMath<>::Dist(begin, end));
-		for (internal::Finalizer fin(&MergeArrayCore::pvDestroy, *this); fin; fin.Detach())
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
 		{
-			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
-			{
-				if constexpr (std::forward_iterator<ArgIterator>)
-					pvAddBackNogrow(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
-				else
-					pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
-			}
+			if constexpr (std::forward_iterator<ArgIterator>)
+				pvAddBackNogrow(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
+			else
+				pvAddBack(FastMovableFunctor(IterCreator(thisMemManager, *iter)));
 		}
 	}
 
@@ -213,11 +204,8 @@ public:
 		: MergeArrayCore(MemManager(array.GetMemManager()))
 	{
 		pvInitCapacity(shrink ? array.GetCount() : array.GetCapacity());
-		for (internal::Finalizer fin(&MergeArrayCore::pvDestroy, *this); fin; fin.Detach())
-		{
-			for (const Item& item : array)
-				this->AddBackNogrow(item);
-		}
+		for (const Item& item : array)
+			this->AddBackNogrow(item);
 	}
 
 	explicit MergeArrayCore(const MergeArrayCore& array, MemManager memManager)
@@ -244,7 +232,9 @@ public:
 
 	~MergeArrayCore() noexcept
 	{
-		pvDestroy();
+		pvRemoveBack(mCount);
+		mCapacity = 0;
+		pvDeallocateSegments();
 	}
 
 	MergeArrayCore& operator=(MergeArrayCore&& array) noexcept
@@ -552,13 +542,6 @@ private:
 				segment = nullptr;
 			}
 		}
-	}
-
-	void pvDestroy() noexcept
-	{
-		pvRemoveBack(mCount);
-		mCapacity = 0;
-		pvDeallocateSegments();
 	}
 
 	void pvInitCapacity(size_t capacity)

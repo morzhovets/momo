@@ -355,8 +355,7 @@ public:
 		const MergeTraits& mergeTraits = MergeTraits(), MemManager memManager = MemManager())
 		: MergeSetCore(mergeTraits, std::move(memManager))
 	{
-		for (internal::Finalizer fin(&MergeSetCore::pvDestroy, *this); fin; fin.Detach())
-			Insert(std::move(begin), std::move(end));
+		Insert(std::move(begin), std::move(end));
 	}
 
 	MergeSetCore(std::initializer_list<Item> items)
