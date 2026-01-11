@@ -18,9 +18,11 @@ LIBCXX_TEST_BEGIN(compare_three_way)
 #include "list/compare.three_way.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 LIBCXX_TEST_BEGIN(exception_safety)
 #include "list/exception_safety.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(get_allocator)
 #include "list/get_allocator.pass.cpp"
@@ -112,9 +114,11 @@ LIBCXX_TEST_BEGIN(cons_dtor_noexcept)
 #include "list/list.cons/dtor_noexcept.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
 LIBCXX_TEST_BEGIN(cons_from_range)
 #include "list/list.cons/from_range.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(cons_initializer_list)
 #include "list/list.cons/initializer_list.pass.cpp"
@@ -164,6 +168,8 @@ LIBCXX_TEST_BEGIN(erasure_erase_if)
 #include "list/list.erasure/erase_if.pass.cpp"
 LIBCXX_TEST_END
 
+#if TEST_STD_VER >= 23
+
 LIBCXX_TEST_BEGIN(modifiers_append_range)
 #include "list/list.modifiers/append_range.pass.cpp"
 LIBCXX_TEST_END
@@ -171,6 +177,8 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(modifiers_assign_range)
 #include "list/list.modifiers/assign_range.pass.cpp"
 LIBCXX_TEST_END
+
+#endif // TEST_STD_VER
 
 LIBCXX_TEST_BEGIN(modifiers_clear)
 #include "list/list.modifiers/clear.pass.cpp"
@@ -200,17 +208,21 @@ LIBCXX_TEST_BEGIN(modifiers_pop_front)
 #include "list/list.modifiers/pop_front.pass.cpp"
 LIBCXX_TEST_END
 
+//#if TEST_STD_VER >= 23
 //LIBCXX_TEST_BEGIN(modifiers_prepend_range)
 //#include "list/list.modifiers/prepend_range.pass.cpp"
 //LIBCXX_TEST_END
+//#endif
 
 LIBCXX_TEST_BEGIN(modifiers_push_back)
 #include "list/list.modifiers/push_back.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 LIBCXX_TEST_BEGIN(modifiers_push_back_exception_safety)
 #include "list/list.modifiers/push_back_exception_safety.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_push_back_rvalue)
 #include "list/list.modifiers/push_back_rvalue.pass.cpp"
@@ -220,9 +232,11 @@ LIBCXX_TEST_BEGIN(modifiers_push_front)
 #include "list/list.modifiers/push_front.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 LIBCXX_TEST_BEGIN(modifiers_push_front_exception_safety)
 #include "list/list.modifiers/push_front_exception_safety.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_push_front_rvalue)
 #include "list/list.modifiers/push_front_rvalue.pass.cpp"
