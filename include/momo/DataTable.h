@@ -912,25 +912,21 @@ private:
 	template<typename Rows, internal::conceptPredicate<ConstRowReference> RowFilter>
 	void pvFill(const Rows& rows, FastCopyableFunctor<RowFilter> rowFilter)
 	{
+		// If an exception occurs, the caller is responsible for cleanup
+		MOMO_ASSERT(IsEmpty());
 		const ColumnList& columnList = GetColumnList();
 		if constexpr (std::is_same_v<RowFilter, EmptyRowFilter>)
 			Reserve(rows.GetCount());
-		for (internal::Finalizer rawsFin(&DataTable::pvDestroyRaws, *this); rawsFin; rawsFin.Detach())
+		for (ConstRowReference rowRef : rows)
 		{
-			for (ConstRowReference rowRef : rows)
-			{
-				if (!rowFilter(rowRef))
-					continue;
-				mRaws.Reserve(mRaws.GetCount() + 1);
-				Raw* raw = pvImportRaw(columnList, rowRef.GetRaw());
-				for (internal::Finalizer rawFin(&DataTable::pvDestroyRaw, *this, raw);
-					rawFin; rawFin.Detach())
-				{
-					mIndexes.AddRaw(raw);
-				}
-				mRaws.AddBackNogrow(raw);
-			}
+			if (!rowFilter(rowRef))
+				continue;
+			mRaws.Reserve(mRaws.GetCount() + 1);
+			Raw* raw = pvImportRaw(columnList, rowRef.GetRaw());
+			mRaws.AddBackNogrow(raw);
 		}
+		for (Raw* raw : mRaws)
+			mIndexes.AddRaw(raw);
 		pvSetNumbers();
 	}
 

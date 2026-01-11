@@ -587,9 +587,9 @@ public:
 		mNodeParams = MemManagerProxy::template AllocateCreate<NodeParams>(
 			thisMemManager, thisMemManager);
 		mRootNode = pvCopy(treeSet.mRootNode);
-		mCount = treeSet.mCount;
 		if (!mRootNode->IsLeaf())
 			pvUpdateParents(mRootNode);
+		mCount = treeSet.mCount;
 	}
 
 	~TreeSetCore() noexcept

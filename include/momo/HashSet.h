@@ -619,6 +619,7 @@ public:
 			++logBucketCount;
 		}
 		mBuckets = Buckets::Create(GetMemManager(), logBucketCount, nullptr);
+		mCapacity = capacity;
 		for (const Item& item : hashSet)
 		{
 			size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
@@ -626,7 +627,6 @@ public:
 				FastMovableFunctor(Creator<const Item&>(GetMemManager(), item)));
 		}
 		mCount = hashSet.mCount;
-		mCapacity = capacity;
 	}
 
 	~HashSetCore() noexcept
