@@ -867,12 +867,15 @@ public:
 	//template<internal::conceptObjectPredicate<Item> ItemFilter>
 	//size_t Remove(ItemFilter itemFilter)
 
+	//template<internal::conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
+	//bool IsEqual(const ArrayCore& array, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
+
+	//template<typename ItemThreeComparer = internal::TieThreeComparer<Item>>
+	//bool Compare(const ArrayCore& array, ItemThreeComparer itemThreeComp = ItemThreeComparer()) const
+
 	//template<typename ItemArg,
 	//	internal::conceptEqualComparer<Item, ItemArg> ItemEqualComparer = std::equal_to<>>
 	//bool Contains(const ItemArg& itemArg, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
-
-	//template<internal::conceptEqualComparer<Item> ItemEqualComparer = std::equal_to<Item>>
-	//bool IsEqual(const ArrayCore& array, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 
 private:
 	explicit ArrayCore(Data&& data) noexcept
