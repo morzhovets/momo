@@ -968,19 +968,19 @@ public:
 	}
 
 	template<typename ItemEqualComparer = std::equal_to<Item>>
-	bool Contains(const Item& item,
-		const ItemEqualComparer& itemEqualComp = ItemEqualComparer()) const
-	{
-		return std::any_of(GetBegin(), GetEnd(),
-			[&item, &itemEqualComp] (const Item& thisItem) { return itemEqualComp(thisItem, item); });
-	}
-
-	template<typename ItemEqualComparer = std::equal_to<Item>>
 	bool IsEqual(const ArrayCore& array,
 		const ItemEqualComparer& itemEqualComp = ItemEqualComparer()) const
 	{
 		return GetCount() == array.GetCount() &&
 			std::equal(GetBegin(), GetEnd(), array.GetBegin(), itemEqualComp);
+	}
+
+	template<typename ItemEqualComparer = std::equal_to<Item>>
+	bool Contains(const Item& item,
+		const ItemEqualComparer& itemEqualComp = ItemEqualComparer()) const
+	{
+		return std::any_of(GetBegin(), GetEnd(),
+			[&item, &itemEqualComp] (const Item& thisItem) { return itemEqualComp(thisItem, item); });
 	}
 
 private:
