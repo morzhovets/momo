@@ -736,15 +736,7 @@ public:
 		const HashTraits& hashTraits = HashTraits(), MemManager memManager = MemManager())
 		: HashMultiMapCore(hashTraits, std::move(memManager))
 	{
-		try
-		{
-			Add(std::move(begin), std::move(end));
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
-		}
+		Add(std::move(begin), std::move(end));
 	}
 
 	template<typename Pair = std::pair<Key, Value>>
@@ -774,28 +766,22 @@ public:
 	}
 
 	explicit HashMultiMapCore(const HashMultiMapCore& hashMultiMap, MemManager memManager)
-		: mHashMap(hashMultiMap.GetHashTraits(), std::move(memManager)),
-		mValueCount(hashMultiMap.mValueCount),
-		mValueCrew(GetMemManager())
+		: HashMultiMapCore(hashMultiMap.GetHashTraits(), std::move(memManager))
 	{
-		try
-		{
-			ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
-			mHashMap.Reserve(hashMultiMap.mHashMap.GetCount());
-			for (typename HashMap::ConstIterator::Reference ref : hashMultiMap.mHashMap)
-				mHashMap.Insert(ref.key, ValueArray(valueArrayParams, ref.value));
-		}
-		catch (...)
-		{
-			pvDestroy();
-			throw;
-		}
+		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();
+		mHashMap.Reserve(hashMultiMap.mHashMap.GetCount());
+		for (typename HashMap::ConstIterator::Reference ref : hashMultiMap.mHashMap)
+			mHashMap.Insert(ref.key, ValueArray(valueArrayParams, ref.value));
+		mValueCount = hashMultiMap.mValueCount;
 	}
 
 	~HashMultiMapCore() noexcept
 	{
 		if (!mValueCrew.IsNull())
-			pvDestroy();
+		{
+			pvClearValueArrays();
+			mValueCrew.Destroy(GetMemManager());
+		}
 	}
 
 	HashMultiMapCore& operator=(HashMultiMapCore&& hashMultiMap) noexcept
@@ -1170,12 +1156,6 @@ public:
 	}
 
 private:
-	void pvDestroy() noexcept
-	{
-		pvClearValueArrays();
-		mValueCrew.Destroy(GetMemManager());
-	}
-
 	void pvClearValueArrays() noexcept
 	{
 		ValueArrayParams& valueArrayParams = mValueCrew.GetValueArrayParams();

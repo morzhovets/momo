@@ -945,34 +945,21 @@ private:
 	template<typename Rows, typename RowFilter>
 	void pvFill(const Rows& rows, const RowFilter& rowFilter)
 	{
+		// If an exception occurs, the caller is responsible for cleanup
+		MOMO_ASSERT(IsEmpty());
 		const ColumnList& columnList = GetColumnList();
 		if (std::is_same<RowFilter, EmptyRowFilter>::value)
 			Reserve(rows.GetCount());
-		try
+		for (ConstRowReference rowRef : rows)
 		{
-			for (ConstRowReference rowRef : rows)
-			{
-				if (!rowFilter(rowRef))
-					continue;
-				mRaws.Reserve(mRaws.GetCount() + 1);
-				Raw* raw = pvImportRaw(columnList, rowRef.GetRaw());
-				try
-				{
-					mIndexes.AddRaw(raw);
-				}
-				catch (...)
-				{
-					pvDestroyRaw(raw);
-					throw;
-				}
-				mRaws.AddBackNogrow(raw);
-			}
+			if (!rowFilter(rowRef))
+				continue;
+			mRaws.Reserve(mRaws.GetCount() + 1);
+			Raw* raw = pvImportRaw(columnList, rowRef.GetRaw());
+			mRaws.AddBackNogrow(raw);
 		}
-		catch (...)
-		{
-			pvDestroyRaws();
-			throw;
-		}
+		for (Raw* raw : mRaws)
+			mIndexes.AddRaw(raw);
 		pvSetNumbers();
 	}
 

@@ -221,18 +221,9 @@ public:
 	explicit SegmentedArrayCore(ArgIterator begin, ArgSentinel end, MemManager memManager = MemManager())
 		: SegmentedArrayCore(std::move(memManager))
 	{
-		try
-		{
-			typedef typename ItemTraits::template Creator<decltype(*begin)> IterCreator;
-			for (ArgIterator iter = std::move(begin); iter != end; ++iter)
-				AddBackCrt(IterCreator(GetMemManager(), *iter));
-		}
-		catch (...)
-		{
-			pvDecCount(0);
-			pvDecCapacity(0);
-			throw;
-		}
+		typedef typename ItemTraits::template Creator<decltype(*begin)> IterCreator;
+		for (ArgIterator iter = std::move(begin); iter != end; ++iter)
+			AddBackCrt(IterCreator(GetMemManager(), *iter));
 	}
 
 	SegmentedArrayCore(std::initializer_list<Item> items)
@@ -261,17 +252,8 @@ public:
 		: SegmentedArrayCore(MemManager(array.GetMemManager()))
 	{
 		pvIncCapacity(0, shrink ? array.GetCount() : array.GetCapacity());
-		try
-		{
-			for (const Item& item : array)
-				AddBackNogrow(item);
-		}
-		catch (...)
-		{
-			pvDecCount(0);
-			pvDecCapacity(0);
-			throw;
-		}
+		for (const Item& item : array)
+			AddBackNogrow(item);
 	}
 
 	explicit SegmentedArrayCore(const SegmentedArrayCore& array, MemManager memManager)
