@@ -424,7 +424,7 @@ public:
 		return SMath::Next(begin(), index);
 	}
 
-	template<typename ValueArg>
+	template<typename ValueArg = value_type>
 	friend size_type erase(vector_adaptor& cont, const ValueArg& valueArg)
 	{
 		auto valueFilter = [&valueArg] (const value_type& value)

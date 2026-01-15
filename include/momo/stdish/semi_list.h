@@ -354,7 +354,7 @@ public:
 		return mSemiList.Remove(momo::FastCopyableFunctor(valueFilter));
 	}
 
-	template<typename ValueArg>
+	template<typename ValueArg = value_type>
 	friend size_type erase(semi_list_adaptor& cont, const ValueArg& valueArg)
 	{
 		return cont.remove(valueArg);
