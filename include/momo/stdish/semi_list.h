@@ -389,10 +389,26 @@ public:
 		pvAssign(std::ranges::begin(values), std::ranges::end(values));
 	}
 
-	//size_type unique();
+	size_type unique()
+	{
+		return unique(std::equal_to<>());
+	}
 
-	//template<conceptEqualComparer<value_type> ValueEqualComparer>
-	//size_type unique(ValueEqualComparer valueEqualComparer);
+	template<momo::internal::conceptEqualComparer<value_type> ValueEqualComparer>
+	size_type unique(ValueEqualComparer valueEqualComparer)
+	{
+		size_t initCount = size();
+		const_iterator iter = cbegin();
+		const_iterator end = cend();
+		while (iter != end)
+		{
+			const_iterator nextIter = std::next(iter);
+			while (nextIter != end && valueEqualComparer(*iter, *nextIter))
+				nextIter = erase(nextIter);
+			iter = nextIter;
+		}
+		return initCount - size();
+	}
 
 	bool operator==(const semi_list_adaptor& right) const
 	{

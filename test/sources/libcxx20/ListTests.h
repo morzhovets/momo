@@ -250,13 +250,13 @@ LIBCXX_TEST_BEGIN(ops_remove_if)
 #include "list/list.ops/remove_if.pass.cpp"
 LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(ops_unique)
-//#include "list/list.ops/unique.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(ops_unique)
+#include "list/list.ops/unique.pass.cpp"
+LIBCXX_TEST_END
 
-//LIBCXX_TEST_BEGIN(ops_unique_pred)
-//#include "list/list.ops/unique_pred.pass.cpp"
-//LIBCXX_TEST_END
+LIBCXX_TEST_BEGIN(ops_unique_pred)
+#include "list/list.ops/unique_pred.pass.cpp"
+LIBCXX_TEST_END
 
 LIBCXX_TEST_BEGIN(special_swap)
 #include "list/list.special/swap.pass.cpp"
