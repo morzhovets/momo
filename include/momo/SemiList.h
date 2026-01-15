@@ -667,7 +667,7 @@ public:
 			list.GetBegin(), list.GetEnd(), FastCopyableFunctor(itemThreeComp));
 	}
 
-	//template<typename ItemArg,
+	//template<typename ItemArg = Item,
 	//	internal::conceptEqualComparer<Item, ItemArg> ItemEqualComparer = std::equal_to<>>
 	//bool Contains(const ItemArg& itemArg, ItemEqualComparer itemEqualComp = ItemEqualComparer()) const
 

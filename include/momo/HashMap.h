@@ -578,14 +578,14 @@ public:
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
-	template<typename ValueArg>
+	template<typename ValueArg = Value>
 	requires requires { typename ValueCreator<ValueArg>; }
 	InsertResult InsertOrAssign(Key&& key, ValueArg&& valueArg)
 	{
 		return pvInsertOrAssign(std::move(key), std::forward<ValueArg>(valueArg));
 	}
 
-	template<typename ValueArg>
+	template<typename ValueArg = Value>
 	requires requires { typename ValueCreator<ValueArg>; }
 	InsertResult InsertOrAssign(const Key& key, ValueArg&& valueArg)
 	{

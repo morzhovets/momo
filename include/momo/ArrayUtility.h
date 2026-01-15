@@ -450,7 +450,8 @@ namespace internal
 				FastCopyableFunctor(itemThreeComp));
 		}
 
-		template<typename Array, typename ItemArg,
+		template<typename Array,
+			typename ItemArg = typename Array::Item,
 			conceptEqualComparer<typename Array::Item, ItemArg> ItemEqualComparer = std::equal_to<>>
 		bool Contains(this const Array& array, const ItemArg& itemArg,
 			ItemEqualComparer itemEqualComp = ItemEqualComparer())

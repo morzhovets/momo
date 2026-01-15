@@ -171,8 +171,9 @@ public:
 			FastCopyableFunctor(equalComp));
 	}
 
-	template<internal::conceptRandomIterator17 Iterator, typename ItemArg,
+	template<internal::conceptRandomIterator17 Iterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
+		typename ItemArg = Item,
 		internal::conceptHasher<Item> Hasher = HashCoder<Item>,
 		internal::conceptEqualComparer<Item, Item, ItemArg> EqualComparer = std::equal_to<>>
 	static FindResult<Iterator> Find(Iterator begin, size_t count,
@@ -184,9 +185,10 @@ public:
 			FastCopyableFunctor(equalComp));
 	}
 
-	template<internal::conceptRandomIterator17 Iterator, typename ItemArg,
-		internal::conceptRandomIterator17 HashIterator,
+	template<internal::conceptRandomIterator17 Iterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
+		typename ItemArg = Item,
+		internal::conceptRandomIterator17 HashIterator,
 		internal::conceptEqualComparer<Item, Item, ItemArg> EqualComparer = std::equal_to<>>
 	requires std::is_same_v<HashCode, std::iter_value_t<HashIterator>>
 	static FindResult<Iterator> FindPrehashed(Iterator begin, size_t count, const ItemArg& itemArg,
@@ -197,8 +199,9 @@ public:
 			FastCopyableFunctor(equalComp));
 	}
 
-	template<internal::conceptRandomIterator17 Iterator, typename ItemArg,
+	template<internal::conceptRandomIterator17 Iterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
+		typename ItemArg = Item,
 		internal::conceptHasher<Item> Hasher = HashCoder<Item>,
 		internal::conceptEqualComparer<Item, Item, ItemArg> EqualComparer = std::equal_to<>>
 	static Bounds<Iterator> GetBounds(Iterator begin, size_t count,
@@ -210,9 +213,10 @@ public:
 			FastCopyableFunctor(iterHasher), FastCopyableFunctor(equalComp));
 	}
 
-	template<internal::conceptRandomIterator17 Iterator, typename ItemArg,
-		internal::conceptRandomIterator17 HashIterator,
+	template<internal::conceptRandomIterator17 Iterator,
 		conceptObject Item = std::iter_value_t<Iterator>,
+		typename ItemArg = Item,
+		internal::conceptRandomIterator17 HashIterator,
 		internal::conceptEqualComparer<Item, Item, ItemArg> EqualComparer = std::equal_to<>>
 	requires std::is_same_v<HashCode, std::iter_value_t<HashIterator>>
 	static Bounds<Iterator> GetBoundsPrehashed(Iterator begin, size_t count, const ItemArg& itemArg,
