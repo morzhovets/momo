@@ -51,11 +51,7 @@ TEST_CONSTEXPR_CXX26 bool test() {
     int a1[] = {1, 2, 1, 3, 5, 8, 11};
     int a2[] = {2, 3, 5, 8, 11};
     std::list<int> c(a1, a1 + 7);
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     c.remove(c.front());
-#else
-    c.remove(int(c.front()));
-#endif
     assert(c == std::list<int>(a2, a2 + 5));
   }
   {
@@ -65,11 +61,7 @@ TEST_CONSTEXPR_CXX26 bool test() {
     for (int* ip = a1; ip < a1 + 8; ++ip)
       c.push_back(S(*ip));
 #if TEST_STD_VER > 17
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
     assert(c.remove(c.front()) == 3);
-#else
-    assert(c.remove(S(c.front())) == 3);
-#endif
 #else
     c.remove(c.front());
 #endif

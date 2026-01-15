@@ -634,14 +634,14 @@ public:
 	size_t Remove(ItemFilter itemFilter)
 	{
 		size_t initCount = mCount;
-		Iterator iter = GetBegin();
-		Iterator end = GetEnd();
+		ConstIterator iter = GetBegin();
+		ConstIterator end = GetEnd();
 		while (iter != end)
 		{
-			Iterator nextIter = std::next(iter);
-			if (itemFilter(std::as_const(*iter)))
-				Remove(iter);
-			iter = nextIter;
+			if (itemFilter(*iter))
+				iter = Remove(iter);
+			else
+				++iter;
 		}
 		return initCount - mCount;
 	}

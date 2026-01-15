@@ -340,12 +340,9 @@ public:
 		return mSemiList.Remove(first, last);
 	}
 
-	template<typename ValueArg>
-	size_type remove(const ValueArg& valueArg)
+	size_type remove(const value_type& value)
 	{
-		auto valueFilter = [&valueArg] (const value_type& value)
-			{ return value == valueArg; };
-		return mSemiList.Remove(valueFilter);
+		return pvRemove(value);
 	}
 
 	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
@@ -357,7 +354,7 @@ public:
 	template<typename ValueArg = value_type>
 	friend size_type erase(semi_list_adaptor& cont, const ValueArg& valueArg)
 	{
-		return cont.remove(valueArg);
+		return cont.pvRemove(valueArg);
 	}
 
 	template<momo::internal::conceptPredicate<const_reference> ValueFilter>
@@ -427,6 +424,28 @@ private:
 	void pvAssign(Iterator begin, Sentinel end)
 	{
 		mSemiList = SemiList(std::move(begin), std::move(end), MemManager(get_allocator()));
+	}
+
+	template<typename ValueArg>
+	size_type pvRemove(const ValueArg& valueArg)
+	{
+		size_t initCount = size();
+		const_iterator iter = cbegin();
+		const_iterator end = cend();
+		const void* argPtr = static_cast<const void*>(std::addressof(valueArg));
+		const_iterator argIter = end;
+		while (iter != end)
+		{
+			if (std::addressof(*iter) == argPtr)
+				argIter = iter;
+			if (iter != argIter && *iter == valueArg)
+				iter = erase(iter);
+			else
+				++iter;
+		}
+		if (argIter != end)
+			erase(argIter);
+		return initCount - size();
 	}
 
 private:
