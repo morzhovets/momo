@@ -287,7 +287,7 @@ public:
 	reference emplace_front(ValueArgs&&... valueArgs)
 	{
 		mSemiList.AddFrontVar(std::forward<ValueArgs>(valueArgs)...);
-		return front();
+		return mSemiList.GetFrontItem();
 	}
 
 	//template<std::ranges::input_range Range>
@@ -308,16 +308,20 @@ public:
 	reference emplace_back(ValueArgs&&... valueArgs)
 	{
 		mSemiList.AddBackVar(std::forward<ValueArgs>(valueArgs)...);
-		return back();
+		return mSemiList.GetBackItem();
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	void append_range(Range&& values)
 	{
-		auto end = std::ranges::end(values);
-		for (auto iter = std::ranges::begin(values); iter != end; ++iter)
-			emplace_back(*iter);
+		for (momo::internal::Finalizer fin(&semi_list_adaptor::pvDecSize, *this, mSemiList.GetCount());
+			fin; fin.Detach())
+		{
+			auto end = std::ranges::end(values);
+			for (auto iter = std::ranges::begin(values); iter != end; ++iter)
+				mSemiList.AddBackVar(*iter);
+		}
 	}
 
 	void pop_front()
@@ -394,17 +398,16 @@ public:
 	template<momo::internal::conceptEqualComparer<value_type> ValueEqualComparer>
 	size_type unique(ValueEqualComparer valueEqualComparer)
 	{
-		size_t initCount = size();
-		const_iterator iter = cbegin();
-		const_iterator end = cend();
-		while (iter != end)
+		momo::FastCopyableFunctor fastValueEqualComparer(valueEqualComparer);
+		const value_type* prevValue = nullptr;
+		auto valueFilter = [fastValueEqualComparer, &prevValue] (const value_type& value)
 		{
-			const_iterator nextIter = std::next(iter);
-			while (nextIter != end && valueEqualComparer(*iter, *nextIter))
-				nextIter = erase(nextIter);
-			iter = nextIter;
-		}
-		return initCount - size();
+			if (prevValue != nullptr && fastValueEqualComparer(value, *prevValue))
+				return true;
+			prevValue = std::addressof(value);
+			return false;
+		};
+		return mSemiList.Remove(valueFilter);
 	}
 
 	bool operator==(const semi_list_adaptor& right) const
@@ -426,10 +429,16 @@ private:
 		mSemiList = SemiList(std::move(begin), std::move(end), MemManager(get_allocator()));
 	}
 
+	void pvDecSize(size_type size) noexcept
+	{
+		MOMO_ASSERT(size <= mSemiList.GetCount());
+		mSemiList.SetCount(size);
+	}
+
 	template<typename ValueArg>
 	size_type pvRemove(const ValueArg& valueArg)
 	{
-		size_t initCount = size();
+		size_t initSize = size();
 		const_iterator iter = cbegin();
 		const_iterator end = cend();
 		const void* argPtr = static_cast<const void*>(std::addressof(valueArg));
@@ -445,7 +454,7 @@ private:
 		}
 		if (argIter != end)
 			erase(argIter);
-		return initCount - size();
+		return initSize - size();
 	}
 
 private:
