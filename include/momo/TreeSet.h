@@ -666,38 +666,38 @@ public:
 		mCrew.IncVersion();
 	}
 
-	Iterator GetLowerBound(const Key& key) const
+	ConstIterator GetLowerBound(const Key& key) const
 	{
 		return pvGetLowerBound(key);
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
-	Iterator GetLowerBound(const KeyArg& key) const
+	ConstIterator GetLowerBound(const KeyArg& key) const
 	{
 		return pvGetLowerBound(key);
 	}
 
-	Iterator GetUpperBound(const Key& key) const
+	ConstIterator GetUpperBound(const Key& key) const
 	{
 		return pvGetUpperBound(key);
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
-	Iterator GetUpperBound(const KeyArg& key) const
+	ConstIterator GetUpperBound(const KeyArg& key) const
 	{
 		return pvGetUpperBound(key);
 	}
 
-	Iterator Find(const Key& key) const
+	ConstIterator Find(const Key& key) const
 	{
 		return pvFind(key);
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
-	Iterator Find(const KeyArg& key) const
+	ConstIterator Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
@@ -1140,25 +1140,25 @@ private:
 	}
 
 	template<typename KeyArg>
-	Iterator pvGetLowerBound(const KeyArg& key) const
+	ConstIterator pvGetLowerBound(const KeyArg& key) const
 	{
 		return pvFindFirst(FastCopyableFunctor(
 			ItemFindPredicate<KeyArg, true>(key, GetTreeTraits())));
 	}
 
 	template<typename KeyArg>
-	Iterator pvGetUpperBound(const KeyArg& key) const
+	ConstIterator pvGetUpperBound(const KeyArg& key) const
 	{
 		return pvFindFirst(FastCopyableFunctor(
 			ItemFindPredicate<KeyArg, false>(key, GetTreeTraits())));
 	}
 
 	template<internal::conceptObjectPredicate<Item> ItemPredicate>
-	Iterator pvFindFirst(FastCopyableFunctor<ItemPredicate> itemPred) const
+	ConstIterator pvFindFirst(FastCopyableFunctor<ItemPredicate> itemPred) const
 	{
 		if (mRootNode == nullptr)
 			return Iterator();
-		Iterator iter = GetEnd();
+		ConstIterator iter = GetEnd();
 		Node* node = mRootNode;
 		while (true)
 		{
@@ -1202,9 +1202,9 @@ private:
 	}
 
 	template<typename KeyArg>
-	Iterator pvFind(const KeyArg& key) const
+	ConstIterator pvFind(const KeyArg& key) const
 	{
-		Iterator iter = pvGetLowerBound(key);	//?
+		ConstIterator iter = pvGetLowerBound(key);	//?
 		return !pvIsGreater(iter, key) ? iter : GetEnd();
 	}
 

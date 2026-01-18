@@ -745,14 +745,14 @@ public:
 	//	HashSetCore(*this).Swap(*this);
 	//}
 
-	MOMO_FORCEINLINE Position Find(const Key& key) const
+	MOMO_FORCEINLINE ConstPosition Find(const Key& key) const
 	{
 		return pvFind(key);
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
-	MOMO_FORCEINLINE Position Find(const KeyArg& key) const
+	MOMO_FORCEINLINE ConstPosition Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
@@ -998,9 +998,9 @@ public:
 		}
 	}
 
-	Position MakePosition(size_t hashCode) const noexcept
+	ConstPosition MakePosition(size_t hashCode) const noexcept
 	{
-		return PositionProxy(hashCode, BucketIterator(), mCrew.GetVersion());
+		return pvMakePosition(hashCode, BucketIterator());
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
@@ -1048,6 +1048,11 @@ private:
 		return logBucketCount + shift;
 	}
 
+	Position pvMakePosition(size_t indexCode, BucketIterator bucketIter) const noexcept
+	{
+		return PositionProxy(indexCode, bucketIter, mCrew.GetVersion());
+	}
+
 	bool pvExtraCheck(ConstPosition pos) const noexcept
 	{
 		bool res = true;
@@ -1061,7 +1066,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE Position pvFind(const KeyArg& key) const
+	MOMO_FORCEINLINE ConstPosition pvFind(const KeyArg& key) const
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t indexCode = hashTraits.GetHashCode(key);
@@ -1080,7 +1085,7 @@ private:
 					break;
 			}
 		}
-		return PositionProxy(indexCode, bucketIter, mCrew.GetVersion());
+		return pvMakePosition(indexCode, bucketIter);
 	}
 
 	template<internal::conceptObjectPredicate<Item> ItemPredicate>
@@ -1149,7 +1154,7 @@ private:
 		auto [bucketIndex, bucketIter] = pvAddInternal(buckets, hashCode, std::move(itemCreator));
 		++mCount;
 		mCrew.IncVersion();
-		return PositionProxy(bucketIndex, bucketIter, mCrew.GetVersion());
+		return pvMakePosition(bucketIndex, bucketIter);
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>

@@ -454,14 +454,14 @@ public:
 		mCrew.IncVersion();
 	}
 
-	Position Find(const Key& key) const
+	ConstPosition Find(const Key& key) const
 	{
 		return pvFind(key);
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
-	Position Find(const KeyArg& key) const
+	ConstPosition Find(const KeyArg& key) const
 	{
 		return pvFind(key);
 	}
@@ -755,7 +755,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	Position pvFind(const KeyArg& key) const
+	ConstPosition pvFind(const KeyArg& key) const
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
 		size_t hashCode = 0;
@@ -850,7 +850,7 @@ private:
 				}
 			}
 		}
-		return Position();
+		return ConstPosition();
 	}
 
 	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
