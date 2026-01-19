@@ -1140,25 +1140,25 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvGetLowerBound(const KeyArg& key) const
+	Iterator pvGetLowerBound(const KeyArg& key) const
 	{
 		return pvFindFirst(FastCopyableFunctor(
 			ItemFindPredicate<KeyArg, true>(key, GetTreeTraits())));
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvGetUpperBound(const KeyArg& key) const
+	Iterator pvGetUpperBound(const KeyArg& key) const
 	{
 		return pvFindFirst(FastCopyableFunctor(
 			ItemFindPredicate<KeyArg, false>(key, GetTreeTraits())));
 	}
 
 	template<internal::conceptObjectPredicate<Item> ItemPredicate>
-	ConstIterator pvFindFirst(FastCopyableFunctor<ItemPredicate> itemPred) const
+	Iterator pvFindFirst(FastCopyableFunctor<ItemPredicate> itemPred) const
 	{
 		if (mRootNode == nullptr)
 			return Iterator();
-		ConstIterator iter = GetEnd();
+		Iterator iter = GetEnd();
 		Node* node = mRootNode;
 		while (true)
 		{
@@ -1202,9 +1202,9 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstIterator pvFind(const KeyArg& key) const
+	Iterator pvFind(const KeyArg& key) const
 	{
-		ConstIterator iter = pvGetLowerBound(key);	//?
+		Iterator iter = pvGetLowerBound(key);	//?
 		return !pvIsGreater(iter, key) ? iter : GetEnd();
 	}
 

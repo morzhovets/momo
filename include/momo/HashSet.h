@@ -1066,7 +1066,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	MOMO_FORCEINLINE ConstPosition pvFind(const KeyArg& key) const
+	MOMO_FORCEINLINE Position pvFind(const KeyArg& key) const
 	{
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t indexCode = hashTraits.GetHashCode(key);

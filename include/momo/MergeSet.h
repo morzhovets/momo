@@ -755,7 +755,7 @@ private:
 	}
 
 	template<typename KeyArg>
-	ConstPosition pvFind(const KeyArg& key) const
+	Position pvFind(const KeyArg& key) const
 	{
 		const MergeTraits& mergeTraits = GetMergeTraits();
 		size_t hashCode = 0;
@@ -850,7 +850,7 @@ private:
 				}
 			}
 		}
-		return ConstPosition();
+		return Position();
 	}
 
 	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
