@@ -132,13 +132,13 @@ namespace internal
 		{
 		};
 
-		template<>
-		class IsValidKeyArg<HashListSetCodeKeyArg<Key>> : public std::true_type
+		template<std::same_as<Key> KeyArg>	// gcc
+		class IsValidKeyArg<HashListSetCodeKeyArg<KeyArg>> : public std::true_type
 		{
 		};
 
-		template<>
-		class IsValidKeyArg<HashListSetCodeKeyPtr<Key>> : public std::true_type
+		template<std::same_as<Key> KeyArg>
+		class IsValidKeyArg<HashListSetCodeKeyPtr<KeyArg>> : public std::true_type
 		{
 		};
 
