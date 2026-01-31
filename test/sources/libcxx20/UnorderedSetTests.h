@@ -12,9 +12,11 @@
 
 #if !defined(LIBCXX_TEST_MERGE_SET)
 
+#if !defined(LIBCXX_TEST_HASH_LIST_SET)
 LIBCXX_TEST_BEGIN(bucket)
 #include "unord.set/bucket.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(bucket_count)
 #include "unord.set/bucket_count.pass.cpp"
@@ -96,6 +98,8 @@ LIBCXX_TEST_BEGIN(erase_range)
 #include "unord.set/erase_range.pass.cpp"
 LIBCXX_TEST_END
 
+#if !defined(LIBCXX_TEST_HASH_LIST_SET)
+
 LIBCXX_TEST_BEGIN(extract_iterator)
 #include "unord.set/extract_iterator.pass.cpp"
 LIBCXX_TEST_END
@@ -103,6 +107,8 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(extract_key)
 #include "unord.set/extract_key.pass.cpp"
 LIBCXX_TEST_END
+
+#endif // LIBCXX_TEST_HASH_LIST_SET
 
 #endif // !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
 
@@ -156,7 +162,7 @@ LIBCXX_TEST_BEGIN(insert_iter_iter)
 #include "unord.set/insert_iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
-#if !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
+#if (!defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)) && !defined(LIBCXX_TEST_HASH_LIST_SET)
 
 LIBCXX_TEST_BEGIN(insert_node_type)
 #include "unord.set/insert_node_type.pass.cpp"
@@ -166,7 +172,7 @@ LIBCXX_TEST_BEGIN(insert_node_type_hint)
 #include "unord.set/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
 
-#endif // !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
+#endif // (!defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)) && !defined(LIBCXX_TEST_HASH_LIST_SET)
 
 #if TEST_STD_VER >= 23
 LIBCXX_TEST_BEGIN(insert_range)
@@ -194,7 +200,7 @@ LIBCXX_TEST_BEGIN(load_factor)
 #include "unord.set/load_factor.pass.cpp"
 LIBCXX_TEST_END
 
-#if !defined(LIBCXX_TEST_MERGE_SET)
+#if !defined(LIBCXX_TEST_MERGE_SET) && !defined(LIBCXX_TEST_HASH_LIST_SET)
 LIBCXX_TEST_BEGIN(local_iterators)
 #include "unord.set/local_iterators.pass.cpp"
 LIBCXX_TEST_END
