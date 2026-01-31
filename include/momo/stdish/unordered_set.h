@@ -12,12 +12,14 @@
     class unordered_set_adaptor
     class unordered_set
     class unordered_set_open
+    class ordered_set
 
 \**********************************************************/
 
 #pragma once
 
 #include "../HashSet.h"
+#include "../HashListSet.h"
 #include "node_handle.h"
 
 namespace momo::stdish
@@ -516,16 +518,23 @@ public:
 
 	iterator erase(const_iterator first, const_iterator last)
 	{
-		if (first == begin() && last == end())
+		if constexpr (requires { mHashSet.Remove(first, last); })
 		{
-			clear();
-			return end();
+			return mHashSet.Remove(first, last);
 		}
-		if (first == last)
-			return first;
-		if (first != end() && std::next(first) == last)
-			return erase(first);
-		MOMO_THROW(std::invalid_argument("invalid unordered_set erase arguments"));
+		else
+		{
+			if (first == begin() && last == end())
+			{
+				clear();
+				return end();
+			}
+			if (first == last)
+				return first;
+			if (first != end() && std::next(first) == last)
+				return erase(first);
+			MOMO_THROW(std::invalid_argument("invalid unordered_set erase arguments"));
+		}
 	}
 
 	size_type erase(const key_type& key)
@@ -738,6 +747,26 @@ public:
 	using UnorderedSetAdaptor::operator=;
 };
 
+template<typename TKey,
+	typename THasher = HashCoder<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
+	typename TAllocator = std::allocator<TKey>>
+class MOMO_EMPTY_BASES ordered_set
+	: public unordered_set_adaptor<HashListSet<TKey,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<ordered_set>
+{
+private:
+	typedef unordered_set_adaptor<HashListSet<TKey,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
+			MemManagerStd<TAllocator>>> UnorderedSetAdaptor;
+
+public:
+	using UnorderedSetAdaptor::UnorderedSetAdaptor;
+
+	using UnorderedSetAdaptor::operator=;
+};
+
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set) \
 template<typename Iterator, \
 	typename Key = std::iter_value_t<Iterator>> \
@@ -809,10 +838,12 @@ unordered_set(std::from_range_t, Range&&, size_t, Hasher, EqualComparer, Allocat
 
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set_open)
+MOMO_DECLARE_DEDUCTION_GUIDES(ordered_set)
 
 #if defined(__cpp_lib_containers_ranges)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set_open)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(ordered_set)
 #endif
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
