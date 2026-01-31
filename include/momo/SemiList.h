@@ -267,8 +267,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			MOMO_CHECK(mBlock != Chunker::nullBlock);
-			MOMO_CHECK(Chunker::GetState(Chunker::GetChunk(mBlock)) != State{0});
+			MOMO_CHECK(!ptIsEmpty());
 			return Chunker::GetItemPtr(mBlock);
 		}
 
@@ -286,6 +285,12 @@ namespace internal
 		Block ptGetBlock() const noexcept
 		{
 			return mBlock;
+		}
+
+		bool ptIsEmpty() const noexcept
+		{
+			return mBlock == Chunker::nullBlock
+				|| Chunker::GetState(Chunker::GetChunk(mBlock)) == State{0};
 		}
 
 	private:
