@@ -528,7 +528,10 @@ public:
 	{
 	}
 
-	ArrayCore(ArrayCore&&) noexcept = default;
+	ArrayCore(ArrayCore&& array) noexcept
+		: mData(std::move(array.mData))
+	{
+	}
 
 	ArrayCore(const ArrayCore& array)
 		: ArrayCore(array, true)
