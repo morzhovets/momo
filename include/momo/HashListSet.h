@@ -93,6 +93,106 @@ namespace internal
 		size_t mHashCode;
 	};
 
+	template<typename THashSetBucketIterator>
+	class HashListSetBucketIterator : public ForwardIteratorBase
+	{
+	protected:
+		typedef THashSetBucketIterator HashSetBucketIterator;
+
+	private:
+		typedef std::decay_t<decltype(*HashSetBucketIterator())> HashListSetIterator;
+
+	public:
+		typedef typename HashListSetIterator::Reference Reference;
+		typedef typename HashListSetIterator::Pointer Pointer;
+
+		typedef HashListSetBucketIterator ConstIterator;
+
+	public:
+		explicit HashListSetBucketIterator() noexcept
+			: mHashSetBucketIterator()
+		{
+		}
+
+		//operator ConstIterator() const noexcept
+
+		HashListSetBucketIterator& operator++()
+		{
+			++mHashSetBucketIterator;
+			return *this;
+		}
+
+		using ForwardIteratorBase::operator++;
+
+		Pointer operator->() const
+		{
+			return mHashSetBucketIterator->operator->();
+		}
+
+		friend bool operator==(HashListSetBucketIterator iter1, HashListSetBucketIterator iter2) noexcept
+		{
+			return iter1.mHashSetBucketIterator == iter2.mHashSetBucketIterator;
+		}
+
+	protected:
+		explicit HashListSetBucketIterator(HashSetBucketIterator hashSetIter) noexcept
+			: mHashSetBucketIterator(hashSetIter)
+		{
+		}
+
+	private:
+		HashSetBucketIterator mHashSetBucketIterator;
+	};
+
+	template<typename THashSetBucketBounds>
+	class HashListSetBucketBounds
+	{
+	protected:
+		typedef THashSetBucketBounds HashSetBucketBounds;
+
+	public:
+		typedef HashListSetBucketIterator<typename HashSetBucketBounds::Iterator> Iterator;
+
+		typedef HashListSetBucketBounds ConstBounds;
+
+	private:
+		struct IteratorProxy : public Iterator
+		{
+			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
+		};
+
+	public:
+		explicit HashListSetBucketBounds() noexcept
+		{
+		}
+
+		//operator ConstBounds() const noexcept
+
+		Iterator GetBegin() const noexcept
+		{
+			return IteratorProxy(mHashSetBucketBounds.GetBegin());
+		}
+
+		Iterator GetEnd() const noexcept
+		{
+			return IteratorProxy(mHashSetBucketBounds.GetEnd());
+		}
+
+		size_t GetCount() const noexcept
+		{
+			return mHashSetBucketBounds.GetCount();
+		}
+
+	protected:
+		explicit HashListSetBucketBounds(HashSetBucketBounds hashSetBounds) noexcept
+			: mHashSetBucketBounds(hashSetBounds)
+		{
+		}
+
+	private:
+		HashSetBucketBounds mHashSetBucketBounds;
+	};
+
 	template<typename KeyArg>
 	struct HashListSetCodeKeyArg
 	{
@@ -311,7 +411,7 @@ private:
 
 	typedef internal::HashListSetNestedHashTraits<Key, HashTraits> NestedHashTraits;
 	typedef HashSetCore<internal::HashListSetNestedHashSetItemTraits<ItemTraits, typename List::ConstIterator>,
-		NestedHashTraits, internal::NestedHashSetSettings<Settings::allowExceptionSuppression>> HashSet;	//?
+		NestedHashTraits, internal::NestedHashSetSettings<Settings::allowExceptionSuppression>> HashSet;
 
 public:
 	typedef typename List::ConstIterator Iterator;
@@ -324,7 +424,7 @@ public:
 
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;	//?
 
-	typedef internal::ArrayBounds<const Item*> ConstBucketBounds;	//?
+	typedef internal::HashListSetBucketBounds<typename HashSet::ConstBucketBounds> ConstBucketBounds;
 
 	static const size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
 
@@ -339,6 +439,11 @@ private:
 	{
 		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashCode)
+	};
+
+	struct ConstBucketBoundsProxy : public ConstBucketBounds
+	{
+		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBucketBounds)
 	};
 
 public:
@@ -653,7 +758,10 @@ public:
 		return mHashSet.GetBucketCount();
 	}
 
-	//ConstBucketBounds GetBucketBounds(size_t bucketIndex) const
+	ConstBucketBounds GetBucketBounds(size_t bucketIndex) const
+	{
+		return ConstBucketBoundsProxy(mHashSet.GetBucketBounds(bucketIndex));
+	}
 
 	size_t GetBucketIndex(const Key& key) const
 	{
@@ -721,3 +829,13 @@ template<conceptObject TKey,
 using HashListSet = HashListSetCore<HashSetItemTraits<TKey, TMemManager>, THashTraits>;
 
 } // namespace momo
+
+namespace std
+{
+	template<typename BI>
+	struct iterator_traits<momo::internal::HashListSetBucketIterator<BI>>
+		: public momo::internal::IteratorTraitsStd<momo::internal::HashListSetBucketIterator<BI>,
+			forward_iterator_tag>
+	{
+	};
+} // namespace std

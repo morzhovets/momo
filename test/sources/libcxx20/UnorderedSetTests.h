@@ -12,11 +12,9 @@
 
 #if !defined(LIBCXX_TEST_MERGE_SET)
 
-#if !defined(LIBCXX_TEST_HASH_LIST_SET)
 LIBCXX_TEST_BEGIN(bucket)
 #include "unord.set/bucket.pass.cpp"
 LIBCXX_TEST_END
-#endif
 
 LIBCXX_TEST_BEGIN(bucket_count)
 #include "unord.set/bucket_count.pass.cpp"
@@ -200,7 +198,7 @@ LIBCXX_TEST_BEGIN(load_factor)
 #include "unord.set/load_factor.pass.cpp"
 LIBCXX_TEST_END
 
-#if !defined(LIBCXX_TEST_MERGE_SET) && !defined(LIBCXX_TEST_HASH_LIST_SET)
+#if !defined(LIBCXX_TEST_MERGE_SET)
 LIBCXX_TEST_BEGIN(local_iterators)
 #include "unord.set/local_iterators.pass.cpp"
 LIBCXX_TEST_END
