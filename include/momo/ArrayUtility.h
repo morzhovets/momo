@@ -465,6 +465,12 @@ namespace internal
 	protected:
 		explicit ArrayBase() noexcept = default;
 
+		ArrayBase(const ArrayBase&) = delete;
+
+		~ArrayBase() noexcept = default;
+
+		ArrayBase& operator=(const ArrayBase&) = delete;
+
 	private:
 		template<typename Array, internal::conceptObjectCreator<typename Array::Item> ItemCreator>
 		static void pvInsert(Array& array, size_t index, FastMovableFunctor<ItemCreator> itemCreator)
