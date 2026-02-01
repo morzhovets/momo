@@ -25,7 +25,8 @@ int main(int, char**) {
   map_type::iterator i1 = m.insert(map_type::value_type(1, "abc"));
   map_type::iterator i2 = m.insert(map_type::value_type(1, "bcd"));
 
-#ifndef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#else
   i1 = m.find(1);
 #endif
 

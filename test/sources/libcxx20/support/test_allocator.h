@@ -94,7 +94,8 @@ public:
     typedef test_allocator<U> other;
   };
 
-#ifndef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#else
   typedef std::true_type propagate_on_container_swap;
 
   friend void swap(test_allocator& alloc1, test_allocator& alloc2) noexcept

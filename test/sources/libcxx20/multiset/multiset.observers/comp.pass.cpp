@@ -22,7 +22,8 @@ int main(int, char**) {
     set_type::iterator i1 = s.insert(1);
     set_type::iterator i2 = s.insert(2);
 
-#ifndef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#else
     i1 = s.find(1);
 #endif
 
