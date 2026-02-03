@@ -155,12 +155,6 @@ namespace internal
 
 		typedef HashListSetBucketBounds ConstBounds;
 
-	private:
-		struct IteratorProxy : public Iterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-		};
-
 	public:
 		explicit HashListSetBucketBounds() noexcept
 		{
@@ -170,12 +164,12 @@ namespace internal
 
 		Iterator GetBegin() const noexcept
 		{
-			return IteratorProxy(mHashSetBucketBounds.GetBegin());
+			return ProxyConstructor<Iterator>(mHashSetBucketBounds.GetBegin());
 		}
 
 		Iterator GetEnd() const noexcept
 		{
-			return IteratorProxy(mHashSetBucketBounds.GetEnd());
+			return ProxyConstructor<Iterator>(mHashSetBucketBounds.GetEnd());
 		}
 
 		size_t GetCount() const noexcept
@@ -435,15 +429,9 @@ private:
 	template<typename KeyArg>
 	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
 
-	struct ConstPositionProxy : public ConstPosition
+	struct ConstPositionProxy : private ConstPosition
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashCode)
-	};
-
-	struct ConstBucketBoundsProxy : public ConstBucketBounds
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBucketBounds)
 	};
 
 public:
@@ -679,7 +667,7 @@ public:
 	Iterator Remove(ConstIterator iter)
 	{
 		size_t hashCode = GetHashTraits().GetHashCode(ItemTraits::GetKey(*iter));
-		ConstPosition pos = ConstPositionProxy(iter, hashCode);
+		ConstPosition pos = internal::ProxyConstructor<ConstPosition>(iter, hashCode);
 		return Remove(pos);
 	}
 
@@ -760,7 +748,7 @@ public:
 
 	ConstBucketBounds GetBucketBounds(size_t bucketIndex) const
 	{
-		return ConstBucketBoundsProxy(mHashSet.GetBucketBounds(bucketIndex));
+		return internal::ProxyConstructor<ConstBucketBounds>(mHashSet.GetBucketBounds(bucketIndex));
 	}
 
 	size_t GetBucketIndex(const Key& key) const
@@ -801,7 +789,8 @@ private:
 	{
 		size_t hashCode = GetHashTraits().GetHashCode(key);
 		auto hashSetPosition = mHashSet.Find(internal::HashListSetCodeKeyArg(hashCode, key));
-		return ConstPositionProxy(!!hashSetPosition ? *hashSetPosition : GetEnd(), hashCode);
+		return internal::ProxyConstructor<ConstPosition>(
+			!!hashSetPosition ? *hashSetPosition : GetEnd(), hashCode);
 	}
 
 	template<typename Set>

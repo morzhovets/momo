@@ -307,11 +307,6 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check)
 	};
 
-	struct IteratorProxy : public Iterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-	};
-
 	class NodeRelocator
 	{
 	private:
@@ -1100,7 +1095,7 @@ private:
 
 	Iterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const noexcept
 	{
-		return IteratorProxy(*node, itemIndex, mCrew.GetVersion(), move);
+		return internal::ProxyConstructor<Iterator>(*node, itemIndex, mCrew.GetVersion(), move);
 	}
 
 	template<typename KeyArg>

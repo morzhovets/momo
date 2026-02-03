@@ -190,12 +190,6 @@ namespace internal
 
 		typedef SemiListIterator<const QItem, Settings> ConstIterator;
 
-	private:
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
 	public:
 		explicit SemiListIterator() noexcept
 			: mBlock(Chunker::nullBlock)
@@ -204,7 +198,7 @@ namespace internal
 
 		operator ConstIterator() const noexcept
 		{
-			return ConstIteratorProxy(mBlock);
+			return ProxyConstructor<ConstIterator>(mBlock);
 		}
 
 		SemiListIterator& operator++()
@@ -355,15 +349,13 @@ private:
 
 	static const size_t chunkItemCount = size_t{1} << Chunker::logItemCount;
 
-	struct ConstIteratorProxy : public ConstIterator
+	struct ConstIteratorProxy : private ConstIterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBlock)
 	};
 
-	struct IteratorProxy : public Iterator
+	struct IteratorProxy : private Iterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBlock)
 	};
 
@@ -462,22 +454,24 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return ConstIteratorProxy(Chunker::GetBlock(mHeadChunk, pvGetBeginBlockIndex()));
+		return internal::ProxyConstructor<ConstIterator>(
+			Chunker::GetBlock(mHeadChunk, pvGetBeginBlockIndex()));
 	}
 
 	Iterator GetBegin() noexcept
 	{
-		return IteratorProxy(Chunker::GetBlock(mHeadChunk, pvGetBeginBlockIndex()));
+		return internal::ProxyConstructor<Iterator>(
+			Chunker::GetBlock(mHeadChunk, pvGetBeginBlockIndex()));
 	}
 
 	ConstIterator GetEnd() const noexcept
 	{
-		return ConstIteratorProxy(Chunker::GetBlock(mTailChunk, 0));
+		return internal::ProxyConstructor<ConstIterator>(Chunker::GetBlock(mTailChunk, 0));
 	}
 
 	Iterator GetEnd() noexcept
 	{
-		return IteratorProxy(Chunker::GetBlock(mTailChunk, 0));
+		return internal::ProxyConstructor<Iterator>(Chunker::GetBlock(mTailChunk, 0));
 	}
 
 	const MemManager& GetMemManager() const noexcept
@@ -607,7 +601,7 @@ public:
 	{
 		MOMO_CHECK(iter != ConstIterator() && iter != GetEnd());
 		Block block = ConstIteratorProxy::GetBlock(iter);
-		Iterator resIter = IteratorProxy(block);
+		Iterator resIter = internal::ProxyConstructor<Iterator>(block);
 		++resIter;
 		Chunk chunk = Chunker::GetChunk(block);
 		ItemTraits::Destroy(mMemManager, *Chunker::GetItemPtr(block));
@@ -629,7 +623,7 @@ public:
 
 	Iterator Remove(ConstIterator begin, ConstIterator end)
 	{
-		Iterator iter = IteratorProxy(ConstIteratorProxy::GetBlock(begin));
+		Iterator iter = internal::ProxyConstructor<Iterator>(ConstIteratorProxy::GetBlock(begin));
 		while (iter != end)
 			iter = Remove(iter);
 		return iter;

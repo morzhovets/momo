@@ -153,17 +153,6 @@ namespace internal
 
 		typedef MapBidirectionalIterator<SetIterator, true> ConstIterator;
 
-	private:
-		struct ReferenceProxy : public Reference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
-		};
-
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
 	public:
 		explicit MapBidirectionalIterator() noexcept
 			: mSetIterator()
@@ -172,7 +161,7 @@ namespace internal
 
 		operator ConstIterator() const noexcept
 		{
-			return ConstIteratorProxy(mSetIterator);
+			return ProxyConstructor<ConstIterator>(mSetIterator);
 		}
 
 		MapBidirectionalIterator& operator++()
@@ -192,7 +181,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			return Pointer(ReferenceProxy(*mSetIterator));
+			return Pointer(ProxyConstructor<Reference>(*mSetIterator));
 		}
 
 		friend bool operator==(MapBidirectionalIterator iter1,
@@ -231,17 +220,6 @@ namespace internal
 
 		typedef MapForwardIterator<SetIterator, true> ConstIterator;
 
-	private:
-		struct ReferenceProxy : public Reference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
-		};
-
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
 	public:
 		explicit MapForwardIterator() noexcept
 			: mSetIterator()
@@ -250,7 +228,7 @@ namespace internal
 
 		operator ConstIterator() const noexcept
 		{
-			return ConstIteratorProxy(mSetIterator);
+			return ProxyConstructor<ConstIterator>(mSetIterator);
 		}
 
 		MapForwardIterator& operator++()
@@ -263,7 +241,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			return Pointer(ReferenceProxy(*mSetIterator));
+			return Pointer(ProxyConstructor<Reference>(*mSetIterator));
 		}
 
 		friend bool operator==(MapForwardIterator iter1, MapForwardIterator iter2) noexcept
@@ -304,19 +282,8 @@ namespace internal
 		typedef MapPosition<SetPosition, true> ConstPosition;
 
 	private:
-		struct ReferenceProxy : public Reference
+		struct IteratorProxy : private Iterator
 		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
-		};
-
-		struct ConstPositionProxy : public ConstPosition
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
-		};
-
-		struct IteratorProxy : public Iterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 			MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetSetIterator)
 		};
 
@@ -335,20 +302,20 @@ namespace internal
 
 		operator ConstPosition() const noexcept
 		{
-			return ConstPositionProxy(mSetPosition);
+			return ProxyConstructor<ConstPosition>(mSetPosition);
 		}
 
 		template<typename ResIterator>
 		requires std::is_convertible_v<Iterator, ResIterator>
 		operator ResIterator() const noexcept
 		{
-			Iterator iter = IteratorProxy(mSetPosition);
+			Iterator iter = ProxyConstructor<Iterator>(mSetPosition);
 			return static_cast<ResIterator>(iter);
 		}
 
 		Pointer operator->() const
 		{
-			return Pointer(ReferenceProxy(*mSetPosition));
+			return Pointer(ProxyConstructor<Reference>(*mSetPosition));
 		}
 
 		friend bool operator==(MapPosition pos1, MapPosition pos2) noexcept
@@ -1464,26 +1431,18 @@ namespace internal
 			KeyPointer mKeyPtr;
 		};
 
-	private:
-		template<typename KeyReference>
-		struct ValueReferenceProxy : public ValueReference<KeyReference>
-		{
-			typedef typename MapValueReferencer::template ValueReference<KeyReference> ValueReference;	// gcc
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ValueReference)
-		};
-
 	public:
 		template<typename KeyReference>
 		static ValueReference<KeyReference> GetReference(Map& map, Position pos) noexcept
 		{
-			return ValueReferenceProxy<KeyReference>(map, pos);
+			return ProxyConstructor<ValueReference<KeyReference>>(map, pos);
 		}
 
 		template<typename KeyReference>
 		static ValueReference<KeyReference> GetReference(Map& map, Position pos,
 			KeyReference keyRef) noexcept
 		{
-			return ValueReferenceProxy<KeyReference>(map, pos,
+			return ProxyConstructor<ValueReference<KeyReference>>(map, pos,
 				std::forward<KeyReference>(keyRef));
 		}
 	};

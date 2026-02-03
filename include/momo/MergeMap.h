@@ -127,26 +127,14 @@ private:
 	template<typename KeyArg>
 	using IsValidKeyArg = MergeTraits::template IsValidKeyArg<KeyArg>;
 
-	struct ConstIteratorProxy : public ConstIterator
+	struct ConstIteratorProxy : private ConstIterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetSetIterator)
 	};
 
-	struct IteratorProxy : public Iterator
+	struct ConstPositionProxy : private ConstPosition
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-	};
-
-	struct ConstPositionProxy : public ConstPosition
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetSetPosition)
-	};
-
-	struct PositionProxy : public Position
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Position)
 	};
 
 	struct ExtractedPairProxy : private ExtractedPair
@@ -222,12 +210,12 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return ConstIteratorProxy(mMergeSet.GetBegin());
+		return internal::ProxyConstructor<ConstIterator>(mMergeSet.GetBegin());
 	}
 
 	Iterator GetBegin() noexcept
 	{
-		return IteratorProxy(mMergeSet.GetBegin());
+		return internal::ProxyConstructor<Iterator>(mMergeSet.GetBegin());
 	}
 
 	ConstIterator GetEnd() const noexcept
@@ -272,26 +260,26 @@ public:
 
 	ConstPosition Find(const Key& key) const
 	{
-		return ConstPositionProxy(mMergeSet.Find(key));
+		return internal::ProxyConstructor<ConstPosition>(mMergeSet.Find(key));
 	}
 
 	Position Find(const Key& key)
 	{
-		return PositionProxy(mMergeSet.Find(key));
+		return internal::ProxyConstructor<Position>(mMergeSet.Find(key));
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
 	ConstPosition Find(const KeyArg& key) const
 	{
-		return ConstPositionProxy(mMergeSet.Find(key));
+		return internal::ProxyConstructor<ConstPosition>(mMergeSet.Find(key));
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
 	Position Find(const KeyArg& key)
 	{
-		return PositionProxy(mMergeSet.Find(key));
+		return internal::ProxyConstructor<Position>(mMergeSet.Find(key));
 	}
 
 	bool ContainsKey(const Key& key) const
@@ -372,12 +360,12 @@ public:
 				typename MergeSet::InsertResult res =
 					mMergeSet.template InsertCrt<decltype(itemCreator), false>(
 					std::as_const(extPair.GetKey()), std::move(itemCreator));
-				return { PositionProxy(res.position), res.inserted };
+				return { internal::ProxyConstructor<Position>(res.position), res.inserted };
 			}
 		}
 		typename MergeSet::InsertResult res =
 			mMergeSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
-		return { PositionProxy(res.position), res.inserted };
+		return { internal::ProxyConstructor<Position>(res.position), res.inserted };
 	}
 
 	template<internal::conceptMapArgIterator<Key> ArgIterator,
@@ -490,7 +478,8 @@ public:
 	Iterator Remove(ConstIterator iter)
 		requires (MergeTraits::func == MergeTraitsFunc::hash)
 	{
-		return IteratorProxy(mMergeSet.Remove(ConstIteratorProxy::GetSetIterator(iter)));
+		return internal::ProxyConstructor<Iterator>(
+			mMergeSet.Remove(ConstIteratorProxy::GetSetIterator(iter)));
 	}
 
 	Iterator Remove(Iterator iter)
@@ -514,8 +503,8 @@ public:
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 		requires (MergeTraits::func == MergeTraitsFunc::hash)
 	{
-		Iterator resIter = IteratorProxy(mMergeSet.Remove(ConstIteratorProxy::GetSetIterator(iter),
-			ExtractedPairProxy::GetSetExtractedItem(extPair)));
+		Iterator resIter = internal::ProxyConstructor<Iterator>(mMergeSet.Remove(
+			ConstIteratorProxy::GetSetIterator(iter), ExtractedPairProxy::GetSetExtractedItem(extPair)));
 		if constexpr (KeyValueTraits::useValuePtr)
 			ExtractedPairProxy::GetValueMemPool(extPair) = &mMergeSet.GetMemManager().GetMemPool();
 		return resIter;
@@ -562,7 +551,7 @@ public:
 	Iterator MakeMutableIterator(ConstIterator iter)
 	{
 		CheckIterator(iter);
-		return IteratorProxy(ConstIteratorProxy::GetSetIterator(iter));
+		return internal::ProxyConstructor<Iterator>(ConstIteratorProxy::GetSetIterator(iter));
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
@@ -582,7 +571,7 @@ private:
 		};
 		typename MergeSet::InsertResult res = mMergeSet.template InsertCrt<decltype(itemCreator), false>(
 			std::as_const(key), std::move(itemCreator));
-		return { PositionProxy(res.position), res.inserted };
+		return { internal::ProxyConstructor<Position>(res.position), res.inserted };
 	}
 
 	template<bool extraCheck, internal::conceptMapPairCreator<Key, Value> PairCreator>
@@ -590,7 +579,7 @@ private:
 	{
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
 			{ std::construct_at(newItem, mMergeSet.GetMemManager(), std::move(pairCreator)); };
-		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
+		return internal::ProxyConstructor<Position>(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetSetPosition(pos), std::move(itemCreator)));
 	}
 
@@ -603,7 +592,7 @@ private:
 			KeyValuePair::template Create<KeyValueTraits>(newItem, mMergeSet.GetMemManager(),
 				std::forward<RKey>(key), std::move(valueCreator));
 		};
-		return PositionProxy(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
+		return internal::ProxyConstructor<Position>(mMergeSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetSetPosition(pos), std::move(itemCreator)));
 	}
 

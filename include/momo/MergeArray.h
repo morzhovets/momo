@@ -122,16 +122,6 @@ private:
 	static const size_t logInitialItemCount = Settings::logInitialItemCount;
 	static const size_t initialItemCount = size_t{1} << logInitialItemCount;
 
-	struct ConstIteratorProxy : public ConstIterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-	};
-
-	struct IteratorProxy : public Iterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-	};
-
 public:
 	MergeArrayCore() noexcept(noexcept(MemManager()))
 		: MergeArrayCore(MemManager())
@@ -256,7 +246,7 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return ConstIteratorProxy(this, size_t{0});
+		return internal::ProxyConstructor<ConstIterator>(this, size_t{0});
 	}
 
 	Iterator GetBegin() noexcept
@@ -266,7 +256,7 @@ public:
 
 	ConstIterator GetEnd() const noexcept
 	{
-		return ConstIteratorProxy(this, mCount);
+		return internal::ProxyConstructor<ConstIterator>(this, mCount);
 	}
 
 	Iterator GetEnd() noexcept
@@ -565,7 +555,7 @@ private:
 
 	Iterator pvMakeIterator(size_t index) noexcept
 	{
-		return IteratorProxy(this, index);
+		return internal::ProxyConstructor<Iterator>(this, index);
 	}
 
 	template<internal::conceptObjectMultiCreator<Item> ItemMultiCreator>

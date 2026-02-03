@@ -497,11 +497,6 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, IsMovable)
 	};
 
-	struct IteratorProxy : public Iterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-	};
-
 	struct ConstPositionProxy : private ConstPosition
 	{
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIndex)
@@ -509,11 +504,6 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Reset)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Check)
-	};
-
-	struct PositionProxy : public Position
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Position)
 	};
 
 	template<typename KeyArg>
@@ -656,7 +646,7 @@ public:
 	{
 		if (mCount == 0)
 			return Iterator();
-		return IteratorProxy(*mBuckets, size_t{0},
+		return internal::ProxyConstructor<Iterator>(*mBuckets, size_t{0},
 			mBuckets->GetBegin()->GetBounds(mBuckets->GetBucketParams()).GetEnd(),
 			mCrew.GetVersion());
 	}
@@ -1050,7 +1040,7 @@ private:
 
 	Position pvMakePosition(size_t indexCode, BucketIterator bucketIter) const noexcept
 	{
-		return PositionProxy(indexCode, bucketIter, mCrew.GetVersion());
+		return internal::ProxyConstructor<Position>(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
 	bool pvExtraCheck(ConstPosition pos) const noexcept
@@ -1241,7 +1231,7 @@ private:
 		mCrew.IncVersion();
 		if (!ConstIteratorProxy::IsMovable(iter))
 			return Iterator();
-		return IteratorProxy(*buckets, bucketIndex, bucketIter, mCrew.GetVersion());
+		return internal::ProxyConstructor<Iterator>(*buckets, bucketIndex, bucketIter, mCrew.GetVersion());
 	}
 
 	Buckets* pvFindBuckets(size_t bucketIndex, BucketIterator bucketIter) const

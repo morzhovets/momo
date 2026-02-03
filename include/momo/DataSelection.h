@@ -78,17 +78,6 @@ namespace internal
 	protected:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
-	private:
-		struct RowReferenceProxy : public RowReference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
-		};
-
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
 	public:
 		explicit DataRowIterator() noexcept
 			: mColumnList(nullptr),
@@ -98,7 +87,7 @@ namespace internal
 
 		operator ConstIterator() const noexcept
 		{
-			return ConstIteratorProxy(mColumnList, mRawIterator, *this);
+			return ProxyConstructor<ConstIterator>(mColumnList, mRawIterator, pvGetVersionKeeper());
 		}
 
 		DataRowIterator& operator+=(ptrdiff_t diff)
@@ -116,7 +105,8 @@ namespace internal
 		Pointer operator->() const
 		{
 			MOMO_CHECK(mColumnList != nullptr);
-			return Pointer(RowReferenceProxy(mColumnList, *mRawIterator, *this));
+			return Pointer(ProxyConstructor<RowReference>(
+				mColumnList, *mRawIterator, pvGetVersionKeeper()));
 		}
 
 		friend bool operator==(DataRowIterator iter1, DataRowIterator iter2) noexcept
@@ -151,6 +141,12 @@ namespace internal
 		}
 
 	private:
+		VersionKeeper pvGetVersionKeeper() const noexcept
+		{
+			return *this;
+		}
+
+	private:
 		const ColumnList* mColumnList;
 		RawIterator mRawIterator;
 	};
@@ -175,17 +171,6 @@ namespace internal
 	protected:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
-	private:
-		struct IteratorProxy : public Iterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-		};
-
-		struct ConstBoundsProxy : public ConstBounds
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBounds)
-		};
-
 	public:
 		explicit DataRowBounds() noexcept
 			: mColumnList(nullptr)
@@ -194,17 +179,17 @@ namespace internal
 
 		operator ConstBounds() const noexcept
 		{
-			return ConstBoundsProxy(mColumnList, mRawBounds, *this);
+			return ProxyConstructor<ConstBounds>(mColumnList, mRawBounds, pvGetVersionKeeper());
 		}
 
 		Iterator GetBegin() const noexcept
 		{
-			return IteratorProxy(mColumnList, mRawBounds.GetBegin(), *this);
+			return ProxyConstructor<Iterator>(mColumnList, mRawBounds.GetBegin(), pvGetVersionKeeper());
 		}
 
 		Iterator GetEnd() const noexcept
 		{
-			return IteratorProxy(mColumnList, mRawBounds.GetEnd(), *this);
+			return ProxyConstructor<Iterator>(mColumnList, mRawBounds.GetEnd(), pvGetVersionKeeper());
 		}
 
 		size_t GetCount() const noexcept
@@ -225,6 +210,12 @@ namespace internal
 			mColumnList(columnList),
 			mRawBounds(rawBounds)
 		{
+		}
+
+	private:
+		VersionKeeper pvGetVersionKeeper() const noexcept
+		{
+			return *this;
 		}
 
 	private:
@@ -399,25 +390,9 @@ namespace internal
 		using ConstItemBounds = DataConstItemBounds<ConstRowBounds, Item>;
 
 	private:
-		struct RowReferenceProxy : public RowReference
+		struct RowReferenceProxy : private RowReference
 		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
 			MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw)
-		};
-
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
-		struct ConstSelectionProxy : public ConstSelection
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstSelection)
-		};
-
-		struct ConstRowBoundsProxy : public ConstRowBounds
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstRowBounds)
 		};
 
 	public:
@@ -464,12 +439,14 @@ namespace internal
 
 		operator ConstSelection() && noexcept
 		{
-			return ConstSelectionProxy(mColumnList, std::move(mRaws), *this);
+			return ProxyConstructor<ConstSelection>(
+				mColumnList, std::move(mRaws), pvGetVersionKeeper());
 		}
 
 		operator ConstSelection() const&
 		{
-			return ConstSelectionProxy(mColumnList, Raws(mRaws), *this);
+			return ProxyConstructor<ConstSelection>(
+				mColumnList, Raws(mRaws), pvGetVersionKeeper());
 		}
 
 		void Swap(DataSelection& selection) noexcept
@@ -481,12 +458,14 @@ namespace internal
 
 		ConstIterator GetBegin() const noexcept
 		{
-			return ConstIteratorProxy(mColumnList, RawIterator(mRaws, 0), *this);
+			return ProxyConstructor<ConstIterator>(
+				mColumnList, RawIterator(mRaws, 0), pvGetVersionKeeper());
 		}
 
 		ConstIterator GetEnd() const noexcept
 		{
-			return ConstIteratorProxy(mColumnList, RawIterator(mRaws, GetCount()), *this);
+			return ProxyConstructor<ConstIterator>(
+				mColumnList, RawIterator(mRaws, GetCount()), pvGetVersionKeeper());
 		}
 
 		const ColumnList& GetColumnList() const noexcept
@@ -542,7 +521,8 @@ namespace internal
 		ConstItemBounds<Item> GetColumnItems(const Column<Item>& column) const
 		{
 			RawBounds rawBounds(RawIterator(mRaws, 0), GetCount());
-			return ConstItemBounds<Item>(ConstRowBoundsProxy(mColumnList, rawBounds, *this),
+			return ConstItemBounds<Item>(
+				ProxyConstructor<ConstRowBounds>(mColumnList, rawBounds, pvGetVersionKeeper()),
 				mColumnList->GetOffset(column));
 		}
 
@@ -703,6 +683,11 @@ namespace internal
 		}
 
 	private:
+		VersionKeeper pvGetVersionKeeper() const noexcept
+		{
+			return *this;
+		}
+
 		ConstRowReference pvMakeConstRowReference(Raw* raw) const noexcept
 		{
 			return pvMakeRowReference(raw);
@@ -710,7 +695,7 @@ namespace internal
 
 		RowReference pvMakeRowReference(Raw* raw) const noexcept
 		{
-			return RowReferenceProxy(mColumnList, raw, *this);
+			return ProxyConstructor<RowReference>(mColumnList, raw, pvGetVersionKeeper());
 		}
 
 		void pvDecCount(size_t count) noexcept

@@ -326,16 +326,6 @@ private:
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check)
 	};
 
-	struct IteratorProxy : public Iterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-	};
-
-	struct PositionProxy : public Position
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Position)
-	};
-
 public:
 	MergeSetCore()
 		: MergeSetCore(MergeTraits())
@@ -414,7 +404,7 @@ public:
 		if (IsEmpty())
 			return Iterator();
 		const Segment& backSegment = mSegments.GetBackItem();
-		return IteratorProxy(&backSegment, backSegment.items, mCrew.GetVersion());
+		return internal::ProxyConstructor<Iterator>(&backSegment, backSegment.items, mCrew.GetVersion());
 	}
 
 	Iterator GetEnd() const noexcept
@@ -721,7 +711,7 @@ private:
 
 	Position pvMakePosition(const Segment& segment, Item* itemPtr) const noexcept
 	{
-		return PositionProxy(&segment, itemPtr, mCrew.GetVersion());
+		return internal::ProxyConstructor<Position>(&segment, itemPtr, mCrew.GetVersion());
 	}
 
 	bool pvExtraCheck(ConstPosition pos) const noexcept
@@ -1187,7 +1177,7 @@ private:
 		}
 		--mCount;
 		mCrew.IncVersion();
-		return IteratorProxy(&segment, itemPtr, mCrew.GetVersion());
+		return internal::ProxyConstructor<Iterator>(&segment, itemPtr, mCrew.GetVersion());
 	}
 
 	template<typename Set>

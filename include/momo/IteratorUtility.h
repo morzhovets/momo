@@ -333,17 +333,6 @@ namespace internal
 		typedef DerivedBidirectionalIterator<
 			typename ConstIteratorSelector<BaseIterator>::ConstIterator, TReference> ConstIterator;
 
-	private:
-		struct ReferenceProxy : public Reference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
-		};
-
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
 	public:
 		explicit DerivedBidirectionalIterator() noexcept
 			: mBaseIterator()
@@ -352,7 +341,7 @@ namespace internal
 
 		operator ConstIterator() const noexcept
 		{
-			return ConstIteratorProxy(mBaseIterator);
+			return ProxyConstructor<ConstIterator>(mBaseIterator);
 		}
 
 		DerivedBidirectionalIterator& operator++()
@@ -372,7 +361,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			return Pointer(ReferenceProxy(*mBaseIterator));
+			return Pointer(ProxyConstructor<Reference>(*mBaseIterator));
 		}
 
 		friend bool operator==(DerivedBidirectionalIterator iter1,
@@ -411,17 +400,6 @@ namespace internal
 		typedef DerivedForwardIterator<typename ConstIteratorSelector<BaseIterator>::ConstIterator,
 			TReference> ConstIterator;
 
-	private:
-		struct ReferenceProxy : public Reference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
-		};
-
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
 	public:
 		explicit DerivedForwardIterator() noexcept
 			: mBaseIterator()
@@ -430,7 +408,7 @@ namespace internal
 
 		operator ConstIterator() const noexcept
 		{
-			return ConstIteratorProxy(mBaseIterator);
+			return ProxyConstructor<ConstIterator>(mBaseIterator);
 		}
 
 		DerivedForwardIterator& operator++()
@@ -443,7 +421,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			return Pointer(ReferenceProxy(*mBaseIterator));
+			return Pointer(ProxyConstructor<Reference>(*mBaseIterator));
 		}
 
 		friend bool operator==(DerivedForwardIterator iter1, DerivedForwardIterator iter2) noexcept

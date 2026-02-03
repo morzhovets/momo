@@ -41,17 +41,6 @@ namespace internal
 
 		typedef HashMapBucketBounds<HashSetBucketBounds, true> ConstBounds;
 
-	private:
-		struct IteratorProxy : public Iterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-		};
-
-		struct ConstBoundsProxy : public ConstBounds
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBounds)
-		};
-
 	public:
 		explicit HashMapBucketBounds() noexcept
 		{
@@ -59,17 +48,17 @@ namespace internal
 
 		operator ConstBounds() const noexcept
 		{
-			return ConstBoundsProxy(mHashSetBucketBounds);
+			return ProxyConstructor<ConstBounds>(mHashSetBucketBounds);
 		}
 
 		Iterator GetBegin() const noexcept
 		{
-			return IteratorProxy(mHashSetBucketBounds.GetBegin());
+			return ProxyConstructor<Iterator>(mHashSetBucketBounds.GetBegin());
 		}
 
 		Iterator GetEnd() const noexcept
 		{
-			return IteratorProxy(mHashSetBucketBounds.GetEnd());
+			return ProxyConstructor<Iterator>(mHashSetBucketBounds.GetEnd());
 		}
 
 		size_t GetCount() const noexcept
@@ -199,42 +188,20 @@ private:
 	template<typename KeyArg>
 	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
 
-	struct ConstIteratorProxy : public ConstIterator
+	struct ConstIteratorProxy : private ConstIterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetSetIterator)
 	};
 
-	struct IteratorProxy : public Iterator
+	struct ConstPositionProxy : private ConstPosition
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-	};
-
-	struct ConstPositionProxy : public ConstPosition
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetSetPosition)
-	};
-
-	struct PositionProxy : public Position
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Position)
 	};
 
 	struct ExtractedPairProxy : private ExtractedPair
 	{
 		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetSetExtractedItem)
 		MOMO_DECLARE_PROXY_FUNCTION(ExtractedPair, GetValueMemPool)
-	};
-
-	struct ConstBucketBoundsProxy : public ConstBucketBounds
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstBucketBounds)
-	};
-
-	struct BucketBoundsProxy : public BucketBounds
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(BucketBounds)
 	};
 
 public:
@@ -304,12 +271,12 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return ConstIteratorProxy(mHashSet.GetBegin());
+		return internal::ProxyConstructor<ConstIterator>(mHashSet.GetBegin());
 	}
 
 	Iterator GetBegin() noexcept
 	{
-		return IteratorProxy(mHashSet.GetBegin());
+		return internal::ProxyConstructor<Iterator>(mHashSet.GetBegin());
 	}
 
 	ConstIterator GetEnd() const noexcept
@@ -369,26 +336,26 @@ public:
 
 	MOMO_FORCEINLINE ConstPosition Find(const Key& key) const
 	{
-		return ConstPositionProxy(mHashSet.Find(key));
+		return internal::ProxyConstructor<ConstPosition>(mHashSet.Find(key));
 	}
 
 	MOMO_FORCEINLINE Position Find(const Key& key)
 	{
-		return PositionProxy(mHashSet.Find(key));
+		return internal::ProxyConstructor<Position>(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
 	MOMO_FORCEINLINE ConstPosition Find(const KeyArg& key) const
 	{
-		return ConstPositionProxy(mHashSet.Find(key));
+		return internal::ProxyConstructor<ConstPosition>(mHashSet.Find(key));
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
 	MOMO_FORCEINLINE Position Find(const KeyArg& key)
 	{
-		return PositionProxy(mHashSet.Find(key));
+		return internal::ProxyConstructor<Position>(mHashSet.Find(key));
 	}
 
 	MOMO_FORCEINLINE bool ContainsKey(const Key& key) const
@@ -469,12 +436,12 @@ public:
 				typename HashSet::InsertResult res =
 					mHashSet.template InsertCrt<decltype(itemCreator), false>(
 					std::as_const(extPair.GetKey()), std::move(itemCreator));
-				return { PositionProxy(res.position), res.inserted };
+				return { internal::ProxyConstructor<Position>(res.position), res.inserted };
 			}
 		}
 		typename HashSet::InsertResult res =
 			mHashSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
-		return { PositionProxy(res.position), res.inserted };
+		return { internal::ProxyConstructor<Position>(res.position), res.inserted };
 	}
 
 	template<internal::conceptMapArgIterator<Key> ArgIterator,
@@ -574,7 +541,7 @@ public:
 				return pvAdd<true>(pos, FastMovableFunctor(std::move(pairCreator)));
 			}
 		}
-		return PositionProxy(mHashSet.Add(ConstPositionProxy::GetSetPosition(pos),
+		return internal::ProxyConstructor<Position>(mHashSet.Add(ConstPositionProxy::GetSetPosition(pos),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
@@ -608,7 +575,8 @@ public:
 
 	Iterator Remove(ConstIterator iter)
 	{
-		return IteratorProxy(mHashSet.Remove(ConstIteratorProxy::GetSetIterator(iter)));
+		return internal::ProxyConstructor<Iterator>(
+			mHashSet.Remove(ConstIteratorProxy::GetSetIterator(iter)));
 	}
 
 	Iterator Remove(Iterator iter)
@@ -628,8 +596,8 @@ public:
 
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		Iterator resIter = IteratorProxy(mHashSet.Remove(ConstIteratorProxy::GetSetIterator(iter),
-			ExtractedPairProxy::GetSetExtractedItem(extPair)));
+		Iterator resIter = internal::ProxyConstructor<Iterator>(mHashSet.Remove(
+			ConstIteratorProxy::GetSetIterator(iter), ExtractedPairProxy::GetSetExtractedItem(extPair)));
 		if constexpr (KeyValueTraits::useValuePtr)
 			ExtractedPairProxy::GetValueMemPool(extPair) = &mHashSet.GetMemManager().GetMemPool();
 		return resIter;
@@ -680,12 +648,12 @@ public:
 
 	ConstBucketBounds GetBucketBounds(size_t bucketIndex) const
 	{
-		return ConstBucketBoundsProxy(mHashSet.GetBucketBounds(bucketIndex));
+		return internal::ProxyConstructor<ConstBucketBounds>(mHashSet.GetBucketBounds(bucketIndex));
 	}
 
 	BucketBounds GetBucketBounds(size_t bucketIndex)
 	{
-		return BucketBoundsProxy(mHashSet.GetBucketBounds(bucketIndex));
+		return internal::ProxyConstructor<BucketBounds>(mHashSet.GetBucketBounds(bucketIndex));
 	}
 
 	size_t GetBucketIndex(const Key& key) const
@@ -695,13 +663,13 @@ public:
 
 	ConstPosition MakePosition(size_t hashCode) const noexcept
 	{
-		return ConstPositionProxy(mHashSet.MakePosition(hashCode));
+		return internal::ProxyConstructor<ConstPosition>(mHashSet.MakePosition(hashCode));
 	}
 
 	Iterator MakeMutableIterator(ConstIterator iter)
 	{
 		CheckIterator(iter);
-		return IteratorProxy(ConstIteratorProxy::GetSetIterator(iter));
+		return internal::ProxyConstructor<Iterator>(ConstIteratorProxy::GetSetIterator(iter));
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
@@ -721,7 +689,7 @@ private:
 		};
 		typename HashSet::InsertResult res = mHashSet.template InsertCrt<decltype(itemCreator), false>(
 			std::as_const(key), std::move(itemCreator));
-		return { PositionProxy(res.position), res.inserted };
+		return { internal::ProxyConstructor<Position>(res.position), res.inserted };
 	}
 
 	template<bool extraCheck, internal::conceptMapPairCreator<Key, Value> PairCreator>
@@ -729,7 +697,7 @@ private:
 	{
 		auto itemCreator = [this, pairCreator = std::move(pairCreator)] (KeyValuePair* newItem) mutable
 			{ std::construct_at(newItem, mHashSet.GetMemManager(), std::move(pairCreator)); };
-		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
+		return internal::ProxyConstructor<Position>(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetSetPosition(pos), std::move(itemCreator)));
 	}
 
@@ -742,7 +710,7 @@ private:
 			KeyValuePair::template Create<KeyValueTraits>(newItem, mHashSet.GetMemManager(),
 				std::forward<RKey>(key), std::move(valueCreator));
 		};
-		return PositionProxy(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
+		return internal::ProxyConstructor<Position>(mHashSet.template AddCrt<decltype(itemCreator), extraCheck>(
 			ConstPositionProxy::GetSetPosition(pos), std::move(itemCreator)));
 	}
 

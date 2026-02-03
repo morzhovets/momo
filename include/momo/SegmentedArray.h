@@ -190,16 +190,6 @@ private:
 
 	typedef ArrayCore<ArrayItemTraits<Item*, MemManager>, SegmentsSettings> Segments;
 
-	struct ConstIteratorProxy : public ConstIterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-	};
-
-	struct IteratorProxy : public Iterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-	};
-
 public:
 	SegmentedArrayCore() noexcept(noexcept(MemManager()))
 		: SegmentedArrayCore(MemManager())
@@ -308,22 +298,22 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return ConstIteratorProxy(this, size_t{0});
+		return internal::ProxyConstructor<ConstIterator>(this, size_t{0});
 	}
 
 	Iterator GetBegin() noexcept
 	{
-		return IteratorProxy(this, size_t{0});
+		return internal::ProxyConstructor<Iterator>(this, size_t{0});
 	}
 
 	ConstIterator GetEnd() const noexcept
 	{
-		return ConstIteratorProxy(this, mCount);
+		return internal::ProxyConstructor<ConstIterator>(this, mCount);
 	}
 
 	Iterator GetEnd() noexcept
 	{
-		return IteratorProxy(this, mCount);
+		return internal::ProxyConstructor<Iterator>(this, mCount);
 	}
 
 	const MemManager& GetMemManager() const noexcept

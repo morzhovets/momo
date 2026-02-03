@@ -72,30 +72,16 @@ private:
 	template<typename KeyArg>
 	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
 
-	struct ConstIteratorProxy : public const_iterator
+	struct ConstIteratorProxy : private const_iterator
 	{
 		typedef const_iterator ConstIterator;
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator)
 	};
 
-	struct IteratorProxy : public iterator
+	struct IteratorProxy : private iterator
 	{
 		typedef iterator Iterator;
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 		MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator)
-	};
-
-	struct ConstLocalIteratorProxy : public const_local_iterator
-	{
-		typedef const_local_iterator ConstLocalIterator;
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstLocalIterator)
-	};
-
-	struct LocalIteratorProxy : public local_iterator
-	{
-		typedef local_iterator LocalIterator;
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(LocalIterator)
 	};
 
 	struct NodeTypeProxy : private node_type
@@ -288,22 +274,22 @@ public:
 
 	const_iterator begin() const noexcept
 	{
-		return ConstIteratorProxy(mHashMap.GetBegin());
+		return momo::internal::ProxyConstructor<const_iterator>(mHashMap.GetBegin());
 	}
 
 	iterator begin() noexcept
 	{
-		return IteratorProxy(mHashMap.GetBegin());
+		return momo::internal::ProxyConstructor<iterator>(mHashMap.GetBegin());
 	}
 
 	const_iterator end() const noexcept
 	{
-		return ConstIteratorProxy(mHashMap.GetEnd());
+		return momo::internal::ProxyConstructor<const_iterator>(mHashMap.GetEnd());
 	}
 
 	iterator end() noexcept
 	{
-		return IteratorProxy(mHashMap.GetEnd());
+		return momo::internal::ProxyConstructor<iterator>(mHashMap.GetEnd());
 	}
 
 	const_iterator cbegin() const noexcept
@@ -383,26 +369,26 @@ public:
 
 	MOMO_FORCEINLINE const_iterator find(const key_type& key) const
 	{
-		return ConstIteratorProxy(mHashMap.Find(key));
+		return momo::internal::ProxyConstructor<const_iterator>(mHashMap.Find(key));
 	}
 
 	MOMO_FORCEINLINE iterator find(const key_type& key)
 	{
-		return IteratorProxy(mHashMap.Find(key));
+		return momo::internal::ProxyConstructor<iterator>(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
 	MOMO_FORCEINLINE const_iterator find(const KeyArg& key) const
 	{
-		return ConstIteratorProxy(mHashMap.Find(key));
+		return momo::internal::ProxyConstructor<const_iterator>(mHashMap.Find(key));
 	}
 
 	template<typename KeyArg>
 	requires IsValidKeyArg<KeyArg>::value
 	MOMO_FORCEINLINE iterator find(const KeyArg& key)
 	{
-		return IteratorProxy(mHashMap.Find(key));
+		return momo::internal::ProxyConstructor<iterator>(mHashMap.Find(key));
 	}
 
 	MOMO_FORCEINLINE size_type count(const key_type& key) const
@@ -477,7 +463,7 @@ public:
 			return { end(), false, node_type() };
 		typename HashMap::InsertResult res = mHashMap.Insert(
 			std::move(NodeTypeProxy::GetExtractedPair(node)));
-		return { IteratorProxy(res.position), res.inserted,
+		return { momo::internal::ProxyConstructor<iterator>(res.position), res.inserted,
 			res.inserted ? node_type() : std::move(node) };
 	}
 
@@ -487,8 +473,8 @@ public:
 		{
 			if (node.empty())
 				return end();
-			return IteratorProxy(mHashMap.Add(ConstIteratorProxy::GetBaseIterator(hint),
-				std::move(NodeTypeProxy::GetExtractedPair(node))));
+			return momo::internal::ProxyConstructor<iterator>(mHashMap.Add(
+				ConstIteratorProxy::GetBaseIterator(hint), std::move(NodeTypeProxy::GetExtractedPair(node))));
 		}
 		else
 		{
@@ -570,7 +556,8 @@ public:
 
 	iterator erase(const_iterator where)
 	{
-		return IteratorProxy(mHashMap.Remove(ConstIteratorProxy::GetBaseIterator(where)));
+		return momo::internal::ProxyConstructor<iterator>(
+			mHashMap.Remove(ConstIteratorProxy::GetBaseIterator(where)));
 	}
 
 	iterator erase(iterator where)
@@ -587,8 +574,8 @@ public:
 		}
 		if (first == last)
 		{
-			return IteratorProxy(mHashMap.MakeMutableIterator(
-				ConstIteratorProxy::GetBaseIterator(first)));
+			return momo::internal::ProxyConstructor<iterator>(
+				mHashMap.MakeMutableIterator(ConstIteratorProxy::GetBaseIterator(first)));
 		}
 		if (first != end() && std::next(first) == last)
 			return erase(first);
@@ -743,22 +730,26 @@ public:
 
 	local_iterator begin(size_type bucketIndex)
 	{
-		return LocalIteratorProxy(mHashMap.GetBucketBounds(bucketIndex).GetBegin());
+		return momo::internal::ProxyConstructor<local_iterator>(
+			mHashMap.GetBucketBounds(bucketIndex).GetBegin());
 	}
 
 	const_local_iterator begin(size_type bucketIndex) const
 	{
-		return ConstLocalIteratorProxy(mHashMap.GetBucketBounds(bucketIndex).GetBegin());
+		return momo::internal::ProxyConstructor<const_local_iterator>(
+			mHashMap.GetBucketBounds(bucketIndex).GetBegin());
 	}
 
 	local_iterator end(size_type bucketIndex)
 	{
-		return LocalIteratorProxy(mHashMap.GetBucketBounds(bucketIndex).GetEnd());
+		return momo::internal::ProxyConstructor<local_iterator>(
+			mHashMap.GetBucketBounds(bucketIndex).GetEnd());
 	}
 
 	const_local_iterator end(size_type bucketIndex) const
 	{
-		return ConstLocalIteratorProxy(mHashMap.GetBucketBounds(bucketIndex).GetEnd());
+		return momo::internal::ProxyConstructor<const_local_iterator>(
+			mHashMap.GetBucketBounds(bucketIndex).GetEnd());
 	}
 
 	const_local_iterator cbegin(size_type bucketIndex) const
@@ -832,7 +823,7 @@ private:
 			};
 			typename HashMap::Position resPos = mHashMap.AddCrt(
 				ConstIteratorProxy::GetBaseIterator(hint), std::move(valueCreator));
-			return { IteratorProxy(resPos), true };
+			return { momo::internal::ProxyConstructor<iterator>(resPos), true };
 		}
 		else
 		{
@@ -843,7 +834,7 @@ private:
 			KeyDestroyFinalizer keyFin(&memManager, keyBuffer.template GetPtr<true>());
 			typename HashMap::Position pos = mHashMap.Find(std::as_const(keyBuffer.Get()));
 			if (!!pos)
-				return { IteratorProxy(pos), false };
+				return { momo::internal::ProxyConstructor<iterator>(pos), false };
 			auto valueCreator = [mappedCreator = std::move(mappedCreator), keyFin = std::move(keyFin)]
 				(key_type* newKey, mapped_type* newMapped) mutable
 			{
@@ -853,7 +844,7 @@ private:
 				keyFin.ResetPtr();
 			};
 			typename HashMap::Position resPos = mHashMap.AddCrt(pos, std::move(valueCreator));
-			return { IteratorProxy(resPos), true };
+			return { momo::internal::ProxyConstructor<iterator>(resPos), true };
 		}
 	}
 
@@ -869,13 +860,13 @@ private:
 			typename HashMap::Position resPos = mHashMap.AddCrt(
 				ConstIteratorProxy::GetBaseIterator(hint),
 				std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator));
-			return { IteratorProxy(resPos), true };
+			return { momo::internal::ProxyConstructor<iterator>(resPos), true };
 		}
 		else
 		{
 			typename HashMap::InsertResult res = mHashMap.InsertCrt(
 				std::forward<RKey>(std::get<0>(key)), std::move(mappedCreator));
-			return { IteratorProxy(res.position), res.inserted };
+			return { momo::internal::ProxyConstructor<iterator>(res.position), res.inserted };
 		}
 	}
 
@@ -899,7 +890,7 @@ private:
 	{
 		typename HashMap::InsertResult res = mHashMap.InsertOrAssign(
 			std::forward<RKey>(key), std::forward<MappedArg>(mappedArg));
-		return { IteratorProxy(res.position), res.inserted };
+		return { momo::internal::ProxyConstructor<iterator>(res.position), res.inserted };
 	}
 
 	template<typename RKey, typename MappedArg>
