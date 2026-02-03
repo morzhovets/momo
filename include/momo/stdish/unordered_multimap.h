@@ -114,17 +114,10 @@ private:
 	{
 	};
 
-	struct ConstIteratorProxy : public const_iterator
+	struct ConstIteratorProxy : private const_iterator
 	{
 		typedef const_iterator ConstIterator;
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator)
-	};
-
-	struct IteratorProxy : public iterator
-	{
-		typedef iterator Iterator;
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 	};
 
 public:
@@ -320,22 +313,22 @@ public:
 
 	const_iterator begin() const noexcept
 	{
-		return ConstIteratorProxy(mHashMultiMap.GetBegin());
+		return momo::internal::ProxyConstructor<const_iterator>(mHashMultiMap.GetBegin());
 	}
 
 	iterator begin() noexcept
 	{
-		return IteratorProxy(mHashMultiMap.GetBegin());
+		return momo::internal::ProxyConstructor<iterator>(mHashMultiMap.GetBegin());
 	}
 
 	const_iterator end() const noexcept
 	{
-		return ConstIteratorProxy(mHashMultiMap.GetEnd());
+		return momo::internal::ProxyConstructor<const_iterator>(mHashMultiMap.GetEnd());
 	}
 
 	iterator end() noexcept
 	{
-		return IteratorProxy(mHashMultiMap.GetEnd());
+		return momo::internal::ProxyConstructor<iterator>(mHashMultiMap.GetEnd());
 	}
 
 	const_iterator cbegin() const noexcept
@@ -441,28 +434,26 @@ public:
 
 	MOMO_FORCEINLINE std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
-		return pvEqualRange<const_iterator, ConstIteratorProxy>(mHashMultiMap,
-			mHashMultiMap.Find(key));
+		return pvEqualRange<const_iterator>(mHashMultiMap, mHashMultiMap.Find(key));
 	}
 
 	MOMO_FORCEINLINE std::pair<iterator, iterator> equal_range(const key_type& key)
 	{
-		return pvEqualRange<iterator, IteratorProxy>(mHashMultiMap, mHashMultiMap.Find(key));
+		return pvEqualRange<iterator>(mHashMultiMap, mHashMultiMap.Find(key));
 	}
 
 	template<typename KeyArg>
 	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 	std::pair<const_iterator, const_iterator>> equal_range(const KeyArg& key) const
 	{
-		return pvEqualRange<const_iterator, ConstIteratorProxy>(mHashMultiMap,
-			mHashMultiMap.Find(key));
+		return pvEqualRange<const_iterator>(mHashMultiMap, mHashMultiMap.Find(key));
 	}
 
 	template<typename KeyArg>
 	MOMO_FORCEINLINE momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 	std::pair<iterator, iterator>> equal_range(const KeyArg& key)
 	{
-		return pvEqualRange<iterator, IteratorProxy>(mHashMultiMap, mHashMultiMap.Find(key));
+		return pvEqualRange<iterator>(mHashMultiMap, mHashMultiMap.Find(key));
 	}
 
 	template<typename ValueArg = std::pair<key_type, mapped_type>>
@@ -553,10 +544,9 @@ public:
 	{
 		typename HashMultiMap::ConstIterator iter = ConstIteratorProxy::GetBaseIterator(where);
 		typename HashMultiMap::ConstKeyIterator keyIter = iter.GetKeyIterator();
-		if (keyIter->GetCount() == 1)
-			return IteratorProxy(mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
-		else
-			return IteratorProxy(mHashMultiMap.Remove(iter));
+		return momo::internal::ProxyConstructor<iterator>((keyIter->GetCount() > 1)
+			? mHashMultiMap.Remove(iter)
+			: mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
 	}
 
 	iterator erase(iterator where)
@@ -573,7 +563,7 @@ public:
 		}
 		if (first == last)
 		{
-			return IteratorProxy(mHashMultiMap.MakeMutableIterator(
+			return momo::internal::ProxyConstructor<iterator>(mHashMultiMap.MakeMutableIterator(
 				ConstIteratorProxy::GetBaseIterator(first)));
 		}
 		if (first != end())
@@ -582,8 +572,12 @@ public:
 				return erase(first);
 			typename HashMultiMap::ConstKeyIterator keyIter =
 				ConstIteratorProxy::GetBaseIterator(first).GetKeyIterator();
-			if (last == ConstIteratorProxy(mHashMultiMap.MakeIterator(keyIter, keyIter->GetCount())))
-				return IteratorProxy(mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
+			if (last == momo::internal::ProxyConstructor<const_iterator>(
+				mHashMultiMap.MakeIterator(keyIter, keyIter->GetCount())))
+			{
+				return momo::internal::ProxyConstructor<iterator>(
+					mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
+			}
 		}
 		MOMO_THROW(std::invalid_argument("invalid unordered_multimap erase arguments"));
 	}
@@ -647,18 +641,20 @@ public:
 	}
 
 private:
-	template<typename Iterator, typename IteratorProxy, typename HashMultiMap, typename KeyIterator>
+	template<typename Iterator, typename HashMultiMap, typename KeyIterator>
 	static std::pair<Iterator, Iterator> pvEqualRange(HashMultiMap& hashMultiMap,
 		KeyIterator keyIter)
 	{
-		Iterator end = IteratorProxy(hashMultiMap.GetEnd());
+		Iterator end = momo::internal::ProxyConstructor<Iterator>(hashMultiMap.GetEnd());
 		if (!keyIter)
 			return { end, end };
 		size_t count = keyIter->GetCount();
 		if (count == 0)
 			return { end, end };
-		Iterator first = IteratorProxy(hashMultiMap.MakeIterator(keyIter, 0));
-		Iterator last = IteratorProxy(hashMultiMap.MakeIterator(keyIter, count));
+		Iterator first = momo::internal::ProxyConstructor<Iterator>(
+			hashMultiMap.MakeIterator(keyIter, 0));
+		Iterator last = momo::internal::ProxyConstructor<Iterator>(
+			hashMultiMap.MakeIterator(keyIter, count));
 		return { first, last };
 	}
 
@@ -690,7 +686,7 @@ private:
 	momo::internal::EnableIf<std::is_same<key_type, Key>::value,
 	iterator> pvInsert(std::tuple<RKey>&& key, MappedCreator&& mappedCreator)
 	{
-		return IteratorProxy(mHashMultiMap.AddCrt(
+		return momo::internal::ProxyConstructor<iterator>(mHashMultiMap.AddCrt(
 			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator)));
 	}
 

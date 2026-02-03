@@ -335,9 +335,8 @@ private:
 	{
 	};
 
-	struct ConstIteratorProxy : public ConstIterator
+	struct ConstIteratorProxy : private ConstIterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetNode)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetItemIndex)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check)
@@ -1065,7 +1064,8 @@ private:
 
 	ConstIterator pvMakeIterator(Node* node, size_t itemIndex, bool move) const noexcept
 	{
-		return ConstIteratorProxy(*node, itemIndex, mCrew.GetVersion(), move);
+		return internal::ProxyConstructor<ConstIterator>(*node, itemIndex,
+			mCrew.GetVersion(), move);
 	}
 
 	template<typename KeyArg>

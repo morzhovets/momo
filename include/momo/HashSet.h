@@ -515,15 +515,13 @@ private:
 	{
 	};
 
-	struct ConstIteratorProxy : public ConstIterator
+	struct ConstIteratorProxy : private ConstIterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, IsMovable)
 	};
 
-	struct ConstPositionProxy : public ConstPosition
+	struct ConstPositionProxy : private ConstPosition
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstPosition)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIndex)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashCode)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIterator)
@@ -634,7 +632,7 @@ public:
 	{
 		if (mCount == 0)
 			return ConstIterator();
-		return ConstIteratorProxy(*mBuckets, size_t{0},
+		return internal::ProxyConstructor<ConstIterator>(*mBuckets, size_t{0},
 			mBuckets->GetBegin()->GetBounds(mBuckets->GetBucketParams()).GetEnd(),
 			mCrew.GetVersion());
 	}
@@ -965,7 +963,8 @@ public:
 
 	ConstPosition MakePosition(size_t hashCode) const noexcept
 	{
-		return ConstPositionProxy(hashCode, BucketIterator(), mCrew.GetVersion());
+		return internal::ProxyConstructor<ConstPosition>(hashCode, BucketIterator(),
+			mCrew.GetVersion());
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
@@ -1047,7 +1046,7 @@ private:
 					break;
 			}
 		}
-		return ConstPositionProxy(indexCode, bucketIter, mCrew.GetVersion());
+		return internal::ProxyConstructor<ConstPosition>(indexCode, bucketIter, mCrew.GetVersion());
 	}
 
 	template<typename ItemPredicate>
@@ -1131,7 +1130,8 @@ private:
 			++mCount;
 			mCrew.IncVersion();
 		}
-		return ConstPositionProxy(bucketIndex, bucketIter, mCrew.GetVersion());
+		return internal::ProxyConstructor<ConstPosition>(bucketIndex, bucketIter,
+			mCrew.GetVersion());
 	}
 
 	template<typename ItemCreator>
@@ -1192,7 +1192,8 @@ private:
 		mCrew.IncVersion();
 		if (!ConstIteratorProxy::IsMovable(iter))
 			return ConstIterator();
-		return ConstIteratorProxy(*buckets, bucketIndex, bucketIter, mCrew.GetVersion());
+		return internal::ProxyConstructor<ConstIterator>(*buckets, bucketIndex, bucketIter,
+			mCrew.GetVersion());
 	}
 
 	ConstIterator pvExtract(ConstIterator iter, Item* extItem)

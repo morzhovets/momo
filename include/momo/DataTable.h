@@ -299,49 +299,20 @@ private:
 		Data* mData;
 	};
 
-	struct RowProxy : public Row
+	struct RowProxy : private Row
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Row)
 		MOMO_DECLARE_PROXY_FUNCTION(Row, GetRaw)
 		MOMO_DECLARE_PROXY_FUNCTION(Row, ExtractRaw)
 	};
 
-	struct ConstRowReferenceProxy : public ConstRowReference
+	struct ConstRowReferenceProxy : private ConstRowReference
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstRowReference)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstRowReference, GetRaw)
-	};
-
-	struct RowReferenceProxy : public RowReference
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowReference)
-		//MOMO_DECLARE_PROXY_FUNCTION(RowReference, GetRaw)
-	};
-
-	struct IteratorProxy : public Iterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 	};
 
 	struct SelectionProxy : public Selection
 	{
 		typedef typename Selection::Raws Raws;
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Selection)
-	};
-
-	struct RowHashPointerProxy : public RowHashPointer
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowHashPointer)
-	};
-
-	struct RowHashBoundsProxy : public RowHashBounds
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(RowHashBounds)
-	};
-
-	struct ConstRowBoundsProxy : public ConstRowBounds
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstRowBounds)
 	};
 
 public:
@@ -504,7 +475,8 @@ public:
 		const ColumnList& columnList = GetColumnList();
 		RawBounds rawBounds(RawIterator(mRaws, 0), GetCount());
 		return ConstItemBounds<Item>(
-			ConstRowBoundsProxy(&columnList, rawBounds, VersionKeeper(&mCrew.GetRemoveVersion())),
+			internal::ProxyConstructor<ConstRowBounds>(&columnList, rawBounds,
+				VersionKeeper(&mCrew.GetRemoveVersion())),
 			columnList.GetOffset(column));
 	}
 
@@ -843,56 +815,56 @@ public:
 	ConstRowHashPointer FindByUniqueHash(Equalities<Items...> equals,
 		UniqueHashIndex uniqueHashIndex = UniqueHashIndex::empty) const
 	{
-		return pvFindByHash<RowHashPointerProxy>(equals, uniqueHashIndex);
+		return pvFindByHash<RowHashPointer>(equals, uniqueHashIndex);
 	}
 
 	template<typename... Items>
 	RowHashPointer FindByUniqueHash(Equalities<Items...> equals,
 		UniqueHashIndex uniqueHashIndex = UniqueHashIndex::empty)
 	{
-		return pvFindByHash<RowHashPointerProxy>(equals, uniqueHashIndex);
+		return pvFindByHash<RowHashPointer>(equals, uniqueHashIndex);
 	}
 
 	template<typename Item, typename... Items>
 	ConstRowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, Equality<Item> equal,
 		Equality<Items>... equals) const
 	{
-		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equal, equals...);
+		return pvFindByHash<RowHashPointer>(uniqueHashIndex, equal, equals...);
 	}
 
 	template<typename Item, typename... Items>
 	RowHashPointer FindByUniqueHash(UniqueHashIndex uniqueHashIndex, Equality<Item> equal,
 		Equality<Items>... equals)
 	{
-		return pvFindByHash<RowHashPointerProxy>(uniqueHashIndex, equal, equals...);
+		return pvFindByHash<RowHashPointer>(uniqueHashIndex, equal, equals...);
 	}
 
 	template<typename... Items>
 	ConstRowHashBounds FindByMultiHash(Equalities<Items...> equals,
 		MultiHashIndex multiHashIndex = MultiHashIndex::empty) const
 	{
-		return pvFindByHash<RowHashBoundsProxy>(equals, multiHashIndex);
+		return pvFindByHash<RowHashBounds>(equals, multiHashIndex);
 	}
 
 	template<typename... Items>
 	RowHashBounds FindByMultiHash(Equalities<Items...> equals,
 		MultiHashIndex multiHashIndex = MultiHashIndex::empty)
 	{
-		return pvFindByHash<RowHashBoundsProxy>(equals, multiHashIndex);
+		return pvFindByHash<RowHashBounds>(equals, multiHashIndex);
 	}
 
 	template<typename Item, typename... Items>
 	ConstRowHashBounds FindByMultiHash(MultiHashIndex multiHashIndex, Equality<Item> equal,
 		Equality<Items>... equals) const
 	{
-		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equal, equals...);
+		return pvFindByHash<RowHashBounds>(multiHashIndex, equal, equals...);
 	}
 
 	template<typename Item, typename... Items>
 	RowHashBounds FindByMultiHash(MultiHashIndex multiHashIndex, Equality<Item> equal,
 		Equality<Items>... equals)
 	{
-		return pvFindByHash<RowHashBoundsProxy>(multiHashIndex, equal, equals...);
+		return pvFindByHash<RowHashBounds>(multiHashIndex, equal, equals...);
 	}
 
 	template<typename Item, typename... Items>
@@ -965,18 +937,19 @@ private:
 
 	ConstRowReference pvMakeConstRowReference(Raw* raw) const noexcept
 	{
-		return ConstRowReferenceProxy(&GetColumnList(), raw,
+		return internal::ProxyConstructor<ConstRowReference>(&GetColumnList(), raw,
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	RowReference pvMakeRowReference(Raw* raw) const noexcept
 	{
-		return RowReferenceProxy(&GetColumnList(), raw, VersionKeeper(&mCrew.GetRemoveVersion()));
+		return internal::ProxyConstructor<RowReference>(&GetColumnList(), raw,
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	Iterator pvMakeIterator(size_t index) const noexcept
 	{
-		return IteratorProxy(&GetColumnList(), RawIterator(mRaws, index),
+		return internal::ProxyConstructor<Iterator>(&GetColumnList(), RawIterator(mRaws, index),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
@@ -1042,7 +1015,7 @@ private:
 
 	Row pvMakeRow(Raw* raw) noexcept
 	{
-		return RowProxy(&GetColumnList(), raw, &mCrew.GetFreeRaws());
+		return internal::ProxyConstructor<Row>(&GetColumnList(), raw, &mCrew.GetFreeRaws());
 	}
 
 	template<typename... Items, typename... ItemArgs>
@@ -1363,7 +1336,8 @@ private:
 	Selection pvSelectEmpty() const
 	{
 		MemManager memManager = GetMemManager();
-		return SelectionProxy(&GetColumnList(), typename SelectionProxy::Raws(std::move(memManager)),
+		return internal::ProxyConstructor<Selection>(&GetColumnList(),
+			typename SelectionProxy::Raws(std::move(memManager)),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
@@ -1494,7 +1468,7 @@ private:
 			if (rowFilter(pvMakeConstRowReference(raw)))
 				selRaws.AddBack(raw);
 		}
-		return SelectionProxy(&GetColumnList(), std::move(selRaws),
+		return internal::ProxyConstructor<Selection>(&GetColumnList(), std::move(selRaws),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
@@ -1503,7 +1477,7 @@ private:
 	{
 		MemManager memManager = GetMemManager();
 		typename SelectionProxy::Raws selRaws(raws.GetBegin(), raws.GetEnd(), std::move(memManager));
-		return SelectionProxy(&GetColumnList(), std::move(selRaws),
+		return internal::ProxyConstructor<Selection>(&GetColumnList(), std::move(selRaws),
 			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
@@ -1528,34 +1502,35 @@ private:
 		MOMO_CHECK(&row.GetColumnList() == columnList);
 		auto raws = mIndexes.FindRaws(uniqueHashIndex, RowProxy::GetRaw(row),
 			VersionKeeper(&mCrew.GetChangeVersion()));
-		return RowHashPointerProxy(columnList, raws, VersionKeeper(&mCrew.GetRemoveVersion()));
+		return internal::ProxyConstructor<RowHashPointer>(columnList, raws,
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
-	template<typename RowBoundsProxy, typename... Items, typename Index>
-	RowBoundsProxy pvFindByHash(const Equalities<Items...>& equals, Index index) const
+	template<typename RowBounds, typename... Items, typename Index>
+	RowBounds pvFindByHash(const Equalities<Items...>& equals, Index index) const
 	{
 		MOMO_STATIC_ASSERT(sizeof...(Items) > 0);
-		return pvFindByHash<RowBoundsProxy>(equals, index,
+		return pvFindByHash<RowBounds>(equals, index,
 			typename internal::SequenceMaker<sizeof...(Items)>::Sequence());
 	}
 
-	template<typename RowBoundsProxy, typename... Items, typename Index, size_t... sequence>
-	RowBoundsProxy pvFindByHash(const Equalities<Items...>& equals, Index index,
+	template<typename RowBounds, typename... Items, typename Index, size_t... sequence>
+	RowBounds pvFindByHash(const Equalities<Items...>& equals, Index index,
 		internal::Sequence<sequence...>) const
 	{
-		return pvFindByHash<RowBoundsProxy>(index, internal::Sequence<sequence...>(),
+		return pvFindByHash<RowBounds>(index, internal::Sequence<sequence...>(),
 			equals.template Get<sequence>()...);
 	}
 
-	template<typename RowBoundsProxy, typename Index, typename... Items>
-	RowBoundsProxy pvFindByHash(Index index, const Equality<Items>&... equals) const
+	template<typename RowBounds, typename Index, typename... Items>
+	RowBounds pvFindByHash(Index index, const Equality<Items>&... equals) const
 	{
-		return pvFindByHash<RowBoundsProxy>(index,
+		return pvFindByHash<RowBounds>(index,
 			typename internal::SequenceMaker<sizeof...(Items)>::Sequence(), equals...);
 	}
 
-	template<typename RowBoundsProxy, typename Index, typename... Items, size_t... sequence>
-	RowBoundsProxy pvFindByHash(Index index, internal::Sequence<sequence...>,
+	template<typename RowBounds, typename Index, typename... Items, size_t... sequence>
+	RowBounds pvFindByHash(Index index, internal::Sequence<sequence...>,
 		const Equality<Items>&... equals) const
 	{
 		auto offsets = pvGetOffsets(equals...);
@@ -1563,7 +1538,8 @@ private:
 		OffsetItemTuple<Items...> tuple{
 			std::pair<size_t, const Items&>(offsets[sequence], equals.GetItem())... };
 		auto raws = mIndexes.FindRaws(trueIndex, tuple, VersionKeeper(&mCrew.GetChangeVersion()));
-		return RowBoundsProxy(&GetColumnList(), raws, VersionKeeper(&mCrew.GetRemoveVersion()));
+		return internal::ProxyConstructor<RowBounds>(&GetColumnList(), raws,
+			VersionKeeper(&mCrew.GetRemoveVersion()));
 	}
 
 	template<bool distinct, typename RowFilter, typename... Items>

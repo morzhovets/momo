@@ -843,26 +843,18 @@ namespace internal
 			KeyPointer mKeyPtr;
 		};
 
-	private:
-		template<typename KeyReference>
-		struct ValueReferenceProxy : public ValueReference<KeyReference>
-		{
-			typedef typename MapValueReferencer::template ValueReference<KeyReference> ValueReference;	// gcc
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ValueReference)
-		};
-
 	public:
 		template<typename KeyReference>
 		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter) noexcept
 		{
-			return ValueReferenceProxy<KeyReference>(map, iter);
+			return ProxyConstructor<ValueReference<KeyReference>>(map, iter);
 		}
 
 		template<typename KeyReference>
 		static ValueReference<KeyReference> GetReference(Map& map, Iterator iter,
 			KeyReference keyRef) noexcept
 		{
-			return ValueReferenceProxy<KeyReference>(map, iter,
+			return ProxyConstructor<ValueReference<KeyReference>>(map, iter,
 				std::forward<KeyReference>(keyRef));
 		}
 	};

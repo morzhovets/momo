@@ -113,14 +113,6 @@
 #define MOMO_EXTRA_CHECK(expr) \
 	MOMO_ASSERT(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))
 
-#define MOMO_DECLARE_PROXY_CONSTRUCTOR(Class) \
-	template<typename... Args> \
-	explicit Class##Proxy(Args&&... args) \
-		noexcept(std::is_nothrow_constructible<Class, Args&&...>::value) \
-		: Class(std::forward<Args>(args)...) \
-	{ \
-	}
-
 #define MOMO_DECLARE_PROXY_FUNCTION(Class, Func) \
 	template<typename RClass, typename... Args, typename Result = decltype( \
 		(std::declval<RClass&&>().*&Class##Proxy::pt##Func)(std::declval<Args&&>()...))> \
@@ -239,6 +231,17 @@ namespace internal
 	struct UIntSelector<size, EnableIf<(4 < size && size <= 8)>>
 	{
 		typedef uint64_t UInt;
+	};
+
+	template<typename Class>
+	struct ProxyConstructor : public Class
+	{
+		template<typename... Args>
+		explicit ProxyConstructor(Args&&... args)
+			noexcept(std::is_nothrow_constructible<Class, Args&&...>::value)
+			: Class(std::forward<Args>(args)...)
+		{
+		}
 	};
 
 	class MemCopyer

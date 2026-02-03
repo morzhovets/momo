@@ -113,17 +113,15 @@ namespace internal
 		{
 		};
 
-		struct ConstIteratorProxy : public const_iterator
+		struct ConstIteratorProxy : private const_iterator
 		{
 			typedef const_iterator ConstIterator;
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 			MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetBaseIterator)
 		};
 
-		struct IteratorProxy : public iterator
+		struct IteratorProxy : private iterator
 		{
 			typedef iterator Iterator;
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 			MOMO_DECLARE_PROXY_FUNCTION(Iterator, GetBaseIterator)
 		};
 
@@ -253,22 +251,22 @@ namespace internal
 
 		const_iterator begin() const noexcept
 		{
-			return ConstIteratorProxy(mTreeMap.GetBegin());
+			return momo::internal::ProxyConstructor<const_iterator>(mTreeMap.GetBegin());
 		}
 
 		iterator begin() noexcept
 		{
-			return IteratorProxy(mTreeMap.GetBegin());
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.GetBegin());
 		}
 
 		const_iterator end() const noexcept
 		{
-			return ConstIteratorProxy(mTreeMap.GetEnd());
+			return momo::internal::ProxyConstructor<const_iterator>(mTreeMap.GetEnd());
 		}
 
 		iterator end() noexcept
 		{
-			return IteratorProxy(mTreeMap.GetEnd());
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.GetEnd());
 		}
 
 		const_reverse_iterator rbegin() const noexcept
@@ -355,26 +353,26 @@ namespace internal
 
 		const_iterator find(const key_type& key) const
 		{
-			return ConstIteratorProxy(mTreeMap.Find(key));
+			return momo::internal::ProxyConstructor<const_iterator>(mTreeMap.Find(key));
 		}
 
 		iterator find(const key_type& key)
 		{
-			return IteratorProxy(mTreeMap.Find(key));
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.Find(key));
 		}
 
 		template<typename KeyArg>
 		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 		const_iterator> find(const KeyArg& key) const
 		{
-			return ConstIteratorProxy(mTreeMap.Find(key));
+			return momo::internal::ProxyConstructor<const_iterator>(mTreeMap.Find(key));
 		}
 
 		template<typename KeyArg>
 		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 		iterator> find(const KeyArg& key)
 		{
-			return IteratorProxy(mTreeMap.Find(key));
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.Find(key));
 		}
 
 		size_type count(const key_type& key) const
@@ -403,50 +401,50 @@ namespace internal
 
 		const_iterator lower_bound(const key_type& key) const
 		{
-			return ConstIteratorProxy(mTreeMap.GetLowerBound(key));
+			return momo::internal::ProxyConstructor<const_iterator>(mTreeMap.GetLowerBound(key));
 		}
 
 		iterator lower_bound(const key_type& key)
 		{
-			return IteratorProxy(mTreeMap.GetLowerBound(key));
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.GetLowerBound(key));
 		}
 
 		template<typename KeyArg>
 		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 		const_iterator> lower_bound(const KeyArg& key) const
 		{
-			return ConstIteratorProxy(mTreeMap.GetLowerBound(key));
+			return momo::internal::ProxyConstructor<const_iterator>(mTreeMap.GetLowerBound(key));
 		}
 
 		template<typename KeyArg>
 		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 		iterator> lower_bound(const KeyArg& key)
 		{
-			return IteratorProxy(mTreeMap.GetLowerBound(key));
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.GetLowerBound(key));
 		}
 
 		const_iterator upper_bound(const key_type& key) const
 		{
-			return ConstIteratorProxy(mTreeMap.GetUpperBound(key));
+			return momo::internal::ProxyConstructor<const_iterator>(mTreeMap.GetUpperBound(key));
 		}
 
 		iterator upper_bound(const key_type& key)
 		{
-			return IteratorProxy(mTreeMap.GetUpperBound(key));
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.GetUpperBound(key));
 		}
 
 		template<typename KeyArg>
 		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 		const_iterator> upper_bound(const KeyArg& key) const
 		{
-			return ConstIteratorProxy(mTreeMap.GetUpperBound(key));
+			return momo::internal::ProxyConstructor<const_iterator>(mTreeMap.GetUpperBound(key));
 		}
 
 		template<typename KeyArg>
 		momo::internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 		iterator> upper_bound(const KeyArg& key)
 		{
-			return IteratorProxy(mTreeMap.GetUpperBound(key));
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.GetUpperBound(key));
 		}
 
 		std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
@@ -503,7 +501,7 @@ namespace internal
 				return { end(), false, node_type() };
 			typename TreeMap::InsertResult res = mTreeMap.Insert(
 				std::move(NodeTypeProxy::GetExtractedPair(node)));
-			return { IteratorProxy(res.position), res.inserted,
+			return { momo::internal::ProxyConstructor<iterator>(res.position), res.inserted,
 				res.inserted ? node_type() : std::move(node) };
 		}
 
@@ -514,7 +512,8 @@ namespace internal
 			std::pair<iterator, bool> res = pvFind(hint, node.key());
 			if (!res.second)
 				return res.first;
-			return IteratorProxy(mTreeMap.Add(IteratorProxy::GetBaseIterator(res.first),
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.Add(
+				IteratorProxy::GetBaseIterator(res.first),
 				std::move(NodeTypeProxy::GetExtractedPair(node))));
 		}
 
@@ -594,7 +593,8 @@ namespace internal
 
 		iterator erase(const_iterator where)
 		{
-			return IteratorProxy(mTreeMap.Remove(ConstIteratorProxy::GetBaseIterator(where)));
+			return momo::internal::ProxyConstructor<iterator>(
+				mTreeMap.Remove(ConstIteratorProxy::GetBaseIterator(where)));
 		}
 
 		iterator erase(iterator where)
@@ -604,7 +604,8 @@ namespace internal
 
 		iterator erase(const_iterator first, const_iterator last)
 		{
-			return IteratorProxy(mTreeMap.Remove(ConstIteratorProxy::GetBaseIterator(first),
+			return momo::internal::ProxyConstructor<iterator>(mTreeMap.Remove(
+				ConstIteratorProxy::GetBaseIterator(first),
 				ConstIteratorProxy::GetBaseIterator(last)));
 		}
 
@@ -700,7 +701,7 @@ namespace internal
 				else
 					return pvFind(nullptr, key);
 			}
-			return { IteratorProxy(mTreeMap.MakeMutableIterator(
+			return { momo::internal::ProxyConstructor<iterator>(mTreeMap.MakeMutableIterator(
 				ConstIteratorProxy::GetBaseIterator(hint))), true };
 		}
 
@@ -729,7 +730,7 @@ namespace internal
 			};
 			TreeMapIterator resIter = mTreeMap.AddCrt(
 				IteratorProxy::GetBaseIterator(res.first), valueCreator);
-			return { IteratorProxy(resIter), true };
+			return { momo::internal::ProxyConstructor<iterator>(resIter), true };
 		}
 
 		template<typename Hint, typename RKey, typename MappedCreator,
@@ -744,7 +745,7 @@ namespace internal
 				return res;
 			TreeMapIterator resIter = mTreeMap.AddCrt(IteratorProxy::GetBaseIterator(res.first),
 				std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
-			return { IteratorProxy(resIter), true };
+			return { momo::internal::ProxyConstructor<iterator>(resIter), true };
 		}
 
 		template<typename Iterator, typename Sentinel>

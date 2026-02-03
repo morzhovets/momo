@@ -44,17 +44,6 @@ namespace internal
 
 		typedef TreeMapIterator<TreeSetIterator, true> ConstIterator;
 
-	private:
-		struct ReferenceProxy : public Reference
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Reference)
-		};
-
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
 	public:
 		explicit TreeMapIterator() noexcept
 			: mTreeSetIterator()
@@ -63,7 +52,7 @@ namespace internal
 
 		operator ConstIterator() const noexcept
 		{
-			return ConstIteratorProxy(mTreeSetIterator);
+			return ProxyConstructor<ConstIterator>(mTreeSetIterator);
 		}
 
 		TreeMapIterator& operator++()
@@ -80,7 +69,7 @@ namespace internal
 
 		Pointer operator->() const
 		{
-			return Pointer(ReferenceProxy(*mTreeSetIterator));
+			return Pointer(ProxyConstructor<Reference>(*mTreeSetIterator));
 		}
 
 		friend bool operator==(TreeMapIterator iter1, TreeMapIterator iter2) noexcept
@@ -279,15 +268,9 @@ private:
 	{
 	};
 
-	struct ConstIteratorProxy : public ConstIterator
+	struct ConstIteratorProxy : private ConstIterator
 	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetTreeSetIterator)
-	};
-
-	struct IteratorProxy : public Iterator
-	{
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
 	};
 
 	struct ExtractedPairProxy : private ExtractedPair
@@ -362,22 +345,22 @@ public:
 
 	ConstIterator GetBegin() const noexcept
 	{
-		return ConstIteratorProxy(mTreeSet.GetBegin());
+		return internal::ProxyConstructor<ConstIterator>(mTreeSet.GetBegin());
 	}
 
 	Iterator GetBegin() noexcept
 	{
-		return IteratorProxy(mTreeSet.GetBegin());
+		return internal::ProxyConstructor<Iterator>(mTreeSet.GetBegin());
 	}
 
 	ConstIterator GetEnd() const noexcept
 	{
-		return ConstIteratorProxy(mTreeSet.GetEnd());
+		return internal::ProxyConstructor<ConstIterator>(mTreeSet.GetEnd());
 	}
 
 	Iterator GetEnd() noexcept
 	{
-		return IteratorProxy(mTreeSet.GetEnd());
+		return internal::ProxyConstructor<Iterator>(mTreeSet.GetEnd());
 	}
 
 	MOMO_FRIEND_SWAP(TreeMapCore)
@@ -416,74 +399,74 @@ public:
 
 	ConstIterator GetLowerBound(const Key& key) const
 	{
-		return ConstIteratorProxy(mTreeSet.GetLowerBound(key));
+		return internal::ProxyConstructor<ConstIterator>(mTreeSet.GetLowerBound(key));
 	}
 
 	Iterator GetLowerBound(const Key& key)
 	{
-		return IteratorProxy(mTreeSet.GetLowerBound(key));
+		return internal::ProxyConstructor<Iterator>(mTreeSet.GetLowerBound(key));
 	}
 
 	template<typename KeyArg>
 	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 	ConstIterator> GetLowerBound(const KeyArg& key) const
 	{
-		return ConstIteratorProxy(mTreeSet.GetLowerBound(key));
+		return internal::ProxyConstructor<ConstIterator>(mTreeSet.GetLowerBound(key));
 	}
 
 	template<typename KeyArg>
 	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 	Iterator> GetLowerBound(const KeyArg& key)
 	{
-		return IteratorProxy(mTreeSet.GetLowerBound(key));
+		return internal::ProxyConstructor<Iterator>(mTreeSet.GetLowerBound(key));
 	}
 
 	ConstIterator GetUpperBound(const Key& key) const
 	{
-		return ConstIteratorProxy(mTreeSet.GetUpperBound(key));
+		return internal::ProxyConstructor<ConstIterator>(mTreeSet.GetUpperBound(key));
 	}
 
 	Iterator GetUpperBound(const Key& key)
 	{
-		return IteratorProxy(mTreeSet.GetUpperBound(key));
+		return internal::ProxyConstructor<Iterator>(mTreeSet.GetUpperBound(key));
 	}
 
 	template<typename KeyArg>
 	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 	ConstIterator> GetUpperBound(const KeyArg& key) const
 	{
-		return ConstIteratorProxy(mTreeSet.GetUpperBound(key));
+		return internal::ProxyConstructor<ConstIterator>(mTreeSet.GetUpperBound(key));
 	}
 
 	template<typename KeyArg>
 	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 	Iterator> GetUpperBound(const KeyArg& key)
 	{
-		return IteratorProxy(mTreeSet.GetUpperBound(key));
+		return internal::ProxyConstructor<Iterator>(mTreeSet.GetUpperBound(key));
 	}
 
 	ConstIterator Find(const Key& key) const
 	{
-		return ConstIteratorProxy(mTreeSet.Find(key));
+		return internal::ProxyConstructor<ConstIterator>(mTreeSet.Find(key));
 	}
 
 	Iterator Find(const Key& key)
 	{
-		return IteratorProxy(mTreeSet.Find(key));
+		return internal::ProxyConstructor<Iterator>(mTreeSet.Find(key));
 	}
 
 	template<typename KeyArg>
 	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 	ConstIterator> Find(const KeyArg& key) const
 	{
-		return ConstIteratorProxy(mTreeSet.Find(key));
+		return internal::ProxyConstructor<ConstIterator>(mTreeSet.Find(key));
 	}
 
 	template<typename KeyArg>
 	internal::EnableIf<IsValidKeyArg<KeyArg>::value,
 	Iterator> Find(const KeyArg& key)
 	{
-		return IteratorProxy(mTreeSet.Find(key));
+		return internal::ProxyConstructor<Iterator>(mTreeSet.Find(key));
 	}
 
 	bool ContainsKey(const Key& key) const
@@ -560,7 +543,7 @@ public:
 	{
 		typename TreeSet::InsertResult res =
 			mTreeSet.Insert(std::move(ExtractedPairProxy::GetSetExtractedItem(extPair)));
-		return { IteratorProxy(res.position), res.inserted };
+		return { internal::ProxyConstructor<Iterator>(res.position), res.inserted };
 	}
 
 	template<typename ArgIterator, typename ArgSentinel,
@@ -608,8 +591,9 @@ public:
 	{
 		auto itemCreator = [&pairCreator] (KeyValuePair* newItem)
 			{ KeyValuePair::Create(newItem, std::forward<PairCreator>(pairCreator)); };
-		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
+		return internal::ProxyConstructor<Iterator>(
+			mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
+				ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
 	}
 
 	template<typename ValueCreator, bool extraCheck = true>
@@ -660,7 +644,8 @@ public:
 
 	Iterator Add(ConstIterator iter, ExtractedPair&& extPair)
 	{
-		return IteratorProxy(mTreeSet.Add(ConstIteratorProxy::GetTreeSetIterator(iter),
+		return internal::ProxyConstructor<Iterator>(mTreeSet.Add(
+			ConstIteratorProxy::GetTreeSetIterator(iter),
 			std::move(ExtractedPairProxy::GetSetExtractedItem(extPair))));
 	}
 
@@ -684,7 +669,8 @@ public:
 
 	Iterator Remove(ConstIterator iter)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(iter)));
+		return internal::ProxyConstructor<Iterator>(
+			mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(iter)));
 	}
 
 	Iterator Remove(Iterator iter)
@@ -694,13 +680,15 @@ public:
 
 	Iterator Remove(ConstIterator iter, ExtractedPair& extPair)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(iter),
+		return internal::ProxyConstructor<Iterator>(mTreeSet.Remove(
+			ConstIteratorProxy::GetTreeSetIterator(iter),
 			ExtractedPairProxy::GetSetExtractedItem(extPair)));
 	}
 
 	Iterator Remove(ConstIterator begin, ConstIterator end)
 	{
-		return IteratorProxy(mTreeSet.Remove(ConstIteratorProxy::GetTreeSetIterator(begin),
+		return internal::ProxyConstructor<Iterator>(mTreeSet.Remove(
+			ConstIteratorProxy::GetTreeSetIterator(begin),
 			ConstIteratorProxy::GetTreeSetIterator(end)));
 	}
 
@@ -745,7 +733,7 @@ public:
 	Iterator MakeMutableIterator(ConstIterator iter)
 	{
 		CheckIterator(iter);
-		return IteratorProxy(ConstIteratorProxy::GetTreeSetIterator(iter));
+		return internal::ProxyConstructor<Iterator>(ConstIteratorProxy::GetTreeSetIterator(iter));
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
@@ -769,7 +757,7 @@ private:
 		};
 		typename TreeSet::InsertResult res = mTreeSet.template InsertCrt<decltype(itemCreator), false>(
 			static_cast<const Key&>(key), std::move(itemCreator));
-		return { IteratorProxy(res.position), res.inserted };
+		return { internal::ProxyConstructor<Iterator>(res.position), res.inserted };
 	}
 
 	template<bool extraCheck, typename RKey, typename ValueCreator>
@@ -780,8 +768,9 @@ private:
 			KeyValuePair::template Create<KeyValueTraits>(newItem, GetMemManager(),
 				std::forward<RKey>(key), std::forward<ValueCreator>(valueCreator));
 		};
-		return IteratorProxy(mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
-			ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
+		return internal::ProxyConstructor<Iterator>(
+			mTreeSet.template AddCrt<decltype(itemCreator), extraCheck>(
+				ConstIteratorProxy::GetTreeSetIterator(iter), std::move(itemCreator)));
 	}
 
 private:

@@ -69,26 +69,15 @@ namespace internal
 		typedef ArrayIndexIterator<Array, typename Array::Item> Iterator;
 		typedef typename Iterator::ConstIterator ConstIterator;
 
-	private:
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
-		struct IteratorProxy : public Iterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(Iterator)
-		};
-
 	public:
 		static ConstIterator MakeIterator(const Array& array, size_t index) noexcept
 		{
-			return ConstIteratorProxy(&array, index);
+			return ProxyConstructor<ConstIterator>(&array, index);
 		}
 
 		static Iterator MakeIterator(Array& array, size_t index) noexcept
 		{
-			return IteratorProxy(&array, index);
+			return ProxyConstructor<Iterator>(&array, index);
 		}
 	};
 }

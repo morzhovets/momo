@@ -73,14 +73,6 @@ private:
 	typedef mem_pool_params MemPoolParams;
 	typedef momo::MemPool<MemPoolParams, MemManager> MemPool;
 
-	template<typename Value>
-	struct PoolAllocatorProxy
-		: public unsynchronized_pool_allocator<Value, base_allocator_type, mem_pool_params>
-	{
-		typedef unsynchronized_pool_allocator<Value, base_allocator_type, mem_pool_params> PoolAllocator;
-		MOMO_DECLARE_PROXY_CONSTRUCTOR(PoolAllocator)
-	};
-
 public:
 	explicit unsynchronized_pool_allocator(const base_allocator_type& alloc = base_allocator_type())
 		: mMemPool(std::allocate_shared<MemPool>(alloc, pvGetMemPoolParams(), MemManager(alloc)))	//?
@@ -104,7 +96,8 @@ public:
 	operator unsynchronized_pool_allocator<Value, base_allocator_type, mem_pool_params>() const
 		noexcept
 	{
-		return PoolAllocatorProxy<Value>(mMemPool);
+		return momo::internal::ProxyConstructor<
+			unsynchronized_pool_allocator<Value, base_allocator_type, mem_pool_params>>(mMemPool);
 	}
 
 	base_allocator_type get_base_allocator() const noexcept

@@ -54,12 +54,6 @@ namespace internal
 
 		typedef ArrayIndexIterator<const QArray, const QItem, Settings> ConstIterator;
 
-	private:
-		struct ConstIteratorProxy : public ConstIterator
-		{
-			MOMO_DECLARE_PROXY_CONSTRUCTOR(ConstIterator)
-		};
-
 	public:
 		explicit ArrayIndexIterator() noexcept
 			: mArray(nullptr),
@@ -69,7 +63,7 @@ namespace internal
 
 		operator ConstIterator() const noexcept
 		{
-			return ConstIteratorProxy(mArray, mIndex);
+			return ProxyConstructor<ConstIterator>(mArray, mIndex);
 		}
 
 		ArrayIndexIterator& operator+=(ptrdiff_t diff)
