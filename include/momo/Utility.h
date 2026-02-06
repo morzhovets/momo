@@ -156,7 +156,8 @@ namespace internal
 		static ResObject FromBuffer(const void* buffer) noexcept
 		{
 			ResObject object{};
-			CopyBuffer<sizeof(ResObject)>(buffer, &object);
+			//CopyBuffer<sizeof(ResObject)>(buffer, &object);	// gcc perf
+			MOMO_COPY_MEMORY(&object, buffer, sizeof(ResObject));
 			return object;
 		}
 
