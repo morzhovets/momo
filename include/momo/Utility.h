@@ -156,19 +156,19 @@ namespace internal
 		static ResObject FromBuffer(const void* buffer) noexcept
 		{
 			ResObject object{};
-			//CopyBuffer<sizeof(ResObject)>(buffer, &object);	// gcc perf
-			MOMO_COPY_MEMORY(&object, buffer, (std::integral_constant<size_t, sizeof(ResObject)>()));
+			CopyBuffer<sizeof(ResObject)>(buffer, &object);
 			return object;
 		}
 
 		template<size_t size>
 		static void CopyBuffer(const void* srcBuffer, void* dstBuffer) noexcept
 		{
-			CopyBuffer(srcBuffer, dstBuffer, std::integral_constant<size_t, size>());
+			static_assert(size > 0);
+			MOMO_ASSERT(srcBuffer != nullptr && dstBuffer != nullptr);
+			MOMO_COPY_MEMORY(dstBuffer, srcBuffer, size);	// gcc perf
 		}
 
-		template<std::convertible_to<size_t> Size>
-		static void CopyBuffer(const void* srcBuffer, void* dstBuffer, Size size) noexcept
+		static void CopyBuffer(const void* srcBuffer, void* dstBuffer, size_t size) noexcept
 		{
 			MOMO_ASSERT(srcBuffer != nullptr && dstBuffer != nullptr && size > 0);
 			MOMO_COPY_MEMORY(dstBuffer, srcBuffer, size);
