@@ -157,7 +157,7 @@ namespace internal
 		{
 			ResObject object{};
 			//CopyBuffer<sizeof(ResObject)>(buffer, &object);	// gcc perf
-			MOMO_COPY_MEMORY(&object, buffer, sizeof(ResObject));
+			MOMO_COPY_MEMORY(&object, buffer, (std::integral_constant<size_t, sizeof(ResObject)>()));
 			return object;
 		}
 
