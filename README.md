@@ -70,7 +70,7 @@ Some examples are [here](https://github.com/morzhovets/momo/blob/master/test/sou
 
 #### Supported compilers
 
-- MS Visual C++ (19.42+, Visual Studio 2022 17.12+) with /std:c++latest
+- MS Visual C++ (Visual Studio 2022+, toolset 14.4+) with /std:c++23preview
 
 - GCC (14+) with -std=c++23
 
