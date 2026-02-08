@@ -72,7 +72,7 @@ Some examples are [here](https://github.com/morzhovets/momo/blob/branch_cpp11/te
 
 #### Supported compilers
 
-- MS Visual C++ (19.0+, Visual Studio 2015+)
+- MS Visual C++ (Visual Studio 2015+)
 
 - GCC (5+)
 

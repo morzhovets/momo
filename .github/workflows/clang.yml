@@ -153,14 +153,6 @@ jobs:
           build_type: 'Release'
           test_libcxx20: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror'
-          cont_ver: '24.04'
-
-        - clang_ver: '18'
-          ubuntu_ver: '24.04'
-          build_type: 'Release'
-          test_libcxx20: 'Off'
-          extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
           cont_ver: '24.04'
 
@@ -347,14 +339,6 @@ jobs:
           test_libcxx20: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
-          cont_ver: '24.04'
-
-        - clang_ver: '18'
-          ubuntu_ver: '24.04-arm'
-          build_type: 'Release'
-          test_libcxx20: 'Off'
-          extra_settings: 'Off'
-          flags: '-std=c++11 -Werror'
           cont_ver: '24.04'
 
         - clang_ver: '18'

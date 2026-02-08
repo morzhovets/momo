@@ -105,14 +105,6 @@ jobs:
           build_type: 'Release'
           test_libcxx20: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++11'
-          cont_ver: '24.04'
-
-        - gcc_ver: '14'
-          ubuntu_ver: '24.04'
-          build_type: 'Release'
-          test_libcxx20: 'Off'
-          extra_settings: 'Off'
           flags: '-std=c++14'
           cont_ver: '24.04'
 
@@ -251,14 +243,6 @@ jobs:
           test_libcxx20: 'On'
           extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
-          cont_ver: '24.04'
-
-        - gcc_ver: '14'
-          ubuntu_ver: '24.04-arm'
-          build_type: 'Release'
-          test_libcxx20: 'Off'
-          extra_settings: 'Off'
-          flags: '-std=c++11'
           cont_ver: '24.04'
 
         - gcc_ver: '14'
