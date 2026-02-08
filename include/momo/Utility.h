@@ -251,7 +251,8 @@ namespace internal
 		static void ToBuffer(Object object, void* buffer) noexcept
 		{
 			MOMO_STATIC_ASSERT(std::is_trivially_copyable<Object>::value);
-			CopyBuffer(&object, buffer, std::integral_constant<size_t, sizeof(Object)>());
+			//CopyBuffer(&object, buffer, std::integral_constant<size_t, sizeof(Object)>());	// gcc perf
+			MOMO_COPY_MEMORY(buffer, &object, (std::integral_constant<size_t, sizeof(Object)>()));
 		}
 
 		template<typename ResObject>
@@ -260,14 +261,15 @@ namespace internal
 			MOMO_STATIC_ASSERT(std::is_trivially_copyable<ResObject>::value
 				&& std::is_nothrow_default_constructible<ResObject>::value);
 			ResObject object{};
-			CopyBuffer(buffer, &object, std::integral_constant<size_t, sizeof(ResObject)>());
+			//CopyBuffer(buffer, &object, std::integral_constant<size_t, sizeof(ResObject)>());	// gcc perf
+			MOMO_COPY_MEMORY(&object, buffer, (std::integral_constant<size_t, sizeof(ResObject)>()));
 			return object;
 		}
 
 		template<typename Size>
 		static void CopyBuffer(const void* srcBuffer, void* dstBuffer, Size size) noexcept
 		{
-			MOMO_ASSERT(srcBuffer != nullptr && dstBuffer != nullptr && size > 0);
+			MOMO_ASSERT(size > 0);
 			MOMO_COPY_MEMORY(dstBuffer, srcBuffer, size);
 		}
 	};
