@@ -428,6 +428,8 @@ LIBCXX_TEST_BEGIN(modifiers_erase_range)
 #include "unord.map/unord.map.modifiers/erase_range.pass.cpp"
 LIBCXX_TEST_END
 
+#if !defined(LIBCXX_TEST_HASH_LIST_MAP)
+
 LIBCXX_TEST_BEGIN(modifiers_extract_iterator)
 #include "unord.map/unord.map.modifiers/extract_iterator.pass.cpp"
 LIBCXX_TEST_END
@@ -435,6 +437,8 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(modifiers_extract_key)
 #include "unord.map/unord.map.modifiers/extract_key.pass.cpp"
 LIBCXX_TEST_END
+
+#endif // LIBCXX_TEST_HASH_LIST_MAP
 
 #endif // !defined(LIBCXX_TEST_MERGE_MAP) || defined(LIBCXX_TEST_MERGE_HASH)
 
@@ -462,7 +466,7 @@ LIBCXX_TEST_BEGIN(modifiers_insert_iter_iter)
 #include "unord.map/unord.map.modifiers/insert_iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
-#if !defined(LIBCXX_TEST_MERGE_MAP) || defined(LIBCXX_TEST_MERGE_HASH)
+#if (!defined(LIBCXX_TEST_MERGE_MAP) || defined(LIBCXX_TEST_MERGE_HASH)) && !defined(LIBCXX_TEST_HASH_LIST_MAP)
 
 LIBCXX_TEST_BEGIN(modifiers_insert_node_type)
 #include "unord.map/unord.map.modifiers/insert_node_type.pass.cpp"
@@ -472,7 +476,7 @@ LIBCXX_TEST_BEGIN(modifiers_insert_node_type_hint)
 #include "unord.map/unord.map.modifiers/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
 
-#endif // !defined(LIBCXX_TEST_MERGE_MAP) || defined(LIBCXX_TEST_MERGE_HASH)
+#endif // (!defined(LIBCXX_TEST_MERGE_MAP) || defined(LIBCXX_TEST_MERGE_HASH)) && !defined(LIBCXX_TEST_HASH_LIST_MAP)
 
 LIBCXX_TEST_BEGIN(modifiers_insert_or_assign)
 #include "unord.map/unord.map.modifiers/insert_or_assign.pass.cpp"

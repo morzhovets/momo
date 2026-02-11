@@ -28,7 +28,7 @@
 template<typename TKey, typename TMapped,
 	typename THasher = momo::HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>>
-#ifdef LIBCXX_TEST_MERGE_MAP
+#if defined(LIBCXX_TEST_MERGE_MAP) || defined(LIBCXX_TEST_HASH_LIST_MAP)
 using unordered_map2 = std::unordered_map<TKey, TMapped, THasher, TEqualComparer>;
 #else
 using unordered_map2 = momo::stdish::unordered_map_adaptor<momo::HashMapCore<
