@@ -71,6 +71,9 @@ private:
 	template<typename KeyArg>
 	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
 
+	static const bool useHintIterators = HashTraits::useHintIterators
+		&& std::is_convertible_v<typename HashSet::ConstIterator, typename HashSet::ConstPosition>;
+
 	struct NodeTypeProxy : private node_type
 	{
 		typedef node_type NodeType;
@@ -419,7 +422,7 @@ public:
 
 	iterator insert(const_iterator hint, value_type&& value)
 	{
-		if constexpr (HashTraits::useHintIterators)
+		if constexpr (useHintIterators)
 			return mHashSet.Add(hint, std::move(value));
 		else
 			return insert(std::move(value)).first;
@@ -433,7 +436,7 @@ public:
 
 	iterator insert(const_iterator hint, const value_type& value)
 	{
-		if constexpr (HashTraits::useHintIterators)
+		if constexpr (useHintIterators)
 			return mHashSet.Add(hint, value);
 		else
 			return insert(value).first;
@@ -450,7 +453,7 @@ public:
 
 	iterator insert(const_iterator hint, node_type&& node)
 	{
-		if constexpr (HashTraits::useHintIterators)
+		if constexpr (useHintIterators)
 		{
 			if (node.empty())
 				return end();
@@ -503,7 +506,7 @@ public:
 	template<typename... ValueArgs>
 	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
 	{
-		if constexpr (HashTraits::useHintIterators)
+		if constexpr (useHintIterators)
 			return mHashSet.AddVar(hint, std::forward<ValueArgs>(valueArgs)...);
 		else
 			return emplace(std::forward<ValueArgs>(valueArgs)...).first;

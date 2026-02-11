@@ -51,7 +51,7 @@ struct throw_hasher
 template<typename TKey,
 	typename THasher = momo::HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>>
-#ifdef LIBCXX_TEST_MERGE_SET
+#if defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_HASH_LIST_SET)
 using unordered_set2 = std::unordered_set<TKey, THasher, TEqualComparer>;
 #else
 using unordered_set2 = momo::stdish::unordered_set_adaptor<momo::HashSetCore<

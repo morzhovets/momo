@@ -27,7 +27,7 @@ namespace momo
 namespace internal
 {
 	template<typename TIterator>
-	class HashListSetPosition : public IteratorBase
+	class HashListSetPosition : public ForwardIteratorBase
 	{
 	public:
 		typedef TIterator Iterator;
@@ -64,11 +64,6 @@ namespace internal
 		bool operator!() const noexcept
 		{
 			return IteratorProxy::IsEmpty(mIterator);
-		}
-
-		explicit operator bool() const noexcept
-		{
-			return !!*this;
 		}
 
 		friend bool operator==(HashListSetPosition pos1, HashListSetPosition pos2) noexcept
@@ -358,6 +353,8 @@ private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
+	static const size_t alignment = ItemManager::alignment;	//?
+
 	template<typename... ItemArgs>
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
 
@@ -815,7 +812,7 @@ private:
 template<conceptObject TKey,
 	conceptHashTraits<TKey> THashTraits = HashTraitsOpen<TKey>,
 	conceptMemManager TMemManager = MemManagerDefault>
-using HashListSet = HashListSetCore<HashSetItemTraits<TKey, TMemManager>, THashTraits>;
+using HashListSet = HashListSetCore<HashListSetItemTraits<TKey, TMemManager>, THashTraits>;
 
 } // namespace momo
 
