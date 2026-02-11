@@ -444,6 +444,20 @@ namespace internal
 		BaseIterator mBaseIterator;
 	};
 
+	template<std::forward_iterator BaseIterator,
+		template<typename BaseReference> class Reference>
+	struct DerivedIteratorSelector
+	{
+		typedef DerivedForwardIterator<BaseIterator, Reference> DerivedIterator;
+	};
+
+	template<std::bidirectional_iterator BaseIterator,
+		template<typename BaseReference> class Reference>
+	struct DerivedIteratorSelector<BaseIterator, Reference>
+	{
+		typedef DerivedBidirectionalIterator<BaseIterator, Reference> DerivedIterator;
+	};
+
 	template<typename TPointerGenerator>
 	requires (std::copy_constructible<TPointerGenerator>) &&
 		(noexcept(std::declval<TPointerGenerator>()())) &&

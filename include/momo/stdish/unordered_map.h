@@ -12,12 +12,14 @@
     class unordered_map_adaptor
     class unordered_map
     class unordered_map_open
+    class ordered_map
 
 \**********************************************************/
 
 #pragma once
 
 #include "../HashMap.h"
+#include "../HashListMap.h"
 #include "node_handle.h"
 
 namespace momo::stdish
@@ -49,8 +51,8 @@ public:
 	typedef typename std::allocator_traits<typename MemManager::ByteAllocator>
 		::template rebind_alloc<value_type> allocator_type;
 
-	typedef momo::internal::DerivedForwardIterator<HashMapIterator,
-		momo::internal::MapReferenceStd> iterator;
+	typedef momo::internal::DerivedIteratorSelector<
+		HashMapIterator, momo::internal::MapReferenceStd>::DerivedIterator iterator;
 	typedef typename iterator::ConstIterator const_iterator;
 
 	typedef typename iterator::Reference reference;
@@ -567,19 +569,27 @@ public:
 
 	iterator erase(const_iterator first, const_iterator last)
 	{
-		if (first == begin() && last == end())
+		if constexpr (requires { mHashMap.Remove(HashMapIterator(), HashMapIterator()); })
 		{
-			clear();
-			return end();
+			return momo::internal::ProxyConstructor<iterator>(mHashMap.Remove(
+				ConstIteratorProxy::GetBaseIterator(first), ConstIteratorProxy::GetBaseIterator(last)));
 		}
-		if (first == last)
+		else
 		{
-			return momo::internal::ProxyConstructor<iterator>(
-				mHashMap.MakeMutableIterator(ConstIteratorProxy::GetBaseIterator(first)));
+			if (first == begin() && last == end())
+			{
+				clear();
+				return end();
+			}
+			if (first == last)
+			{
+				return momo::internal::ProxyConstructor<iterator>(
+					mHashMap.MakeMutableIterator(ConstIteratorProxy::GetBaseIterator(first)));
+			}
+			if (first != end() && std::next(first) == last)
+				return erase(first);
+			MOMO_THROW(std::invalid_argument("invalid unordered_map erase arguments"));
 		}
-		if (first != end() && std::next(first) == last)
-			return erase(first);
-		MOMO_THROW(std::invalid_argument("invalid unordered_map erase arguments"));
 	}
 
 	size_type erase(const key_type& key)
@@ -843,7 +853,7 @@ private:
 				std::move(mappedCreator)(newMapped);
 				keyFin.ResetPtr();
 			};
-			typename HashMap::Position resPos = mHashMap.AddCrt(pos, std::move(valueCreator));
+			auto resPos = mHashMap.AddCrt(pos, std::move(valueCreator));
 			return { momo::internal::ProxyConstructor<iterator>(resPos), true };
 		}
 	}
@@ -986,6 +996,26 @@ public:
 	using UnorderedMapAdaptor::operator=;
 };
 
+template<typename TKey, typename TMapped,
+	typename THasher = HashCoder<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
+	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
+class MOMO_EMPTY_BASES ordered_map
+	: public unordered_map_adaptor<HashListMap<TKey, TMapped,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>,
+	public momo::internal::Swappable<ordered_map>
+{
+private:
+	typedef unordered_map_adaptor<HashListMap<TKey, TMapped,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
+			MemManagerStd<TAllocator>>> UnorderedMapAdaptor;
+
+public:
+	using UnorderedMapAdaptor::UnorderedMapAdaptor;
+
+	using UnorderedMapAdaptor::operator=;
+};
+
 #define MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map) \
 template<typename Iterator, \
 	typename Value = std::iter_value_t<Iterator>, \
@@ -1077,10 +1107,12 @@ unordered_map(std::from_range_t, Range&&, size_t, Hasher, EqualComparer, Allocat
 
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map_open)
+MOMO_DECLARE_DEDUCTION_GUIDES(ordered_map)
 
 #if defined(__cpp_lib_containers_ranges)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_map)
 MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_map_open)
+MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(ordered_map)
 #endif
 
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
