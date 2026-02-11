@@ -158,11 +158,11 @@ private:
 	typedef typename HashSet::ExtractedItem HashSetExtractedItem;
 
 public:
-	typedef internal::MapForwardIterator<HashSetConstIterator> Iterator;
-	typedef typename Iterator::ConstIterator ConstIterator;
-
 	typedef internal::MapPosition<HashSetConstPosition> Position;
 	typedef typename Position::ConstPosition ConstPosition;
+
+	typedef typename Position::Iterator Iterator;
+	typedef typename Iterator::ConstIterator ConstIterator;
 
 	typedef internal::InsertResult<Position> InsertResult;
 

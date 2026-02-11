@@ -29,7 +29,6 @@ concept conceptMapKeyValueTraits =
 	std::is_same_v<typename MapKeyValueTraits::MemManager, MemManager> &&
 	requires (Key& key, Value& value, MemManager& memManager)
 	{
-		typename std::bool_constant<MapKeyValueTraits::useValuePtr>;
 		typename std::integral_constant<size_t, MapKeyValueTraits::keyAlignment>;
 		typename std::integral_constant<size_t, MapKeyValueTraits::valueAlignment>;	//?
 		{ MapKeyValueTraits::DestroyKey(&memManager, key) } noexcept;
@@ -270,11 +269,14 @@ namespace internal
 	{
 	protected:
 		typedef TSetPosition SetPosition;
+		typedef typename SetPosition::Iterator SetIterator;
 
 		static const bool isConst = tIsConst;
 
 	public:
-		typedef MapForwardIterator<typename SetPosition::Iterator, isConst> Iterator;
+		typedef std::conditional_t<std::bidirectional_iterator<SetIterator>,
+			MapBidirectionalIterator<SetIterator, isConst>,
+			MapForwardIterator<SetIterator, isConst>> Iterator;
 
 		typedef typename Iterator::Reference Reference;
 		typedef typename Iterator::Pointer Pointer;
@@ -294,7 +296,8 @@ namespace internal
 		}
 
 		template<typename ArgIterator>
-		requires std::is_convertible_v<ArgIterator, Iterator>
+		requires std::is_constructible_v<SetPosition, SetIterator> &&
+			std::is_convertible_v<ArgIterator, Iterator>
 		MapPosition(ArgIterator iter) noexcept
 			: mSetPosition(IteratorProxy::GetSetIterator(static_cast<Iterator>(iter)))
 		{
@@ -316,6 +319,11 @@ namespace internal
 		Pointer operator->() const
 		{
 			return Pointer(ProxyConstructor<Reference>(*mSetPosition));
+		}
+
+		bool operator!() const noexcept
+		{
+			return !mSetPosition;
 		}
 
 		friend bool operator==(MapPosition pos1, MapPosition pos2) noexcept
