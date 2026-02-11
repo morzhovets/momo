@@ -86,6 +86,24 @@ jobs:
           flags: '/std:c++latest /WX'
           win_ver: '2025-vs2026'
 
+        # Visual Studio 2019 x86
+        - toolset: '14.2'
+          arch: 'x64_x86'
+          build_type: 'Release'
+          test_libcxx20: 'On'
+          extra_settings: 'Off'
+          flags: '/std:c++20 /WX'
+          win_ver: '2025'
+
+        # Visual Studio 2022 x86
+        - toolset: '14.4'
+          arch: 'x64_x86'
+          build_type: 'Release'
+          test_libcxx20: 'On'
+          extra_settings: 'Off'
+          flags: '/std:c++23preview /WX'
+          win_ver: '2025'
+
         # Visual Studio 2026 x86
         - toolset: '14.5'
           arch: 'x64_x86'
