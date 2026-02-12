@@ -163,7 +163,7 @@ int main(int, char**)
     int ctr = 0;
     while (i != m2.end()) {
         if (ctr++ % 2 == 0)
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#ifdef LIBCXX_TEST_HASH_LIST_MAP
             m2.erase(i++);
 #else
             i = m2.erase(i);

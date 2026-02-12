@@ -25,7 +25,7 @@ int main(int, char**) {
   std::pair<map_type::iterator, bool> p1 = m.insert(map_type::value_type(1, "abc"));
   std::pair<map_type::iterator, bool> p2 = m.insert(map_type::value_type(2, "abc"));
 
-#ifdef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#ifdef LIBCXX_TEST_HASH_LIST_MAP
 #else
   p1.first = m.find(1);
 #endif
