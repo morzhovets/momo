@@ -74,6 +74,9 @@ private:
 	template<typename KeyArg>
 	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
 
+	static const bool useHintIterators = HashTraits::useHintIterators
+		&& std::is_convertible_v<typename HashMap::ConstIterator, typename HashMap::ConstPosition>;
+
 	struct ConstIteratorProxy : private const_iterator
 	{
 		typedef const_iterator ConstIterator;
@@ -471,7 +474,7 @@ public:
 
 	iterator insert(const_iterator hint, node_type&& node)
 	{
-		if constexpr (HashTraits::useHintIterators)
+		if constexpr (useHintIterators)
 		{
 			if (node.empty())
 				return end();
@@ -821,7 +824,7 @@ private:
 		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
 		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
 		typedef typename KeyManager::template DestroyFinalizer<> KeyDestroyFinalizer;
-		if constexpr (HashTraits::useHintIterators && !std::is_null_pointer_v<Hint>)
+		if constexpr (useHintIterators && !std::is_null_pointer_v<Hint>)
 		{
 			auto valueCreator = [&memManager, &keyArgs, mappedCreator = std::move(mappedCreator)]
 				(key_type* newKey, mapped_type* newMapped) mutable
@@ -865,7 +868,7 @@ private:
 	std::pair<iterator, bool> pvInsert(Hint hint, std::tuple<RKey>&& key,
 		FastMovableFunctor<MappedCreator> mappedCreator)
 	{
-		if constexpr (HashTraits::useHintIterators && !std::is_null_pointer_v<Hint>)
+		if constexpr (useHintIterators && !std::is_null_pointer_v<Hint>)
 		{
 			typename HashMap::Position resPos = mHashMap.AddCrt(
 				ConstIteratorProxy::GetBaseIterator(hint),
