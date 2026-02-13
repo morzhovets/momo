@@ -174,7 +174,7 @@ namespace internal
 	template<typename TBucket, typename TSettings>
 	class MOMO_EMPTY_BASES HashSetPosition
 		: private VersionKeeper<TSettings>,
-		public ForwardIteratorBase
+		public PositionBase
 	{
 	protected:
 		typedef TBucket Bucket;
@@ -207,8 +207,13 @@ namespace internal
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(mBucketIterator != BucketIterator());
+			MOMO_CHECK(!!*this);
 			return std::to_address(mBucketIterator);
+		}
+
+		bool operator!() const noexcept
+		{
+			return mBucketIterator == BucketIterator();
 		}
 
 		friend bool operator==(HashSetPosition pos1, HashSetPosition pos2) noexcept
@@ -233,7 +238,7 @@ namespace internal
 
 		size_t ptGetHashCode() const noexcept
 		{
-			MOMO_ASSERT(mBucketIterator == BucketIterator());
+			MOMO_ASSERT(!*this);
 			return mIndexCode;
 		}
 
@@ -308,7 +313,12 @@ namespace internal
 			return *this;
 		}
 
-		using ForwardIteratorBase::operator++;
+		HashSetIterator operator++(int)	//?
+		{
+			HashSetIterator resIter = *this;
+			++*this;
+			return resIter;
+		}
 
 	protected:
 		explicit HashSetIterator(Buckets& buckets, size_t bucketIndex,

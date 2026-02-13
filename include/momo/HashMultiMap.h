@@ -196,8 +196,7 @@ namespace internal
 		typedef HashMultiMapReference<Key, Value> Reference;
 		typedef IteratorPointer<Reference> Pointer;
 
-		typedef HashMultiMapIterator<typename KeyIterator::ConstIterator,
-			Settings> ConstIterator;
+		typedef HashMultiMapIterator<typename KeyIterator::ConstIterator, Settings> ConstIterator;
 
 	public:
 		explicit HashMultiMapIterator() noexcept
@@ -213,8 +212,7 @@ namespace internal
 
 		HashMultiMapIterator& operator++()
 		{
-			VersionKeeper::Check();
-			MOMO_CHECK(mValueIterator != ValueIterator());
+			operator->();	// check
 			++mValueIterator;
 			pvMove();
 			return *this;
@@ -225,8 +223,13 @@ namespace internal
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(mValueIterator != ValueIterator());
+			MOMO_CHECK(!!*this);
 			return Pointer(Reference(mKeyIterator->key, *mValueIterator));
+		}
+
+		bool operator!() const noexcept
+		{
+			return mValueIterator == ValueIterator();
 		}
 
 		friend bool operator==(HashMultiMapIterator iter1, HashMultiMapIterator iter2) noexcept
@@ -266,7 +269,7 @@ namespace internal
 		void ptCheck(const size_t& version) const
 		{
 			VersionKeeper::Check(&version);
-			MOMO_CHECK(mValueIterator != ValueIterator());
+			MOMO_CHECK(!!*this);
 		}
 
 	private:

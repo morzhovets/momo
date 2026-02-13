@@ -27,7 +27,7 @@ namespace momo
 namespace internal
 {
 	template<typename TIterator>
-	class HashListSetPosition : public ForwardIteratorBase
+	class HashListSetPosition : public PositionBase
 	{
 	public:
 		typedef TIterator Iterator;

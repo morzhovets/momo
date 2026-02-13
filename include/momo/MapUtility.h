@@ -243,6 +243,12 @@ namespace internal
 			return Pointer(ProxyConstructor<Reference>(*mSetIterator));
 		}
 
+		bool operator!() const noexcept
+			requires requires { { !this->mSetIterator } noexcept; }
+		{
+			return !mSetIterator;
+		}
+
 		friend bool operator==(MapForwardIterator iter1, MapForwardIterator iter2) noexcept
 		{
 			return iter1.mSetIterator == iter2.mSetIterator;
@@ -265,7 +271,7 @@ namespace internal
 
 	template<typename TSetPosition,
 		bool tIsConst = false>
-	class MapPosition : public ForwardIteratorBase
+	class MapPosition : public PositionBase
 	{
 	protected:
 		typedef TSetPosition SetPosition;

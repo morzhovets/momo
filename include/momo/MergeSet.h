@@ -120,7 +120,7 @@ namespace internal
 		Pointer operator->() const
 		{
 			VersionKeeper::Check();
-			MOMO_CHECK(mItemPtr != nullptr);
+			MOMO_CHECK(!!*this);
 			return mItemPtr;
 		}
 
@@ -133,6 +133,11 @@ namespace internal
 		}
 
 		using ForwardIteratorBase::operator++;
+
+		bool operator!() const noexcept
+		{
+			return mItemPtr == nullptr;
+		}
 
 		friend bool operator==(MergeSetIterator iter1, MergeSetIterator iter2) noexcept
 		{

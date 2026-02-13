@@ -221,35 +221,48 @@ namespace internal
 		}
 	};
 
-	class IteratorBase
+	class PositionBase
 	{
 	public:
-		template<conceptMutableThis RIterator>
-		std::remove_reference_t<RIterator> operator++(this RIterator&& iter, int)
-			requires requires { { ++iter }; }
-		{
-			std::remove_reference_t<RIterator> resIter = iter;
-			++iter;
-			return resIter;
-		}
-
-		template<conceptMutableThis RIterator>
-		std::remove_reference_t<RIterator> operator--(this RIterator&& iter, int)
-			requires requires { { --iter }; }
-		{
-			std::remove_reference_t<RIterator> resIter = iter;
-			--iter;
-			return resIter;
-		}
-
 		template<typename Iterator>
 		typename Iterator::Reference operator*(this const Iterator& iter)
 		{
 			return *iter.operator->();
 		}
+
+		template<typename Iterator>
+		explicit operator bool(this const Iterator& iter) noexcept
+			requires requires { { !iter } noexcept; }
+		{
+			return !!iter;
+		}
 	};
 
-	class ArrayIteratorBase : public IteratorBase
+	class ForwardIteratorBase : public PositionBase
+	{
+	public:
+		template<conceptMutableThis RIterator>
+		std::remove_reference_t<RIterator> operator++(this RIterator&& iter, int)
+		{
+			std::remove_reference_t<RIterator> resIter = iter;
+			++iter;
+			return resIter;
+		}
+	};
+
+	class BidirectionalIteratorBase : public ForwardIteratorBase
+	{
+	public:
+		template<conceptMutableThis RIterator>
+		std::remove_reference_t<RIterator> operator--(this RIterator&& iter, int)
+		{
+			std::remove_reference_t<RIterator> resIter = iter;
+			--iter;
+			return resIter;
+		}
+	};
+
+	class ArrayIteratorBase : public BidirectionalIteratorBase
 	{
 	public:
 		template<conceptMutableThis RIterator>
@@ -264,8 +277,8 @@ namespace internal
 			return iter += -1;
 		}
 
-		using IteratorBase::operator++;
-		using IteratorBase::operator--;
+		using BidirectionalIteratorBase::operator++;
+		using BidirectionalIteratorBase::operator--;
 
 		template<typename Iterator>
 		Iterator operator+(this Iterator iter, ptrdiff_t diff)
@@ -295,26 +308,6 @@ namespace internal
 		typename Iterator::Reference operator[](this Iterator iter, ptrdiff_t diff)
 		{
 			return *(iter += diff);
-		}
-	};
-
-	class BidirectionalIteratorBase : public IteratorBase
-	{
-	};
-
-	class ForwardIteratorBase : public IteratorBase
-	{
-	public:
-		template<typename Iterator>
-		bool operator!(this const Iterator& iter) noexcept
-		{
-			return iter == Iterator();
-		}
-
-		template<typename Iterator>
-		explicit operator bool(this const Iterator& iter) noexcept
-		{
-			return !!iter;
 		}
 	};
 
@@ -422,6 +415,12 @@ namespace internal
 		Pointer operator->() const
 		{
 			return Pointer(ProxyConstructor<Reference>(*mBaseIterator));
+		}
+
+		bool operator!() const noexcept
+			requires requires { { !this->mBaseIterator } noexcept; }
+		{
+			return !mBaseIterator;
 		}
 
 		friend bool operator==(DerivedForwardIterator iter1, DerivedForwardIterator iter2) noexcept
