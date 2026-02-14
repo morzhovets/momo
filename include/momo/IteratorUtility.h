@@ -232,7 +232,7 @@ namespace internal
 
 		template<typename Iterator>
 		explicit operator bool(this const Iterator& iter) noexcept
-			requires requires { { !iter } noexcept; }
+			requires requires { { iter.operator!() } noexcept; }
 		{
 			return !!iter;
 		}
@@ -418,7 +418,7 @@ namespace internal
 		}
 
 		bool operator!() const noexcept
-			requires requires { { !this->mBaseIterator } noexcept; }
+			requires requires { { !BaseIterator() } noexcept; }
 		{
 			return !mBaseIterator;
 		}

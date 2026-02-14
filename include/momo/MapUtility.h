@@ -244,7 +244,7 @@ namespace internal
 		}
 
 		bool operator!() const noexcept
-			requires requires { { !this->mSetIterator } noexcept; }
+			requires requires { { !SetIterator() } noexcept; }
 		{
 			return !mSetIterator;
 		}
