@@ -77,13 +77,9 @@
 	{ \
 		return !(iter1 == iter2); \
 	} \
-	bool operator!() const noexcept \
-	{ \
-		return *this == Iterator(); \
-	} \
 	explicit operator bool() const noexcept \
 	{ \
-		return !!*this; \
+		return *this != Iterator(); \
 	}
 
 #define MOMO_MORE_HASH_POSITION_OPERATORS(Position) \
@@ -95,13 +91,9 @@
 	{ \
 		return !(pos1 == pos2); \
 	} \
-	bool operator!() const noexcept \
-	{ \
-		return *this == Position(); \
-	} \
 	explicit operator bool() const noexcept \
 	{ \
-		return !!*this; \
+		return *this != Position(); \
 	}
 
 #define MOMO_MORE_TREE_ITERATOR_OPERATORS(Iterator) \
@@ -288,11 +280,6 @@ namespace internal
 		Reference operator*() const noexcept
 		{
 			return mReference;
-		}
-
-		bool operator!() const noexcept
-		{
-			return false;
 		}
 
 		explicit operator bool() const noexcept

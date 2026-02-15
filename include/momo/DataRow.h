@@ -398,14 +398,9 @@ namespace internal
 			return *RowBounds::GetBegin();
 		}
 
-		bool operator!() const noexcept
-		{
-			return RowBounds::GetCount() == 0;
-		}
-
 		explicit operator bool() const noexcept
 		{
-			return !!*this;
+			return RowBounds::GetCount() > 0;
 		}
 	};
 }
