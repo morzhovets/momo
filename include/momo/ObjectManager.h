@@ -639,20 +639,21 @@ namespace internal
 			size_t count, Executor&& exec, std::false_type /*isNothrowRelocatable*/)
 		{
 			size_t index = 0;
-			try
-			{
-				Iterator srcIter = srcBegin;
-				Iterator dstIter = dstBegin;
-				for (; index < count; ++index, (void)++srcIter, (void)++dstIter)
-					Copy(memManager, *srcIter, std::addressof(*dstIter));
-				std::forward<Executor>(exec)();
-			}
-			catch (...)
-			{
-				Destroy(memManager, dstBegin, index);
-				throw;
-			}
+			auto fin = Catcher::Finalize(&ObjectManager::template pvDestroyExtra<Iterator>,
+				memManager, dstBegin, index);
+			Iterator srcIter = srcBegin;
+			Iterator dstIter = dstBegin;
+			for (; index < count; ++index, (void)++srcIter, (void)++dstIter)
+				Copy(memManager, *srcIter, std::addressof(*dstIter));
+			std::forward<Executor>(exec)();
+			fin.Detach();
 			Destroy(memManager, srcBegin, count);
+		}
+
+		template<typename Iterator>
+		static void pvDestroyExtra(MemManager& memManager, Iterator begin, size_t& lastIndex) noexcept
+		{
+			Destroy(memManager, begin, lastIndex);
 		}
 
 		template<typename Iterator, bool isNothrowSwappable>

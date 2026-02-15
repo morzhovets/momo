@@ -46,7 +46,7 @@
 #ifndef MOMO_INCLUDE_GUARD_MEM_MANAGER
 #define MOMO_INCLUDE_GUARD_MEM_MANAGER
 
-#include "Utility.h"
+#include "FunctionUtility.h"
 
 #include <cstdlib>	// malloc, free, realloc
 
@@ -412,16 +412,11 @@ namespace internal
 		template<typename ResObject, typename... ResObjectArgs>
 		static ResObject* AllocateCreate(MemManager& memManager, ResObjectArgs&&... resObjectArgs)
 		{
-			void* resObjectPtr = Allocate(memManager, sizeof(ResObject));
-			try
-			{
-				return ::new(resObjectPtr) ResObject(std::forward<ResObjectArgs>(resObjectArgs)...);
-			}
-			catch (...)
-			{
-				memManager.Deallocate(resObjectPtr, sizeof(ResObject));
-				throw;
-			}
+			void* ptr = Allocate(memManager, sizeof(ResObject));
+			auto fin = Catcher::Finalize(&MemManager::Deallocate, memManager, ptr, sizeof(ResObject));
+			ResObject* resObjectPtr = ::new(ptr) ResObject(std::forward<ResObjectArgs>(resObjectArgs)...);
+			fin.Detach();
+			return resObjectPtr;
 		}
 
 		template<typename Object>
