@@ -243,10 +243,10 @@ namespace internal
 			return Pointer(ProxyConstructor<Reference>(*mSetIterator));
 		}
 
-		bool operator!() const noexcept
-			requires requires { { !SetIterator() } noexcept; }
+		explicit operator bool() const noexcept
+			requires std::is_nothrow_constructible_v<bool, SetIterator>
 		{
-			return !mSetIterator;
+			return static_cast<bool>(mSetIterator);
 		}
 
 		friend bool operator==(MapForwardIterator iter1, MapForwardIterator iter2) noexcept
@@ -327,9 +327,9 @@ namespace internal
 			return Pointer(ProxyConstructor<Reference>(*mSetPosition));
 		}
 
-		bool operator!() const noexcept
+		explicit operator bool() const noexcept
 		{
-			return !mSetPosition;
+			return static_cast<bool>(mSetPosition);
 		}
 
 		friend bool operator==(MapPosition pos1, MapPosition pos2) noexcept

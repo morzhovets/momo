@@ -61,9 +61,9 @@ namespace internal
 			return mIterator.operator->();
 		}
 
-		bool operator!() const noexcept
+		explicit operator bool() const noexcept
 		{
-			return IteratorProxy::IsEmpty(mIterator);
+			return !IteratorProxy::IsEmpty(mIterator);
 		}
 
 		friend bool operator==(HashListSetPosition pos1, HashListSetPosition pos2) noexcept

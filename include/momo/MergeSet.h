@@ -134,9 +134,9 @@ namespace internal
 
 		using ForwardIteratorBase::operator++;
 
-		bool operator!() const noexcept
+		explicit operator bool() const noexcept
 		{
-			return mItemPtr == nullptr;
+			return mItemPtr != nullptr;
 		}
 
 		friend bool operator==(MergeSetIterator iter1, MergeSetIterator iter2) noexcept

@@ -142,11 +142,6 @@ namespace internal
 			return mReference;
 		}
 
-		bool operator!() const noexcept
-		{
-			return false;
-		}
-
 		explicit operator bool() const noexcept
 		{
 			return true;
@@ -228,13 +223,6 @@ namespace internal
 		typename Iterator::Reference operator*(this const Iterator& iter)
 		{
 			return *iter.operator->();
-		}
-
-		template<typename Iterator>
-		explicit operator bool(this const Iterator& iter) noexcept
-			requires requires { { iter.operator!() } noexcept; }
-		{
-			return !!iter;
 		}
 	};
 
@@ -417,10 +405,10 @@ namespace internal
 			return Pointer(ProxyConstructor<Reference>(*mBaseIterator));
 		}
 
-		bool operator!() const noexcept
-			requires requires { { !BaseIterator() } noexcept; }
+		explicit operator bool() const noexcept
+			requires std::is_nothrow_constructible_v<bool, BaseIterator>
 		{
-			return !mBaseIterator;
+			return static_cast<bool>(mBaseIterator);
 		}
 
 		friend bool operator==(DerivedForwardIterator iter1, DerivedForwardIterator iter2) noexcept

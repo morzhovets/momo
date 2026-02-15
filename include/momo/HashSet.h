@@ -211,9 +211,9 @@ namespace internal
 			return std::to_address(mBucketIterator);
 		}
 
-		bool operator!() const noexcept
+		explicit operator bool() const noexcept
 		{
-			return mBucketIterator == BucketIterator();
+			return mBucketIterator != BucketIterator();
 		}
 
 		friend bool operator==(HashSetPosition pos1, HashSetPosition pos2) noexcept
