@@ -597,21 +597,14 @@ namespace internal
 		template<typename RowIterator, typename RowSentinel>
 		void Add(RowIterator begin, RowSentinel end)
 		{
-			size_t initCount = GetCount();
-			try
+			auto fin = Catcher::Finalize<Raws, size_t>(&Raws::SetCount, mRaws, GetCount());
+			for (RowIterator iter = std::move(begin); iter != end; ++iter)
 			{
-				for (RowIterator iter = std::move(begin); iter != end; ++iter)
-				{
-					RowReference rowRef = *iter;
-					MOMO_CHECK(&rowRef.GetColumnList() == mColumnList);
-					mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
-				}
+				RowReference rowRef = *iter;
+				MOMO_CHECK(&rowRef.GetColumnList() == mColumnList);
+				mRaws.AddBack(RowReferenceProxy::GetRaw(rowRef));
 			}
-			catch (...)
-			{
-				mRaws.SetCount(initCount);
-				throw;
-			}
+			fin.Detach();
 		}
 
 		void Insert(size_t index, RowReference rowRef)

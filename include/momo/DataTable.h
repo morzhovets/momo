@@ -957,15 +957,9 @@ private:
 	Raw* pvCreateRaw(RawCreator&& rawCreator)
 	{
 		Raw* raw = pvAllocateRaw();
-		try
-		{
-			std::forward<RawCreator>(rawCreator)(raw);
-		}
-		catch (...)
-		{
-			mRawMemPool.Deallocate(raw);
-			throw;
-		}
+		auto fin = internal::Catcher::Finalize(&RawMemPool::template Deallocate<Raw>, mRawMemPool, raw);
+		std::forward<RawCreator>(rawCreator)(raw);
+		fin.Detach();
 		return raw;
 	}
 
@@ -1022,15 +1016,9 @@ private:
 	Row pvNewRow(const Assignment<Items, ItemArgs>&... assigns)
 	{
 		Raw* raw = pvCreateRaw();
-		try
-		{
-			pvFillRaw(raw, assigns...);
-		}
-		catch (...)
-		{
-			pvDestroyRaw(raw);
-			throw;
-		}
+		auto fin = internal::Catcher::Finalize(&DataTable::pvDestroyRaw, *this, raw);
+		pvFillRaw(raw, assigns...);
+		fin.Detach();
 		return pvMakeRow(raw);
 	}
 
@@ -1049,7 +1037,12 @@ private:
 	{
 	}
 
-	void pvSetNumbers(size_t beginNumber = 0) noexcept
+	void pvSetNumbers() noexcept
+	{
+		pvSetNumbers(0);
+	}
+
+	void pvSetNumbers(size_t beginNumber) noexcept
 	{
 		for (size_t i = beginNumber, count = mRaws.GetCount(); i < count; ++i)
 			pvSetNumber(mRaws[i], i);
@@ -1133,24 +1126,18 @@ private:
 		for (Raw* raw : mRaws)
 			columnList.SetNumber(raw, invalidNumber);
 		size_t count = 0;
-		try
+		auto fin = internal::Catcher::Finalize(&DataTable::pvSetNumbers, *this);
+		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
-			for (RowIterator iter = std::move(begin); iter != end; ++iter)
-			{
-				ConstRowReference rowRef = *iter;
-				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
-				Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
-				if (columnList.GetNumber(raw) != invalidNumber)
-					continue;
-				columnList.SetNumber(raw, count);
-				++count;
-			}
+			ConstRowReference rowRef = *iter;
+			MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+			Raw* raw = ConstRowReferenceProxy::GetRaw(rowRef);
+			if (columnList.GetNumber(raw) != invalidNumber)
+				continue;
+			columnList.SetNumber(raw, count);
+			++count;
 		}
-		catch (...)
-		{
-			pvSetNumbers();
-			throw;
-		}
+		fin.Detach();
 		pvRemoveInvalidRaws();
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -1204,20 +1191,14 @@ private:
 	pvRemove(RowIterator begin, RowSentinel end)
 	{
 		const ColumnList& columnList = GetColumnList();
-		try
+		auto fin = internal::Catcher::Finalize(&DataTable::pvSetNumbers, *this);
+		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
-			for (RowIterator iter = std::move(begin); iter != end; ++iter)
-			{
-				ConstRowReference rowRef = *iter;
-				MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
-				columnList.SetNumber(ConstRowReferenceProxy::GetRaw(rowRef), invalidNumber);
-			}
+			ConstRowReference rowRef = *iter;
+			MOMO_CHECK(&rowRef.GetColumnList() == &columnList);
+			columnList.SetNumber(ConstRowReferenceProxy::GetRaw(rowRef), invalidNumber);
 		}
-		catch (...)
-		{
-			pvSetNumbers();
-			throw;
-		}
+		fin.Detach();
 		pvRemoveInvalidRaws();
 		pvSetNumbers();
 	}
@@ -1247,19 +1228,13 @@ private:
 	pvRemove(const RowFilter& rowFilter)
 	{
 		const ColumnList& columnList = GetColumnList();
-		try
+		auto fin = internal::Catcher::Finalize(&DataTable::pvSetNumbers, *this);
+		for (Raw* raw : mRaws)
 		{
-			for (Raw* raw : mRaws)
-			{
-				if (rowFilter(pvMakeConstRowReference(raw)))
-					columnList.SetNumber(raw, invalidNumber);
-			}
+			if (rowFilter(pvMakeConstRowReference(raw)))
+				columnList.SetNumber(raw, invalidNumber);
 		}
-		catch (...)
-		{
-			pvSetNumbers();
-			throw;
-		}
+		fin.Detach();
 		pvRemoveInvalidRaws();
 		pvSetNumbers();
 	}

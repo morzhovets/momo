@@ -1258,15 +1258,10 @@ private:
 			ItemTraits::Create(memManager, item);
 		else
 			ItemTraits::Copy(memManager, *srcItem, item);
-		try
-		{
-			pvCreate<Items...>(memManager, columns + 1, srcColumnList, srcRaw, raw);
-		}
-		catch (...)
-		{
-			ItemTraits::Destroy(&memManager, *pvGetItemPtr<Item, true>(raw, offset));	//?
-			throw;
-		}
+		//item = pvGetItemPtr<Item, true>(raw, offset);
+		auto fin = internal::Catcher::Finalize(&ItemTraits::template Destroy<Item>, &memManager, *item);
+		pvCreate<Items...>(memManager, columns + 1, srcColumnList, srcRaw, raw);
+		fin.Detach();
 	}
 
 	template<typename DataColumnListPtr, typename RawPtr>
