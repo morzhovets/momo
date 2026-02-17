@@ -218,13 +218,6 @@ namespace internal
 		{
 			return Finalizer<void (Class::*)(Args...)>(func, object, args...);
 		}
-
-		template<typename Class,
-			typename Function = Identity<void (Class::*)()>>
-		static Finalizer<Function> Finalize(Function func, Class& object) noexcept
-		{
-			return Finalizer<Function>(func, object);
-		}
 	};
 }
 

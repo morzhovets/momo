@@ -1037,12 +1037,7 @@ private:
 	{
 	}
 
-	void pvSetNumbers() noexcept
-	{
-		pvSetNumbers(0);
-	}
-
-	void pvSetNumbers(size_t beginNumber) noexcept
+	void pvSetNumbers(size_t beginNumber = 0) noexcept
 	{
 		for (size_t i = beginNumber, count = mRaws.GetCount(); i < count; ++i)
 			pvSetNumber(mRaws[i], i);
@@ -1126,7 +1121,7 @@ private:
 		for (Raw* raw : mRaws)
 			columnList.SetNumber(raw, invalidNumber);
 		size_t count = 0;
-		auto fin = internal::Catcher::Finalize(&DataTable::pvSetNumbers, *this);
+		auto fin = internal::Catcher::Finalize(&DataTable::pvSetNumbers, *this, 0);
 		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			ConstRowReference rowRef = *iter;
@@ -1191,7 +1186,7 @@ private:
 	pvRemove(RowIterator begin, RowSentinel end)
 	{
 		const ColumnList& columnList = GetColumnList();
-		auto fin = internal::Catcher::Finalize(&DataTable::pvSetNumbers, *this);
+		auto fin = internal::Catcher::Finalize(&DataTable::pvSetNumbers, *this, 0);
 		for (RowIterator iter = std::move(begin); iter != end; ++iter)
 		{
 			ConstRowReference rowRef = *iter;
@@ -1228,7 +1223,7 @@ private:
 	pvRemove(const RowFilter& rowFilter)
 	{
 		const ColumnList& columnList = GetColumnList();
-		auto fin = internal::Catcher::Finalize(&DataTable::pvSetNumbers, *this);
+		auto fin = internal::Catcher::Finalize(&DataTable::pvSetNumbers, *this, 0);
 		for (Raw* raw : mRaws)
 		{
 			if (rowFilter(pvMakeConstRowReference(raw)))
