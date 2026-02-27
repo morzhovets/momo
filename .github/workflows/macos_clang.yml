@@ -13,7 +13,7 @@ jobs:
 
         # ARM64
         - clang_ver: '19'
-          macos_ver: '15'
+          macos_ver: 'latest'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
@@ -21,7 +21,7 @@ jobs:
           path_prefix: '/opt/homebrew'
 
         - clang_ver: '20'
-          macos_ver: '15'
+          macos_ver: 'latest'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
@@ -29,7 +29,7 @@ jobs:
           path_prefix: '/opt/homebrew'
 
         - clang_ver: '20'
-          macos_ver: '15'
+          macos_ver: 'latest'
           build_type: 'Debug'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
@@ -38,7 +38,7 @@ jobs:
 
         # x64
         - clang_ver: '19'
-          macos_ver: '15-intel'
+          macos_ver: '26-intel'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
@@ -46,7 +46,7 @@ jobs:
           path_prefix: '/usr/local'
 
         - clang_ver: '20'
-          macos_ver: '15-intel'
+          macos_ver: '26-intel'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
@@ -54,7 +54,7 @@ jobs:
           path_prefix: '/usr/local'
 
         - clang_ver: '20'
-          macos_ver: '15-intel'
+          macos_ver: '26-intel'
           build_type: 'Debug'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'

@@ -13,7 +13,7 @@ jobs:
 
         # ARM64
         - gcc_ver: '15'
-          macos_ver: '15'
+          macos_ver: 'latest'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
@@ -21,7 +21,7 @@ jobs:
           path_prefix: '/opt/homebrew'
 
 #        - gcc_ver: '15'
-#          macos_ver: '15'
+#          macos_ver: 'latest'
 #          build_type: 'Debug'
 #          no_exceptions_rtti: 'Off'
 #          extra_settings: 'Off'
@@ -30,7 +30,7 @@ jobs:
 
         # x64
         - gcc_ver: '15'
-          macos_ver: '15-intel'
+          macos_ver: '26-intel'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
@@ -38,7 +38,7 @@ jobs:
           path_prefix: '/usr/local'
 
 #        - gcc_ver: '15'
-#          macos_ver: '15-intel'
+#          macos_ver: '26-intel'
 #          build_type: 'Debug'
 #          no_exceptions_rtti: 'Off'
 #          extra_settings: 'Off'
