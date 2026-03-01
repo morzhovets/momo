@@ -1060,17 +1060,11 @@ public:
 		HashMapIterator hashMapIter = mHashMap.MakeMutableIterator(
 			ConstKeyIteratorProxy::GetBaseIterator(keyIter));
 		ValueArray& valueArray = hashMapIter->value;
-		ValueArray tempValueArray(std::move(valueArray));
-		try
-		{
-			hashMapIter = mHashMap.Remove(hashMapIter);
-		}
-		catch (...)
-		{
-			valueArray = std::move(tempValueArray);
-			throw;
-		}
-		pvRemoveValues(tempValueArray);
+		ValueArray remValueArray(std::move(valueArray));
+		internal::ObjectAssignFinalizer<ValueArray> fin(std::move(remValueArray), valueArray);
+		hashMapIter = mHashMap.Remove(hashMapIter);
+		fin.Detach();
+		pvRemoveValues(remValueArray);
 		return internal::ProxyConstructor<KeyIterator>(hashMapIter);
 	}
 

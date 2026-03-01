@@ -367,6 +367,28 @@ namespace internal
 		Object* mObjectPtr;
 	};
 
+	template<typename TObject>
+	class ObjectAssignFinalizer : public Finalizer<void (*)(TObject&, TObject&)>
+	{
+	public:
+		typedef TObject Object;
+
+	private:
+		typedef internal::Finalizer<void (*)(Object&, Object&)> Finalizer;
+
+	public:
+		explicit ObjectAssignFinalizer(Object&& srcObject, Object& dstObject) noexcept
+			: Finalizer(&pvAssign, srcObject, dstObject)
+		{
+		}
+
+	private:
+		static void pvAssign(Object& srcObject, Object& dstObject) noexcept
+		{
+			dstObject = std::move(srcObject);
+		}
+	};
+
 	template<typename TObject, typename TMemManager>
 	class ObjectManager
 	{

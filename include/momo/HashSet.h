@@ -1138,6 +1138,7 @@ private:
 	MOMO_NOINLINE ConstPosition pvAddGrow(size_t hashCode, ItemCreator&& itemCreator)
 	{
 		const HashTraits& hashTraits = GetHashTraits();
+		MemManager& memManager = GetMemManager();
 		size_t newLogBucketCount = pvGetNewLogBucketCount();
 		size_t newCapacity = hashTraits.CalcCapacity(size_t{1} << newLogBucketCount,
 			bucketMaxItemCount);
@@ -1146,7 +1147,7 @@ private:
 		Buckets* newBuckets;
 		try
 		{
-			newBuckets = Buckets::Create(GetMemManager(), newLogBucketCount,
+			newBuckets = Buckets::Create(memManager, newLogBucketCount,
 				hasBuckets ? &mBuckets->GetBucketParams() : nullptr);
 		}
 		catch (const std::bad_alloc& exception)
@@ -1158,17 +1159,11 @@ private:
 			}
 			MOMO_THROW(exception);
 		}
-		ConstPosition resPos;
-		try
-		{
-			resPos = pvAddNogrow<true>(*newBuckets, hashCode,
-				std::forward<ItemCreator>(itemCreator));
-		}
-		catch (...)
-		{
-			newBuckets->Destroy(GetMemManager(), !hasBuckets);
-			throw;
-		}
+		auto fin = internal::Catcher::Finalize(&Buckets::Destroy,
+			*newBuckets, memManager, !hasBuckets);
+		ConstPosition resPos = pvAddNogrow<true>(*newBuckets, hashCode,
+			std::forward<ItemCreator>(itemCreator));
+		fin.Detach();
 		newBuckets->SetNextBuckets(mBuckets);
 		mBuckets = newBuckets;
 		mCapacity = newCapacity;

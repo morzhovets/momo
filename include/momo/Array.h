@@ -329,16 +329,11 @@ private:
 			if (capacity > internalCapacity)
 			{
 				Item* items = pvAllocate(capacity);
-				try
-				{
-					std::forward<ItemsCreator>(itemsCreator)(items);
-				}
-				catch (...)
-				{
-					MemManagerProxy::Deallocate(GetMemManager(), items, capacity * sizeof(Item));
-					throw;
-				}
-				pvDeallocate();
+				auto fin = internal::Catcher::Finalize(&Data::pvDeallocate, *this, items, capacity);
+				std::forward<ItemsCreator>(itemsCreator)(items);
+				fin.Detach();
+				if (GetCapacity() > internalCapacity)
+					pvDeallocate(mItems, mCapacity);
 				mItems = items;
 				mCount = count;
 				mCapacity = capacity;
@@ -414,16 +409,21 @@ private:
 			return (::new(static_cast<void*>(&mInternalItems)) InternalItems())->GetPtr();
 		}
 
+		void pvSetCapacity(size_t capacity) noexcept
+		{
+			mCapacity = capacity;	// deactivate mInternalItems
+		}
+
 		void pvDestroy() noexcept
 		{
 			ItemTraits::Destroy(GetMemManager(), mItems, mCount);
-			pvDeallocate();
+			if (GetCapacity() > internalCapacity)
+				pvDeallocate(mItems, mCapacity);
 		}
 
-		void pvDeallocate() noexcept
+		void pvDeallocate(Item* items, size_t capacity) noexcept
 		{
-			if (GetCapacity() > internalCapacity)
-				MemManagerProxy::Deallocate(GetMemManager(), mItems, mCapacity * sizeof(Item));
+			MemManagerProxy::Deallocate(GetMemManager(), items, capacity * sizeof(Item));
 		}
 
 		bool pvIsInternal() const noexcept
@@ -472,15 +472,9 @@ private:
 			MOMO_ASSERT(!pvIsInternal());
 			size_t initCapacity = mCapacity;
 			Item* items = pvActivateInternalItems();
-			try
-			{
-				std::forward<ItemsCreator>(itemsCreator)(items);
-			}
-			catch (...)
-			{
-				mCapacity = initCapacity;	// deactivate mInternalItems
-				throw;
-			}
+			auto fin = internal::Catcher::Finalize(&Data::pvSetCapacity, *this, initCapacity);
+			std::forward<ItemsCreator>(itemsCreator)(items);
+			fin.Detach();
 			MemManagerProxy::Deallocate(GetMemManager(), mItems, initCapacity * sizeof(Item));
 			mItems = items;
 			mCount = count;
@@ -493,7 +487,8 @@ private:
 		{
 			(void)count;
 			MOMO_ASSERT(count == 0);
-			pvDeallocate();
+			MOMO_ASSERT(mCapacity > 0);
+			pvDeallocate(mItems, mCapacity);
 			pvInit();
 		}
 
@@ -685,16 +680,11 @@ public:
 		{
 			Item* items = GetItems();
 			size_t index = initCount;
-			try
-			{
-				for (; index < newCount; ++index)
-					itemMultiCreator(items + index);
-			}
-			catch (...)
-			{
-				ItemTraits::Destroy(GetMemManager(), items + initCount, index - initCount);
-				throw;
-			}
+			auto fin = internal::Catcher::Finalize(&ArrayCore::pvDestroyExtraItems,
+				*this, items, initCount, index);
+			for (; index < newCount; ++index)
+				itemMultiCreator(items + index);
+			fin.Detach();
 			mData.SetCount(newCount);
 		}
 		else
@@ -704,20 +694,20 @@ public:
 			auto itemsCreator = [this, initCount, newCount, &itemMultiCreator] (Item* newItems)
 			{
 				size_t index = initCount;
-				try
-				{
-					for (; index < newCount; ++index)
-						itemMultiCreator(newItems + index);
-					ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, initCount);
-				}
-				catch (...)
-				{
-					ItemTraits::Destroy(GetMemManager(), newItems + initCount, index - initCount);
-					throw;
-				}
+				auto fin = internal::Catcher::Finalize(&ArrayCore::pvDestroyExtraItems,
+					*this, newItems, initCount, index);
+				for (; index < newCount; ++index)
+					itemMultiCreator(newItems + index);
+				ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, initCount);
+				fin.Detach();
 			};
 			mData.Reset(newCapacity, newCount, itemsCreator);
 		}
+	}
+
+	void pvDestroyExtraItems(Item* items, size_t initCount, size_t& lastIndex) noexcept
+	{
+		ItemTraits::Destroy(GetMemManager(), items + initCount, lastIndex - initCount);
 	}
 
 	void SetCount(size_t count)
@@ -1079,20 +1069,13 @@ private:
 	{
 		size_t initCount = GetCount();
 		size_t newCount = initCount + 1;
-		internal::ObjectBuffer<Item, ItemTraits::GetAlignment()> itemBuffer;
 		MemManager& memManager = GetMemManager();
-		typename ItemTraits::template Creator<const Item&>(memManager, item)(itemBuffer.GetPtr());
-		try
-		{
-			pvGrow(newCount, ArrayGrowCause::add);
-		}
-		catch (...)
-		{
-			ItemTraits::Destroy(memManager, itemBuffer.template GetPtr<true>(), 1);
-			throw;
-		}
-		ItemTraits::Relocate(memManager, itemBuffer.template GetPtr<true>(),
+		ItemHandler itemHandler(memManager,
+			typename ItemTraits::template Creator<const Item&>(memManager, item));
+		pvGrow(newCount, ArrayGrowCause::add);
+		ItemTraits::Relocate(memManager, std::addressof(itemHandler.Get()),
 			GetItems() + initCount, 1);
+		itemHandler.Detach();
 		mData.SetCount(newCount);
 	}
 

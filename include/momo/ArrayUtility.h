@@ -154,7 +154,7 @@ namespace internal
 	public:
 		template<typename ItemCreator>
 		explicit ArrayItemHandler(MemManager& memManager, ItemCreator&& itemCreator)
-			: mMemManager(memManager)
+			: mMemManager(&memManager)
 		{
 			std::forward<ItemCreator>(itemCreator)(mItemBuffer.GetPtr());
 		}
@@ -163,19 +163,26 @@ namespace internal
 
 		~ArrayItemHandler() noexcept
 		{
-			ItemTraits::Destroy(mMemManager, std::addressof(Get()), 1);
+			if (mMemManager != nullptr)
+				ItemTraits::Destroy(*mMemManager, std::addressof(Get()), 1);
 		}
 
 		ArrayItemHandler& operator=(const ArrayItemHandler&) = delete;
 
 		Item& Get() noexcept
 		{
+			MOMO_ASSERT(mMemManager != nullptr);
 			return mItemBuffer.Get();
+		}
+
+		void Detach() noexcept
+		{
+			mMemManager = nullptr;
 		}
 
 	private:
 		ObjectBuffer<Item, ItemTraits::GetAlignment()> mItemBuffer;
-		MemManager& mMemManager;
+		MemManager* mMemManager;
 	};
 
 	template<typename TArray>

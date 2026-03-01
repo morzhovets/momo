@@ -482,30 +482,32 @@ namespace internal
 		{
 			size_t keyIndex = 0;
 			size_t valueIndex = 0;
-			try
-			{
-				KeyIterator srcKeyIter = srcKeyBegin;
-				KeyIterator dstKeyIter = dstKeyBegin;
-				for (; keyIndex < count; ++keyIndex, (void)++srcKeyIter, (void)++dstKeyIter)
-					KeyManager::Copy(memManager, *srcKeyIter, std::addressof(*dstKeyIter));
-				ValueIterator srcValueIter = srcValueBegin;
-				ValueIterator dstValueIter = dstValueBegin;
-				for (; valueIndex < count; ++valueIndex, (void)++srcValueIter, (void)++dstValueIter)
-					ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
-				std::forward<Executor>(exec)();
-			}
-			catch (...)
-			{
-				for (KeyIterator itd = dstKeyBegin; keyIndex > 0; --keyIndex, (void)++itd)
-					KeyManager::Destroy(memManager, *itd);
-				for (ValueIterator itd = dstValueBegin; valueIndex > 0; --valueIndex, (void)++itd)
-					ValueManager::Destroy(memManager, *itd);
-				throw;
-			}
-			for (KeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex, (void)++its)
-				KeyManager::Destroy(memManager, *its);
-			for (ValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex, (void)++its)
-				ValueManager::Destroy(memManager, *its);
+			auto fin = Catcher::Finalize(
+				&MapKeyValueTraits::template pvDestroyExtra<KeyIterator, ValueIterator>,
+				memManager, dstKeyBegin, dstValueBegin, keyIndex, valueIndex);
+			KeyIterator srcKeyIter = srcKeyBegin;
+			KeyIterator dstKeyIter = dstKeyBegin;
+			for (; keyIndex < count; ++keyIndex, (void)++srcKeyIter, (void)++dstKeyIter)
+				KeyManager::Copy(memManager, *srcKeyIter, std::addressof(*dstKeyIter));
+			ValueIterator srcValueIter = srcValueBegin;
+			ValueIterator dstValueIter = dstValueBegin;
+			for (; valueIndex < count; ++valueIndex, (void)++srcValueIter, (void)++dstValueIter)
+				ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
+			std::forward<Executor>(exec)();
+			fin.Detach();
+			pvDestroyExtra(memManager, srcKeyBegin, srcValueBegin, keyIndex, valueIndex);
+		}
+
+		template<typename KeyIterator, typename ValueIterator>
+		static void pvDestroyExtra(MemManager& memManager, KeyIterator keyBegin, ValueIterator valueBegin,
+			size_t& lastKeyIndex, size_t& lastValueIndex) noexcept
+		{
+			KeyIterator keyIter = keyBegin;
+			for (size_t i = 0; i < lastKeyIndex; ++i, (void)++keyIter)
+				KeyManager::Destroy(memManager, *keyIter);
+			ValueIterator valueIter = valueBegin;
+			for (size_t i = 0; i < lastValueIndex; ++i, (void)++valueIter)
+				ValueManager::Destroy(memManager, *valueIter);
 		}
 	};
 
