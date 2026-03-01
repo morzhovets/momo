@@ -466,15 +466,10 @@ public:
 			MOMO_ASSERT(itemIndex == 0);
 			mSegments.Reserve(segCount + 1);
 			Item* segment = pvAllocateSegment(segCount);
-			try
-			{
-				std::forward<ItemCreator>(itemCreator)(segment);
-			}
-			catch (...)
-			{
-				pvDeallocateSegment(segCount, segment);
-				throw;
-			}
+			auto fin = internal::Catcher::Finalize(&SegmentedArrayCore::pvDeallocateSegment,
+				*this, segCount, segment);
+			std::forward<ItemCreator>(itemCreator)(segment);
+			fin.Detach();
 			mSegments.AddBackNogrow(segment);
 		}
 		++mCount;
@@ -610,29 +605,25 @@ private:
 		size_t initCount = mCount;
 		if (count > initCapacity)
 			pvIncCapacity(initCapacity, count);
-		try
+		auto capacityFin = internal::Catcher::Finalize(&SegmentedArrayCore::pvDecCapacity,
+			*this, initCapacity);
+		auto countFin = internal::Catcher::Finalize(&SegmentedArrayCore::pvDecCount, *this, initCount);
+		size_t segIndex, itemIndex;
+		Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
+		while (mCount < count)
 		{
-			size_t segIndex, itemIndex;
-			Settings::GetSegItemIndexes(mCount, segIndex, itemIndex);
-			while (mCount < count)
+			Item* segment = mSegments[segIndex];
+			size_t itemCount = Settings::GetItemCount(segIndex);
+			for (; itemIndex < itemCount && mCount < count; ++itemIndex, ++mCount)
+				itemMultiCreator(segment + itemIndex);
+			if (itemIndex == itemCount)
 			{
-				Item* segment = mSegments[segIndex];
-				size_t itemCount = Settings::GetItemCount(segIndex);
-				for (; itemIndex < itemCount && mCount < count; ++itemIndex, ++mCount)
-					itemMultiCreator(segment + itemIndex);
-				if (itemIndex == itemCount)
-				{
-					++segIndex;
-					itemIndex = 0;
-				}
+				++segIndex;
+				itemIndex = 0;
 			}
 		}
-		catch (...)
-		{
-			pvDecCount(initCount);
-			pvDecCapacity(initCapacity);
-			throw;
-		}
+		countFin.Detach();
+		capacityFin.Detach();
 	}
 
 	void pvDecCount(size_t count) noexcept
@@ -662,20 +653,14 @@ private:
 		Settings::GetSegItemIndexes(capacity, segIndex, itemIndex);
 		if (itemIndex > 0)
 			++segIndex;
-		try
+		auto fin = internal::Catcher::Finalize(&SegmentedArrayCore::pvDecCapacity, *this, initCapacity);
+		for (size_t segCount = mSegments.GetCount(); segCount < segIndex; ++segCount)
 		{
-			for (size_t segCount = mSegments.GetCount(); segCount < segIndex; ++segCount)
-			{
-				mSegments.Reserve(segCount + 1);
-				Item* segment = pvAllocateSegment(segCount);
-				mSegments.AddBackNogrow(segment);
-			}
+			mSegments.Reserve(segCount + 1);
+			Item* segment = pvAllocateSegment(segCount);
+			mSegments.AddBackNogrow(segment);
 		}
-		catch (...)
-		{
-			pvDecCapacity(initCapacity);
-			throw;
-		}
+		fin.Detach();
 	}
 
 	void pvDecCapacity(size_t capacity) noexcept

@@ -257,22 +257,20 @@ namespace internal
 		{
 			for (size_t i = 0; i < count; ++i)
 				Item::Create(dstItems + i);
-			try
-			{
-				KeyValueTraits::RelocateExec(memManager,
-					MapKeyIterator<Item*>(srcItems), MapValueIterator<Item*>(srcItems),
-					MapKeyIterator<Item*>(dstItems), MapValueIterator<Item*>(dstItems),
-					count, ObjectCreateExecutor<Item, ItemCreator>(
-						std::forward<ItemCreator>(itemCreator), newItem));
-			}
-			catch (...)
-			{
-				for (size_t i = 0; i < count; ++i)
-					Item::Destroy(dstItems[i]);
-				throw;
-			}
+			auto fin = Catcher::Finalize(&HashMapNestedSetItemTraits::pvDestroy, dstItems, count);
+			KeyValueTraits::RelocateExec(memManager,
+				MapKeyIterator<Item*>(srcItems), MapValueIterator<Item*>(srcItems),
+				MapKeyIterator<Item*>(dstItems), MapValueIterator<Item*>(dstItems), count,
+				ObjectCreateExecutor<Item, ItemCreator>(std::forward<ItemCreator>(itemCreator), newItem));
+			fin.Detach();
+			pvDestroy(srcItems, count);
+		}
+
+	private:
+		static void pvDestroy(Item* items, size_t count) noexcept
+		{
 			for (size_t i = 0; i < count; ++i)
-				Item::Destroy(srcItems[i]);
+				Item::Destroy(items[i]);
 		}
 	};
 

@@ -10,7 +10,8 @@
 
 \**********************************************************/
 
-#pragma once
+#ifndef MOMO_INCLUDE_GUARD_FUNCTION_UTILITY
+#define MOMO_INCLUDE_GUARD_FUNCTION_UTILITY
 
 #include "Utility.h"
 
@@ -20,7 +21,30 @@ namespace momo
 namespace internal
 {
 	template<typename... Args>
-	class FinalizerArgs;
+	class FinalizerArgs
+	{
+	public:
+		FinalizerArgs(Args... args) noexcept
+			: mArgs(args...)
+		{
+		}
+
+	protected:
+		void ptExecute(void (*func)(Args...)) noexcept
+		{
+			pvExecute(func, typename SequenceMaker<sizeof...(Args)>::Sequence());
+		}
+
+	private:
+		template<size_t... sequence>
+		void pvExecute(void (*func)(Args...), internal::Sequence<sequence...>) noexcept
+		{
+			func(std::get<sequence>(mArgs)...);
+		}
+
+	private:
+		std::tuple<Args...> mArgs;
+	};
 
 	template<>
 	class FinalizerArgs<>
@@ -222,3 +246,5 @@ namespace internal
 }
 
 } // namespace momo
+
+#endif // MOMO_INCLUDE_GUARD_FUNCTION_UTILITY

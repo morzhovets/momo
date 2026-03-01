@@ -208,16 +208,11 @@ namespace internal
 				FastMemory memory(params.GetFastMemPool(memPoolIndex));
 				Item* items = pvGetFastItems(memory.Get());
 				size_t index = 0;
-				try
-				{
-					for (; index < count; ++index)
-						ItemTraits::Copy(memManager, bounds[index], items + index);
-				}
-				catch (...)
-				{
-					ItemTraits::Destroy(memManager, items, index);
-					throw;
-				}
+				auto fin = Catcher::Finalize(&ArrayBucket::pvDestroyExtraItems,
+					memManager, items, index);
+				for (; index < count; ++index)
+					ItemTraits::Copy(memManager, bounds[index], items + index);
+				fin.Detach();
 				pvSet(memory.Extract(), pvMakeState(memPoolIndex, count));
 			}
 			else
@@ -420,6 +415,11 @@ namespace internal
 		static Array* pvGetArrayPtr(Byte* ptr) noexcept
 		{
 			return PtrCaster::FromBytePtr<Array, isWithinLifetime, true>(ptr + arrayAlignment);
+		}
+
+		static void pvDestroyExtraItems(MemManager& memManager, Item* items, size_t& lastIndex) noexcept
+		{
+			ItemTraits::Destroy(memManager, items, lastIndex);
 		}
 
 		Bounds pvGetBounds() const noexcept

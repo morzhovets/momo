@@ -337,16 +337,11 @@ namespace internal
 			std::true_type /*isContinuous*/)
 		{
 			ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
-			try
-			{
-				std::forward<ItemRemover>(itemRemover)(*GetItemPtr(count - 1));
-			}
-			catch (...)
-			{
-				ItemTraits::ShiftNothrow(params.GetMemManager(),
-					std::reverse_iterator<Item*>(GetItemPtr(count)), count - index - 1);
-				throw;
-			}
+			std::reverse_iterator<Item*> revIter(GetItemPtr(count));
+			auto fin = Catcher::Finalize(&ItemTraits::template ShiftNothrow<decltype(revIter)>,
+				params.GetMemManager(), revIter, count - index - 1);
+			std::forward<ItemRemover>(itemRemover)(*GetItemPtr(count - 1));
+			fin.Detach();
 		}
 
 		template<typename ItemRemover>

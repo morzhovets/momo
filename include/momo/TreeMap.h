@@ -120,24 +120,14 @@ namespace internal
 			Iterator dstIter = dstBegin;
 			for (size_t i = 0; i < count; ++i, (void)++dstIter)
 				Item::Create(dstIter.operator->());	//?
-			try
-			{
-				KeyValueTraits::RelocateExec(memManager,
-					MapKeyIterator<Iterator>(srcBegin), MapValueIterator<Iterator>(srcBegin),
-					MapKeyIterator<Iterator>(dstBegin), MapValueIterator<Iterator>(dstBegin),
-					count, ObjectCreateExecutor<Item, ItemCreator>(
-						std::forward<ItemCreator>(itemCreator), newItem));
-			}
-			catch (...)
-			{
-				dstIter = dstBegin;
-				for (size_t i = 0; i < count; ++i, (void)++dstIter)
-					Item::Destroy(*dstIter);
-				throw;
-			}
-			Iterator srcIter = srcBegin;
-			for (size_t i = 0; i < count; ++i, (void)++srcIter)
-				Item::Destroy(*srcIter);
+			auto fin = Catcher::Finalize(&TreeMapNestedSetItemTraits::template pvDestroy<Iterator>,
+				dstBegin, count);
+			KeyValueTraits::RelocateExec(memManager,
+				MapKeyIterator<Iterator>(srcBegin), MapValueIterator<Iterator>(srcBegin),
+				MapKeyIterator<Iterator>(dstBegin), MapValueIterator<Iterator>(dstBegin), count,
+				ObjectCreateExecutor<Item, ItemCreator>(std::forward<ItemCreator>(itemCreator), newItem));
+			fin.Detach();
+			pvDestroy(srcBegin, count);
 		}
 
 		template<typename Iterator>
@@ -145,6 +135,15 @@ namespace internal
 		{
 			KeyValueTraits::ShiftKeyNothrow(memManager, MapKeyIterator<Iterator>(begin), shift);
 			KeyValueTraits::ShiftValueNothrow(memManager, MapValueIterator<Iterator>(begin), shift);
+		}
+
+	private:
+		template<typename Iterator>
+		static void pvDestroy(Iterator begin, size_t count) noexcept
+		{
+			Iterator iter = begin;
+			for (size_t i = 0; i < count; ++i, (void)++iter)
+				Item::Destroy(*iter);
 		}
 	};
 
