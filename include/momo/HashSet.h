@@ -58,42 +58,29 @@ namespace internal
 			size_t bufferSize = pvGetBufferSize(logBucketCount);
 			void* buffer = MemManagerProxy::Allocate(memManager, bufferSize);
 			HashSetBuckets* resBuckets = ::new(buffer) HashSetBuckets(logBucketCount);
-			Bucket* buckets = resBuckets->pvGetBuckets<false>();
 			size_t bucketIndex = 0;
-			try
-			{
-				for (; bucketIndex < bucketCount; ++bucketIndex)
-					::new(static_cast<void*>(buckets + bucketIndex)) Bucket();
-				resBuckets->mBucketParams = (bucketParams != nullptr) ? bucketParams
-					: MemManagerProxy::template AllocateCreate<BucketParams>(memManager, memManager);
-			}
-			catch (...)
-			{
-				for (size_t i = 0; i < bucketIndex; ++i)
-					buckets[i].~Bucket();
-				resBuckets->~HashSetBuckets();
-				MemManagerProxy::Deallocate(memManager, buffer, bufferSize);
-				throw;
-			}
+			auto fin = Catcher::Finalize(&HashSetBuckets::pvDestroy,
+				*resBuckets, memManager, bucketIndex);
+			Bucket* buckets = resBuckets->pvGetBuckets<false>();
+			for (; bucketIndex < bucketCount; ++bucketIndex)
+				::new(static_cast<void*>(buckets + bucketIndex)) Bucket();
+			resBuckets->mBucketParams = (bucketParams != nullptr) ? bucketParams
+				: MemManagerProxy::template AllocateCreate<BucketParams>(memManager, memManager);
+			fin.Detach();
 			return resBuckets;
 		}
 
 		void Destroy(MemManager& memManager, bool destroyBucketParams) noexcept
 		{
 			MOMO_ASSERT(mNextBuckets == nullptr);
-			size_t bucketCount = GetCount();
-			Bucket* buckets = pvGetBuckets();
-			for (size_t i = 0; i < bucketCount; ++i)
-				buckets[i].~Bucket();
-			if (destroyBucketParams)
+			BucketParams* remBucketParams = destroyBucketParams ? mBucketParams : nullptr;
+			pvDestroy(memManager, GetCount());
+			if (remBucketParams != nullptr)
 			{
-				mBucketParams->Clear();
-				mBucketParams->~BucketParams();
-				MemManagerProxy::Deallocate(memManager, mBucketParams, sizeof(BucketParams));
+				remBucketParams->Clear();
+				remBucketParams->~BucketParams();
+				MemManagerProxy::Deallocate(memManager, remBucketParams, sizeof(BucketParams));
 			}
-			size_t bufferSize = pvGetBufferSize(GetLogCount());
-			this->~HashSetBuckets();
-			MemManagerProxy::Deallocate(memManager, this, bufferSize);
 		}
 
 		Bucket* GetBegin() noexcept
@@ -156,6 +143,16 @@ namespace internal
 		}
 
 		~HashSetBuckets() = default;
+
+		void pvDestroy(MemManager& memManager, const size_t& lastBucketIndex) noexcept
+		{
+			Bucket* buckets = pvGetBuckets();
+			for (size_t i = 0; i < lastBucketIndex; ++i)
+				buckets[i].~Bucket();
+			size_t bufferSize = pvGetBufferSize(GetLogCount());
+			this->~HashSetBuckets();
+			MemManagerProxy::Deallocate(memManager, this, bufferSize);
+		}
 
 		template<bool isWithinLifetime = true>
 		Bucket* pvGetBuckets() noexcept

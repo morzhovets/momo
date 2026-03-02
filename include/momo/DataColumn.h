@@ -1302,7 +1302,7 @@ private:
 	}
 
 	static void pvDestroyRawExtraItems(const DataColumnList& columnList,
-		MemManager& memManager, Raw* raw, size_t& lastFuncIndex) noexcept
+		MemManager& memManager, Raw* raw, const size_t& lastFuncIndex) noexcept
 	{
 		for (size_t i = 0; i < lastFuncIndex; ++i)
 		{

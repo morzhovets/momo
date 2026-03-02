@@ -705,7 +705,7 @@ public:
 		}
 	}
 
-	void pvDestroyExtraItems(Item* items, size_t initCount, size_t& lastIndex) noexcept
+	void pvDestroyExtraItems(Item* items, size_t initCount, const size_t& lastIndex) noexcept
 	{
 		ItemTraits::Destroy(GetMemManager(), items + initCount, lastIndex - initCount);
 	}

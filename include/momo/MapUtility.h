@@ -495,12 +495,12 @@ namespace internal
 				ValueManager::Copy(memManager, *srcValueIter, std::addressof(*dstValueIter));
 			std::forward<Executor>(exec)();
 			fin.Detach();
-			pvDestroyExtra(memManager, srcKeyBegin, srcValueBegin, keyIndex, valueIndex);
+			pvDestroyExtra(memManager, srcKeyBegin, srcValueBegin, count, count);
 		}
 
 		template<typename KeyIterator, typename ValueIterator>
 		static void pvDestroyExtra(MemManager& memManager, KeyIterator keyBegin, ValueIterator valueBegin,
-			size_t& lastKeyIndex, size_t& lastValueIndex) noexcept
+			const size_t& lastKeyIndex, const size_t& lastValueIndex) noexcept
 		{
 			KeyIterator keyIter = keyBegin;
 			for (size_t i = 0; i < lastKeyIndex; ++i, (void)++keyIter)
