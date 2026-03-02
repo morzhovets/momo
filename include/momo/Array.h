@@ -432,7 +432,7 @@ private:
 
 		void pvSetCapacity(size_t capacity) noexcept
 		{
-			mCapacity = capacity;
+			mCapacity = capacity;	// deactivate mInternalItems
 		}
 
 		void pvDestroy() noexcept
@@ -958,7 +958,7 @@ private:
 		}
 	}
 
-	void pvDestroyExtraItems(Item* items, size_t initCount, size_t& lastIndex) noexcept
+	void pvDestroyExtraItems(Item* items, size_t initCount, const size_t& lastIndex) noexcept
 	{
 		ItemTraits::Destroy(GetMemManager(), items + initCount, lastIndex - initCount);
 	}

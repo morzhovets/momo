@@ -584,10 +584,7 @@ namespace internal
 						ValueManager::Copy(&memManager, *srcValueIter++, std::to_address(dstValueIter++));
 					std::move(exec)();
 				}
-				for (SrcKeyIterator its = srcKeyBegin; keyIndex > 0; --keyIndex)
-					KeyManager::Destroy(&memManager, *its++);
-				for (SrcValueIterator its = srcValueBegin; valueIndex > 0; --valueIndex)
-					ValueManager::Destroy(&memManager, *its++);
+				pvDestroyExtra(memManager, srcKeyBegin, srcValueBegin, count, count);
 			}
 		}
 
@@ -604,7 +601,7 @@ namespace internal
 
 		template<conceptIncIterator<Key> KeyIterator, conceptIncIterator<Value> ValueIterator>
 		static void pvDestroyExtra(MemManager& memManager, KeyIterator keyBegin, ValueIterator valueBegin,
-			size_t& lastKeyIndex, size_t& lastValueIndex) noexcept
+			const size_t& lastKeyIndex, const size_t& lastValueIndex) noexcept
 		{
 			KeyIterator keyIter = keyBegin;
 			for (size_t i = 0; i < lastKeyIndex; ++i)

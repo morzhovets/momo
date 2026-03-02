@@ -279,7 +279,8 @@ namespace internal
 
 	private:
 		template<typename Class, typename... Args>
-		static void pvInvoke(void (Class::*func)(Args...), Class& object, Args... args)
+		static void pvInvoke(void (Class::*func)(Args...),
+			std::type_identity_t<Class>& object, std::type_identity_t<Args>... args)
 		{
 			(object.*func)(args...);
 		}

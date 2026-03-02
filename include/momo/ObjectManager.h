@@ -752,7 +752,8 @@ namespace internal
 
 	private:
 		template<conceptIncIterator<Object> Iterator>
-		static void pvDestroyExtra(MemManager& memManager, Iterator begin, size_t& lastIndex) noexcept
+		static void pvDestroyExtra(MemManager& memManager, Iterator begin,
+			const size_t& lastIndex) noexcept
 		{
 			Destroy(memManager, begin, lastIndex);
 		}

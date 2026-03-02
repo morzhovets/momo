@@ -404,7 +404,8 @@ namespace internal
 			return PtrCaster::FromBytePtr<Array, isWithinLifetime, true>(ptr + arrayAlignment);
 		}
 
-		static void pvDestroyExtraItems(MemManager& memManager, Item* items, size_t& lastIndex) noexcept
+		static void pvDestroyExtraItems(MemManager& memManager, Item* items,
+			const size_t& lastIndex) noexcept
 		{
 			ItemTraits::Destroy(memManager, items, lastIndex);
 		}

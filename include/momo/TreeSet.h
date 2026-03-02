@@ -1070,7 +1070,7 @@ private:
 		return dstNode;
 	}
 
-	void pvDestroyExtra(Node* node, size_t& lastItemIndex, size_t& lastChildIndex) noexcept
+	void pvDestroyExtra(Node* node, const size_t& lastItemIndex, const size_t& lastChildIndex) noexcept
 	{
 		MemManager& memManager = GetMemManager();
 		for (size_t i = 0; i < lastItemIndex; ++i)
