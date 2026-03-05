@@ -641,6 +641,7 @@ public:
 	static const CheckMode checkMode = CheckMode::bydefault;
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	static const bool allowExceptionSuppression = true;
 
 	static const bool keepRowNumber = tKeepRowNumber;
 
@@ -883,8 +884,8 @@ private:
 
 	typedef typename ColumnTraits::ColumnCodeHashTraits ColumnCodeHashTraits;
 
-	typedef HashSetCore<HashSetItemTraits<ColumnCode, MemManager>,
-		ColumnCodeHashTraits, internal::NestedHashSetSettings> ColumnCodeSet;
+	typedef HashSetCore<HashSetItemTraits<ColumnCode, MemManager>, ColumnCodeHashTraits,
+		internal::NestedHashSetSettings<Settings::allowExceptionSuppression>> ColumnCodeSet;
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 

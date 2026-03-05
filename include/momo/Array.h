@@ -156,6 +156,7 @@ class ArraySettings
 {
 public:
 	static const CheckMode checkMode = CheckMode::bydefault;
+	static const bool allowExceptionSuppression = true;
 
 	static const size_t internalCapacity = tInternalCapacity;
 	static const bool growOnReserve = tGrowOnReserve;
@@ -1141,7 +1142,8 @@ using ArrayIntCap = ArrayCore<ArrayItemTraits<TItem, TMemManager>, ArraySettings
 
 namespace internal
 {
-	template<typename TBaseArraySettings = ArraySettings<>>
+	template<typename TBaseArraySettings = ArraySettings<>,
+		bool tAllowExceptionSuppression = false>
 	class NestedArraySettings : public TBaseArraySettings
 	{
 	protected:
@@ -1149,6 +1151,7 @@ namespace internal
 
 	public:
 		static const CheckMode checkMode = CheckMode::assertion;
+		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 
 	template<size_t tInternalCapacity, typename TItem, typename TMemManager>

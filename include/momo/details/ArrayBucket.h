@@ -107,9 +107,7 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		typedef ArrayBucketNestedArrayItemTraits<ItemTraits> ArrayItemTraits;
-
-		typedef ArrayCore<ArrayItemTraits, NestedArraySettings<ArraySettings>> Array;
+		typedef ArrayCore<ArrayBucketNestedArrayItemTraits<ItemTraits>, ArraySettings> Array;
 
 		static const size_t arrayAlignment = ObjectAlignmenter<Array>::alignment;
 		typedef MemPoolParamsStatic<sizeof(Array) + arrayAlignment, arrayAlignment,

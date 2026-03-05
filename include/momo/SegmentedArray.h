@@ -26,6 +26,18 @@
 namespace momo
 {
 
+namespace internal
+{
+	class SegmentedArraySettingsBase
+	{
+	public:
+		static const CheckMode checkMode = CheckMode::bydefault;
+		static const bool allowExceptionSuppression = true;
+
+		typedef ArraySettings<> SegmentsSettings;
+	};
+}
+
 template<typename TItem,
 	typename TMemManager = MemManagerDefault>
 class SegmentedArrayItemTraits
@@ -71,14 +83,11 @@ class SegmentedArraySettings;
 
 template<size_t tLogInitialItemCount>
 class SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogInitialItemCount>
+	: public internal::SegmentedArraySettingsBase
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-
 	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::sqrt;
 	static const size_t logInitialItemCount = tLogInitialItemCount;
-
-	typedef ArraySettings<> SegmentsSettings;
 
 public:
 	static void GetSegItemIndexes(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
@@ -123,14 +132,11 @@ private:
 
 template<size_t tLogInitialItemCount>
 class SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogInitialItemCount>
+	: public internal::SegmentedArraySettingsBase
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-
 	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::cnst;
 	static const size_t logInitialItemCount = tLogInitialItemCount;
-
-	typedef ArraySettings<> SegmentsSettings;
 
 public:
 	static void GetSegItemIndexes(size_t index, size_t& segIndex, size_t& itemIndex) noexcept
@@ -175,7 +181,8 @@ public:
 private:
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings> SegmentsSettings;
+	typedef internal::NestedArraySettings<typename Settings::SegmentsSettings,
+		Settings::allowExceptionSuppression> SegmentsSettings;
 
 	typedef ArrayCore<ArrayItemTraits<Item*, MemManager>, SegmentsSettings> Segments;
 

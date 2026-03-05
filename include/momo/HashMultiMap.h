@@ -341,7 +341,8 @@ namespace internal
 		typedef ArrayBucket<HashMultiMapArrayBucketItemTraits<HashMultiMapKeyValueTraits>,
 			HashMultiMapSettings::valueArrayMaxFastCount,
 			typename HashMultiMapSettings::ValueArrayMemPoolParams,
-			typename HashMultiMapSettings::ValueArraySettings> Value;
+			NestedArraySettings<typename HashMultiMapSettings::ValueArraySettings,
+				HashMultiMapSettings::allowExceptionSuppression>> Value;
 
 		static const bool useSafeValueReference = false;
 
@@ -437,6 +438,7 @@ namespace internal
 		static const CheckMode checkMode = HashMultiMapSettings::checkMode;
 		static const ExtraCheckMode extraCheckMode = HashMultiMapSettings::extraCheckMode;
 		static const bool checkVersion = HashMultiMapSettings::checkKeyVersion;
+		static const bool allowExceptionSuppression = HashMultiMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -528,6 +530,7 @@ public:
 	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 	static const bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;
 	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
+	static const bool allowExceptionSuppression = true;
 
 	static const size_t valueArrayMaxFastCount = 7;
 	typedef MemPoolParams<> ValueArrayMemPoolParams;
@@ -1217,6 +1220,7 @@ using HashMultiMapOpen = HashMultiMap<TKey, TValue, HashTraitsOpen<TKey>>;
 
 namespace internal
 {
+	template<bool tAllowExceptionSuppression>
 	class NestedHashMultiMapSettings : public HashMultiMapSettings
 	{
 	public:
@@ -1224,6 +1228,7 @@ namespace internal
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkKeyVersion = false;
 		static const bool checkValueVersion = false;
+		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 }
 

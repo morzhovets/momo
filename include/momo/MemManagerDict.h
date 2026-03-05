@@ -31,6 +31,7 @@ namespace internal
 		static const CheckMode checkMode = CheckMode::assertion;
 		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 		static const bool checkVersion = false;
+		static const bool allowExceptionSuppression = false;
 	};
 }
 

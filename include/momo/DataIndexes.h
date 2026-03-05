@@ -457,7 +457,7 @@ namespace internal
 		{
 		private:
 			typedef HashSetCore<HashSetItemTraits<Raw*, MemManagerPtr>,
-				HashTraits, NestedHashSetSettings> HashSet;
+				HashTraits, NestedHashSetSettings<Settings::allowExceptionSuppression>> HashSet;
 
 			typedef typename HashSet::ConstPosition Position;
 
@@ -607,8 +607,8 @@ namespace internal
 		class MultiHash
 		{
 		private:
-			typedef HashMultiMapCore<HashMultiMapKeyValueTraits<Raw*, Raw*, MemManagerPtr>,
-				HashTraits, NestedHashMultiMapSettings> HashMultiMap;
+			typedef HashMultiMapCore<HashMultiMapKeyValueTraits<Raw*, Raw*, MemManagerPtr>, HashTraits,
+				NestedHashMultiMapSettings<Settings::allowExceptionSuppression>> HashMultiMap;
 
 			typedef typename HashMultiMap::ConstKeyIterator ConstKeyIterator;
 			typedef typename HashMultiMap::KeyIterator KeyIterator;

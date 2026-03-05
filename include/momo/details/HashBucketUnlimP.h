@@ -63,10 +63,8 @@ namespace internal
 		static const size_t maxFastCount = tMaxFastCount;
 
 	private:
-		typedef BucketUnlimPArrayBucketItemTraits<ItemTraits> ArrayBucketItemTraits;
-
-		typedef internal::ArrayBucket<ArrayBucketItemTraits, maxFastCount, MemPoolParams,
-			ArraySettings> ArrayBucket;
+		typedef internal::ArrayBucket<BucketUnlimPArrayBucketItemTraits<ItemTraits>,
+			maxFastCount, MemPoolParams, NestedArraySettings<ArraySettings, false>> ArrayBucket;	//?
 
 	public:
 		static const size_t maxCount = UIntConst::maxSize;
