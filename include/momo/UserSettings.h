@@ -28,6 +28,9 @@
 # include <bit>
 #endif
 
+// Disable C++ exceptions. Use this macro when `-fno-exceptions` option is enabled.
+//#define MOMO_DISABLE_EXCEPTIONS
+
 // If you activate safe map brackets, in the case of absence in `map` the key `key`
 // the expression `map[key]` can be used only on the left side of an assignment operator.
 // Do not forget that the references to the items may become invalid after each insertion,
@@ -45,7 +48,9 @@
 // By default, we can use the move constructor even if it is not marked as `noexcept`.
 // If your program does not use exceptions at all, you can define it as `true`.
 // On the contrary, for strong safety it can be defined as `false`.
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(MOMO_DISABLE_EXCEPTIONS)
+# define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) true
+#elif defined(__GNUC__) || defined(__clang__)
 // `false` if Object has copy constructor and no move constructor, works in GCC and Clang
 # define MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object) \
 	(!std::is_constructible<Object, momo::internal::ConvertibleToReferences<Object>>::value)
@@ -176,7 +181,13 @@
 
 #define MOMO_ASSERT(expr) assert(expr)
 
-#define MOMO_THROW(exception) throw exception
+#ifdef MOMO_DISABLE_EXCEPTIONS
+# define MOMO_THROW(exception) std::terminate()
+#else
+# define MOMO_THROW(exception) throw exception
+// Undefine MOMO_CATCH_ALL macro if you want to disable internal exception suppression
+# define MOMO_CATCH_ALL catch (...) {}
+#endif
 
 #define MOMO_CHECK_EXCEPTION(expr) \
 	do { if (!(expr)) MOMO_THROW(std::invalid_argument(#expr)); } while (false)

@@ -803,19 +803,19 @@ namespace internal
 			typedef ArrayCore<ArrayItemTraits<size_t, MemManagerPtr<MemManager>>,
 				internal::NestedArraySettings<>> HashCodes;
 			HashCodes hashCodes((MemManagerPtr<MemManager>(GetMemManager())));
-			try
+			if (internal::Catcher::AllowExceptionSuppression<Settings>::value)
+				Catcher::CatchAll(&HashCodes::Reserve, hashCodes, mRaws.GetCount());
+			if (hashCodes.GetCapacity() >= mRaws.GetCount())
 			{
-				hashCodes.Reserve(mRaws.GetCount());
+				for (Raw* raw : mRaws)
+					hashCodes.AddBackNogrow(rawHasher(raw));
+				HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
+					hashCodes.GetBegin(), rawEqualComp);
 			}
-			catch (const std::bad_alloc&)
+			else
 			{
 				HashSorter::Sort(mRaws.GetBegin(), mRaws.GetCount(), rawHasher, rawEqualComp);
-				return;
 			}
-			for (Raw* raw : mRaws)
-				hashCodes.AddBackNogrow(rawHasher(raw));
-			HashSorter::SortPrehashed(mRaws.GetBegin(), mRaws.GetCount(),
-				hashCodes.GetBegin(), rawEqualComp);
 		}
 
 		template<typename Void, typename Item, typename... Items>

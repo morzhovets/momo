@@ -229,6 +229,19 @@ namespace internal
 	class Catcher
 	{
 	public:
+		template<typename Settings>
+		class AllowExceptionSuppression
+#if defined(MOMO_DISABLE_EXCEPTIONS)
+			: public std::true_type
+#elif defined(MOMO_CATCH_ALL)
+			: public BoolConstant<Settings::allowExceptionSuppression>
+#else
+			: public std::false_type
+#endif
+		{
+		};
+
+	public:
 		template<typename... Args>
 		static Finalizer<void (*)(Args...)> Finalize(
 			void (*func)(Args...), Identity<Args>... args) noexcept
@@ -241,6 +254,40 @@ namespace internal
 			void (Class::*func)(Args...), Identity<Class>& object, Identity<Args>... args) noexcept
 		{
 			return Finalizer<void (Class::*)(Args...)>(func, object, args...);
+		}
+
+		template<typename Functor, typename... Args>
+		static bool CatchAll(Functor&& func, Args&&... args) noexcept
+		{
+#if !defined(MOMO_DISABLE_EXCEPTIONS) && !defined(MOMO_CATCH_ALL)
+			MOMO_ASSERT(false);
+#endif
+			bool res = false;
+#if !defined(MOMO_DISABLE_EXCEPTIONS) && defined(MOMO_CATCH_ALL)
+			try
+#endif
+			{
+				pvInvoke(std::forward<Functor>(func), std::forward<Args>(args)...);
+				res = true;
+			}
+#if !defined(MOMO_DISABLE_EXCEPTIONS) && defined(MOMO_CATCH_ALL)
+			MOMO_CATCH_ALL
+#endif
+			return res;
+		}
+
+	private:
+		template<typename Functor, typename... Args>
+		static void pvInvoke(Functor&& func, Args&&... args)
+		{
+			std::forward<Functor>(func)(std::forward<Args>(args)...);
+		}
+
+		template<typename Class, typename... Args>
+		static void pvInvoke(void (Class::*func)(Args...),
+			Identity<Class>& object, Identity<Args>... args)
+		{
+			(object.*func)(args...);
 		}
 	};
 }

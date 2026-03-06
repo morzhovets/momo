@@ -503,6 +503,9 @@ private:
 	static const bool areItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
 		&& ItemTraits::isNothrowRelocatable && Bucket::isNothrowAddableIfNothrowCreatable;
 
+	static const bool allowExceptionSuppression
+		= internal::Catcher::AllowExceptionSuppression<Settings>::value;
+
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
@@ -1010,15 +1013,14 @@ private:
 
 	bool pvExtraCheck(ConstPosition pos) const noexcept
 	{
-		try
+		bool res = true;
+		if (allowExceptionSuppression)
 		{
-			return pos == pvFind(ItemTraits::GetKey(*pos));
+			res = false;
+			internal::Catcher::CatchAll([this, &res, pos] ()
+				{ res = (pos == pvFind(ItemTraits::GetKey(*pos))); });
 		}
-		catch (...)
-		{
-			//?
-			return false;
-		}
+		return res;
 	}
 
 	template<typename KeyArg>

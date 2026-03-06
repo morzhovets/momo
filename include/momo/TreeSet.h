@@ -328,6 +328,9 @@ public:
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
 private:
+	static const bool allowExceptionSuppression
+		= internal::Catcher::AllowExceptionSuppression<Settings>::value;
+
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
@@ -1093,19 +1096,17 @@ private:
 
 	bool pvExtraCheck(ConstIterator iter) const noexcept
 	{
-		try
+		bool res = true;
+		if (allowExceptionSuppression)
 		{
-			if (iter != GetBegin() && !pvIsOrdered(std::prev(iter), iter))
-				return false;
-			if (iter != std::prev(GetEnd()) && !pvIsOrdered(iter, std::next(iter)))
-				return false;
-			return true;
+			res = false;
+			internal::Catcher::CatchAll([this, &res, iter] ()
+				{
+					res = (iter == GetBegin() || pvIsOrdered(std::prev(iter), iter))
+						&& (iter == std::prev(GetEnd()) || pvIsOrdered(iter, std::next(iter)));
+				});
 		}
-		catch (...)
-		{
-			//?
-			return false;
-		}
+		return res;
 	}
 
 	template<typename KeyArg>
@@ -1519,29 +1520,33 @@ private:
 			mRootNode->GetParent()->Destroy(*mNodeParams);
 			mRootNode->SetParent(nullptr);
 		}
-		try
+		if (ItemTraits::isNothrowRelocatable)
+			pvRebalanceLoop(node, savedNode, fast);
+		else if (allowExceptionSuppression)
+			internal::Catcher::CatchAll(&TreeSetCore::pvRebalanceLoop, *this, node, savedNode, fast);
+	}
+
+	void pvRebalanceLoop(Node* node, Node* savedNode, bool fast)
+		noexcept(ItemTraits::isNothrowRelocatable)
+	{
+		Node* curNode = node;
+		while (true)
 		{
-			while (true)
-			{
-				Node* parentNode = node->GetParent();
-				MOMO_ASSERT(parentNode != savedNode);
-				if (parentNode == nullptr)
-					break;
-				size_t index = parentNode->GetChildIndex(node);
-				bool stop = !pvRebalance(parentNode, index + 1, savedNode)
-					&& !pvRebalance(parentNode, index, savedNode) && fast;
-				if (stop)
-					break;
-				node = parentNode;
-			}
-		}
-		catch (...)
-		{
-			// no throw!
+			Node* parentNode = curNode->GetParent();
+			MOMO_ASSERT(parentNode != savedNode);
+			if (parentNode == nullptr)
+				break;
+			size_t index = parentNode->GetChildIndex(curNode);
+			bool stop = !pvRelocateItems(parentNode, index + 1, savedNode)
+				&& !pvRelocateItems(parentNode, index, savedNode) && fast;
+			if (stop)
+				break;
+			curNode = parentNode;
 		}
 	}
 
-	bool pvRebalance(Node* parentNode, size_t index, Node* savedNode)
+	bool pvRelocateItems(Node* parentNode, size_t index, Node* savedNode)
+		noexcept(ItemTraits::isNothrowRelocatable)
 	{
 		if (index == 0 || index > parentNode->GetCount())
 			return false;
