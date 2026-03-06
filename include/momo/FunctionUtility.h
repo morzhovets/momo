@@ -278,7 +278,8 @@ namespace internal
 
 	private:
 		template<typename Functor, typename... Args>
-		static void pvInvoke(Functor&& func, Args&&... args)
+		static EnableIf<!std::is_member_pointer<typename std::decay<Functor>::type>::value>
+		pvInvoke(Functor&& func, Args&&... args)
 		{
 			std::forward<Functor>(func)(std::forward<Args>(args)...);
 		}
