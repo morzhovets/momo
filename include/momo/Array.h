@@ -753,15 +753,9 @@ public:
 			pvGrow(capacity, ArrayGrowCause::reserve);
 	}
 
-	void Shrink()
+	void Shrink(size_t capacity = 0)
 	{
-		Shrink(GetCount());
-	}
-
-	void Shrink(size_t capacity)
-	{
-		size_t initCapacity = GetCapacity();
-		if (initCapacity <= capacity || initCapacity == internalCapacity)
+		if (GetCapacity() <= SMath::Max(capacity, internalCapacity))
 			return;
 		size_t count = GetCount();
 		if (capacity < count)
@@ -771,6 +765,25 @@ public:
 			auto itemsCreator = [this, count] (Item* newItems)
 				{ ItemTraits::Relocate(GetMemManager(), GetItems(), newItems, count); };
 			mData.Reset(capacity, count, itemsCreator);
+		}
+	}
+
+	bool TryShrink(size_t capacity = 0) noexcept
+	{
+		if (internal::Catcher::AllowExceptionSuppression<Settings>::value)
+		{
+			return internal::Catcher::CatchAll(&ArrayCore::Shrink, *this, capacity);
+		}
+		else
+		{
+			capacity = SMath::Max(capacity, GetCount());
+			if (capacity <= internalCapacity
+				&& (internalCapacity == 0 || ItemTraits::IsNothrowRelocatable()))
+			{
+				Shrink(capacity);
+				return true;
+			}
+			return GetCapacity() <= SMath::Max(capacity, internalCapacity);
 		}
 	}
 

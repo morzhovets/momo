@@ -389,26 +389,20 @@ public:
 			pvIncCapacity(initCapacity, capacity);
 	}
 
-	void Shrink() noexcept
-	{
-		Shrink(mCount);
-	}
-
-	void Shrink(size_t capacity) noexcept
+	void Shrink(size_t capacity = 0) noexcept
 	{
 		if (GetCapacity() <= capacity)
 			return;
 		if (capacity < mCount)
 			capacity = mCount;
 		pvDecCapacity(capacity);
-		try
-		{
-			mSegments.Shrink();
-		}
-		catch (...)
-		{
-			// no throw!
-		}
+		mSegments.TryShrink();
+	}
+
+	bool TryShrink(size_t capacity = 0) noexcept
+	{
+		Shrink(capacity);
+		return true;
 	}
 
 	const Item& operator[](size_t index) const

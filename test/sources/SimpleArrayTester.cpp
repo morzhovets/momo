@@ -133,7 +133,7 @@ public:
 
 		ar.Clear();
 		assert(ar.IsEmpty());
-		ar.Shrink();
+		assert(ar.TryShrink());
 
 		ar.AddBack(std::move(s1));
 		ar.Insert(0, 3, ar[0]);
@@ -150,45 +150,41 @@ public:
 
 	static void TestTemplAll()
 	{
-		static const size_t minArraySize = 3 * sizeof(void*);
-
 		std::cout << "momo::Array<size_t>: " << std::flush;
 		TestTemplArray<momo::Array<size_t, momo::MemManagerDict<>>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<size_t, momo::MemManagerCpp>: " << std::flush;
-		TestTemplArray<momo::Array<size_t, momo::MemManagerCpp>, minArraySize>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerCpp>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<TemplItem<false>, momo::MemManagerCpp>: " << std::flush;
-		TestTemplArray<momo::Array<TemplItem<false>, momo::MemManagerCpp>, minArraySize>();
+		TestTemplArray<momo::Array<TemplItem<false>, momo::MemManagerCpp>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<size_t, momo::MemManagerC>: " << std::flush;
-		TestTemplArray<momo::Array<size_t, momo::MemManagerC>, minArraySize>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerC>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<TemplItem<true>, momo::MemManagerC>: " << std::flush;
-		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerC>, minArraySize>();
+		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerC>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<size_t, momo::MemManagerStd>: " << std::flush;
-		TestTemplArray<momo::Array<size_t, momo::MemManagerStd<std::allocator<size_t>>>,
-			minArraySize>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerStd<std::allocator<size_t>>>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<TemplItem<true>, momo::MemManagerStd>: " << std::flush;
-		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerStd<std::allocator<TemplItem<true>>>>,
-			minArraySize>();
+		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerStd<std::allocator<TemplItem<true>>>>>();
 		std::cout << "ok" << std::endl;
 
 #ifdef MOMO_USE_MEM_MANAGER_WIN
 		std::cout << "momo::Array<size_t, momo::MemManagerWin>: " << std::flush;
-		TestTemplArray<momo::Array<size_t, momo::MemManagerWin>, minArraySize>();
+		TestTemplArray<momo::Array<size_t, momo::MemManagerWin>>();
 		std::cout << "ok" << std::endl;
 
 		std::cout << "momo::Array<TemplItem<true>, momo::MemManagerWin>: " << std::flush;
-		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerWin>, minArraySize>();
+		TestTemplArray<momo::Array<TemplItem<true>, momo::MemManagerWin>>();
 		std::cout << "ok" << std::endl;
 #endif
 
@@ -213,13 +209,15 @@ public:
 		std::cout << "ok" << std::endl;
 	}
 
-	template<typename Array,
-		size_t arraySize = 0>
-	static void TestTemplArray()
+	template<typename Array>
+	static Array TestTemplArray()
 	{
 		typedef typename Array::Item Item;
+		typedef typename Array::Settings Settings;
 
-		MOMO_STATIC_ASSERT(arraySize == 0 || arraySize == sizeof(Array));
+		MOMO_STATIC_ASSERT(!std::is_base_of<momo::ArraySettings<>, Settings>::value
+			|| !std::is_empty<typename Array::MemManager>::value
+			|| sizeof(Array) == 3 * sizeof(void*));
 
 		Array ar;
 		static const size_t count = 20000;
@@ -229,10 +227,15 @@ public:
 			[&ar] () { return Item(ar.GetCount()); });
 
 		ar.Reserve(count * 3);
-		ar.Shrink();
+
+		assert(ar.TryShrink() ==
+			(momo::internal::Catcher::AllowExceptionSuppression<Settings>::value
+			|| std::is_base_of<momo::internal::SegmentedArraySettingsBase, Settings>::value));
 
 		for (size_t i = 0; i < count; ++i)
 			assert(ar[i] == Item(i));
+
+		return Array(ar);
 	}
 };
 

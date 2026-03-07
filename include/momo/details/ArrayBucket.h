@@ -65,6 +65,11 @@ namespace internal
 			return ArrayBucketItemTraits::isTriviallyRelocatable;
 		}
 
+		static constexpr bool IsNothrowRelocatable() noexcept	// for TryShrink
+		{
+			return ArrayBucketItemTraits::isTriviallyRelocatable;
+		}
+
 		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 		{
 			ArrayBucketItemTraits::Destroy(memManager.GetBaseMemManager(), items, count);
@@ -332,16 +337,7 @@ namespace internal
 				Array& array = pvGetArray();
 				array.RemoveBack();
 				if (2 < count && count <= array.GetCapacity() / 4)
-				{
-					try
-					{
-						array.Shrink(count * 2);
-					}
-					catch (...)
-					{
-						// no throw!
-					}
-				}
+					array.TryShrink(count * 2);
 			}
 		}
 
