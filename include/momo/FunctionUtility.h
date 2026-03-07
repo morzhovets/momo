@@ -229,17 +229,25 @@ namespace internal
 	class Catcher
 	{
 	public:
-		template<typename Settings>
+		template<typename Settings,
+			typename = bool>
 		class AllowExceptionSuppression
-#if defined(MOMO_DISABLE_EXCEPTIONS)
+#if defined(MOMO_DISABLE_EXCEPTIONS) || defined(MOMO_CATCH_ALL)
 			: public std::true_type
-#elif defined(MOMO_CATCH_ALL)
-			: public BoolConstant<Settings::allowExceptionSuppression>
 #else
 			: public std::false_type
 #endif
 		{
 		};
+
+#if !defined(MOMO_DISABLE_EXCEPTIONS) && defined(MOMO_CATCH_ALL)
+		template<typename Settings>
+		class AllowExceptionSuppression<Settings,
+			typename std::decay<decltype(Settings::allowExceptionSuppression)>::type>
+			: public BoolConstant<Settings::allowExceptionSuppression>
+		{
+		};
+#endif
 
 	public:
 		template<typename... Args>
