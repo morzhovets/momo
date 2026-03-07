@@ -374,7 +374,8 @@ namespace internal
 		};
 
 		template<typename MemManager>
-		struct PtrUsefulBitCount<MemManager, decltype(MemManager::ptrUsefulBitCount)>
+		struct PtrUsefulBitCount<MemManager,
+			typename std::decay<decltype(MemManager::ptrUsefulBitCount)>::type>
 		{
 			static const size_t value = MemManager::ptrUsefulBitCount;
 		};
