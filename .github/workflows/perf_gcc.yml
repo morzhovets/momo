@@ -32,24 +32,24 @@ jobs:
       with:
         repository: 'morzhovets/hash-table-shootout'
         ref: 'regress'
-    - name: Checkout momo_v3_2
-      uses: actions/checkout@v4
-      with:
-        repository: 'morzhovets/momo'
-        ref: 'v3.2'
-        path: 'momo_v3_2'
-    - name: Checkout momo_v3_5
-      uses: actions/checkout@v4
-      with:
-        repository: 'morzhovets/momo'
-        ref: 'v3.5'
-        path: 'momo_v3_5'
     - name: Checkout momo_v3_8
       uses: actions/checkout@v4
       with:
         repository: 'morzhovets/momo'
         ref: 'v3.8'
         path: 'momo_v3_8'
+    - name: Checkout momo_v3_9
+      uses: actions/checkout@v4
+      with:
+        repository: 'morzhovets/momo'
+        ref: 'v3.9'
+        path: 'momo_v3_9'
+    - name: Checkout momo_v3_10
+      uses: actions/checkout@v4
+      with:
+        repository: 'morzhovets/momo'
+        ref: 'v3.10'
+        path: 'momo_v3_10'
     - name: Checkout momo_v3_11
       uses: actions/checkout@v4
       with:
@@ -65,9 +65,9 @@ jobs:
     - name: Build
       run: |
         mkdir build
-        g++-${{ matrix.gcc_ver }} -Imomo_v3_2 -O3 -DNDEBUG -march=native -std=c++20 -o build/momo_${{ matrix.type }}_1 src/momo_${{ matrix.type }}.cc
-        g++-${{ matrix.gcc_ver }} -Imomo_v3_5 -O3 -DNDEBUG -march=native -std=c++20 -o build/momo_${{ matrix.type }}_2 src/momo_${{ matrix.type }}.cc
-        g++-${{ matrix.gcc_ver }} -Imomo_v3_8/include -O3 -DNDEBUG -march=native -std=c++23 -o build/momo_${{ matrix.type }}_3 src/momo_${{ matrix.type }}.cc
+        g++-${{ matrix.gcc_ver }} -Imomo_v3_8/include -O3 -DNDEBUG -march=native -std=c++23 -o build/momo_${{ matrix.type }}_1 src/momo_${{ matrix.type }}.cc
+        g++-${{ matrix.gcc_ver }} -Imomo_v3_9/include -O3 -DNDEBUG -march=native -std=c++23 -o build/momo_${{ matrix.type }}_2 src/momo_${{ matrix.type }}.cc
+        g++-${{ matrix.gcc_ver }} -Imomo_v3_10/include -O3 -DNDEBUG -march=native -std=c++23 -o build/momo_${{ matrix.type }}_3 src/momo_${{ matrix.type }}.cc
         g++-${{ matrix.gcc_ver }} -Imomo_v3_11/include -O3 -DNDEBUG -march=native -std=c++23 -o build/momo_${{ matrix.type }}_4 src/momo_${{ matrix.type }}.cc
         g++-${{ matrix.gcc_ver }} -Imomo_cur/include -O3 -DNDEBUG -march=native -std=c++23 -o build/momo_${{ matrix.type }}_0 src/momo_${{ matrix.type }}.cc
     - name: Test
