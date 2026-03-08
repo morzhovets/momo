@@ -556,6 +556,12 @@ private:
 		const KeyArg& mKey;
 	};
 
+	struct BucketIndexIterator
+	{
+		size_t index;
+		BucketIterator iterator;
+	};
+
 public:
 	HashSetCore()
 		: HashSetCore(HashTraits())
@@ -1203,7 +1209,7 @@ private:
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>
-	std::pair<size_t, BucketIterator> pvAddInternal(Buckets& buckets, size_t hashCode,
+	BucketIndexIterator pvAddInternal(Buckets& buckets, size_t hashCode,
 		FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		size_t bucketCount = buckets.GetCount();
