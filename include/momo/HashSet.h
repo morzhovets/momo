@@ -514,6 +514,12 @@ private:
 	{
 	};
 
+	struct BucketIndexIterator
+	{
+		size_t index;
+		BucketIterator iterator;
+	};
+
 	struct ConstIteratorProxy : private ConstIterator
 	{
 		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, IsMovable)
@@ -599,7 +605,7 @@ public:
 		for (const Item& item : hashSet)
 		{
 			size_t hashCode = hashTraits.GetHashCode(ItemTraits::GetKey(item));
-			pvAddNogrow<false>(*mBuckets, hashCode, Creator<const Item&>(thisMemManager, item));
+			pvAddInternal(*mBuckets, hashCode, Creator<const Item&>(thisMemManager, item));
 		}
 		mCount = hashSet.mCount;
 	}
@@ -962,8 +968,7 @@ public:
 
 	ConstPosition MakePosition(size_t hashCode) const noexcept
 	{
-		return internal::ProxyConstructor<ConstPosition>(hashCode, BucketIterator(),
-			mCrew.GetVersion());
+		return pvMakePosition(hashCode, BucketIterator());
 	}
 
 	void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
@@ -1011,6 +1016,11 @@ private:
 		return logBucketCount + shift;
 	}
 
+	ConstPosition pvMakePosition(size_t indexCode, BucketIterator bucketIter) const noexcept
+	{
+		return internal::ProxyConstructor<ConstPosition>(indexCode, bucketIter, mCrew.GetVersion());
+	}
+
 	bool pvExtraCheck(ConstPosition pos) const noexcept
 	{
 		bool res = true;
@@ -1044,7 +1054,7 @@ private:
 					break;
 			}
 		}
-		return internal::ProxyConstructor<ConstPosition>(indexCode, bucketIter, mCrew.GetVersion());
+		return pvMakePosition(indexCode, bucketIter);
 	}
 
 	template<typename ItemPredicate>
@@ -1095,17 +1105,76 @@ private:
 		size_t hashCode = ConstPositionProxy::GetHashCode(pos);
 		ConstPosition resPos;
 		if (mCount < mCapacity)
-			resPos = pvAddNogrow<true>(*mBuckets, hashCode, std::forward<ItemCreator>(itemCreator));
+			resPos = pvAddNogrow(*mBuckets, hashCode, std::forward<ItemCreator>(itemCreator));
 		else
 			resPos = pvAddGrow(hashCode, std::forward<ItemCreator>(itemCreator));
-		if (mBuckets->GetNextBuckets() != nullptr)
-			pvRelocateItems(resPos);
+		if (allowExceptionSuppression)
+		{
+			if (mBuckets->GetNextBuckets() != nullptr)
+				pvRelocateItems(resPos);
+		}
 		MOMO_EXTRA_CHECK(!extraCheck || pvExtraCheck(resPos));
 		return resPos;
 	}
 
-	template<bool incCount, typename ItemCreator>
+	template<typename ItemCreator>
 	ConstPosition pvAddNogrow(Buckets& buckets, size_t hashCode, ItemCreator&& itemCreator)
+	{
+		BucketIndexIterator bucketIndexIter = pvAddInternal(buckets, hashCode,
+			std::forward<ItemCreator>(itemCreator));
+		++mCount;
+		mCrew.IncVersion();
+		return pvMakePosition(bucketIndexIter.index, bucketIndexIter.iterator);
+	}
+
+	template<typename ItemCreator>
+	MOMO_NOINLINE Position pvAddGrow(size_t hashCode, ItemCreator&& itemCreator)
+	{
+		const HashTraits& hashTraits = GetHashTraits();
+		MemManager& memManager = GetMemManager();
+		size_t newLogBucketCount = pvGetNewLogBucketCount();
+		size_t newCapacity = hashTraits.CalcCapacity(size_t{1} << newLogBucketCount,
+			bucketMaxItemCount);
+		MOMO_CHECK(newCapacity > mCount);
+		Buckets* newBuckets = nullptr;
+		auto newBucketsCreator = [this, &newBuckets, newLogBucketCount] ()
+		{
+			newBuckets = Buckets::Create(GetMemManager(), newLogBucketCount,
+				(mBuckets != nullptr) ? &mBuckets->GetBucketParams() : nullptr);
+		};
+		if (mBuckets == nullptr || !allowExceptionSuppression)
+			newBucketsCreator();
+		else
+			internal::Catcher::CatchAll(newBucketsCreator);
+		if (newBuckets == nullptr)
+			return pvAddNogrow(*mBuckets, hashCode, std::forward<ItemCreator>(itemCreator));
+		auto newBucketsFin = internal::Catcher::Finalize(&Buckets::Destroy,
+			*newBuckets, memManager, mBuckets == nullptr);
+		Position resPos;
+		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
+		if (allowExceptionSuppression)
+			resPos = pvAddNogrow(*newBuckets, hashCode, std::forward<ItemCreator>(itemCreator));
+		else
+			std::forward<ItemCreator>(itemCreator)(itemBuffer.GetPtr());
+		newBucketsFin.Detach();
+		newBuckets->SetNextBuckets(mBuckets);
+		mBuckets = newBuckets;
+		mCapacity = newCapacity;
+		if (!allowExceptionSuppression)
+		{
+			auto fin = internal::Catcher::Finalize(&ItemTraits::Destroy,
+				&memManager, itemBuffer.Get());
+			pvRelocateItems();
+			auto itemRelocateCreator = [&memManager, &itemBuffer] (Item* newItem)
+				{ ItemTraits::Relocate(&memManager, itemBuffer.Get(), newItem); };
+			resPos = pvAddNogrow(*mBuckets, hashCode, itemRelocateCreator);
+			fin.Detach();
+		}
+		return resPos;
+	}
+
+	template<typename ItemCreator>
+	BucketIndexIterator pvAddInternal(Buckets& buckets, size_t hashCode, ItemCreator&& itemCreator)
 	{
 		size_t bucketCount = buckets.GetCount();
 		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
@@ -1123,49 +1192,7 @@ private:
 		BucketIterator bucketIter = bucket->AddCrt(buckets.GetBucketParams(),
 			std::forward<ItemCreator>(itemCreator), hashCode, buckets.GetLogCount(), probe);
 		startBucket.UpdateMaxProbe(probe);
-		if (incCount)
-		{
-			++mCount;
-			mCrew.IncVersion();
-		}
-		return internal::ProxyConstructor<ConstPosition>(bucketIndex, bucketIter,
-			mCrew.GetVersion());
-	}
-
-	template<typename ItemCreator>
-	MOMO_NOINLINE ConstPosition pvAddGrow(size_t hashCode, ItemCreator&& itemCreator)
-	{
-		const HashTraits& hashTraits = GetHashTraits();
-		MemManager& memManager = GetMemManager();
-		size_t newLogBucketCount = pvGetNewLogBucketCount();
-		size_t newCapacity = hashTraits.CalcCapacity(size_t{1} << newLogBucketCount,
-			bucketMaxItemCount);
-		MOMO_CHECK(newCapacity > mCount);
-		bool hasBuckets = (mBuckets != nullptr);
-		Buckets* newBuckets;
-		try
-		{
-			newBuckets = Buckets::Create(memManager, newLogBucketCount,
-				hasBuckets ? &mBuckets->GetBucketParams() : nullptr);
-		}
-		catch (const std::bad_alloc& exception)
-		{
-			if (Settings::allowExceptionSuppression && hasBuckets)
-			{
-				return pvAddNogrow<true>(*mBuckets, hashCode,
-					std::forward<ItemCreator>(itemCreator));
-			}
-			MOMO_THROW(exception);
-		}
-		auto fin = internal::Catcher::Finalize(&Buckets::Destroy,
-			*newBuckets, memManager, !hasBuckets);
-		ConstPosition resPos = pvAddNogrow<true>(*newBuckets, hashCode,
-			std::forward<ItemCreator>(itemCreator));
-		fin.Detach();
-		newBuckets->SetNextBuckets(mBuckets);
-		mBuckets = newBuckets;
-		mCapacity = newCapacity;
-		return resPos;
+		return { bucketIndex, bucketIter };
 	}
 
 	template<typename ItemReplacer>
@@ -1223,6 +1250,7 @@ private:
 
 	MOMO_NOINLINE void pvRelocateItems(ConstPosition& pos) noexcept
 	{
+		MOMO_ASSERT(allowExceptionSuppression);
 		BucketParams& bucketParams = mBuckets->GetBucketParams();
 		size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
 		Bucket& bucket = (*mBuckets)[bucketIndex];
@@ -1233,36 +1261,35 @@ private:
 			std::next(bucket.GetBounds(bucketParams).GetBegin(), itemIndex));
 	}
 
-	void pvRelocateItems() noexcept
+	void pvRelocateItems() noexcept(areItemsNothrowRelocatable || allowExceptionSuppression)
 	{
-		Buckets* nextBuckets = mBuckets->GetNextBuckets();
-		MOMO_ASSERT(nextBuckets != nullptr);
-		try
+		MemManager& memManager = GetMemManager();
+		while (true)
 		{
-			pvRelocateItems(nextBuckets);
-			mBuckets->ExtractNextBuckets();
-		}
-		catch (...)
-		{
-			// no throw!
+			Buckets* buckets = mBuckets->GetNextBuckets();
+			if (buckets == nullptr)
+				break;
+			bool done = true;
+			if (areItemsNothrowRelocatable || !allowExceptionSuppression)
+				pvRelocateItems(*buckets);
+			else
+				done = internal::Catcher::CatchAll([this, buckets] () { pvRelocateItems(*buckets); });	//?
+			if (!done)
+				break;
+			Buckets* nextBuckets = buckets->ExtractNextBuckets();
+			mBuckets->ExtractNextBuckets()->Destroy(memManager, false);
+			mBuckets->SetNextBuckets(nextBuckets);
 		}
 	}
 
-	void pvRelocateItems(Buckets* buckets) noexcept(areItemsNothrowRelocatable)
+	void pvRelocateItems(Buckets& buckets) noexcept(areItemsNothrowRelocatable)
 	{
-		Buckets* nextBuckets = buckets->GetNextBuckets();
-		if (nextBuckets != nullptr)
-		{
-			pvRelocateItems(nextBuckets);
-			buckets->ExtractNextBuckets();
-		}
-		MemManager& memManager = GetMemManager();
 		const HashTraits& hashTraits = GetHashTraits();
-		BucketParams& bucketParams = buckets->GetBucketParams();
-		size_t bucketCount = buckets->GetCount();
+		BucketParams& bucketParams = buckets.GetBucketParams();
+		size_t bucketCount = buckets.GetCount();
 		for (size_t i = 0; i < bucketCount; ++i)
 		{
-			Bucket& bucket = (*buckets)[i];
+			Bucket& bucket = buckets[i];
 			BucketBounds bucketBounds = bucket.GetBounds(bucketParams);
 			BucketIterator bucketIter = bucketBounds.GetEnd();
 			auto hashCodeFullGetter = [&hashTraits, &bucketIter] ()
@@ -1270,20 +1297,20 @@ private:
 			for (size_t c = bucketBounds.GetCount(); c > 0; --c)
 			{
 				--bucketIter;
-				size_t hashCode = bucket.GetHashCodePart(hashCodeFullGetter, bucketIter, i,
-					buckets->GetLogCount(), mBuckets->GetLogCount());
-				auto itemReplacer = [this, hashCode, &memManager] (Item& srcItem, Item& dstItem)
+				size_t hashCode = bucket.GetHashCodePart(hashCodeFullGetter,
+					bucketIter, i, buckets.GetLogCount(), mBuckets->GetLogCount());
+				auto itemReplacer = [this, hashCode] (Item& srcItem, Item& dstItem)
 				{
 					(void)srcItem;
 					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
+					MemManager& memManager = GetMemManager();
 					auto itemCreator = [&memManager, &dstItem] (Item* newItem)
 						{ ItemTraits::Relocate(&memManager, dstItem, newItem); };
-					pvAddNogrow<false>(*mBuckets, hashCode, itemCreator);
+					pvAddInternal(*mBuckets, hashCode, itemCreator);
 				};
 				bucketIter = bucket.Remove(bucketParams, bucketIter, itemReplacer);
 			}
 		}
-		buckets->Destroy(memManager, false);
 	}
 
 	template<typename Set>
