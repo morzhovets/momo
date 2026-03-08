@@ -43,7 +43,9 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 		LibcxxSegmentedArraySettings>>;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_FAILURE
+#ifndef TEST_HAS_NO_EXCEPTIONS
+# define LIBCXX_TEST_FAILURE
+#endif
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_PREFIX "segmented_array_sqrt"
 #include LIBCXX_HEADER(VectorTests.h)
@@ -71,7 +73,9 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 		LibcxxSegmentedArraySettings>>;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_FAILURE
+#ifndef TEST_HAS_NO_EXCEPTIONS
+# define LIBCXX_TEST_FAILURE
+#endif
 #define LIBCXX_TEST_SEGMENTED_ARRAY
 #define LIBCXX_TEST_PREFIX "segmented_array_cnst"
 #include LIBCXX_HEADER(VectorTests.h)

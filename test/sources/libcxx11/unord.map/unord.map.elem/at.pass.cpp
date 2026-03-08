@@ -45,6 +45,7 @@ void main()
         assert(c.size() == 4);
         c.at(1) = "ONE";
         assert(c.at(1) == "ONE");
+#ifndef TEST_HAS_NO_EXCEPTIONS
         try
         {
             c.at(11) = "eleven";
@@ -53,6 +54,7 @@ void main()
         catch (std::out_of_range&)
         {
         }
+#endif
         assert(c.size() == 4);
     }
     {
@@ -70,6 +72,7 @@ void main()
         const C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.size() == 4);
         assert(c.at(1) == "one");
+#ifndef TEST_HAS_NO_EXCEPTIONS
         try
         {
             c.at(11);
@@ -78,6 +81,7 @@ void main()
         catch (std::out_of_range&)
         {
         }
+#endif
         assert(c.size() == 4);
     }
 //#if __cplusplus >= 201103L
@@ -99,6 +103,7 @@ void main()
         assert(c.size() == 4);
         c.at(1) = "ONE";
         assert(c.at(1) == "ONE");
+#ifndef TEST_HAS_NO_EXCEPTIONS
         try
         {
             c.at(11) = "eleven";
@@ -107,6 +112,7 @@ void main()
         catch (std::out_of_range&)
         {
         }
+#endif
         assert(c.size() == 4);
     }
     {
@@ -125,6 +131,7 @@ void main()
         const C c(a, a + sizeof(a)/sizeof(a[0]));
         assert(c.size() == 4);
         assert(c.at(1) == "one");
+#ifndef TEST_HAS_NO_EXCEPTIONS
         try
         {
             c.at(11);
@@ -133,6 +140,7 @@ void main()
         catch (std::out_of_range&)
         {
         }
+#endif
         assert(c.size() == 4);
     }
 #endif

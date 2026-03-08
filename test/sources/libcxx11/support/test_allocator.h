@@ -140,7 +140,7 @@ public:
         {
             assert(data_ >= 0);
             if (time_to_throw >= throw_after) {
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#ifndef TEST_HAS_NO_EXCEPTIONS
                 throw std::bad_alloc();
 #else
                 std::terminate();
@@ -204,7 +204,7 @@ public:
         {
             assert(data_ >= 0);
             if (time_to_throw >= throw_after) {
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#ifndef TEST_HAS_NO_EXCEPTIONS
                 throw std::bad_alloc();
 #else
                 std::terminate();

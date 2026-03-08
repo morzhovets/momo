@@ -14,9 +14,11 @@ LIBCXX_TEST_BEGIN(access)
 #include "vector/access.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 LIBCXX_TEST_BEGIN(asan_throw)
 #include "vector/asan_throw.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 #ifndef LIBCXX_TEST_SEGMENTED_ARRAY
 LIBCXX_TEST_BEGIN(contiguous)
@@ -322,9 +324,11 @@ LIBCXX_TEST_BEGIN(modifiers_push_back)
 #include "vector/vector.modifiers/push_back.pass.cpp"
 LIBCXX_TEST_END
 
+#ifndef TEST_HAS_NO_EXCEPTIONS
 LIBCXX_TEST_BEGIN(modifiers_push_back_exception_safety)
 #include "vector/vector.modifiers/push_back_exception_safety.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_push_back_rvalue)
 #include "vector/vector.modifiers/push_back_rvalue.pass.cpp"

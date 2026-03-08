@@ -40,7 +40,9 @@ using vector = momo::stdish::vector<TValue, TAllocator,
 	momo::ArrayCore<momo::ArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>, LibcxxArraySettings>>;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_FAILURE
+#ifndef TEST_HAS_NO_EXCEPTIONS
+# define LIBCXX_TEST_FAILURE
+#endif
 #define LIBCXX_TEST_ARRAY
 #define LIBCXX_TEST_PREFIX "array_0"
 #include LIBCXX_HEADER(VectorTests.h)

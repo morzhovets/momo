@@ -42,7 +42,7 @@ void main()
         assert(v.size() == 101);
         //assert(is_contiguous_container_asan_correct(v));
     }
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#ifndef TEST_HAS_NO_EXCEPTIONS
     {
         vector<int, stack_allocator<int, 400> > v(100);
         v.push_back(1);

@@ -43,7 +43,7 @@ public:
     pointer allocate(size_type n, const void* = 0)
     {
         if (n > N - (ptr_ - buf_) / sizeof(value_type)) {
-#ifndef _LIBCPP_NO_EXCEPTIONS
+#ifndef TEST_HAS_NO_EXCEPTIONS
             throw std::bad_alloc();
 #else
             std::terminate();

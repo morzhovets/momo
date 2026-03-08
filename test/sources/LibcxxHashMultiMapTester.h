@@ -57,7 +57,9 @@ using multiset = momo::stdish::multiset<TKey>;
 
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_FAILURE
+#ifndef TEST_HAS_NO_EXCEPTIONS
+# define LIBCXX_TEST_FAILURE
+#endif
 #define LIBCXX_TEST_PREFIX "hash_multimap_" LIBCXX_TEST_PREFIX_TAIL
 #include LIBCXX_HEADER(UnorderedMultiMapTests.h)
 #undef LIBCXX_TEST_PREFIX
