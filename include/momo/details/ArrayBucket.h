@@ -64,6 +64,11 @@ namespace internal
 			return ArrayBucketItemTraits::isTriviallyRelocatable;
 		}
 
+		static consteval bool IsNothrowRelocatable() noexcept	// for TryShrink
+		{
+			return ArrayBucketItemTraits::isTriviallyRelocatable;
+		}
+
 		static void Destroy(MemManager& memManager, Item* items, size_t count) noexcept
 		{
 			ArrayBucketItemTraits::Destroy(memManager.GetBaseMemManager(), items, count);
