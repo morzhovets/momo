@@ -70,6 +70,12 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "MOMO_DISABLE_EXCEPTIONS: ";
+#ifdef MOMO_DISABLE_EXCEPTIONS
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
 	std::cout << "MOMO_DISABLE_TYPE_INFO: ";
 #ifdef MOMO_DISABLE_TYPE_INFO
 	std::cout << "defined";
@@ -140,6 +146,12 @@ int main()
 
 	std::cout << "MOMO_HAS_CONTAINERS_RANGES: ";
 #ifdef MOMO_HAS_CONTAINERS_RANGES
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_TEST_NO_EXCEPTIONS_RTTI: ";
+#ifdef MOMO_TEST_NO_EXCEPTIONS_RTTI
 	std::cout << "defined";
 #endif
 	std::cout << std::endl;

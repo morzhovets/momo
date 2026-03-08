@@ -57,6 +57,7 @@
 //#define TEST_NATVIS
 //#define TEST_SPEED_MAP
 
+//#define MOMO_TEST_NO_EXCEPTIONS_RTTI
 //#define MOMO_TEST_EXTRA_SETTINGS
 
 #ifdef _WIN32
@@ -66,11 +67,17 @@
 # endif
 #endif
 
-#ifdef MOMO_TEST_EXTRA_SETTINGS	//?
+#ifdef MOMO_TEST_NO_EXCEPTIONS_RTTI
+# define MOMO_DISABLE_EXCEPTIONS
 # define MOMO_DISABLE_TYPE_INFO
 #endif
 
 #include "../../include/momo/UserSettings.h"
+
+#ifdef MOMO_TEST_NO_EXCEPTIONS_RTTI
+# undef MOMO_DEFAULT_CHECK_MODE
+# define MOMO_DEFAULT_CHECK_MODE exception
+#endif
 
 #ifdef MOMO_TEST_EXTRA_SETTINGS
 
@@ -86,5 +93,7 @@
 
 #undef MOMO_ASSERT
 #define MOMO_ASSERT(expr) void()
+
+#undef MOMO_CATCH_ALL
 
 #endif // MOMO_TEST_EXTRA_SETTINGS
