@@ -16,6 +16,7 @@ jobs:
           macos_ver: '14'
           build_type: 'Release'
           test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
 
@@ -23,6 +24,23 @@ jobs:
           macos_ver: '14'
           build_type: 'Release'
           test_libcxx20: 'Off'
+          no_exceptions_rtti: 'On'
+          extra_settings: 'Off'
+          flags: '-std=c++11 -Werror'
+
+        - xcode_ver: '15.4'
+          macos_ver: '14'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'On'
+          flags: '-std=c++11 -Werror'
+
+        - xcode_ver: '15.4'
+          macos_ver: '14'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
@@ -31,6 +49,7 @@ jobs:
           macos_ver: '14'
           build_type: 'Release'
           test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
@@ -39,6 +58,7 @@ jobs:
           macos_ver: '26'
           build_type: 'Release'
           test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
 
@@ -46,6 +66,7 @@ jobs:
           macos_ver: '26'
           build_type: 'Release'
           test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
 
@@ -53,6 +74,7 @@ jobs:
           macos_ver: '26'
           build_type: 'Release'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
@@ -60,6 +82,7 @@ jobs:
           macos_ver: '26'
           build_type: 'Release'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
 
@@ -67,6 +90,7 @@ jobs:
           macos_ver: '26'
           build_type: 'Release'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
@@ -74,6 +98,7 @@ jobs:
           macos_ver: '26'
           build_type: 'Debug'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
@@ -81,6 +106,15 @@ jobs:
           macos_ver: '26'
           build_type: 'Release'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'On'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '26.2'
+          macos_ver: '26'
+          build_type: 'Release'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26 -Werror'
 
@@ -89,6 +123,7 @@ jobs:
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
 
@@ -96,6 +131,23 @@ jobs:
           macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'Off'
+          no_exceptions_rtti: 'On'
+          extra_settings: 'Off'
+          flags: '-std=c++11 -Werror'
+
+        - xcode_ver: '16.2'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'On'
+          flags: '-std=c++11 -Werror'
+
+        - xcode_ver: '16.2'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
@@ -104,6 +156,7 @@ jobs:
           macos_ver: '26-intel'
           build_type: 'Release'
           test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
 
@@ -111,6 +164,7 @@ jobs:
           macos_ver: '26-intel'
           build_type: 'Release'
           test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
 
@@ -118,6 +172,7 @@ jobs:
           macos_ver: '26-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
@@ -125,6 +180,7 @@ jobs:
           macos_ver: '26-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
 
@@ -132,6 +188,7 @@ jobs:
           macos_ver: '26-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
@@ -139,6 +196,7 @@ jobs:
           macos_ver: '26-intel'
           build_type: 'Debug'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
@@ -146,6 +204,15 @@ jobs:
           macos_ver: '26-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
+          no_exceptions_rtti: 'On'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - xcode_ver: '26.2'
+          macos_ver: '26-intel'
+          build_type: 'Release'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26 -Werror'
 
@@ -170,6 +237,7 @@ jobs:
         cd build
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
+          -DMOMO_TEST_NO_EXCEPTIONS_RTTI=${{ matrix.no_exceptions_rtti }} \
           -DMOMO_TEST_EXTRA_SETTINGS=${{ matrix.extra_settings }}
         cmake --build . -v
     - name: Test

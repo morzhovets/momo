@@ -7,27 +7,31 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       ARCH: x64
       BUILD_TYPE: Release
-      EXTRA_SETTINGS: Off
-      FLAGS: "/WX"
-      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
-
-#    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-#      ARCH: x64
-#      BUILD_TYPE: Release
-#      EXTRA_SETTINGS: On
-#      FLAGS: "/WX"
-#      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
-
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      ARCH: x86
-      BUILD_TYPE: Release
+      NO_EXCEPTIONS_RTTI: Off
       EXTRA_SETTINGS: Off
       FLAGS: "/WX"
       VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       ARCH: x86
+      BUILD_TYPE: Debug
+      NO_EXCEPTIONS_RTTI: Off
+      EXTRA_SETTINGS: Off
+      FLAGS: "/WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      ARCH: x64
       BUILD_TYPE: Release
+      NO_EXCEPTIONS_RTTI: On
+      EXTRA_SETTINGS: Off
+      FLAGS: "/WX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      ARCH: x86
+      BUILD_TYPE: Release
+      NO_EXCEPTIONS_RTTI: Off
       EXTRA_SETTINGS: On
       FLAGS: "/WX"
       VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
@@ -35,6 +39,7 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       ARCH: x64
       BUILD_TYPE: Release
+      NO_EXCEPTIONS_RTTI: Off
       EXTRA_SETTINGS: Off
       FLAGS: "/std:c++17 /WX"
       VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"
@@ -45,7 +50,7 @@ build_script:
   - cd test
   - mkdir build
   - cd build
-  - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DMOMO_TEST_EXTRA_SETTINGS=%EXTRA_SETTINGS%
+  - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DMOMO_TEST_NO_EXCEPTIONS_RTTI=%NO_EXCEPTIONS_RTTI% -DMOMO_TEST_EXTRA_SETTINGS=%EXTRA_SETTINGS%
   - cmake --build . -v
 
 test_script:
