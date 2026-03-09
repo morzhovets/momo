@@ -183,8 +183,15 @@
 
 #ifdef MOMO_DISABLE_EXCEPTIONS
 # define MOMO_THROW(exception) std::terminate()
+# if defined(_MSC_VER) && (_MSC_VER < 1920)
+#  undef MOMO_THROW
+#  define MOMO_THROW(exception) std::abort()
+# endif
 #else
 # define MOMO_THROW(exception) throw exception
+#endif
+
+#ifndef MOMO_DISABLE_EXCEPTIONS
 // Undefine MOMO_CATCH_ALL macro if you want to disable internal exception suppression
 # define MOMO_CATCH_ALL catch (...) {}
 #endif
