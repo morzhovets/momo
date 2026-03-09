@@ -393,7 +393,11 @@ struct limited_alloc_handle {
   template <class T>
   T *allocate(std::size_t N) {
     if (N + outstanding_ > MaxAllocs)
+#ifndef TEST_HAS_NO_EXCEPTIONS
       throw std::bad_alloc();
+#else
+      std::terminate();
+#endif
     last_alloc_ = ::operator new(N*sizeof(T));
     outstanding_ += N;
     return static_cast<T*>(last_alloc_);
