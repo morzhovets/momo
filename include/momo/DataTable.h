@@ -1420,11 +1420,12 @@ private:
 			rowFilter, static_cast<Result*>(nullptr));
 	}
 
-#ifdef _MSC_VER	//?
+#if defined(_MSC_VER) && _MSC_VER < 1930	//?
 	template<typename Result, typename Index, typename RowFilter>
 	Result pvSelectRec(Index, const size_t*, const RowFilter&, OffsetItemTuple<>&&) const
 	{
-		MOMO_THROW(std::exception());
+		MOMO_ASSERT(false);
+		std::abort();
 	}
 #endif
 
