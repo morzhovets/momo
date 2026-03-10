@@ -44,14 +44,6 @@ environment:
       FLAGS: "/std:c++17 /WX"
       VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"
 
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-      ARCH: x86
-      BUILD_TYPE: Release
-      NO_EXCEPTIONS_RTTI: On
-      EXTRA_SETTINGS: Off
-      FLAGS: "/std:c++17 /WX"
-      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"
-
 build_script:
   - set CXXFLAGS=%FLAGS%
   - call "%VCVARS_BAT%" %ARCH%
