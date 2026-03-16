@@ -87,7 +87,7 @@ jobs:
 
     steps:
     - name: Checkout
-      run: git clone --depth=1 https://github.com/${{ github.repository }} .
+      uses: actions/checkout@v6
 #    - name: Install Ninja
 #      run: sudo apt install ninja-build
     - name: Install Clang

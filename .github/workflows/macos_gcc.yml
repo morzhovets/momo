@@ -49,7 +49,7 @@ jobs:
 
     steps:
     - name: Checkout
-      run: git clone --depth=1 https://github.com/${{ github.repository }} .
+      uses: actions/checkout@v6
 #    - name: Install Ninja
 #      run: brew install ninja
     - name: Install GCC

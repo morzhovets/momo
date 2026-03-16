@@ -140,7 +140,7 @@ jobs:
 
     steps:
     - name: Checkout
-      run: git clone --depth=1 https://github.com/${{ github.repository }} .
+      uses: actions/checkout@v6
     - name: Install Ninja
       if: matrix.win_ver == '11-arm'
       run: choco install ninja
