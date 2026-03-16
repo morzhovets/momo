@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      run: git clone --depth=1 https://github.com/${{ github.repository }} .
     - name: Calculate LOC
       id: loc
       uses: PavanMudigonda/lines-of-code-reporter@v1.6
