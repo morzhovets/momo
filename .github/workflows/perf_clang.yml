@@ -28,36 +28,36 @@ jobs:
 
     steps:
     - name: Checkout hash-table-shootout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: 'morzhovets/hash-table-shootout'
         ref: 'regress'
     - name: Checkout momo_v3_2
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: 'morzhovets/momo'
         ref: 'v3.2'
         path: 'momo_v3_2'
     - name: Checkout momo_v3_5
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: 'morzhovets/momo'
         ref: 'v3.5'
         path: 'momo_v3_5'
     - name: Checkout momo_v3_8
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: 'morzhovets/momo'
         ref: 'v3.8'
         path: 'momo_v3_8'
     - name: Checkout momo_v3_11
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: 'morzhovets/momo'
         ref: 'v3.11'
         path: 'momo_v3_11'
     - name: Checkout momo_cur
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: 'momo_cur'
     - name: Install Clang

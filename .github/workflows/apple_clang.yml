@@ -224,7 +224,7 @@ jobs:
       with:
         xcode-version: ${{ matrix.xcode_ver }}
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 #    - name: Install Ninja
 #      run: brew install ninja
     - name: Build

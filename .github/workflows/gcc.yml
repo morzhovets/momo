@@ -384,9 +384,10 @@ jobs:
         apt-get install -y ninja-build
     - name: Checkout
       if: matrix.cont_ver != '18.04'
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
     - name: Checkout 18.04
       if: matrix.cont_ver == '18.04'
+      # Checkout branch_cpp11
       run: |
         apt-get install -y git
         git clone --depth=1 https://github.com/${{ github.repository }} .
