@@ -125,9 +125,10 @@ namespace internal
 		{
 			(void)iter;
 			MOMO_ASSERT(iter == pvGetItemPtr());
-			if (sizeof(HashState) < sizeof(size_t))
+			if MOMO_CONSTEXPR_IF (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();
-			return static_cast<size_t>(mHashState >> 1);
+			else
+				return static_cast<size_t>(mHashState >> 1);
 		}
 
 	private:

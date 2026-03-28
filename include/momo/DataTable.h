@@ -920,7 +920,7 @@ private:
 		// If an exception occurs, the caller is responsible for cleanup
 		MOMO_ASSERT(IsEmpty());
 		const ColumnList& columnList = GetColumnList();
-		if (std::is_same<RowFilter, EmptyRowFilter>::value)
+		if MOMO_CONSTEXPR_IF (std::is_same<RowFilter, EmptyRowFilter>::value)
 			Reserve(rows.GetCount());
 		for (ConstRowReference rowRef : rows)
 		{
@@ -1519,7 +1519,7 @@ private:
 		DataTable resTable(std::move(resColumnList));
 		auto offsets = pvGetOffsets(columns...);
 		auto resOffsets = resTable.pvGetOffsets(columns...);
-		if (distinct)
+		if MOMO_CONSTEXPR_IF (distinct)
 			resTable.mIndexes.template AddUniqueHashIndex<Items...>(resTable.mRaws, resOffsets);
 		for (Raw* raw : mRaws)
 		{

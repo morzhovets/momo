@@ -803,7 +803,7 @@ namespace internal
 			typedef ArrayCore<ArrayItemTraits<size_t, MemManagerPtr<MemManager>>,
 				internal::NestedArraySettings<>> HashCodes;
 			HashCodes hashCodes((MemManagerPtr<MemManager>(GetMemManager())));
-			if (internal::Catcher::AllowExceptionSuppression<Settings>::value)
+			if MOMO_CONSTEXPR_IF (internal::Catcher::AllowExceptionSuppression<Settings>::value)
 				Catcher::CatchAll(&HashCodes::Reserve, hashCodes, mRaws.GetCount());
 			if (hashCodes.GetCapacity() >= mRaws.GetCount())
 			{

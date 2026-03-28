@@ -61,7 +61,7 @@ namespace internal
 			const ItemPredicate& itemPred, size_t hashCode)
 		{
 #ifdef MOMO_PREFETCH
-			if (first)
+			if MOMO_CONSTEXPR_IF (first)
 				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
 #endif
 			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);

@@ -463,7 +463,7 @@ namespace internal
 		static void Swap(MemManager& memManager1, MemManager& memManager2) noexcept
 		{
 			MOMO_ASSERT(&memManager1 != &memManager2);
-			if (!std::is_empty<MemManager>::value)
+			if MOMO_CONSTEXPR_IF (!std::is_empty<MemManager>::value)
 			{
 				MemManager tempMemManager(std::move(memManager1));
 				Assign(std::move(memManager2), memManager1);
@@ -474,7 +474,7 @@ namespace internal
 		static void Assign(MemManager&& srcMemManager, MemManager& dstMemManager) noexcept
 		{
 			MOMO_ASSERT(&srcMemManager != &dstMemManager);
-			if (!std::is_empty<MemManager>::value)
+			if MOMO_CONSTEXPR_IF (!std::is_empty<MemManager>::value)
 			{
 				pvAssign(std::move(srcMemManager), dstMemManager,
 					std::is_nothrow_move_assignable<MemManager>());

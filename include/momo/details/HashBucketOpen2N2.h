@@ -151,7 +151,7 @@ namespace internal
 			Item* newItem = mItems.GetPtr() + maxCount - 1 - count;
 			std::forward<ItemCreator>(itemCreator)(newItem);
 			mCodeData.shortCodes[maxCount - 1 - count] = pvCalcShortCode(hashCode);
-			if (useHashCodePartGetter)
+			if MOMO_CONSTEXPR_IF (useHashCodePartGetter)
 			{
 				uint8_t& codeProbe = mCodeData.codeProbes[maxCount - 1 - count];
 				size_t probeShift = pvGetProbeShift(logBucketCount);

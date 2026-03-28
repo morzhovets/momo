@@ -680,10 +680,10 @@ public:
 	{
 		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
 		size_t shortCode = static_cast<size_t>(columnCode);
-		if (sizeof(ColumnCode) > 4)
+		if MOMO_CONSTEXPR_IF (sizeof(ColumnCode) > 4)
 			shortCode += static_cast<size_t>(static_cast<uint64_t>(columnCode) >> 32);
 		shortCode += shortCode >> 16;
-		if (logVertexCount < 8)
+		if MOMO_CONSTEXPR_IF (logVertexCount < 8)
 			shortCode += shortCode >> 8;
 		size_t vertex1 = (shortCode & vertexCount1) ^ (codeParam >> 4);
 		size_t vertex2 = ((shortCode >> logVertexCount) & vertexCount1) ^ (codeParam & 15);
@@ -1246,7 +1246,7 @@ private:
 		size_t offset = columns->GetOffset();
 		Item* item = pvGetItemPtr<Item>(raw, offset);
 		const Item* srcItem = nullptr;
-		if (!std::is_same<RawPtr, std::nullptr_t>::value)
+		if MOMO_CONSTEXPR_IF (!std::is_same<RawPtr, std::nullptr_t>::value)
 		{
 			size_t srcOffset = offset;
 			const DataColumnList* srcColumnListPtr = static_cast<const DataColumnList*>(srcColumnList);

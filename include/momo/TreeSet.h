@@ -877,20 +877,23 @@ public:
 		ConstIterator iter = pvGetLowerBound(key);
 		if (pvIsGreater(iter, key))
 			return 0;
-		if (!TreeTraits::multiKey)
+		if MOMO_CONSTEXPR_IF (TreeTraits::multiKey)
+		{
+			ConstIterator iter2 = std::next(iter);
+			size_t remCount = 1;
+			while (!pvIsGreater(iter2, key))
+			{
+				++iter2;
+				++remCount;
+			}
+			Remove(iter, iter2);
+			return remCount;
+		}
+		else
 		{
 			Remove(iter);
 			return 1;
 		}
-		ConstIterator iter2 = std::next(iter);
-		size_t remCount = 1;
-		while (!pvIsGreater(iter2, key))
-		{
-			++iter2;
-			++remCount;
-		}
-		Remove(iter, iter2);
-		return remCount;
 	}
 
 	template<typename ItemFilter>
@@ -943,7 +946,7 @@ public:
 	{
 		if (this == &dstTreeSet)
 			return;
-		if (!std::is_empty<TreeTraits>::value)
+		if /*constexpr*/ (!std::is_empty<TreeTraits>::value)
 			return pvMergeTo(dstTreeSet);
 		size_t count = GetCount();
 		if (count == 0)
@@ -1097,7 +1100,7 @@ private:
 	bool pvExtraCheck(ConstIterator iter) const noexcept
 	{
 		bool res = true;
-		if (allowExceptionSuppression)
+		if MOMO_CONSTEXPR_IF (allowExceptionSuppression)
 		{
 			res = false;
 			internal::Catcher::CatchAll([this, &res, iter] ()
@@ -1149,7 +1152,7 @@ private:
 	template<typename ItemPredicate>
 	size_t pvFindFirst(Node* node, const ItemPredicate& itemPred) const
 	{
-		if (TreeTraits::useLinearSearch)
+		if MOMO_CONSTEXPR_IF (TreeTraits::useLinearSearch)
 		{
 			size_t itemCount = node->GetCount();
 			if (itemCount == 0 || !itemPred(*node->GetItemPtr(itemCount - 1)))
@@ -1195,11 +1198,14 @@ private:
 	InsertResult pvInsert(const Key& key, ItemCreator&& itemCreator)
 	{
 		ConstIterator iter = pvGetUpperBound(key);
-		if (!TreeTraits::multiKey && iter != GetBegin())
+		if MOMO_CONSTEXPR_IF (!TreeTraits::multiKey)
 		{
-			ConstIterator prevIter = std::prev(iter);
-			if (!GetTreeTraits().IsLess(ItemTraits::GetKey(*prevIter), key))
-				return { prevIter, false };
+			if (iter != GetBegin())
+			{
+				ConstIterator prevIter = std::prev(iter);
+				if (!GetTreeTraits().IsLess(ItemTraits::GetKey(*prevIter), key))
+					return { prevIter, false };
+			}
 		}
 		iter = pvAdd<extraCheck>(iter, std::forward<ItemCreator>(itemCreator));
 		return { iter, true };
@@ -1520,9 +1526,9 @@ private:
 			mRootNode->GetParent()->Destroy(*mNodeParams);
 			mRootNode->SetParent(nullptr);
 		}
-		if (ItemTraits::isNothrowRelocatable)
+		if MOMO_CONSTEXPR_IF (ItemTraits::isNothrowRelocatable)
 			pvRebalanceLoop(node, savedNode, fast);
-		else if (allowExceptionSuppression)
+		else if MOMO_CONSTEXPR_IF (allowExceptionSuppression)
 			internal::Catcher::CatchAll(&TreeSetCore::pvRebalanceLoop, *this, node, savedNode, fast);
 	}
 
@@ -1614,7 +1620,7 @@ private:
 					{ iter = pvExtract(iter, newItem); };
 				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter, itemCreator));
 			}
-			else
+			else if MOMO_CONSTEXPR_IF (!TreeTraits::multiKey)
 			{
 				++iter;
 				++dstIter;

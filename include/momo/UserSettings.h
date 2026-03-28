@@ -214,6 +214,16 @@
 # define MOMO_CONSTEXPR_VERSION 200704L
 #endif
 
+#ifdef __cpp_if_constexpr
+# define MOMO_CONSTEXPR_IF constexpr
+# if defined(_MSVC_LANG) && _MSVC_LANG < 201703L
+#  undef MOMO_CONSTEXPR_IF	// warning C4984
+# endif
+#endif
+#ifndef MOMO_CONSTEXPR_IF
+# define MOMO_CONSTEXPR_IF
+#endif
+
 #ifdef __cpp_deduction_guides
 # define MOMO_HAS_DEDUCTION_GUIDES
 #endif

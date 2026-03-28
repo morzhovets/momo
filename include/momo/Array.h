@@ -256,7 +256,7 @@ private:
 			pvDestroy();
 			MemManager& thisMemManager = GetMemManager();
 			MemManager& dataMemManager = data.GetMemManager();
-			if (swapMemManagers)
+			if MOMO_CONSTEXPR_IF (swapMemManagers)
 				MemManagerProxy::Swap(thisMemManager, dataMemManager);
 			else
 				MemManagerProxy::Assign(std::move(dataMemManager), thisMemManager);
@@ -770,7 +770,7 @@ public:
 
 	bool TryShrink(size_t capacity = 0) noexcept
 	{
-		if (internal::Catcher::AllowExceptionSuppression<Settings>::value)
+		if MOMO_CONSTEXPR_IF (internal::Catcher::AllowExceptionSuppression<Settings>::value)
 		{
 			return internal::Catcher::CatchAll(&ArrayCore::Shrink, *this, capacity);
 		}

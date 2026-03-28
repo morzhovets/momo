@@ -1024,7 +1024,7 @@ private:
 	bool pvExtraCheck(ConstPosition pos) const noexcept
 	{
 		bool res = true;
-		if (allowExceptionSuppression)
+		if MOMO_CONSTEXPR_IF (allowExceptionSuppression)
 		{
 			res = false;
 			internal::Catcher::CatchAll([this, &res, pos] ()
@@ -1108,7 +1108,7 @@ private:
 			resPos = pvAddNogrow(*mBuckets, hashCode, std::forward<ItemCreator>(itemCreator));
 		else
 			resPos = pvAddGrow(hashCode, std::forward<ItemCreator>(itemCreator));
-		if (allowExceptionSuppression)
+		if MOMO_CONSTEXPR_IF (allowExceptionSuppression)
 		{
 			if (mBuckets->GetNextBuckets() != nullptr)
 				pvRelocateItems(resPos);
@@ -1144,7 +1144,7 @@ private:
 		};
 		if (mBuckets == nullptr || !allowExceptionSuppression)
 			newBucketsCreator();
-		else
+		else if MOMO_CONSTEXPR_IF (allowExceptionSuppression)
 			internal::Catcher::CatchAll(newBucketsCreator);
 		if (newBuckets == nullptr)
 			return pvAddNogrow(*mBuckets, hashCode, std::forward<ItemCreator>(itemCreator));
@@ -1152,7 +1152,7 @@ private:
 			*newBuckets, memManager, mBuckets == nullptr);
 		Position resPos;
 		internal::ObjectBuffer<Item, ItemTraits::alignment> itemBuffer;
-		if (allowExceptionSuppression)
+		if MOMO_CONSTEXPR_IF (allowExceptionSuppression)
 			resPos = pvAddNogrow(*newBuckets, hashCode, std::forward<ItemCreator>(itemCreator));
 		else
 			std::forward<ItemCreator>(itemCreator)(itemBuffer.GetPtr());
@@ -1160,7 +1160,7 @@ private:
 		newBuckets->SetNextBuckets(mBuckets);
 		mBuckets = newBuckets;
 		mCapacity = newCapacity;
-		if (!allowExceptionSuppression)
+		if MOMO_CONSTEXPR_IF (!allowExceptionSuppression)
 		{
 			auto fin = internal::Catcher::Finalize(&ItemTraits::Destroy,
 				&memManager, itemBuffer.Get());
@@ -1270,7 +1270,7 @@ private:
 			if (buckets == nullptr)
 				break;
 			bool done = true;
-			if (areItemsNothrowRelocatable || !allowExceptionSuppression)
+			if MOMO_CONSTEXPR_IF (areItemsNothrowRelocatable || !allowExceptionSuppression)
 				pvRelocateItems(*buckets);
 			else
 				done = internal::Catcher::CatchAll([this, buckets] () { pvRelocateItems(*buckets); });	//?
