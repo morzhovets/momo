@@ -70,6 +70,12 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "_MSVC_LANG: ";
+#ifdef _MSVC_LANG
+	std::cout << _MSVC_LANG;
+#endif
+	std::cout << std::endl;
+
 	std::cout << "MOMO_DISABLE_EXCEPTIONS: ";
 #ifdef MOMO_DISABLE_EXCEPTIONS
 	std::cout << "defined";

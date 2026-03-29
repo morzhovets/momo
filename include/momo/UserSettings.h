@@ -61,8 +61,8 @@
 
 // Using `memcpy` for relocate
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivially_copyable<Object>::value)
-#if defined(__GNUC__) && !defined(__clang__)	// -Wclass-memaccess
-# undef MOMO_IS_TRIVIALLY_RELOCATABLE
+#if defined(__GNUC__) && !defined(__clang__)
+# undef MOMO_IS_TRIVIALLY_RELOCATABLE	// -Wclass-memaccess
 # define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) \
 	(std::is_trivially_copyable<Object>::value && std::is_trivially_copy_assignable<Object>::value)
 #endif
@@ -155,8 +155,8 @@
 //#endif
 
 #define MOMO_ALIGNED_STORAGE(size, alignment) alignas(alignment) std::array<unsigned char, size>
-#if defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE))	// C2719, C2711
-# undef MOMO_ALIGNED_STORAGE
+#if defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE))
+# undef MOMO_ALIGNED_STORAGE	// C2719, C2711
 # define MOMO_ALIGNED_STORAGE(size, alignment) typename std::aligned_storage<size, alignment>::type
 #endif
 
@@ -216,11 +216,11 @@
 
 #ifdef __cpp_if_constexpr
 # define MOMO_CONSTEXPR_IF constexpr
-# if defined(_MSVC_LANG) && (_MSVC_LANG < 201703L)
-#  undef MOMO_CONSTEXPR_IF	// warning C4984
+# if defined(_MSC_VER) && !defined(__clang__) && (_MSVC_LANG < 201703L || _MSC_VER < 1930)
+#  undef MOMO_CONSTEXPR_IF	// C4984, C4100
 # endif
-# if defined(_MSC_VER) && (_MSC_VER < 1920) && !defined(__clang__)	// vs2017
-#  undef MOMO_CONSTEXPR_IF	// warning C4100
+# if defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 10)
+#  undef MOMO_CONSTEXPR_IF	// -Wunused-but-set-parameter
 # endif
 #endif
 #ifndef MOMO_CONSTEXPR_IF
@@ -233,7 +233,7 @@
 
 #ifdef __cpp_guaranteed_copy_elision
 # define MOMO_HAS_GUARANTEED_COPY_ELISION
-# if defined(_MSC_VER) && (_MSC_VER < 1930) && !defined(__clang__)
+# if defined(_MSC_VER) && !defined(__clang__) && (_MSC_VER < 1930)
 #  undef MOMO_HAS_GUARANTEED_COPY_ELISION
 # endif
 #endif
