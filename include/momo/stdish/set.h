@@ -407,11 +407,16 @@ public:
 	std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 	{
 		const_iterator iter = lower_bound(key);
-		if (TreeTraits::multiKey)
+		if MOMO_CONSTEXPR_IF (TreeTraits::multiKey)
+		{
 			return { iter, upper_bound(key) };
-		if (iter == end() || mTreeSet.GetTreeTraits().IsLess(key, *iter))
-			return { iter, iter };
-		return { iter, std::next(iter) };
+		}
+		else
+		{
+			if (iter == end() || mTreeSet.GetTreeTraits().IsLess(key, *iter))
+				return { iter, iter };
+			return { iter, std::next(iter) };
+		}
 	}
 
 	//std::pair<iterator, iterator> equal_range(const key_type& key)
@@ -609,7 +614,7 @@ private:
 			return false;
 		if (hint != end() && !pvIsOrdered(key, *hint))
 		{
-			if (TreeTraits::multiKey)
+			if MOMO_CONSTEXPR_IF (TreeTraits::multiKey)
 				hint = lower_bound(key);
 			return TreeTraits::multiKey;
 		}

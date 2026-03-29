@@ -512,7 +512,7 @@ public:
 
 	iterator insert(const_iterator hint, node_type&& node)
 	{
-		if (HashTraits::useHintIterators)
+		if MOMO_CONSTEXPR_IF (HashTraits::useHintIterators)
 		{
 			if (node.empty())
 				return end();
@@ -874,22 +874,27 @@ private:
 	std::pair<iterator, bool> pvInsert(const_iterator hint, std::tuple<KeyArgs...>&& keyArgs,
 		MappedCreator&& mappedCreator)
 	{
-		if (!HashTraits::useHintIterators)
-			return pvInsert(nullptr, std::move(keyArgs), std::move(mappedCreator));
-		MemManager& memManager = mHashMap.GetMemManager();
-		typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
-		typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
-		auto valueCreator = [&memManager, &keyArgs, &mappedCreator]
-			(key_type* newKey, mapped_type* newMapped)
+		if MOMO_CONSTEXPR_IF (HashTraits::useHintIterators)
 		{
-			KeyCreator(memManager, std::move(keyArgs))(newKey);
-			typename KeyManager::DestroyFinalizer keyFin(&memManager, *newKey);
-			std::forward<MappedCreator>(mappedCreator)(newMapped);
-			keyFin.ResetPtr();
-		};
-		typename HashMap::Position resPos = mHashMap.AddCrt(
-			ConstIteratorProxy::GetBaseIterator(hint), valueCreator);
-		return { momo::internal::ProxyConstructor<iterator>(resPos), true };
+			MemManager& memManager = mHashMap.GetMemManager();
+			typedef momo::internal::ObjectManager<key_type, MemManager> KeyManager;
+			typedef typename KeyManager::template Creator<KeyArgs...> KeyCreator;
+			auto valueCreator = [&memManager, &keyArgs, &mappedCreator]
+				(key_type* newKey, mapped_type* newMapped)
+			{
+				KeyCreator(memManager, std::move(keyArgs))(newKey);
+				typename KeyManager::DestroyFinalizer keyFin(&memManager, *newKey);
+				std::forward<MappedCreator>(mappedCreator)(newMapped);
+				keyFin.ResetPtr();
+			};
+			typename HashMap::Position resPos = mHashMap.AddCrt(
+				ConstIteratorProxy::GetBaseIterator(hint), valueCreator);
+			return { momo::internal::ProxyConstructor<iterator>(resPos), true };
+		}
+		else
+		{
+			return pvInsert(nullptr, std::move(keyArgs), std::move(mappedCreator));
+		}
 	}
 
 	template<typename RKey, typename MappedCreator,
@@ -898,11 +903,17 @@ private:
 	std::pair<iterator, bool>> pvInsert(const_iterator hint, std::tuple<RKey>&& key,
 		MappedCreator&& mappedCreator)
 	{
-		if (!HashTraits::useHintIterators)
+		if MOMO_CONSTEXPR_IF (HashTraits::useHintIterators)
+		{
+			typename HashMap::Position resPos = mHashMap.AddCrt(
+				ConstIteratorProxy::GetBaseIterator(hint),
+				std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
+			return { momo::internal::ProxyConstructor<iterator>(resPos), true };
+		}
+		else
+		{
 			return pvInsert(nullptr, std::move(key), std::move(mappedCreator));
-		typename HashMap::Position resPos = mHashMap.AddCrt(ConstIteratorProxy::GetBaseIterator(hint),
-			std::forward<RKey>(std::get<0>(key)), std::forward<MappedCreator>(mappedCreator));
-		return { momo::internal::ProxyConstructor<iterator>(resPos), true };
+		}
 	}
 
 	template<typename Iterator, typename Sentinel>

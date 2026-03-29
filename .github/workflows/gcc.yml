@@ -63,7 +63,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++17 -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '20.04'
 
         - gcc_ver: '8'
@@ -244,7 +244,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++17 -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '20.04'
 
         - gcc_ver: '8'

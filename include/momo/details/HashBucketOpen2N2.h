@@ -174,7 +174,7 @@ namespace internal
 			std::forward<ItemReplacer>(itemReplacer)(items[maxCount - count], items[index]);
 			mCodeData.shortCodes[index] = mCodeData.shortCodes[maxCount - count];
 			mCodeData.shortCodes[maxCount - count] = emptyShortCode;
-			if (useHashCodePartGetter)
+			if MOMO_CONSTEXPR_IF (useHashCodePartGetter)
 				mCodeData.codeProbes[index] = mCodeData.codeProbes[maxCount - count];
 			--mState[1];
 			return iter;
@@ -184,23 +184,28 @@ namespace internal
 		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator iter,
 			size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount)
 		{
-			if (!useHashCodePartGetter)
+			if MOMO_CONSTEXPR_IF (useHashCodePartGetter)
+			{
+				size_t index = UIntMath<>::Dist(mItems.GetPtr(), std::addressof(*iter));
+				uint8_t codeProbe = mCodeData.codeProbes[index];
+				bool useFullGetter = (codeProbe == emptyCodeProbe ||
+					(logBucketCount + logBucketCountAddend) / logBucketCountStep
+					!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
+				if (useFullGetter)
+					return hashCodeFullGetter();
+				size_t probeShift = pvGetProbeShift(logBucketCount);
+				MOMO_ASSERT(probeShift > 0);
+				size_t probe = size_t{codeProbe} & ((size_t{1} << probeShift) - 1);
+				size_t probe2 = (probe % 2 == 0) ? (probe / 2) * (probe + 1) : probe * ((probe + 1) / 2);
+				size_t bucketCount = size_t{1} << logBucketCount;
+				return ((bucketIndex - probe2) & (bucketCount - 1))
+					| ((size_t{codeProbe} >> probeShift) << logBucketCount)
+					| (size_t{mCodeData.shortCodes[index]} << hashCodeShift);
+			}
+			else
+			{
 				return hashCodeFullGetter();
-			size_t index = UIntMath<>::Dist(mItems.GetPtr(), std::addressof(*iter));
-			uint8_t codeProbe = mCodeData.codeProbes[index];
-			bool useFullGetter = (codeProbe == emptyCodeProbe ||
-				(logBucketCount + logBucketCountAddend) / logBucketCountStep
-				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
-			if (useFullGetter)
-				return hashCodeFullGetter();
-			size_t probeShift = pvGetProbeShift(logBucketCount);
-			MOMO_ASSERT(probeShift > 0);
-			size_t probe = size_t{codeProbe} & ((size_t{1} << probeShift) - 1);
-			size_t probe2 = (probe % 2 == 0) ? (probe / 2) * (probe + 1) : probe * ((probe + 1) / 2);
-			size_t bucketCount = size_t{1} << logBucketCount;
-			return ((bucketIndex - probe2) & (bucketCount - 1))
-				| ((size_t{codeProbe} >> probeShift) << logBucketCount)
-				| (size_t{mCodeData.shortCodes[index]} << hashCodeShift);
+			}
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,

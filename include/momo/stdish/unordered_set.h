@@ -458,7 +458,7 @@ public:
 
 	iterator insert(const_iterator hint, value_type&& value)
 	{
-		if (HashTraits::useHintIterators)
+		if MOMO_CONSTEXPR_IF (HashTraits::useHintIterators)
 			return mHashSet.Add(hint, std::move(value));
 		else
 			return insert(std::move(value)).first;
@@ -472,7 +472,7 @@ public:
 
 	iterator insert(const_iterator hint, const value_type& value)
 	{
-		if (HashTraits::useHintIterators)
+		if MOMO_CONSTEXPR_IF (HashTraits::useHintIterators)
 			return mHashSet.Add(hint, value);
 		else
 			return insert(value).first;
@@ -489,7 +489,7 @@ public:
 
 	iterator insert(const_iterator hint, node_type&& node)
 	{
-		if (HashTraits::useHintIterators)
+		if MOMO_CONSTEXPR_IF (HashTraits::useHintIterators)
 		{
 			if (node.empty())
 				return end();
@@ -544,7 +544,7 @@ public:
 	template<typename... ValueArgs>
 	iterator emplace_hint(const_iterator hint, ValueArgs&&... valueArgs)
 	{
-		if (HashTraits::useHintIterators)
+		if MOMO_CONSTEXPR_IF (HashTraits::useHintIterators)
 			return mHashSet.AddVar(hint, std::forward<ValueArgs>(valueArgs)...);
 		else
 			return emplace(std::forward<ValueArgs>(valueArgs)...).first;

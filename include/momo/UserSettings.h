@@ -216,8 +216,11 @@
 
 #ifdef __cpp_if_constexpr
 # define MOMO_CONSTEXPR_IF constexpr
-# if defined(_MSVC_LANG) && _MSVC_LANG < 201703L
+# if defined(_MSVC_LANG) && (_MSVC_LANG < 201703L)
 #  undef MOMO_CONSTEXPR_IF	// warning C4984
+# endif
+# if defined(_MSC_VER) && (_MSC_VER < 1920) && !defined(__clang__)	// vs2017
+#  undef MOMO_CONSTEXPR_IF	// warning C4100
 # endif
 #endif
 #ifndef MOMO_CONSTEXPR_IF

@@ -1530,10 +1530,13 @@ private:
 			resTable.mRaws.AddBackNogrow(resRaw);
 			resTable.template pvAssign<void, Items...>(raw, offsets.data(),
 				resRaw, resOffsets.data());
-			if (distinct && resTable.mIndexes.AddRaw(resRaw).raw != nullptr)
+			if MOMO_CONSTEXPR_IF (distinct)
 			{
-				resTable.mRaws.RemoveBack();
-				resTable.pvDestroyRaw(resRaw);
+				if (resTable.mIndexes.AddRaw(resRaw).raw != nullptr)
+				{
+					resTable.mRaws.RemoveBack();
+					resTable.pvDestroyRaw(resRaw);
+				}
 			}
 		}
 		resTable.RemoveUniqueHashIndexes();
