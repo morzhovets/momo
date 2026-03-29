@@ -51,8 +51,8 @@
 
 // Using `memcpy` for relocate
 #define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) (std::is_trivially_copyable_v<Object>)
-#if defined(__GNUC__) && !defined(__clang__)	// -Wclass-memaccess
-# undef MOMO_IS_TRIVIALLY_RELOCATABLE
+#if defined(__GNUC__) && !defined(__clang__)
+# undef MOMO_IS_TRIVIALLY_RELOCATABLE	// -Wclass-memaccess
 # define MOMO_IS_TRIVIALLY_RELOCATABLE(Object) \
 	(std::is_trivially_copyable<Object>::value && std::is_trivially_copy_assignable<Object>::value)
 #endif
@@ -158,6 +158,9 @@
 # define MOMO_THROW(exception) std::terminate()
 #else
 # define MOMO_THROW(exception) throw exception
+#endif
+
+#ifndef MOMO_DISABLE_EXCEPTIONS
 // Undefine MOMO_CATCH_ALL macro if you want to disable internal exception suppression
 # define MOMO_CATCH_ALL catch (...) {}
 #endif
