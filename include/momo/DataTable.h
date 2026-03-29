@@ -1454,10 +1454,13 @@ private:
 			Raw* resRaw = resTable.pvCreateRaw();
 			resTable.mRaws.AddBackNogrow(resRaw);
 			resTable.template pvAssign<Items...>(raw, offsets.data(), resRaw, resOffsets.data());
-			if (distinct && resTable.mIndexes.AddRaw(resRaw).raw != nullptr)
+			if constexpr (distinct)
 			{
-				resTable.mRaws.RemoveBack();
-				resTable.pvDestroyRaw(resRaw);
+				if (resTable.mIndexes.AddRaw(resRaw).raw != nullptr)
+				{
+					resTable.mRaws.RemoveBack();
+					resTable.pvDestroyRaw(resRaw);
+				}
 			}
 		}
 		resTable.RemoveUniqueHashIndexes();

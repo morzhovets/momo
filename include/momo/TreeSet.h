@@ -909,20 +909,23 @@ public:
 		Iterator iter = pvGetLowerBound(key);
 		if (pvIsGreater(iter, key))
 			return 0;
-		if (!TreeTraits::multiKey)
+		if constexpr (TreeTraits::multiKey)
+		{
+			Iterator iter2 = std::next(iter);
+			size_t remCount = 1;
+			while (!pvIsGreater(iter2, key))
+			{
+				++iter2;
+				++remCount;
+			}
+			Remove(iter, iter2);
+			return remCount;
+		}
+		else
 		{
 			Remove(iter);
 			return 1;
 		}
-		Iterator iter2 = std::next(iter);
-		size_t remCount = 1;
-		while (!pvIsGreater(iter2, key))
-		{
-			++iter2;
-			++remCount;
-		}
-		Remove(iter, iter2);
-		return remCount;
 	}
 
 	template<internal::conceptObjectPredicate<Item> ItemFilter>
@@ -974,7 +977,7 @@ public:
 	{
 		if (this == &dstTreeSet)
 			return;
-		if (!std::is_empty_v<TreeTraits>)
+		if /*constexpr*/ (!std::is_empty_v<TreeTraits>)
 			return pvMergeTo(dstTreeSet);
 		size_t count = GetCount();
 		if (count == 0)
@@ -1216,11 +1219,14 @@ private:
 	InsertResult pvInsert(const Key& key, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		Iterator iter = pvGetUpperBound(key);
-		if (!TreeTraits::multiKey && iter != GetBegin())
+		if constexpr (!TreeTraits::multiKey)
 		{
-			Iterator prevIter = std::prev(iter);
-			if (!GetTreeTraits().IsLess(ItemTraits::GetKey(*prevIter), key))
-				return { prevIter, false };
+			if (iter != GetBegin())
+			{
+				Iterator prevIter = std::prev(iter);
+				if (!GetTreeTraits().IsLess(ItemTraits::GetKey(*prevIter), key))
+					return { prevIter, false };
+			}
 		}
 		iter = pvAdd<extraCheck>(iter, std::move(itemCreator));
 		return { iter, true };
@@ -1663,7 +1669,7 @@ private:
 				dstIter = std::next(dstTreeSet.pvAdd<false>(dstIter,
 					FastMovableFunctor(std::move(itemCreator))));
 			}
-			else
+			else if constexpr (!TreeTraits::multiKey)
 			{
 				++iter;
 				++dstIter;

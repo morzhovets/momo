@@ -125,9 +125,10 @@ namespace internal
 			size_t /*newLogBucketCount*/) const
 		{
 			MOMO_ASSERT(iter == mItemBuffer.GetPtr());
-			if (sizeof(HashState) < sizeof(size_t))
+			if constexpr (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();
-			return static_cast<size_t>(mHashState >> 1);
+			else
+				return static_cast<size_t>(mHashState >> 1);
 		}
 
 	private:

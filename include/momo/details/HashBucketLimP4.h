@@ -367,10 +367,13 @@ namespace internal
 				std::move(itemReplacer)(items[count - 1], *iter);
 				mShortCodes[index] = mShortCodes[count - 1];
 				mShortCodes[count - 1] = emptyCodeProbe;
-				if (useHashCodePartGetter && codeCount - 1 - index >= count)
+				if constexpr (useHashCodePartGetter)
 				{
-					mShortCodes[codeCount - 1 - index] = (codeCount - count >= count)
-						? mShortCodes[codeCount - count] : emptyCodeProbe;
+					if (codeCount - 1 - index >= count)
+					{
+						mShortCodes[codeCount - 1 - index] = (codeCount - count >= count)
+							? mShortCodes[codeCount - count] : emptyCodeProbe;
+					}
 				}
 				pvSetPtrState(items, memPoolIndex);
 				return iter;
@@ -381,21 +384,26 @@ namespace internal
 		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
 			Iterator iter, size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount) const
 		{
-			if (!useHashCodePartGetter)
+			if constexpr (useHashCodePartGetter)
+			{
+				size_t index = UIntMath<>::Dist(mPtrState.GetPtr(), iter);
+				size_t codeProbe = size_t{mShortCodes[codeCount - 1 - index]};
+				bool useFullGetter = (static_cast<uint8_t>(codeProbe + 1) <= maskEmpty ||
+					(logBucketCount + logBucketCountAddend) / logBucketCountStep
+					!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
+				if (useFullGetter)
+					return hashCodeFullGetter();
+				size_t probeShift = pvGetProbeShift(logBucketCount);
+				size_t probe = codeProbe & ((size_t{1} << probeShift) - 1);
+				size_t bucketCount = size_t{1} << logBucketCount;
+				return ((bucketIndex + bucketCount - probe) & (bucketCount - 1))
+					| (((codeProbe - size_t{maskEmpty}) >> probeShift) << logBucketCount)
+					| (size_t{mShortCodes[index]} << hashCodeShift);
+			}
+			else
+			{
 				return hashCodeFullGetter();
-			size_t index = UIntMath<>::Dist(mPtrState.GetPtr(), iter);
-			size_t codeProbe = size_t{mShortCodes[codeCount - 1 - index]};
-			bool useFullGetter = (static_cast<uint8_t>(codeProbe + 1) <= maskEmpty ||
-				(logBucketCount + logBucketCountAddend) / logBucketCountStep
-				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
-			if (useFullGetter)
-				return hashCodeFullGetter();
-			size_t probeShift = pvGetProbeShift(logBucketCount);
-			size_t probe = codeProbe & ((size_t{1} << probeShift) - 1);
-			size_t bucketCount = size_t{1} << logBucketCount;
-			return ((bucketIndex + bucketCount - probe) & (bucketCount - 1))
-				| (((codeProbe - size_t{maskEmpty}) >> probeShift) << logBucketCount)
-				| (size_t{mShortCodes[index]} << hashCodeShift);
+			}
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -432,8 +440,11 @@ namespace internal
 		{
 			uint8_t memPoolIndex1 = static_cast<uint8_t>(memPoolIndex) - 1;
 			mPtrState.Set(items, useHashCodePartGetter ? memPoolIndex1 : 0);
-			if (!useHashCodePartGetter && (maxCount < 4 || !IsFull()))
-				mShortCodes[3] = maskEmpty + memPoolIndex1;
+			if constexpr (!useHashCodePartGetter)
+			{
+				if (maxCount < 4 || !IsFull())
+					mShortCodes[3] = maskEmpty + memPoolIndex1;
+			}
 		}
 
 		size_t pvGetMemPoolIndex() const noexcept

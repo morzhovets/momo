@@ -150,23 +150,28 @@ namespace internal
 		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
 			Iterator iter, size_t bucketIndex, size_t logBucketCount, size_t newLogBucketCount) const
 		{
-			if (!useHashCodePartGetter)
+			if constexpr (useHashCodePartGetter)
+			{
+				size_t index = UIntMath<>::Dist(mItems.GetPtr(), std::to_address(iter));
+				uint8_t codeProbe = mCodeData.codeProbes[index];
+				bool useFullGetter = (codeProbe == emptyCodeProbe ||
+					(logBucketCount + logBucketCountAddend) / logBucketCountStep
+					!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
+				if (useFullGetter)
+					return hashCodeFullGetter();
+				size_t probeShift = pvGetProbeShift(logBucketCount);
+				MOMO_ASSERT(probeShift > 0);
+				size_t probe = size_t{codeProbe} & ((size_t{1} << probeShift) - 1);
+				size_t probe2 = (probe % 2 == 0) ? (probe / 2) * (probe + 1) : probe * ((probe + 1) / 2);
+				size_t bucketCount = size_t{1} << logBucketCount;
+				return ((bucketIndex - probe2) & (bucketCount - 1))
+					| ((size_t{codeProbe} >> probeShift) << logBucketCount)
+					| (size_t{mCodeData.shortCodes[index]} << hashCodeShift);
+			}
+			else
+			{
 				return hashCodeFullGetter();
-			size_t index = UIntMath<>::Dist(mItems.GetPtr(), std::to_address(iter));
-			uint8_t codeProbe = mCodeData.codeProbes[index];
-			bool useFullGetter = (codeProbe == emptyCodeProbe ||
-				(logBucketCount + logBucketCountAddend) / logBucketCountStep
-				!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
-			if (useFullGetter)
-				return hashCodeFullGetter();
-			size_t probeShift = pvGetProbeShift(logBucketCount);
-			MOMO_ASSERT(probeShift > 0);
-			size_t probe = size_t{codeProbe} & ((size_t{1} << probeShift) - 1);
-			size_t probe2 = (probe % 2 == 0) ? (probe / 2) * (probe + 1) : probe * ((probe + 1) / 2);
-			size_t bucketCount = size_t{1} << logBucketCount;
-			return ((bucketIndex - probe2) & (bucketCount - 1))
-				| ((size_t{codeProbe} >> probeShift) << logBucketCount)
-				| (size_t{mCodeData.shortCodes[index]} << hashCodeShift);
+			}
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,

@@ -438,21 +438,31 @@ namespace internal
 		std::pair<const_iterator, const_iterator> equal_range(const key_type& key) const
 		{
 			const_iterator iter = lower_bound(key);
-			if (TreeTraits::multiKey)
+			if constexpr (TreeTraits::multiKey)
+			{
 				return { iter, upper_bound(key) };
-			if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
-				return { iter, iter };
-			return { iter, std::next(iter) };
+			}
+			else
+			{
+				if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
+					return { iter, iter };
+				return { iter, std::next(iter) };
+			}
 		}
 
 		std::pair<iterator, iterator> equal_range(const key_type& key)
 		{
 			iterator iter = lower_bound(key);
-			if (TreeTraits::multiKey)
+			if constexpr (TreeTraits::multiKey)
+			{
 				return { iter, upper_bound(key) };
-			if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
-				return { iter, iter };
-			return { iter, std::next(iter) };
+			}
+			else
+			{
+				if (iter == end() || mTreeMap.GetTreeTraits().IsLess(key, iter->first))
+					return { iter, iter };
+				return { iter, std::next(iter) };
+			}
 		}
 
 		template<typename KeyArg>
@@ -678,11 +688,14 @@ namespace internal
 		std::pair<iterator, bool> pvFind(std::nullptr_t /*hint*/, const key_type& key)
 		{
 			iterator iter = upper_bound(key);
-			if (!TreeTraits::multiKey && iter != begin())
+			if constexpr (!TreeTraits::multiKey)
 			{
-				iterator prevIter = std::prev(iter);
-				if (!mTreeMap.GetTreeTraits().IsLess(prevIter->first, key))
-					return { prevIter, false };
+				if (iter != begin())
+				{
+					iterator prevIter = std::prev(iter);
+					if (!mTreeMap.GetTreeTraits().IsLess(prevIter->first, key))
+						return { prevIter, false };
+				}
 			}
 			return { iter, true };
 		}
