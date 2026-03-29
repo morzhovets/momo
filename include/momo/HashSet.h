@@ -182,6 +182,13 @@ namespace internal
 		//Bucket[]
 	};
 
+	template<typename BucketIterator>
+	struct HashSetBucketIndexIterator
+	{
+		size_t index;
+		BucketIterator iterator;
+	};
+
 	template<typename TBucket, typename TSettings>
 	class HashSetConstIterator;
 
@@ -514,11 +521,7 @@ private:
 	{
 	};
 
-	struct BucketIndexIterator
-	{
-		size_t index;
-		BucketIterator iterator;
-	};
+	typedef internal::HashSetBucketIndexIterator<BucketIterator> BucketIndexIterator;
 
 	struct ConstIteratorProxy : private ConstIterator
 	{
