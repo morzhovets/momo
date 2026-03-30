@@ -62,26 +62,6 @@
 		return *(Iterator(*this) += diff); \
 	}
 
-#define MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator) \
-	Iterator operator++(int) \
-	{ \
-		Iterator resIter = *this; \
-		++*this; \
-		return resIter; \
-	} \
-	Reference operator*() const \
-	{ \
-		return *operator->(); \
-	} \
-	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
-	{ \
-		return !(iter1 == iter2); \
-	} \
-	explicit operator bool() const noexcept \
-	{ \
-		return *this != Iterator(); \
-	}
-
 #define MOMO_MORE_HASH_POSITION_OPERATORS(Position) \
 	Reference operator*() const \
 	{ \
@@ -90,32 +70,24 @@
 	friend bool operator!=(Position pos1, Position pos2) noexcept \
 	{ \
 		return !(pos1 == pos2); \
-	} \
-	explicit operator bool() const noexcept \
-	{ \
-		return *this != Position(); \
 	}
 
-#define MOMO_MORE_TREE_ITERATOR_OPERATORS(Iterator) \
+#define MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator) \
+	MOMO_MORE_HASH_POSITION_OPERATORS(Iterator) \
 	Iterator operator++(int) \
 	{ \
 		Iterator resIter = *this; \
 		++*this; \
 		return resIter; \
-	} \
+	}
+
+#define MOMO_MORE_TREE_ITERATOR_OPERATORS(Iterator) \
+	MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator) \
 	Iterator operator--(int) \
 	{ \
 		Iterator resIter = *this; \
 		--*this; \
 		return resIter; \
-	} \
-	Reference operator*() const \
-	{ \
-		return *operator->(); \
-	} \
-	friend bool operator!=(Iterator iter1, Iterator iter2) noexcept \
-	{ \
-		return !(iter1 == iter2); \
 	}
 
 namespace momo
@@ -392,6 +364,11 @@ namespace internal
 		Pointer operator->() const
 		{
 			return Pointer(ProxyConstructor<Reference>(*mBaseIterator));
+		}
+
+		explicit operator bool() const noexcept
+		{
+			return !!mBaseIterator;
 		}
 
 		friend bool operator==(HashDerivedIterator iter1, HashDerivedIterator iter2) noexcept

@@ -66,6 +66,11 @@ namespace internal
 			return Pointer(ProxyConstructor<Reference>(*mHashSetIterator));
 		}
 
+		explicit operator bool() const noexcept
+		{
+			return !!mHashSetIterator;
+		}
+
 		friend bool operator==(HashMapIterator iter1, HashMapIterator iter2) noexcept
 		{
 			return iter1.mHashSetIterator == iter2.mHashSetIterator;
@@ -140,6 +145,11 @@ namespace internal
 		Pointer operator->() const
 		{
 			return Pointer(ProxyConstructor<Reference>(*mHashSetPosition));
+		}
+
+		explicit operator bool() const noexcept
+		{
+			return !!mHashSetPosition;
 		}
 
 		friend bool operator==(HashMapPosition pos1, HashMapPosition pos2) noexcept

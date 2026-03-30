@@ -229,6 +229,11 @@ namespace internal
 			return Pointer(Reference(mKeyIterator->key, *mValueIterator));
 		}
 
+		explicit operator bool() const noexcept
+		{
+			return mValueIterator != ValueIterator();
+		}
+
 		friend bool operator==(HashMultiMapIterator iter1, HashMultiMapIterator iter2) noexcept
 		{
 			return iter1.mValueIterator == iter2.mValueIterator;

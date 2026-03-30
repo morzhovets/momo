@@ -230,6 +230,11 @@ namespace internal
 			return std::addressof(*mBucketIterator);
 		}
 
+		explicit operator bool() const noexcept
+		{
+			return mBucketIterator != BucketIterator();
+		}
+
 		friend bool operator==(HashSetConstPosition pos1, HashSetConstPosition pos2) noexcept
 		{
 			return pos1.mBucketIterator == pos2.mBucketIterator;
