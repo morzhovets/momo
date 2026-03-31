@@ -9,6 +9,7 @@
   momo/stdish/vector.h
 
   namespace momo::stdish:
+    class vector_adaptor
     class vector
     class vector_intcap
 
@@ -38,21 +39,8 @@ namespace momo
 namespace stdish
 {
 
-/*!
-	\brief
-	`momo::stdish::vector` is similar to `std::vector`.
-
-	\details
-	It is allowed to pass to functions `push_back`, `insert`, `emplace_back`
-	and `emplace` references to items within the container.
-	But in case of the function `insert`, receiving pair of iterators, it's
-	not allowed to pass iterators pointing to the items within the container.
-*/
-
-template<typename TValue,
-	typename TAllocator = std::allocator<TValue>,
-	typename TArray = Array<TValue, MemManagerStd<TAllocator>>>
-class vector
+template<typename TArray>
+class vector_adaptor
 {
 private:
 	typedef TArray Array;
@@ -61,8 +49,9 @@ private:
 	typedef momo::internal::UIntMath<> SMath;
 
 public:
-	typedef TValue value_type;
-	typedef TAllocator allocator_type;
+	typedef typename Array::Item value_type;
+	typedef typename std::allocator_traits<typename MemManager::ByteAllocator>
+		::template rebind_alloc<value_type> allocator_type;
 
 	typedef Array nested_container_type;
 
@@ -84,33 +73,35 @@ public:
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
 public:
-	vector() noexcept(noexcept(Array()))
+	vector_adaptor() noexcept(noexcept(Array()))
 	{
 	}
 
-	explicit vector(const allocator_type& alloc) noexcept
+	explicit vector_adaptor(const allocator_type& alloc) noexcept
 		: mArray(MemManager(alloc))
 	{
 	}
 
-	explicit vector(size_type count, const allocator_type& alloc = allocator_type())
+	explicit vector_adaptor(size_type count, const allocator_type& alloc = allocator_type())
 		: mArray(count, MemManager(alloc))
 	{
 	}
 
-	vector(size_type count, const value_type& value, const allocator_type& alloc = allocator_type())
+	vector_adaptor(size_type count, const value_type& value,
+		const allocator_type& alloc = allocator_type())
 		: mArray(count, value, MemManager(alloc))
 	{
 	}
 
 	template<typename Iterator,
 		typename = typename std::iterator_traits<Iterator>::iterator_category>
-	vector(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
+	vector_adaptor(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
 		: mArray(first, last, MemManager(alloc))
 	{
 	}
 
-	vector(std::initializer_list<value_type> values, const allocator_type& alloc = allocator_type())
+	vector_adaptor(std::initializer_list<value_type> values,
+		const allocator_type& alloc = allocator_type())
 		: mArray(values, MemManager(alloc))
 	{
 	}
@@ -118,20 +109,20 @@ public:
 #ifdef MOMO_HAS_CONTAINERS_RANGES
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	vector(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
+	vector_adaptor(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
 		: mArray(std::ranges::begin(values), std::ranges::end(values), MemManager(alloc))
 	{
 	}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-	vector(vector&& right) noexcept
-		: vector(std::move(right), right.get_allocator())
+	vector_adaptor(vector_adaptor&& right) noexcept
+		: vector_adaptor(std::move(right), right.get_allocator())
 	{
 	}
 
-	vector(vector&& right, const momo::internal::Identity<allocator_type>& alloc)
+	vector_adaptor(vector_adaptor&& right, const allocator_type& alloc)
 		noexcept(std::is_empty<allocator_type>::value)
-		: vector(alloc)
+		: vector_adaptor(alloc)
 	{
 		if (right.get_allocator() == alloc)
 		{
@@ -144,41 +135,41 @@ public:
 		}
 	}
 
-	vector(const vector& right)
+	vector_adaptor(const vector_adaptor& right)
 		: mArray(right.mArray)
 	{
 	}
 
-	vector(const vector& right, const momo::internal::Identity<allocator_type>& alloc)
+	vector_adaptor(const vector_adaptor& right, const allocator_type& alloc)
 		: mArray(right.mArray, MemManager(alloc))
 	{
 	}
 
-	~vector() = default;
+	~vector_adaptor() = default;
 
-	vector& operator=(vector&& right)
-		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<vector>::value)
+	vector_adaptor& operator=(vector_adaptor&& right)
+		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<vector_adaptor>::value)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
-	vector& operator=(const vector& right)
+	vector_adaptor& operator=(const vector_adaptor& right)
 	{
 		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
-	vector& operator=(std::initializer_list<value_type> values)
+	vector_adaptor& operator=(std::initializer_list<value_type> values)
 	{
 		assign(values);
 		return *this;
 	}
 
-	void swap(vector& right) noexcept
+	void swap(vector_adaptor& right) noexcept
 	{
 		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
-	friend void swap(vector& left, vector& right) noexcept
+	friend void swap(vector_adaptor& left, vector_adaptor& right) noexcept
 	{
 		left.swap(right);
 	}
@@ -455,7 +446,7 @@ public:
 	}
 
 	template<typename ValueArg = value_type>
-	friend size_type erase(vector& cont, const ValueArg& valueArg)
+	friend size_type erase(vector_adaptor& cont, const ValueArg& valueArg)
 	{
 		auto valueFilter = [&valueArg] (const value_type& value)
 			{ return value == valueArg; };
@@ -463,7 +454,7 @@ public:
 	}
 
 	template<typename ValueFilter>
-	friend size_type erase_if(vector& cont, const ValueFilter& valueFilter)
+	friend size_type erase_if(vector_adaptor& cont, const ValueFilter& valueFilter)
 	{
 		return cont.mArray.Remove(valueFilter);
 	}
@@ -494,13 +485,13 @@ public:
 	}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-	friend bool operator==(const vector& left, const vector& right)
+	friend bool operator==(const vector_adaptor& left, const vector_adaptor& right)
 	{
 		return left.mArray.IsEqual(right.mArray);
 	}
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
-	friend auto operator<=>(const vector& left, const vector& right)
+	friend auto operator<=>(const vector_adaptor& left, const vector_adaptor& right)
 		requires requires (const_reference ref) { std::tie(ref) <=> std::tie(ref); }
 	{
 		auto valueThreeComp = [] (const value_type& value1, const value_type& value2)
@@ -509,13 +500,13 @@ public:
 			right.begin(), right.end(), valueThreeComp);
 	}
 #else
-	friend bool operator<(const vector& left, const vector& right)
+	friend bool operator<(const vector_adaptor& left, const vector_adaptor& right)
 	{
 		return std::lexicographical_compare(left.begin(), left.end(), right.begin(), right.end());
 	}
 #endif
 
-	MOMO_MORE_COMPARISON_OPERATORS(const vector&)
+	MOMO_MORE_COMPARISON_OPERATORS(const vector_adaptor&)
 
 private:
 	template<typename Iterator, typename Sentinel>
@@ -526,6 +517,40 @@ private:
 
 private:
 	Array mArray;
+};
+
+/*!
+	\brief
+	`momo::stdish::vector` is similar to `std::vector`.
+
+	\details
+	It is allowed to pass to functions `push_back`, `insert`, `emplace_back`
+	and `emplace` references to items within the container.
+	But in case of the function `insert`, receiving pair of iterators, it's
+	not allowed to pass iterators pointing to the items within the container.
+*/
+
+template<typename TValue,
+	typename TAllocator = std::allocator<TValue>,
+	typename TArray = Array<TValue, MemManagerStd<TAllocator>>>
+class vector : public vector_adaptor<TArray>
+{
+private:
+	typedef vector_adaptor<TArray> VectorAdaptor;
+
+public:
+	using VectorAdaptor::VectorAdaptor;
+
+	vector& operator=(std::initializer_list<typename VectorAdaptor::value_type> values)
+	{
+		VectorAdaptor::operator=(values);
+		return *this;
+	}
+
+	friend void swap(vector& left, vector& right) noexcept
+	{
+		left.swap(right);
+	}
 };
 
 #ifdef MOMO_HAS_DEDUCTION_GUIDES
@@ -539,11 +564,24 @@ namespace internal
 	};
 }
 
+template<typename Value,
+	typename Allocator = std::allocator<Value>,
+	typename = internal::vector_checker<Allocator>>
+vector(size_t, Value, Allocator = Allocator())
+	-> vector<Value, Allocator>;
 template<typename Iterator,
 	typename Value = typename std::iterator_traits<Iterator>::value_type,
 	typename Allocator = std::allocator<Value>,
 	typename = internal::vector_checker<Allocator>>
 vector(Iterator, Iterator, Allocator = Allocator())
+	-> vector<Value, Allocator>;
+template<typename Value,
+	typename Allocator = std::allocator<Value>,
+	typename = internal::vector_checker<Allocator>>
+vector(std::initializer_list<Value>, Allocator = Allocator())
+	-> vector<Value, Allocator>;
+template<typename Value, typename Allocator>
+vector(vector<Value, Allocator>, momo::internal::Identity<Allocator>)
 	-> vector<Value, Allocator>;
 
 #ifdef MOMO_HAS_CONTAINERS_RANGES
@@ -568,8 +606,8 @@ vector(std::from_range_t, Range&&, Allocator = Allocator())
 
 template<size_t tInternalCapacity, typename TValue,
 	typename TAllocator = std::allocator<TValue>>
-using vector_intcap = vector<TValue, TAllocator,
-	ArrayIntCap<tInternalCapacity, TValue, MemManagerStd<TAllocator>>>;
+using vector_intcap = vector_adaptor<ArrayIntCap<
+	tInternalCapacity, TValue, MemManagerStd<TAllocator>>>;
 
 } // namespace stdish
 

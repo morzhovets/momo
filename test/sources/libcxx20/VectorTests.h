@@ -250,7 +250,7 @@ LIBCXX_TEST_BEGIN(cons_copy_alloc)
 #include "vector/vector.cons/copy_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCXX_TEST_ARRAY
+#ifdef LIBCXX_TEST_CLASS
 LIBCXX_TEST_BEGIN(cons_deduct)
 #include "vector/vector.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
