@@ -29,10 +29,12 @@ struct some_alloc
 };
 
 TEST_CONSTEXPR_CXX20 bool tests() {
+#if !(defined(TEST_MSVC) && _MSC_VER < 1930)
     {
         typedef std::vector<MoveOnly> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
     }
+#endif
     {
         typedef std::vector<MoveOnly, test_allocator<MoveOnly>> C;
         static_assert(std::is_nothrow_default_constructible<C>::value, "");
