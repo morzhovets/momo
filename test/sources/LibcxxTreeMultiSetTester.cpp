@@ -37,9 +37,11 @@ using multiset = momo::stdish::multiset<TKey, TLessComparer, TAllocator,
 		momo::TreeSetSettings>>;
 LIBCXX_NAMESPACE_STD_END
 
+#define LIBCXX_TEST_CLASS momo::stdish::multiset
 #define LIBCXX_TEST_PREFIX "tree_multiset"
 #include LIBCXX_HEADER(MultiSetTests.h)
 #undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_CLASS
 
 } // namespace libcxx_tree_multiset
 

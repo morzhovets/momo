@@ -9,6 +9,8 @@
   momo/stdish/set.h
 
   namespace momo::stdish:
+    class set_adaptor
+    class multiset_adaptor
     class set
     class multiset
 
@@ -35,35 +37,8 @@ namespace momo
 namespace stdish
 {
 
-/*!
-	\brief
-	`momo::stdish::set` is similar to `std::set`, but much more
-	efficient in memory usage. The implementation is based on a B-tree.
-
-	\details
-	Deviations from standard class:
-	1. Container items must be movable (preferably without exceptions)
-	or copyable, similar to items of `std::vector`.
-	2. After each addition or removal of the item all iterators and
-	references to items become invalid and should not be used.
-	3. Functions `begin`, `cbegin`, `rend` and `crend` have logarithmic
-	complexity.
-	4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
-	functions `erase` can throw exceptions.
-	5. Functions `merge`, `extract` and `insert(node_type&&)` move items.
-
-	It is allowed to pass to functions `insert` and `emplace` references
-	to items within the container.
-
-	Function `merge` can work fast, if container types are same and each
-	key from one container is less than each key from other container.
-*/
-
-template<typename TKey,
-	typename TLessComparer = std::less<TKey>,
-	typename TAllocator = std::allocator<TKey>,
-	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>
-class set
+template<typename TTreeSet>
+class set_adaptor
 {
 private:
 	typedef TTreeSet TreeSet;
@@ -71,9 +46,8 @@ private:
 	typedef typename TreeSet::MemManager MemManager;
 
 public:
-	typedef TKey key_type;
-	typedef TLessComparer key_compare;
-	typedef TAllocator allocator_type;
+	typedef typename TreeSet::Key key_type;
+	typedef typename TreeTraits::LessComparer key_compare;
 
 	typedef TreeSet nested_container_type;
 
@@ -82,6 +56,8 @@ public:
 
 	typedef key_type value_type;
 	typedef key_compare value_compare;
+	typedef typename std::allocator_traits<typename MemManager::ByteAllocator>
+		::template rebind_alloc<value_type> allocator_type;
 
 	typedef typename TreeSet::ConstIterator const_iterator;
 	typedef typename TreeSet::Iterator iterator;
@@ -115,42 +91,42 @@ private:
 	};
 
 public:
-	set()
+	set_adaptor()
 	{
 	}
 
-	explicit set(const allocator_type& alloc)
+	explicit set_adaptor(const allocator_type& alloc)
 		: mTreeSet(TreeTraits(), MemManager(alloc))
 	{
 	}
 
-	explicit set(const key_compare& lessComp, const allocator_type& alloc = allocator_type())
+	explicit set_adaptor(const key_compare& lessComp, const allocator_type& alloc = allocator_type())
 		: mTreeSet(TreeTraits(lessComp), MemManager(alloc))
 	{
 	}
 
 	template<typename Iterator>
-	set(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
-		: set(alloc)
+	set_adaptor(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
+		: set_adaptor(alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	set(Iterator first, Iterator last, const key_compare& lessComp,
+	set_adaptor(Iterator first, Iterator last, const key_compare& lessComp,
 		const allocator_type& alloc = allocator_type())
-		: set(lessComp, alloc)
+		: set_adaptor(lessComp, alloc)
 	{
 		insert(first, last);
 	}
 
-	set(std::initializer_list<momo::internal::Identity<value_type>> values,
+	set_adaptor(std::initializer_list<value_type> values,
 		const allocator_type& alloc = allocator_type())
 		: mTreeSet(values, TreeTraits(), MemManager(alloc))
 	{
 	}
 
-	set(std::initializer_list<momo::internal::Identity<value_type>> values,
+	set_adaptor(std::initializer_list<value_type> values,
 		const key_compare& lessComp, const allocator_type& alloc = allocator_type())
 		: mTreeSet(values, TreeTraits(lessComp), MemManager(alloc))
 	{
@@ -159,28 +135,28 @@ public:
 #ifdef MOMO_HAS_CONTAINERS_RANGES
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	set(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
-		: set(alloc)
+	set_adaptor(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
+		: set_adaptor(alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	set(std::from_range_t, Range&& values, const key_compare& lessComp,
+	set_adaptor(std::from_range_t, Range&& values, const key_compare& lessComp,
 		const allocator_type& alloc = allocator_type())
-		: set(lessComp, alloc)
+		: set_adaptor(lessComp, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-	set(set&& right)
-		: set(std::move(right), right.get_allocator())
+	set_adaptor(set_adaptor&& right)
+		: set_adaptor(std::move(right), right.get_allocator())
 	{
 	}
 
-	set(set&& right, const momo::internal::Identity<allocator_type>& alloc)
+	set_adaptor(set_adaptor&& right, const allocator_type& alloc)
 		: mTreeSet(right.mTreeSet.GetTreeTraits(), MemManager(alloc))
 	{
 		if (right.get_allocator() == alloc)
@@ -194,41 +170,41 @@ public:
 		}
 	}
 
-	set(const set& right)
+	set_adaptor(const set_adaptor& right)
 		: mTreeSet(right.mTreeSet)
 	{
 	}
 
-	set(const set& right, const momo::internal::Identity<allocator_type>& alloc)
+	set_adaptor(const set_adaptor& right, const allocator_type& alloc)
 		: mTreeSet(right.mTreeSet, MemManager(alloc))
 	{
 	}
 
-	~set() = default;
+	~set_adaptor() = default;
 
-	set& operator=(set&& right)
-		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<set>::value)
+	set_adaptor& operator=(set_adaptor&& right)
+		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<set_adaptor>::value)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
-	set& operator=(const set& right)
+	set_adaptor& operator=(const set_adaptor& right)
 	{
 		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
-	set& operator=(std::initializer_list<value_type> values)
+	set_adaptor& operator=(std::initializer_list<value_type> values)
 	{
 		mTreeSet = TreeSet(values, mTreeSet.GetTreeTraits(), MemManager(get_allocator()));
 		return *this;
 	}
 
-	void swap(set& right) noexcept
+	void swap(set_adaptor& right) noexcept
 	{
 		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
-	friend void swap(set& left, set& right) noexcept
+	friend void swap(set_adaptor& left, set_adaptor& right) noexcept
 	{
 		left.swap(right);
 	}
@@ -555,7 +531,7 @@ public:
 	}
 
 	template<typename ValueFilter>
-	friend size_type erase_if(set& cont, const ValueFilter& valueFilter)
+	friend size_type erase_if(set_adaptor& cont, const ValueFilter& valueFilter)
 	{
 		return cont.mTreeSet.Remove(valueFilter);
 	}
@@ -572,18 +548,18 @@ public:
 	}
 
 	template<typename Set>
-	void merge(Set&& set)
+	void merge(Set&& set_adaptor)
 	{
-		mTreeSet.MergeFrom(set.get_nested_container());
+		mTreeSet.MergeFrom(set_adaptor.get_nested_container());
 	}
 
-	friend bool operator==(const set& left, const set& right)
+	friend bool operator==(const set_adaptor& left, const set_adaptor& right)
 	{
 		return left.size() == right.size() && std::equal(left.begin(), left.end(), right.begin());
 	}
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
-	friend auto operator<=>(const set& left, const set& right)
+	friend auto operator<=>(const set_adaptor& left, const set_adaptor& right)
 		requires requires (const_reference ref) { std::tie(ref) <=> std::tie(ref); }
 	{
 		auto valueThreeComp = [] (const value_type& value1, const value_type& value2)
@@ -592,13 +568,13 @@ public:
 			right.begin(), right.end(), valueThreeComp);
 	}
 #else
-	friend bool operator<(const set& left, const set& right)
+	friend bool operator<(const set_adaptor& left, const set_adaptor& right)
 	{
 		return std::lexicographical_compare(left.begin(), left.end(), right.begin(), right.end());
 	}
 #endif
 
-	MOMO_MORE_COMPARISON_OPERATORS(const set&)
+	MOMO_MORE_COMPARISON_OPERATORS(const set_adaptor&)
 
 private:
 	bool pvIsOrdered(const key_type& key1, const key_type& key2) const
@@ -640,6 +616,105 @@ private:
 	TreeSet mTreeSet;
 };
 
+template<typename TTreeSet>
+class multiset_adaptor : public set_adaptor<TTreeSet>
+{
+private:
+	typedef set_adaptor<TTreeSet> SetAdaptor;
+
+public:
+	using typename SetAdaptor::value_type;
+	using typename SetAdaptor::iterator;
+	using typename SetAdaptor::node_type;
+
+	typedef iterator insert_return_type;
+
+public:
+	using SetAdaptor::SetAdaptor;
+
+	multiset_adaptor& operator=(std::initializer_list<value_type> values)
+	{
+		SetAdaptor::operator=(values);
+		return *this;
+	}
+
+	friend void swap(multiset_adaptor& left, multiset_adaptor& right) noexcept
+	{
+		left.swap(right);
+	}
+
+	using SetAdaptor::insert;
+
+	iterator insert(value_type&& value)
+	{
+		return SetAdaptor::insert(std::move(value)).first;
+	}
+
+	iterator insert(const value_type& value)
+	{
+		return SetAdaptor::insert(value).first;
+	}
+
+	iterator insert(node_type&& node)
+	{
+		return SetAdaptor::insert(std::move(node)).position;
+	}
+
+	template<typename... ValueArgs>
+	iterator emplace(ValueArgs&&... valueArgs)
+	{
+		return SetAdaptor::emplace(std::forward<ValueArgs>(valueArgs)...).first;
+	}
+};
+
+/*!
+	\brief
+	`momo::stdish::set` is similar to `std::set`, but much more
+	efficient in memory usage. The implementation is based on a B-tree.
+
+	\details
+	Deviations from standard class:
+	1. Container items must be movable (preferably without exceptions)
+	or copyable, similar to items of `std::vector`.
+	2. After each addition or removal of the item all iterators and
+	references to items become invalid and should not be used.
+	3. Functions `begin`, `cbegin`, `rend` and `crend` have logarithmic
+	complexity.
+	4. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false,
+	functions `erase` can throw exceptions.
+	5. Functions `merge`, `extract` and `insert(node_type&&)` move items.
+
+	It is allowed to pass to functions `insert` and `emplace` references
+	to items within the container.
+
+	Function `merge` can work fast, if container types are same and each
+	key from one container is less than each key from other container.
+*/
+
+template<typename TKey,
+	typename TLessComparer = std::less<TKey>,
+	typename TAllocator = std::allocator<TKey>,
+	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>
+class set : public set_adaptor<TTreeSet>
+{
+private:
+	typedef set_adaptor<TTreeSet> SetAdaptor;
+
+public:
+	using SetAdaptor::SetAdaptor;
+
+	set& operator=(std::initializer_list<typename SetAdaptor::value_type> values)
+	{
+		SetAdaptor::operator=(values);
+		return *this;
+	}
+
+	friend void swap(set& left, set& right) noexcept
+	{
+		left.swap(right);
+	}
+};
+
 /*!
 	\brief
 	`momo::stdish::multiset` is similar to `std::multiset`, but much more
@@ -653,60 +728,23 @@ template<typename TKey,
 	typename TAllocator = std::allocator<TKey>,
 	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessComparer, true>,
 		MemManagerStd<TAllocator>>>
-class multiset : public set<TKey, TLessComparer, TAllocator, TTreeSet>
+class multiset : public multiset_adaptor<TTreeSet>
 {
 private:
-	typedef set<TKey, TLessComparer, TAllocator, TTreeSet> Set;
+	typedef multiset_adaptor<TTreeSet> MultiSetAdaptor;
 
 public:
-	using typename Set::size_type;
-	using typename Set::value_type;
-	using typename Set::iterator;
-	using typename Set::node_type;
+	using MultiSetAdaptor::MultiSetAdaptor;
 
-	typedef iterator insert_return_type;
-
-public:
-	using Set::Set;
-
-	multiset& operator=(std::initializer_list<value_type> values)
+	multiset& operator=(std::initializer_list<typename MultiSetAdaptor::value_type> values)
 	{
-		Set::operator=(values);
+		MultiSetAdaptor::operator=(values);
 		return *this;
 	}
 
 	friend void swap(multiset& left, multiset& right) noexcept
 	{
 		left.swap(right);
-	}
-
-	using Set::insert;
-
-	iterator insert(value_type&& value)
-	{
-		return Set::insert(std::move(value)).first;
-	}
-
-	iterator insert(const value_type& value)
-	{
-		return Set::insert(value).first;
-	}
-
-	iterator insert(node_type&& node)
-	{
-		return Set::insert(std::move(node)).position;
-	}
-
-	template<typename... ValueArgs>
-	iterator emplace(ValueArgs&&... valueArgs)
-	{
-		return Set::emplace(std::forward<ValueArgs>(valueArgs)...).first;
-	}
-
-	template<typename ValueFilter>
-	friend size_type erase_if(multiset& cont, const ValueFilter& valueFilter)
-	{
-		return cont.get_nested_container().Remove(valueFilter);
 	}
 };
 
@@ -734,6 +772,9 @@ template<typename Key, typename LessComparer, \
 	typename Allocator = std::allocator<Key>, \
 	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
 set(std::initializer_list<Key>, LessComparer, Allocator = Allocator()) \
+	-> set<Key, LessComparer, Allocator>; \
+template<typename Key, typename LessComparer, typename Allocator> \
+set(set<Key, LessComparer, Allocator>, momo::internal::Identity<Allocator>) \
 	-> set<Key, LessComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(set)
