@@ -31,10 +31,7 @@ LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey,
 	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-using set = momo::stdish::set<TKey, TLessComparer, TAllocator,
-	momo::TreeSetCore<momo::TreeSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
-		momo::TreeTraitsStd<TKey, TLessComparer, false, momo::TreeNode<>>,
-		momo::TreeSetSettings>>;
+using set = momo::stdish::set<TKey, TLessComparer, TAllocator>;
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_CLASS momo::stdish::set

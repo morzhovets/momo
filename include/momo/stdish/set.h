@@ -693,12 +693,13 @@ public:
 
 template<typename TKey,
 	typename TLessComparer = std::less<TKey>,
-	typename TAllocator = std::allocator<TKey>,
-	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>
-class set : public set_adaptor<TTreeSet>
+	typename TAllocator = std::allocator<TKey>>
+class set : public set_adaptor<TreeSet<TKey,
+	TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef set_adaptor<TTreeSet> SetAdaptor;
+	typedef set_adaptor<TreeSet<TKey,
+		TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>> SetAdaptor;
 
 public:
 	using SetAdaptor::SetAdaptor;
@@ -725,13 +726,13 @@ public:
 
 template<typename TKey,
 	typename TLessComparer = std::less<TKey>,
-	typename TAllocator = std::allocator<TKey>,
-	typename TTreeSet = TreeSet<TKey, TreeTraitsStd<TKey, TLessComparer, true>,
-		MemManagerStd<TAllocator>>>
-class multiset : public multiset_adaptor<TTreeSet>
+	typename TAllocator = std::allocator<TKey>>
+class multiset : public multiset_adaptor<TreeSet<TKey,
+	TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef multiset_adaptor<TTreeSet> MultiSetAdaptor;
+	typedef multiset_adaptor<TreeSet<TKey,
+		TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>> MultiSetAdaptor;
 
 public:
 	using MultiSetAdaptor::MultiSetAdaptor;
