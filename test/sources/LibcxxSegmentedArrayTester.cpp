@@ -25,6 +25,44 @@ namespace
 using namespace libcxx_insert_range_seq;
 using namespace libcxx_from_range_seq;
 
+namespace libcxx_segmented_array_cnst
+{
+
+LIBCXX_NAMESPACE_STD_BEGIN
+template<typename TValue,
+	typename TAllocator = std::allocator<TValue>>
+using vector = momo::stdish::vector_adaptor<momo::SegmentedArrayCore<
+	momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+	momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::cnst>>>;
+LIBCXX_NAMESPACE_STD_END
+
+#define LIBCXX_TEST_SEGMENTED_ARRAY
+#define LIBCXX_TEST_PREFIX "segmented_array_cnst"
+#include LIBCXX_HEADER(VectorTests.h)
+#undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_SEGMENTED_ARRAY
+
+} // namespace libcxx_segmented_array_cnst
+
+namespace libcxx_segmented_array_sqrt
+{
+
+LIBCXX_NAMESPACE_STD_BEGIN
+template<typename TValue,
+	typename TAllocator = std::allocator<TValue>>
+using vector = momo::stdish::vector_adaptor<momo::SegmentedArrayCore<
+	momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
+	momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt>>>;
+LIBCXX_NAMESPACE_STD_END
+
+#define LIBCXX_TEST_SEGMENTED_ARRAY
+#define LIBCXX_TEST_PREFIX "segmented_array_sqrt"
+#include LIBCXX_HEADER(VectorTests.h)
+#undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_SEGMENTED_ARRAY
+
+} // namespace libcxx_segmented_array_sqrt
+
 namespace libcxx_segmented_array_cnst_0
 {
 
@@ -84,44 +122,6 @@ LIBCXX_NAMESPACE_STD_END
 #undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_segmented_array_sqrt_0
-
-namespace libcxx_segmented_array_cnst
-{
-
-LIBCXX_NAMESPACE_STD_BEGIN
-template<typename TValue,
-	typename TAllocator = std::allocator<TValue>>
-using vector = momo::stdish::vector_adaptor<momo::SegmentedArrayCore<
-	momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
-	momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::cnst>>>;
-LIBCXX_NAMESPACE_STD_END
-
-#define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "segmented_array_cnst"
-#include LIBCXX_HEADER(VectorTests.h)
-#undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_SEGMENTED_ARRAY
-
-} // namespace libcxx_segmented_array_cnst
-
-namespace libcxx_segmented_array_sqrt
-{
-
-LIBCXX_NAMESPACE_STD_BEGIN
-template<typename TValue,
-	typename TAllocator = std::allocator<TValue>>
-using vector = momo::stdish::vector_adaptor<momo::SegmentedArrayCore<
-	momo::SegmentedArrayItemTraits<TValue, momo::MemManagerStd<TAllocator>>,
-	momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt>>>;
-LIBCXX_NAMESPACE_STD_END
-
-#define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_PREFIX "segmented_array_sqrt"
-#include LIBCXX_HEADER(VectorTests.h)
-#undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_SEGMENTED_ARRAY
-
-} // namespace libcxx_segmented_array_sqrt
 
 } // namespace
 

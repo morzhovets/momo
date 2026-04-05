@@ -24,6 +24,25 @@ namespace
 using namespace libcxx_insert_range_seq;
 using namespace libcxx_from_range_seq;
 
+namespace libcxx_array
+{
+
+LIBCXX_NAMESPACE_STD_BEGIN
+template<typename TValue,
+	typename TAllocator = std::allocator<TValue>>
+using vector = momo::stdish::vector<TValue, TAllocator>;
+LIBCXX_NAMESPACE_STD_END
+
+#define LIBCXX_TEST_ARRAY
+#define LIBCXX_TEST_CLASS momo::stdish::vector
+#define LIBCXX_TEST_PREFIX "array"
+#include LIBCXX_HEADER(VectorTests.h)
+#undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_CLASS
+#undef LIBCXX_TEST_ARRAY
+
+} // namespace libcxx_array
+
 namespace libcxx_array_0
 {
 
@@ -64,11 +83,9 @@ LIBCXX_NAMESPACE_STD_END
 # define LIBCXX_TEST_FAILURE
 #endif
 #define LIBCXX_TEST_ARRAY
-#define LIBCXX_TEST_CLASS momo::stdish::vector
 #define LIBCXX_TEST_PREFIX "array_0"
 #include LIBCXX_HEADER(VectorTests.h)
 #undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_CLASS
 #undef LIBCXX_TEST_ARRAY
 #undef LIBCXX_TEST_FAILURE
 

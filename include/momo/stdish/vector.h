@@ -531,12 +531,11 @@ private:
 */
 
 template<typename TValue,
-	typename TAllocator = std::allocator<TValue>,
-	typename TArray = Array<TValue, MemManagerStd<TAllocator>>>
-class vector : public vector_adaptor<TArray>
+	typename TAllocator = std::allocator<TValue>>
+class vector : public vector_adaptor<Array<TValue, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef vector_adaptor<TArray> VectorAdaptor;
+	typedef vector_adaptor<Array<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
 
 public:
 	using VectorAdaptor::VectorAdaptor;
