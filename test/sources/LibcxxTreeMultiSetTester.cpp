@@ -28,13 +28,10 @@ namespace libcxx_tree_multiset
 {
 
 LIBCXX_NAMESPACE_STD_BEGIN
-template<typename TKey,
-	typename TLessComparer = std::less<TKey>,
-	typename TAllocator = std::allocator<TKey>>
-using multiset = momo::stdish::multiset<TKey, TLessComparer, TAllocator>;
+using momo::stdish::multiset;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_CLASS momo::stdish::multiset
+#define LIBCXX_TEST_CLASS
 #define LIBCXX_TEST_PREFIX "tree_multiset"
 #include LIBCXX_HEADER(MultiSetTests.h)
 #undef LIBCXX_TEST_PREFIX

@@ -698,7 +698,7 @@ class set : public set_adaptor<TreeSet<TKey,
 	TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef set_adaptor<TreeSet<TKey,
+	typedef set_adaptor<momo::TreeSet<TKey,
 		TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>> SetAdaptor;
 
 public:
@@ -731,7 +731,7 @@ class multiset : public multiset_adaptor<TreeSet<TKey,
 	TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef multiset_adaptor<TreeSet<TKey,
+	typedef multiset_adaptor<momo::TreeSet<TKey,
 		TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>> MultiSetAdaptor;
 
 public:

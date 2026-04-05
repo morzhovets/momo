@@ -28,13 +28,10 @@ namespace libcxx_tree_set
 {
 
 LIBCXX_NAMESPACE_STD_BEGIN
-template<typename TKey,
-	typename TLessComparer = std::less<TKey>,
-	typename TAllocator = std::allocator<TKey>>
-using set = momo::stdish::set<TKey, TLessComparer, TAllocator>;
+using momo::stdish::set;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_CLASS momo::stdish::set
+#define LIBCXX_TEST_CLASS
 #define LIBCXX_TEST_PREFIX "tree_set"
 #include LIBCXX_HEADER(SetTests.h)
 #undef LIBCXX_TEST_PREFIX
