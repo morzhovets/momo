@@ -535,7 +535,7 @@ template<typename TValue,
 class vector : public vector_adaptor<Array<TValue, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef vector_adaptor<Array<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
+	typedef vector_adaptor<momo::Array<TValue, MemManagerStd<TAllocator>>> VectorAdaptor;
 
 public:
 	using VectorAdaptor::VectorAdaptor;
