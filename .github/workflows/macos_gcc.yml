@@ -41,7 +41,7 @@ jobs:
 
         # x64
         - gcc_ver: '15'
-          macos_ver: '26-intel'
+          macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -50,7 +50,7 @@ jobs:
           path_prefix: '/usr/local'
 
         - gcc_ver: '15'
-          macos_ver: '26-intel'
+          macos_ver: '15-intel'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -59,7 +59,7 @@ jobs:
           path_prefix: '/usr/local'
 
 #        - gcc_ver: '15'
-#          macos_ver: '26-intel'
+#          macos_ver: '15-intel'
 #          build_type: 'Debug'
 #          test_libcxx20: 'On'
 #          no_exceptions_rtti: 'Off'
