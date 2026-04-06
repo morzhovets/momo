@@ -24,6 +24,28 @@ namespace
 using namespace libcxx_insert_range_seq;
 using namespace libcxx_from_range_seq;
 
+namespace libcxx_merge_array
+{
+
+namespace std
+{
+	using namespace ::std;
+
+	template<typename TValue,
+		typename TAllocator = std::allocator<TValue>>
+	using vector = momo::stdish::merge_vector<TValue, TAllocator>;
+}
+
+#define LIBCXX_TEST_SEGMENTED_ARRAY
+#define LIBCXX_TEST_CLASS momo::stdish::merge_vector
+#define LIBCXX_TEST_PREFIX "merge_array"
+#include "libcxx20/VectorTests.h"
+#undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_CLASS
+#undef LIBCXX_TEST_SEGMENTED_ARRAY
+
+} // namespace libcxx_merge_array
+
 namespace libcxx_merge_array_0
 {
 
@@ -53,28 +75,6 @@ namespace std
 #undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_merge_array_0
-
-namespace libcxx_merge_array
-{
-
-namespace std
-{
-	using namespace ::std;
-
-	template<typename TValue,
-		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::merge_vector<TValue, TAllocator>;
-}
-
-#define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_CLASS momo::stdish::merge_vector
-#define LIBCXX_TEST_PREFIX "merge_array"
-#include "libcxx20/VectorTests.h"
-#undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_CLASS
-#undef LIBCXX_TEST_SEGMENTED_ARRAY
-
-} // namespace libcxx_merge_array
 
 } // namespace
 

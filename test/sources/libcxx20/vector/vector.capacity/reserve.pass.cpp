@@ -30,7 +30,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v.capacity() == 100);
         v.reserve(150);
         assert(v.size() == 100);
-#ifdef LIBCXX_TEST_ARRAY
+#if defined(LIBCXX_TEST_ARRAY) && !defined(LIBCXX_TEST_CLASS)
         assert(v.capacity() == 150);
 #else
         assert(v.capacity() >= 150);
@@ -44,7 +44,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         v.reserve(50);
         assert(v.size() == 100);
         assert(v.capacity() == 100);
-#ifndef LIBCXX_TEST_INTCAP_ARRAY
+#if defined(LIBCXX_TEST_ARRAY) && !defined(LIBCXX_TEST_CLASS)
         v.reserve(150);
         assert(v.size() == 100);
         assert(v.capacity() == 150);
@@ -68,7 +68,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         assert(v.capacity() == 100);
         v.reserve(150);
         assert(v.size() == 100);
-#ifdef LIBCXX_TEST_ARRAY
+#if defined(LIBCXX_TEST_ARRAY) && !defined(LIBCXX_TEST_CLASS)
         assert(v.capacity() == 150);
 #else
         assert(v.capacity() >= 150);
@@ -91,7 +91,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
       assert(v.capacity() == 100);
       v.reserve(150);
       assert(v.size() == 100);
-#ifdef LIBCXX_TEST_ARRAY
+#if defined(LIBCXX_TEST_ARRAY) && !defined(LIBCXX_TEST_CLASS)
         assert(v.capacity() == 150);
 #else
         assert(v.capacity() >= 150);

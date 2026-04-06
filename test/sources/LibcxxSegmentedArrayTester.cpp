@@ -24,6 +24,50 @@ namespace
 using namespace libcxx_insert_range_seq;
 using namespace libcxx_from_range_seq;
 
+namespace libcxx_segmented_array_cnst
+{
+
+namespace std
+{
+	using namespace ::std;
+
+	template<typename TValue,
+		typename TAllocator = std::allocator<TValue>>
+	using vector = momo::stdish::segmented_vector<TValue, TAllocator>;
+}
+
+#define LIBCXX_TEST_SEGMENTED_ARRAY
+#define LIBCXX_TEST_CLASS momo::stdish::segmented_vector
+#define LIBCXX_TEST_PREFIX "segmented_array_cnst"
+#include "libcxx20/VectorTests.h"
+#undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_CLASS
+#undef LIBCXX_TEST_SEGMENTED_ARRAY
+
+} // namespace libcxx_segmented_array_cnst
+
+namespace libcxx_segmented_array_sqrt
+{
+
+namespace std
+{
+	using namespace ::std;
+
+	template<typename TValue,
+		typename TAllocator = std::allocator<TValue>>
+	using vector = momo::stdish::segmented_vector_sqrt<TValue, TAllocator>;
+}
+
+#define LIBCXX_TEST_SEGMENTED_ARRAY
+#define LIBCXX_TEST_CLASS momo::stdish::segmented_vector_sqrt
+#define LIBCXX_TEST_PREFIX "segmented_array_sqrt"
+#include "libcxx20/VectorTests.h"
+#undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_CLASS
+#undef LIBCXX_TEST_SEGMENTED_ARRAY
+
+} // namespace libcxx_segmented_array_sqrt
+
 namespace libcxx_segmented_array_cnst_0
 {
 
@@ -85,50 +129,6 @@ namespace std
 #undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_segmented_array_sqrt_0
-
-namespace libcxx_segmented_array_cnst
-{
-
-namespace std
-{
-	using namespace ::std;
-
-	template<typename TValue,
-		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::segmented_vector<TValue, TAllocator>;
-}
-
-#define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_CLASS momo::stdish::segmented_vector
-#define LIBCXX_TEST_PREFIX "segmented_array_cnst"
-#include "libcxx20/VectorTests.h"
-#undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_CLASS
-#undef LIBCXX_TEST_SEGMENTED_ARRAY
-
-} // namespace libcxx_segmented_array_cnst
-
-namespace libcxx_segmented_array_sqrt
-{
-
-namespace std
-{
-	using namespace ::std;
-
-	template<typename TValue,
-		typename TAllocator = std::allocator<TValue>>
-	using vector = momo::stdish::segmented_vector_sqrt<TValue, TAllocator>;
-}
-
-#define LIBCXX_TEST_SEGMENTED_ARRAY
-#define LIBCXX_TEST_CLASS momo::stdish::segmented_vector_sqrt
-#define LIBCXX_TEST_PREFIX "segmented_array_sqrt"
-#include "libcxx20/VectorTests.h"
-#undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_CLASS
-#undef LIBCXX_TEST_SEGMENTED_ARRAY
-
-} // namespace libcxx_segmented_array_sqrt
 
 } // namespace
 
