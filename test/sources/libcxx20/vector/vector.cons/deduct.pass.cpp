@@ -28,15 +28,15 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 //  Test the explicit deduction guides
     {
     const int arr[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-    std::vector vec(std::begin(arr), std::end(arr));
+    LIBCXX_TEST_CLASS vec(std::begin(arr), std::end(arr));
 
-    static_assert(std::is_same_v<decltype(vec), std::vector<int>>, "");
+    static_assert(std::is_same_v<decltype(vec), LIBCXX_TEST_CLASS<int>>, "");
     assert(std::equal(vec.begin(), vec.end(), std::begin(arr), std::end(arr)));
     }
 
     {
     const long arr[] = {INT_MAX, 1L, 2L, 3L };
-    std::vector vec(std::begin(arr), std::end(arr), std::allocator<long>());
+    LIBCXX_TEST_CLASS vec(std::begin(arr), std::end(arr), std::allocator<long>());
     static_assert(std::is_same_v<decltype(vec)::value_type, long>, "");
     assert(vec.size() == 4);
     assert(vec[0] == INT_MAX);
@@ -48,18 +48,18 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 
     {
 //  We don't expect this one to work.
-//  std::vector vec(std::allocator<int>()); // vector (allocator &)
+//  LIBCXX_TEST_CLASS vec(std::allocator<int>()); // vector (allocator &)
     }
 
     {
-    std::vector vec(1, A{}); // vector (size_type, T)
+    LIBCXX_TEST_CLASS vec(1, A{}); // vector (size_type, T)
     static_assert(std::is_same_v<decltype(vec)::value_type, A>, "");
     static_assert(std::is_same_v<decltype(vec)::allocator_type, std::allocator<A>>, "");
     assert(vec.size() == 1);
     }
 
     {
-    std::vector vec(1, A{}, test_allocator<A>()); // vector (size_type, T, allocator)
+    LIBCXX_TEST_CLASS vec(1, A{}, test_allocator<A>()); // vector (size_type, T, allocator)
     static_assert(std::is_same_v<decltype(vec)::value_type, A>, "");
     static_assert(std::is_same_v<decltype(vec)::allocator_type, test_allocator<A>>, "");
     assert(vec.size() == 1);
@@ -67,7 +67,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 
 #if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
-    std::vector vec{1U, 2U, 3U, 4U, 5U}; // vector(initializer-list)
+    LIBCXX_TEST_CLASS vec{1U, 2U, 3U, 4U, 5U}; // vector(initializer-list)
     static_assert(std::is_same_v<decltype(vec)::value_type, unsigned>, "");
     assert(vec.size() == 5);
     assert(vec[2] == 3U);
@@ -75,7 +75,7 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #endif
 
     {
-    std::vector vec({1.0, 2.0, 3.0, 4.0}, test_allocator<double>()); // vector(initializer-list, allocator)
+    LIBCXX_TEST_CLASS vec({1.0, 2.0, 3.0, 4.0}, test_allocator<double>()); // vector(initializer-list, allocator)
     static_assert(std::is_same_v<decltype(vec)::value_type, double>, "");
     static_assert(std::is_same_v<decltype(vec)::allocator_type, test_allocator<double>>, "");
     assert(vec.size() == 4);
@@ -83,8 +83,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 
     {
-    std::vector<long double> source;
-    std::vector vec(source); // vector(vector &)
+    LIBCXX_TEST_CLASS<long double> source;
+    LIBCXX_TEST_CLASS vec(source); // vector(vector &)
     static_assert(std::is_same_v<decltype(vec)::value_type, long double>, "");
     static_assert(std::is_same_v<decltype(vec)::allocator_type, std::allocator<long double>>, "");
     assert(vec.size() == 0);
@@ -93,21 +93,21 @@ TEST_CONSTEXPR_CXX20 bool tests() {
 #if TEST_STD_VER >= 23
     {
       {
-        std::vector c(std::from_range, std::array<int, 0>());
-        static_assert(std::is_same_v<decltype(c), std::vector<int>>);
+        LIBCXX_TEST_CLASS c(std::from_range, std::array<int, 0>());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int>>);
       }
 
       {
         using Alloc = test_allocator<int>;
-        std::vector c(std::from_range, std::array<int, 0>(), Alloc());
-        static_assert(std::is_same_v<decltype(c), std::vector<int, Alloc>>);
+        LIBCXX_TEST_CLASS c(std::from_range, std::array<int, 0>(), Alloc());
+        static_assert(std::is_same_v<decltype(c), LIBCXX_TEST_CLASS<int, Alloc>>);
       }
     }
 #endif
 
 //  A couple of vector<bool> tests, too!
     {
-    std::vector vec(3, true); // vector(initializer-list)
+    LIBCXX_TEST_CLASS vec(3, true); // vector(initializer-list)
     static_assert(std::is_same_v<decltype(vec)::value_type, bool>, "");
     static_assert(std::is_same_v<decltype(vec)::allocator_type, std::allocator<bool>>, "");
     assert(vec.size() == 3);
@@ -115,8 +115,8 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     }
 
     {
-    std::vector<bool> source;
-    std::vector vec(source); // vector(vector &)
+    LIBCXX_TEST_CLASS<bool> source;
+    LIBCXX_TEST_CLASS vec(source); // vector(vector &)
     static_assert(std::is_same_v<decltype(vec)::value_type, bool>, "");
     static_assert(std::is_same_v<decltype(vec)::allocator_type, std::allocator<bool>>, "");
     assert(vec.size() == 0);
@@ -127,31 +127,32 @@ TEST_CONSTEXPR_CXX20 bool tests() {
         typedef test_allocator<int> ConvertibleToAlloc;
 
         {
-        std::vector<short, Alloc> source;
-        std::vector vec(source, Alloc(2));
+        LIBCXX_TEST_CLASS<short, Alloc> source;
+        LIBCXX_TEST_CLASS vec(source, Alloc(2));
         static_assert(std::is_same_v<decltype(vec), decltype(source)>);
         }
 
         {
-        std::vector<short, Alloc> source;
-        std::vector vec(source, ConvertibleToAlloc(2));
+        LIBCXX_TEST_CLASS<short, Alloc> source;
+        LIBCXX_TEST_CLASS vec(source, ConvertibleToAlloc(2));
         static_assert(std::is_same_v<decltype(vec), decltype(source)>);
         }
 
         {
-        std::vector<short, Alloc> source;
-        std::vector vec(std::move(source), Alloc(2));
+        LIBCXX_TEST_CLASS<short, Alloc> source;
+        LIBCXX_TEST_CLASS vec(std::move(source), Alloc(2));
         static_assert(std::is_same_v<decltype(vec), decltype(source)>);
         }
 
         {
-        std::vector<short, Alloc> source;
-        std::vector vec(std::move(source), ConvertibleToAlloc(2));
+        LIBCXX_TEST_CLASS<short, Alloc> source;
+        LIBCXX_TEST_CLASS vec(std::move(source), ConvertibleToAlloc(2));
         static_assert(std::is_same_v<decltype(vec), decltype(source)>);
         }
     }
 
-    SequenceContainerDeductionGuidesSfinaeAway<std::vector, std::vector<int>>();
+    //SequenceContainerDeductionGuidesSfinaeAway<std::vector, std::vector<int>>();
+    SequenceContainerDeductionGuidesSfinaeAway<LIBCXX_TEST_CLASS, LIBCXX_TEST_CLASS<int>>();
 
     return true;
 }

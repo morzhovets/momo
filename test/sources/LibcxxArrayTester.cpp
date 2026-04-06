@@ -32,7 +32,7 @@ using momo::stdish::vector;
 LIBCXX_NAMESPACE_STD_END
 
 #define LIBCXX_TEST_ARRAY
-#define LIBCXX_TEST_CLASS
+#define LIBCXX_TEST_CLASS momo::stdish::vector
 #define LIBCXX_TEST_PREFIX "array"
 #include LIBCXX_HEADER(VectorTests.h)
 #undef LIBCXX_TEST_PREFIX
