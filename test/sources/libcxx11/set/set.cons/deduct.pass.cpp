@@ -49,9 +49,9 @@ struct NotAnAllocator {
 void main() {
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    set s(std::begin(arr), std::end(arr));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr));
 
-    ASSERT_SAME_TYPE(decltype(s), set<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     const int expected_s[] = { 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -59,9 +59,9 @@ void main() {
 
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    set s(std::begin(arr), std::end(arr), std::greater<int>());
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), std::greater<int>());
 
-    ASSERT_SAME_TYPE(decltype(s), set<int, std::greater<int> >);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::greater<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -69,11 +69,11 @@ void main() {
 
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    set s(std::begin(arr), std::end(arr), std::greater<int>(),
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), std::greater<int>(),
                test_allocator<int>(0, 42));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     set<int, std::greater<int>, test_allocator<int> >);
+                     LIBCXX_TEST_CLASS<int, std::greater<int>, test_allocator<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -81,31 +81,31 @@ void main() {
   }
 
   {
-    set<long> source;
-    set s(source);
-    ASSERT_SAME_TYPE(decltype(s), set<long>);
+    LIBCXX_TEST_CLASS<long> source;
+    LIBCXX_TEST_CLASS s(source);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<long>);
     assert(s.size() == 0);
   }
 
   {
-    set<long> source;
-    set s{ source };  // braces instead of parens
-    ASSERT_SAME_TYPE(decltype(s), set<long>);
+    LIBCXX_TEST_CLASS<long> source;
+    LIBCXX_TEST_CLASS s{ source };  // braces instead of parens
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<long>);
     assert(s.size() == 0);
   }
 
   {
-    set<long> source;
-    set s(source, set<long>::allocator_type());
-    ASSERT_SAME_TYPE(decltype(s), set<long>);
+    LIBCXX_TEST_CLASS<long> source;
+    LIBCXX_TEST_CLASS s(source, LIBCXX_TEST_CLASS<long>::allocator_type());
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<long>);
     assert(s.size() == 0);
   }
 
 #if !(defined(TEST_GCC) && __GNUC__ < 13)
   {
-    set s{ 1, 2, 1, INT_MAX, 3 };
+    LIBCXX_TEST_CLASS s{ 1, 2, 1, INT_MAX, 3 };
 
-    ASSERT_SAME_TYPE(decltype(s), set<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     const int expected_s[] = { 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -113,20 +113,20 @@ void main() {
 #endif
 
   {
-    set s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>());
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>());
 
-    ASSERT_SAME_TYPE(decltype(s), set<int, std::greater<int> >);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::greater<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
   }
 
   {
-    set s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>(),
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, std::greater<int>(),
                test_allocator<int>(0, 43));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     set<int, std::greater<int>, test_allocator<int> >);
+                     LIBCXX_TEST_CLASS<int, std::greater<int>, test_allocator<int> >);
     const int expected_s[] = { INT_MAX, 3, 2, 1 };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -135,10 +135,10 @@ void main() {
 
   {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    set s(std::begin(arr), std::end(arr), test_allocator<int>(0, 44));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), test_allocator<int>(0, 44));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     set<int, std::less<int>, test_allocator<int> >);
+                     LIBCXX_TEST_CLASS<int, std::less<int>, test_allocator<int> >);
     const int expected_s[] = { 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -146,10 +146,10 @@ void main() {
   }
 
   {
-    set s({ 1, 2, 1, INT_MAX, 3 }, test_allocator<int>(0, 45));
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, test_allocator<int>(0, 45));
 
     ASSERT_SAME_TYPE(decltype(s),
-                     set<int, std::less<int>, test_allocator<int> >);
+                     LIBCXX_TEST_CLASS<int, std::less<int>, test_allocator<int> >);
     const int expected_s[] = { 1, 2, 3, INT_MAX };
     assert(std::equal(s.begin(), s.end(), std::begin(expected_s),
                       std::end(expected_s)));
@@ -159,38 +159,38 @@ void main() {
 #if !(defined(TEST_GCC) && __GNUC__ < 13)
   {
     NotAnAllocator a;
-    set s{ a }; // set(initializer_list<NotAnAllocator>)
-    ASSERT_SAME_TYPE(decltype(s), set<NotAnAllocator>);
+    LIBCXX_TEST_CLASS s{ a }; // set(initializer_list<NotAnAllocator>)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<NotAnAllocator>);
     assert(s.size() == 1);
   }
 
   {
-    set<long> source;
-    set s{ source, source }; // set(initializer_list<set<long>>)
-    ASSERT_SAME_TYPE(decltype(s), set<set<long> >);
+    LIBCXX_TEST_CLASS<long> source;
+    LIBCXX_TEST_CLASS s{ source, source }; // set(initializer_list<set<long>>)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<LIBCXX_TEST_CLASS<long> >);
     assert(s.size() == 1);
   }
 
   {
     NotAnAllocator a;
-    set s{ a, a }; // set(initializer_list<NotAnAllocator>)
-    ASSERT_SAME_TYPE(decltype(s), set<NotAnAllocator>);
+    LIBCXX_TEST_CLASS s{ a, a }; // set(initializer_list<NotAnAllocator>)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<NotAnAllocator>);
     assert(s.size() == 1);
   }
 #endif
 
   {
     int source[3] = { 3, 4, 5 };
-    set s(source, source + 3); // set(InputIterator, InputIterator)
-    ASSERT_SAME_TYPE(decltype(s), set<int>);
+    LIBCXX_TEST_CLASS s(source, source + 3); // set(InputIterator, InputIterator)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(s.size() == 3);
   }
 
 #if !(defined(TEST_GCC) && __GNUC__ < 13)
   {
     int source[3] = { 3, 4, 5 };
-    set s{ source, source + 3 }; // set(initializer_list<int*>)
-    ASSERT_SAME_TYPE(decltype(s), set<int *>);
+    LIBCXX_TEST_CLASS s{ source, source + 3 }; // set(initializer_list<int*>)
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int *>);
     assert(s.size() == 2);
   }
 #endif

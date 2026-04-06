@@ -31,7 +31,7 @@ LIBCXX_NAMESPACE_STD_BEGIN
 using momo::stdish::set;
 LIBCXX_NAMESPACE_STD_END
 
-#define LIBCXX_TEST_CLASS
+#define LIBCXX_TEST_CLASS momo::stdish::set
 #define LIBCXX_TEST_PREFIX "tree_set"
 #include LIBCXX_HEADER(SetTests.h)
 #undef LIBCXX_TEST_PREFIX
