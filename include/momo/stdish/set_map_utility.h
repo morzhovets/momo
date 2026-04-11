@@ -212,7 +212,7 @@ namespace internal
 		typename = decltype(std::declval<Hasher&>()(std::declval<const Key&>())),
 		typename = decltype(std::declval<EqualComparer&>()(std::declval<const Key&>(),
 			std::declval<const Key&>()))>
-	class unordered_checker
+	class hash_checker
 	{
 	};
 
@@ -221,7 +221,7 @@ namespace internal
 		typename = decltype(std::declval<Allocator&>().allocate(size_t{})),
 		typename = decltype(std::declval<LessComparer&>()(std::declval<const Key&>(),
 			std::declval<const Key&>()))>
-	class ordered_checker
+	class tree_checker
 	{
 	};
 #endif // MOMO_HAS_DEDUCTION_GUIDES

@@ -755,23 +755,23 @@ public:
 template<typename Iterator, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::ordered_checker<Key, Allocator>> \
+	typename = internal::tree_checker<Key, Allocator>> \
 set(Iterator, Iterator, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessComparer, \
 	typename Key = typename std::iterator_traits<Iterator>::value_type, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+	typename = internal::tree_checker<Key, Allocator, LessComparer>> \
 set(Iterator, Iterator, LessComparer, Allocator = Allocator()) \
 	-> set<Key, LessComparer, Allocator>; \
 template<typename Key, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::ordered_checker<Key, Allocator>> \
+	typename = internal::tree_checker<Key, Allocator>> \
 set(std::initializer_list<Key>, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<typename Key, typename LessComparer, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+	typename = internal::tree_checker<Key, Allocator, LessComparer>> \
 set(std::initializer_list<Key>, LessComparer, Allocator = Allocator()) \
 	-> set<Key, LessComparer, Allocator>; \
 template<typename Key, typename LessComparer, typename Allocator> \
@@ -789,13 +789,13 @@ MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
 template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::ordered_checker<Key, Allocator>> \
+	typename = internal::tree_checker<Key, Allocator>> \
 set(std::from_range_t, Range&&, Allocator = Allocator()) \
 	-> set<Key, std::less<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename LessComparer, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	typename Allocator = std::allocator<Key>, \
-	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+	typename = internal::tree_checker<Key, Allocator, LessComparer>> \
 set(std::from_range_t, Range&&, LessComparer, Allocator = Allocator()) \
 	-> set<Key, LessComparer, Allocator>;
 

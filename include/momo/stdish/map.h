@@ -1046,7 +1046,7 @@ template<typename Iterator, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::ordered_checker<Key, Allocator>> \
+	typename = internal::tree_checker<Key, Allocator>> \
 map(Iterator, Iterator, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<typename Iterator, typename LessComparer, \
@@ -1054,19 +1054,19 @@ template<typename Iterator, typename LessComparer, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+	typename = internal::tree_checker<Key, Allocator, LessComparer>> \
 map(Iterator, Iterator, LessComparer, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessComparer, Allocator>; \
 template<typename QKey, typename Mapped, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::ordered_checker<Key, Allocator>> \
+	typename = internal::tree_checker<Key, Allocator>> \
 map(std::initializer_list<std::pair<QKey, Mapped>>, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<typename QKey, typename Mapped, typename LessComparer, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+	typename = internal::tree_checker<Key, Allocator, LessComparer>> \
 map(std::initializer_list<std::pair<QKey, Mapped>>, LessComparer, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessComparer, Allocator>;
 
@@ -1083,7 +1083,7 @@ template<std::ranges::input_range Range, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::ordered_checker<Key, Allocator>> \
+	typename = internal::tree_checker<Key, Allocator>> \
 map(std::from_range_t, Range&&, Allocator = Allocator()) \
 	-> map<Key, Mapped, std::less<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename LessComparer, \
@@ -1091,7 +1091,7 @@ template<std::ranges::input_range Range, typename LessComparer, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::ordered_checker<Key, Allocator, LessComparer>> \
+	typename = internal::tree_checker<Key, Allocator, LessComparer>> \
 map(std::from_range_t, Range&&, LessComparer, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessComparer, Allocator>;
 

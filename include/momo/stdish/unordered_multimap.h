@@ -775,7 +775,7 @@ template<typename Iterator, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::unordered_checker<Key, Allocator, HashCoder<Key>>> \
+	typename = internal::hash_checker<Key, Allocator, HashCoder<Key>>> \
 unordered_multimap(Iterator, Iterator, size_t, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename Hasher, \
@@ -783,7 +783,7 @@ template<typename Iterator, typename Hasher, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::unordered_checker<Key, Allocator, Hasher>> \
+	typename = internal::hash_checker<Key, Allocator, Hasher>> \
 unordered_multimap(Iterator, Iterator, size_t, Hasher, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, Hasher, std::equal_to<Key>, Allocator>; \
 template<typename Iterator, typename Hasher, typename EqualComparer, \
@@ -791,7 +791,7 @@ template<typename Iterator, typename Hasher, typename EqualComparer, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::unordered_checker<Key, Allocator, Hasher, EqualComparer>> \
+	typename = internal::hash_checker<Key, Allocator, Hasher, EqualComparer>> \
 unordered_multimap(Iterator, Iterator, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>; \
 template<typename QKey, typename Mapped, \
@@ -801,19 +801,19 @@ unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>) \
 template<typename QKey, typename Mapped, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::unordered_checker<Key, Allocator, HashCoder<Key>>> \
+	typename = internal::hash_checker<Key, Allocator, HashCoder<Key>>> \
 unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<typename QKey, typename Mapped, typename Hasher, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::unordered_checker<Key, Allocator, Hasher>> \
+	typename = internal::hash_checker<Key, Allocator, Hasher>> \
 unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, Hasher, std::equal_to<Key>, Allocator>; \
 template<typename QKey, typename Mapped, typename Hasher, typename EqualComparer, \
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::unordered_checker<Key, Allocator, Hasher, EqualComparer>> \
+	typename = internal::hash_checker<Key, Allocator, Hasher, EqualComparer>> \
 unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>;
 
@@ -836,7 +836,7 @@ template<std::ranges::input_range Range, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::unordered_checker<Key, Allocator, HashCoder<Key>>> \
+	typename = internal::hash_checker<Key, Allocator, HashCoder<Key>>> \
 unordered_multimap(std::from_range_t, Range&&, size_t, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, HashCoder<Key>, std::equal_to<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename Hasher, \
@@ -844,7 +844,7 @@ template<std::ranges::input_range Range, typename Hasher, \
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::unordered_checker<Key, Allocator, Hasher>> \
+	typename = internal::hash_checker<Key, Allocator, Hasher>> \
 unordered_multimap(std::from_range_t, Range&&, size_t, Hasher, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, Hasher, std::equal_to<Key>, Allocator>; \
 template<std::ranges::input_range Range, typename Hasher, typename EqualComparer, \
@@ -852,7 +852,7 @@ template<std::ranges::input_range Range, typename Hasher, typename EqualComparer
 	typename Key = std::decay_t<typename Value::first_type>, \
 	typename Mapped = std::decay_t<typename Value::second_type>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
-	typename = internal::unordered_checker<Key, Allocator, Hasher, EqualComparer>> \
+	typename = internal::hash_checker<Key, Allocator, Hasher, EqualComparer>> \
 unordered_multimap(std::from_range_t, Range&&, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>;
 
