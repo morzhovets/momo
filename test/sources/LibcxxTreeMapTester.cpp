@@ -33,24 +33,19 @@ namespace libcxx_tree_map
 
 LIBCXX_NAMESPACE_STD_BEGIN
 
-template<typename TKey, typename TMapped,
-	typename TLessComparer = std::less<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using map = momo::stdish::map<TKey, TMapped, TLessComparer, TAllocator,
-	momo::TreeMapCore<momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
-		momo::TreeTraitsStd<TKey, TLessComparer, false, momo::TreeNode<>>,
-		momo::TreeMapSettings>>;
+using momo::stdish::map;
 
 #if TEST_LIBCXX_VERSION >= 20
-template<typename TValue>
-using vector = momo::stdish::vector<TValue>;
+using momo::stdish::vector;
 #endif
 
 LIBCXX_NAMESPACE_STD_END
 
+#define LIBCXX_TEST_CLASS momo::stdish::map
 #define LIBCXX_TEST_PREFIX "tree_map"
 #include LIBCXX_HEADER(MapTests.h)
 #undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_CLASS
 
 } // namespace libcxx_tree_map
 

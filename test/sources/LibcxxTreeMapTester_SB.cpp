@@ -44,14 +44,13 @@ LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey, typename TMapped,
 	typename TLessComparer = std::less<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using map = momo::stdish::map<TKey, TMapped, TLessComparer, TAllocator,
-	momo::TreeMapCore<LibcxxTreeMapKeyValueTraits<TKey, TMapped, TAllocator>,
-		momo::TreeTraitsStd<TKey, TLessComparer, false, momo::TreeNode<32, 4, momo::MemPoolParams<1>, false>>,
-		momo::TreeMapSettings>>;
+using map = momo::stdish::map_adaptor<momo::TreeMapCore<
+	LibcxxTreeMapKeyValueTraits<TKey, TMapped, TAllocator>,
+	momo::TreeTraitsStd<TKey, TLessComparer, false, momo::TreeNode<4, 2, momo::MemPoolParams<1>, false>>,
+	momo::TreeMapSettings>>;
 
 #if TEST_LIBCXX_VERSION >= 20
-template<typename TValue>
-using vector = momo::stdish::vector<TValue>;
+using momo::stdish::vector;
 #endif
 
 LIBCXX_NAMESPACE_STD_END

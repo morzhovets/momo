@@ -9,6 +9,8 @@
   momo/stdish/map.h
 
   namespace momo::stdish:
+    class map_adaptor
+    class multimap_adaptor
     class map
     class multimap
 
@@ -63,9 +65,8 @@ namespace internal
 		LessComparer comp;
 	};
 
-	template<typename TKey, typename TMapped, typename TLessComparer, typename TAllocator,
-		typename TTreeMap>
-	class map_base
+	template<typename TTreeMap>
+	class map_adaptor_base
 	{
 	private:
 		typedef TTreeMap TreeMap;
@@ -75,10 +76,9 @@ namespace internal
 		typedef typename TreeMap::Iterator TreeMapIterator;
 
 	public:
-		typedef TKey key_type;
-		typedef TMapped mapped_type;
-		typedef TLessComparer key_compare;
-		typedef TAllocator allocator_type;
+		typedef typename TreeMap::Key key_type;
+		typedef typename TreeMap::Value mapped_type;
+		typedef typename TreeTraits::LessComparer key_compare;
 
 		typedef TreeMap nested_container_type;
 
@@ -86,6 +86,8 @@ namespace internal
 		typedef ptrdiff_t difference_type;
 
 		typedef std::pair<const key_type, mapped_type> value_type;
+		typedef typename std::allocator_traits<typename MemManager::ByteAllocator>
+			::template rebind_alloc<value_type> allocator_type;
 
 		typedef map_value_compare<key_type, key_compare> value_compare;
 
@@ -132,72 +134,73 @@ namespace internal
 		};
 
 	public:
-		map_base()
+		map_adaptor_base()
 		{
 		}
 
-		explicit map_base(const allocator_type& alloc)
+		explicit map_adaptor_base(const allocator_type& alloc)
 			: mTreeMap(TreeTraits(), MemManager(alloc))
 		{
 		}
 
-		explicit map_base(const key_compare& lessComp, const allocator_type& alloc = allocator_type())
+		explicit map_adaptor_base(const key_compare& lessComp,
+			const allocator_type& alloc = allocator_type())
 			: mTreeMap(TreeTraits(lessComp), MemManager(alloc))
 		{
 		}
 
 		template<typename Iterator>
-		map_base(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
-			: map_base(alloc)
+		map_adaptor_base(Iterator first, Iterator last, const allocator_type& alloc = allocator_type())
+			: map_adaptor_base(alloc)
 		{
 			insert(first, last);
 		}
 
 		template<typename Iterator>
-		map_base(Iterator first, Iterator last, const key_compare& lessComp,
+		map_adaptor_base(Iterator first, Iterator last, const key_compare& lessComp,
 			const allocator_type& alloc = allocator_type())
-			: map_base(lessComp, alloc)
+			: map_adaptor_base(lessComp, alloc)
 		{
 			insert(first, last);
 		}
 
-		map_base(std::initializer_list<momo::internal::Identity<value_type>> values,
+		map_adaptor_base(std::initializer_list<value_type> values,
 			const allocator_type& alloc = allocator_type())
-			: map_base(values.begin(), values.end(), alloc)
+			: map_adaptor_base(values.begin(), values.end(), alloc)
 		{
 		}
 
-		map_base(std::initializer_list<momo::internal::Identity<value_type>> values,
+		map_adaptor_base(std::initializer_list<value_type> values,
 			const key_compare& lessComp, const allocator_type& alloc = allocator_type())
-			: map_base(values.begin(), values.end(), lessComp, alloc)
+			: map_adaptor_base(values.begin(), values.end(), lessComp, alloc)
 		{
 		}
 
 #ifdef MOMO_HAS_CONTAINERS_RANGES
 		template<std::ranges::input_range Range>
 		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-		map_base(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
-			: map_base(alloc)
+		map_adaptor_base(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
+			: map_adaptor_base(alloc)
 		{
 			insert_range(std::forward<Range>(values));
 		}
 
 		template<std::ranges::input_range Range>
 		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-		map_base(std::from_range_t, Range&& values, const key_compare& lessComp,
+		map_adaptor_base(std::from_range_t, Range&& values, const key_compare& lessComp,
 			const allocator_type& alloc = allocator_type())
-			: map_base(lessComp, alloc)
+			: map_adaptor_base(lessComp, alloc)
 		{
 			insert_range(std::forward<Range>(values));
 		}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-		map_base(map_base&& right)
-			: map_base(std::move(right), right.get_allocator())
+		map_adaptor_base(map_adaptor_base&& right)
+			: map_adaptor_base(std::move(right), right.get_allocator())
 		{
 		}
 
-		map_base(map_base&& right, const momo::internal::Identity<allocator_type>& alloc)
+		map_adaptor_base(map_adaptor_base&& right, const allocator_type& alloc)
 			: mTreeMap(right.mTreeMap.GetTreeTraits(), MemManager(alloc))
 		{
 			if (right.get_allocator() == alloc)
@@ -211,30 +214,30 @@ namespace internal
 			}
 		}
 
-		map_base(const map_base& right)
+		map_adaptor_base(const map_adaptor_base& right)
 			: mTreeMap(right.mTreeMap)
 		{
 		}
 
-		map_base(const map_base& right, const momo::internal::Identity<allocator_type>& alloc)
+		map_adaptor_base(const map_adaptor_base& right, const allocator_type& alloc)
 			: mTreeMap(right.mTreeMap, MemManager(alloc))
 		{
 		}
 
-		~map_base() = default;
+		~map_adaptor_base() = default;
 
-		map_base& operator=(map_base&& right)
-			noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<map_base>::value)
+		map_adaptor_base& operator=(map_adaptor_base&& right)
+			noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<map_adaptor_base>::value)
 		{
 			return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 		}
 
-		map_base& operator=(const map_base& right)
+		map_adaptor_base& operator=(const map_adaptor_base& right)
 		{
 			return momo::internal::ContainerAssignerStd::Copy(right, *this);
 		}
 
-		void swap(map_base& right) noexcept
+		void swap(map_adaptor_base& right) noexcept
 		{
 			momo::internal::ContainerAssignerStd::Swap(*this, right);
 		}
@@ -624,6 +627,14 @@ namespace internal
 			return mTreeMap.Remove(key);
 		}
 
+		template<typename ValueFilter>
+		friend size_type erase_if(map_adaptor_base& cont, const ValueFilter& valueFilter)
+		{
+			auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
+				{ return valueFilter(const_reference(key, mapped)); };
+			return cont.mTreeMap.Remove(pairFilter);
+		}
+
 		node_type extract(const_iterator where)
 		{
 			return node_type(*this, where);	// need RVO for exception safety
@@ -641,28 +652,28 @@ namespace internal
 			mTreeMap.MergeFrom(map.get_nested_container());
 		}
 
-		friend bool operator==(const map_base& left, const map_base& right)
+		friend bool operator==(const map_adaptor_base& left, const map_adaptor_base& right)
 		{
 			return left.size() == right.size()
 				&& std::equal(left.begin(), left.end(), right.begin());
 		}
 
 #ifdef MOMO_HAS_THREE_WAY_COMPARISON
-		friend auto operator<=>(const map_base& left, const map_base& right)
+		friend auto operator<=>(const map_adaptor_base& left, const map_adaptor_base& right)
 			requires requires (const_reference ref) { ref <=> ref; }
 		{
 			return std::lexicographical_compare_three_way(left.begin(), left.end(),
 				right.begin(), right.end());
 		}
 #else
-		friend bool operator<(const map_base& left, const map_base& right)
+		friend bool operator<(const map_adaptor_base& left, const map_adaptor_base& right)
 		{
 			return std::lexicographical_compare(left.begin(), left.end(),
 				right.begin(), right.end());
 		}
 #endif
 
-		MOMO_MORE_COMPARISON_OPERATORS(const map_base&)
+		MOMO_MORE_COMPARISON_OPERATORS(const map_adaptor_base&)
 
 	protected:	//?
 		void ptAssign(std::initializer_list<value_type> values)
@@ -781,6 +792,199 @@ namespace internal
 	};
 }
 
+template<typename TTreeMap>
+class map_adaptor : public internal::map_adaptor_base<TTreeMap>
+{
+private:
+	typedef TTreeMap TreeMap;
+	typedef internal::map_adaptor_base<TreeMap> MapAdaptorBase;
+
+public:
+	using typename MapAdaptorBase::key_type;
+	using typename MapAdaptorBase::mapped_type;
+	using typename MapAdaptorBase::value_type;
+	using typename MapAdaptorBase::const_iterator;
+	using typename MapAdaptorBase::iterator;
+
+public:
+	using MapAdaptorBase::MapAdaptorBase;
+
+	map_adaptor& operator=(std::initializer_list<value_type> values)
+	{
+		MapAdaptorBase::ptAssign(values);
+		return *this;
+	}
+
+	friend void swap(map_adaptor& left, map_adaptor& right) noexcept
+	{
+		left.swap(right);
+	}
+
+	typename TreeMap::template ValueReference<key_type&&> operator[](key_type&& key)
+	{
+		return MapAdaptorBase::get_nested_container()[std::move(key)];
+	}
+
+	typename TreeMap::template ValueReference<const key_type&> operator[](const key_type& key)
+	{
+		return MapAdaptorBase::get_nested_container()[key];
+	}
+
+	const mapped_type& at(const key_type& key) const
+	{
+		const_iterator iter = MapAdaptorBase::find(key);
+		if (iter == MapAdaptorBase::end())
+			MOMO_THROW(std::out_of_range("invalid map key"));
+		return iter->second;
+	}
+
+	mapped_type& at(const key_type& key)
+	{
+		iterator iter = MapAdaptorBase::find(key);
+		if (iter == MapAdaptorBase::end())
+			MOMO_THROW(std::out_of_range("invalid map key"));
+		return iter->second;
+	}
+
+	template<typename... MappedArgs>
+	std::pair<iterator, bool> try_emplace(key_type&& key, MappedArgs&&... mappedArgs)
+	{
+		return MapAdaptorBase::ptEmplace(nullptr, std::forward_as_tuple(std::move(key)),
+			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
+	}
+
+	template<typename... MappedArgs>
+	iterator try_emplace(const_iterator hint, key_type&& key, MappedArgs&&... mappedArgs)
+	{
+		return MapAdaptorBase::ptEmplace(hint, std::forward_as_tuple(std::move(key)),
+			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
+	}
+
+	template<typename... MappedArgs>
+	std::pair<iterator, bool> try_emplace(const key_type& key, MappedArgs&&... mappedArgs)
+	{
+		return MapAdaptorBase::ptEmplace(nullptr, std::forward_as_tuple(key),
+			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
+	}
+
+	template<typename... MappedArgs>
+	iterator try_emplace(const_iterator hint, const key_type& key, MappedArgs&&... mappedArgs)
+	{
+		return MapAdaptorBase::ptEmplace(hint, std::forward_as_tuple(key),
+			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
+	}
+
+	template<typename MappedArg>
+	std::pair<iterator, bool> insert_or_assign(key_type&& key, MappedArg&& mappedArg)
+	{
+		return pvInsertOrAssign(nullptr, std::move(key), std::forward<MappedArg>(mappedArg));
+	}
+
+	template<typename MappedArg>
+	iterator insert_or_assign(const_iterator hint, key_type&& key, MappedArg&& mappedArg)
+	{
+		return pvInsertOrAssign(hint, std::move(key), std::forward<MappedArg>(mappedArg)).first;
+	}
+
+	template<typename MappedArg>
+	std::pair<iterator, bool> insert_or_assign(const key_type& key, MappedArg&& mappedArg)
+	{
+		return pvInsertOrAssign(nullptr, key, std::forward<MappedArg>(mappedArg));
+	}
+
+	template<typename MappedArg>
+	iterator insert_or_assign(const_iterator hint, const key_type& key, MappedArg&& mappedArg)
+	{
+		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
+	}
+
+private:
+	template<typename Hint, typename RKey, typename MappedArg>
+	std::pair<iterator, bool> pvInsertOrAssign(Hint hint, RKey&& key, MappedArg&& mappedArg)
+	{
+		std::pair<iterator, bool> res = MapAdaptorBase::ptEmplace(hint,
+			std::forward_as_tuple(std::forward<RKey>(key)),
+			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
+		if (!res.second)
+			res.first->second = std::forward<MappedArg>(mappedArg);
+		return res;
+	}
+};
+
+template<typename TTreeMap>
+class multimap_adaptor : public internal::map_adaptor_base<TTreeMap>
+{
+private:
+	typedef internal::map_adaptor_base<TTreeMap> MapAdaptorBase;
+
+public:
+	using typename MapAdaptorBase::key_type;
+	using typename MapAdaptorBase::mapped_type;
+	using typename MapAdaptorBase::value_type;
+	using typename MapAdaptorBase::iterator;
+	using typename MapAdaptorBase::const_iterator;
+	using typename MapAdaptorBase::node_type;
+
+	typedef iterator insert_return_type;
+
+public:
+	using MapAdaptorBase::MapAdaptorBase;
+
+	multimap_adaptor& operator=(std::initializer_list<value_type> values)
+	{
+		MapAdaptorBase::ptAssign(values);
+		return *this;
+	}
+
+	friend void swap(multimap_adaptor& left, multimap_adaptor& right) noexcept
+	{
+		left.swap(right);
+	}
+
+	//using MapAdaptorBase::insert;	// gcc 5 & 6
+
+	template<typename ValueArg = std::pair<key_type, mapped_type>>
+	momo::internal::EnableIf<std::is_constructible<value_type, ValueArg&&>::value,
+	iterator> insert(ValueArg&& valueArg)
+	{
+		return MapAdaptorBase::insert(std::forward<ValueArg>(valueArg)).first;
+	}
+
+	template<typename ValueArg = std::pair<key_type, mapped_type>>
+	momo::internal::EnableIf<std::is_constructible<value_type, ValueArg&&>::value,
+	iterator> insert(const_iterator hint, ValueArg&& valueArg)
+	{
+		return MapAdaptorBase::insert(hint, std::forward<ValueArg>(valueArg));
+	}
+
+	iterator insert(node_type&& node)
+	{
+		return MapAdaptorBase::insert(std::move(node)).position;
+	}
+
+	iterator insert(const_iterator hint, node_type&& node)
+	{
+		return MapAdaptorBase::insert(hint, std::move(node));
+	}
+
+	template<typename Iterator>
+	void insert(Iterator first, Iterator last)
+	{
+		MapAdaptorBase::insert(first, last);
+	}
+
+	void insert(std::initializer_list<value_type> values)
+	{
+		MapAdaptorBase::insert(values);
+	}
+
+	template<typename... ValueArgs>
+	iterator emplace(ValueArgs&&... valueArgs)
+	{
+		return MapAdaptorBase::emplace(std::forward<ValueArgs>(valueArgs)...).first;
+	}
+};
+
 /*!
 	\brief
 	`momo::stdish::map` is similar to `std::map`, but much more
@@ -811,134 +1015,26 @@ namespace internal
 
 template<typename TKey, typename TMapped,
 	typename TLessComparer = std::less<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
-	typename TTreeMap = TreeMap<TKey, TMapped, TreeTraitsStd<TKey, TLessComparer>,
-		MemManagerStd<TAllocator>>>
-class map : public internal::map_base<TKey, TMapped, TLessComparer, TAllocator, TTreeMap>
+	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
+class map : public map_adaptor<TreeMap<TKey, TMapped,
+	TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef internal::map_base<TKey, TMapped, TLessComparer, TAllocator, TTreeMap> MapBase;
-	typedef TTreeMap TreeMap;
+	typedef map_adaptor<momo::TreeMap<TKey, TMapped,
+		TreeTraitsStd<TKey, TLessComparer>, MemManagerStd<TAllocator>>> MapAdaptor;
 
 public:
-	using typename MapBase::key_type;
-	using typename MapBase::mapped_type;
-	using typename MapBase::size_type;
-	using typename MapBase::value_type;
-	using typename MapBase::const_reference;
-	using typename MapBase::const_iterator;
-	using typename MapBase::iterator;
+	using MapAdaptor::MapAdaptor;
 
-public:
-	using MapBase::MapBase;
-
-	map& operator=(std::initializer_list<value_type> values)
+	map& operator=(std::initializer_list<typename MapAdaptor::value_type> values)
 	{
-		MapBase::ptAssign(values);
+		MapAdaptor::operator=(values);
 		return *this;
 	}
 
 	friend void swap(map& left, map& right) noexcept
 	{
 		left.swap(right);
-	}
-
-	typename TreeMap::template ValueReference<key_type&&> operator[](key_type&& key)
-	{
-		return MapBase::get_nested_container()[std::move(key)];
-	}
-
-	typename TreeMap::template ValueReference<const key_type&> operator[](const key_type& key)
-	{
-		return MapBase::get_nested_container()[key];
-	}
-
-	const mapped_type& at(const key_type& key) const
-	{
-		const_iterator iter = MapBase::find(key);
-		if (iter == MapBase::end())
-			MOMO_THROW(std::out_of_range("invalid map key"));
-		return iter->second;
-	}
-
-	mapped_type& at(const key_type& key)
-	{
-		iterator iter = MapBase::find(key);
-		if (iter == MapBase::end())
-			MOMO_THROW(std::out_of_range("invalid map key"));
-		return iter->second;
-	}
-
-	template<typename... MappedArgs>
-	std::pair<iterator, bool> try_emplace(key_type&& key, MappedArgs&&... mappedArgs)
-	{
-		return MapBase::ptEmplace(nullptr, std::forward_as_tuple(std::move(key)),
-			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
-	}
-
-	template<typename... MappedArgs>
-	iterator try_emplace(const_iterator hint, key_type&& key, MappedArgs&&... mappedArgs)
-	{
-		return MapBase::ptEmplace(hint, std::forward_as_tuple(std::move(key)),
-			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
-	}
-
-	template<typename... MappedArgs>
-	std::pair<iterator, bool> try_emplace(const key_type& key, MappedArgs&&... mappedArgs)
-	{
-		return MapBase::ptEmplace(nullptr, std::forward_as_tuple(key),
-			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...));
-	}
-
-	template<typename... MappedArgs>
-	iterator try_emplace(const_iterator hint, const key_type& key, MappedArgs&&... mappedArgs)
-	{
-		return MapBase::ptEmplace(hint, std::forward_as_tuple(key),
-			std::forward_as_tuple(std::forward<MappedArgs>(mappedArgs)...)).first;
-	}
-
-	template<typename MappedArg>
-	std::pair<iterator, bool> insert_or_assign(key_type&& key, MappedArg&& mappedArg)
-	{
-		return pvInsertOrAssign(nullptr, std::move(key), std::forward<MappedArg>(mappedArg));
-	}
-
-	template<typename MappedArg>
-	iterator insert_or_assign(const_iterator hint, key_type&& key, MappedArg&& mappedArg)
-	{
-		return pvInsertOrAssign(hint, std::move(key), std::forward<MappedArg>(mappedArg)).first;
-	}
-
-	template<typename MappedArg>
-	std::pair<iterator, bool> insert_or_assign(const key_type& key, MappedArg&& mappedArg)
-	{
-		return pvInsertOrAssign(nullptr, key, std::forward<MappedArg>(mappedArg));
-	}
-
-	template<typename MappedArg>
-	iterator insert_or_assign(const_iterator hint, const key_type& key, MappedArg&& mappedArg)
-	{
-		return pvInsertOrAssign(hint, key, std::forward<MappedArg>(mappedArg)).first;
-	}
-
-	template<typename ValueFilter>
-	friend size_type erase_if(map& cont, const ValueFilter& valueFilter)
-	{
-		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
-			{ return valueFilter(const_reference(key, mapped)); };
-		return cont.get_nested_container().Remove(pairFilter);
-	}
-
-private:
-	template<typename Hint, typename RKey, typename MappedArg>
-	std::pair<iterator, bool> pvInsertOrAssign(Hint hint, RKey&& key, MappedArg&& mappedArg)
-	{
-		std::pair<iterator, bool> res = MapBase::ptEmplace(hint,
-			std::forward_as_tuple(std::forward<RKey>(key)),
-			std::forward_as_tuple(std::forward<MappedArg>(mappedArg)));
-		if (!res.second)
-			res.first->second = std::forward<MappedArg>(mappedArg);
-		return res;
 	}
 };
 
@@ -952,89 +1048,26 @@ private:
 
 template<typename TKey, typename TMapped,
 	typename TLessComparer = std::less<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
-	typename TTreeMap = TreeMap<TKey, TMapped, TreeTraitsStd<TKey, TLessComparer, true>,
-		MemManagerStd<TAllocator>>>
-class multimap : public internal::map_base<TKey, TMapped, TLessComparer, TAllocator, TTreeMap>
+	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
+class multimap : public multimap_adaptor<TreeMap<TKey, TMapped,
+	TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef internal::map_base<TKey, TMapped, TLessComparer, TAllocator, TTreeMap> MapBase;
+	typedef multimap_adaptor<momo::TreeMap<TKey, TMapped,
+		TreeTraitsStd<TKey, TLessComparer, true>, MemManagerStd<TAllocator>>> MultiMapAdaptor;
 
 public:
-	using typename MapBase::key_type;
-	using typename MapBase::mapped_type;
-	using typename MapBase::size_type;
-	using typename MapBase::value_type;
-	using typename MapBase::iterator;
-	using typename MapBase::const_reference;
-	using typename MapBase::const_iterator;
-	using typename MapBase::node_type;
+	using MultiMapAdaptor::MultiMapAdaptor;
 
-	typedef iterator insert_return_type;
-
-public:
-	using MapBase::MapBase;
-
-	multimap& operator=(std::initializer_list<value_type> values)
+	multimap& operator=(std::initializer_list<typename MultiMapAdaptor::value_type> values)
 	{
-		MapBase::ptAssign(values);
+		MultiMapAdaptor::operator=(values);
 		return *this;
 	}
 
 	friend void swap(multimap& left, multimap& right) noexcept
 	{
 		left.swap(right);
-	}
-
-	//using MapBase::insert;	// gcc 5 & 6
-
-	template<typename ValueArg = std::pair<key_type, mapped_type>>
-	momo::internal::EnableIf<std::is_constructible<value_type, ValueArg&&>::value,
-	iterator> insert(ValueArg&& valueArg)
-	{
-		return MapBase::insert(std::forward<ValueArg>(valueArg)).first;
-	}
-
-	template<typename ValueArg = std::pair<key_type, mapped_type>>
-	momo::internal::EnableIf<std::is_constructible<value_type, ValueArg&&>::value,
-	iterator> insert(const_iterator hint, ValueArg&& valueArg)
-	{
-		return MapBase::insert(hint, std::forward<ValueArg>(valueArg));
-	}
-
-	iterator insert(node_type&& node)
-	{
-		return MapBase::insert(std::move(node)).position;
-	}
-
-	iterator insert(const_iterator hint, node_type&& node)
-	{
-		return MapBase::insert(hint, std::move(node));
-	}
-
-	template<typename Iterator>
-	void insert(Iterator first, Iterator last)
-	{
-		MapBase::insert(first, last);
-	}
-
-	void insert(std::initializer_list<value_type> values)
-	{
-		MapBase::insert(values);
-	}
-
-	template<typename... ValueArgs>
-	iterator emplace(ValueArgs&&... valueArgs)
-	{
-		return MapBase::emplace(std::forward<ValueArgs>(valueArgs)...).first;
-	}
-
-	template<typename ValueFilter>
-	friend size_type erase_if(multimap& cont, const ValueFilter& valueFilter)
-	{
-		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
-			{ return valueFilter(const_reference(key, mapped)); };
-		return cont.get_nested_container().Remove(pairFilter);
 	}
 };
 
@@ -1068,6 +1101,9 @@ template<typename QKey, typename Mapped, typename LessComparer, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
 	typename = internal::tree_checker<Key, Allocator, LessComparer>> \
 map(std::initializer_list<std::pair<QKey, Mapped>>, LessComparer, Allocator = Allocator()) \
+	-> map<Key, Mapped, LessComparer, Allocator>; \
+template<typename Key, typename Mapped, typename LessComparer, typename Allocator> \
+map(map<Key, Mapped, LessComparer, Allocator>, momo::internal::Identity<Allocator>) \
 	-> map<Key, Mapped, LessComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(map)

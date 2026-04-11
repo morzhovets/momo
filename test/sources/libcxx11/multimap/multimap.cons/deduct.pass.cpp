@@ -46,77 +46,75 @@ void main()
 {
     {
     const P arr[] = { {1,1L}, {2,2L}, {1,1L}, {INT_MAX,1L}, {3,1L} };
-    momo::stdish::multimap m(std::begin(arr), std::end(arr));
+    LIBCXX_TEST_CLASS m(std::begin(arr), std::end(arr));
 
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, long>);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long>);
     const PC expected_m[] = { {1,1L}, {1,1L}, {2,2L}, {3,1L}, {INT_MAX,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1L}, {2,2L}, {1,1L}, {INT_MAX,1L}, {3,1L} };
-    momo::stdish::multimap m(std::begin(arr), std::end(arr), std::greater<int>());
+    LIBCXX_TEST_CLASS m(std::begin(arr), std::end(arr), std::greater<int>());
 
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, long, std::greater<int>>);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long, std::greater<int>>);
     const PC expected_m[] = { {INT_MAX,1L}, {3,1L}, {2,2L}, {1,1L}, {1,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
     const P arr[] = { {1,1L}, {2,2L}, {1,1L}, {INT_MAX,1L}, {3,1L} };
-    momo::stdish::multimap m(std::begin(arr), std::end(arr), std::greater<int>(), test_allocator<PC>(0, 42));
+    LIBCXX_TEST_CLASS m(std::begin(arr), std::end(arr), std::greater<int>(), test_allocator<PC>(0, 42));
 
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, long, std::greater<int>, test_allocator<PC>>);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long, std::greater<int>, test_allocator<PC>>);
     const PC expected_m[] = { {INT_MAX,1L}, {3,1L}, {2,2L}, {1,1L}, {1,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 42);
     }
 
     {
-    momo::stdish::multimap<int, long> source;
-    momo::stdish::multimap m(source);
+    LIBCXX_TEST_CLASS<int, long> source;
+    LIBCXX_TEST_CLASS m(source);
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
     assert(m.size() == 0);
     }
 
     {
-    momo::stdish::multimap<int, long> source;
-    momo::stdish::multimap m{source};  // braces instead of parens
+    LIBCXX_TEST_CLASS<int, long> source;
+    LIBCXX_TEST_CLASS m{source};  // braces instead of parens
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
     assert(m.size() == 0);
     }
 
-#if !defined(TEST_GCC) && !defined(TEST_CLANG)
     {
-    momo::stdish::multimap<int, long> source;
-    momo::stdish::multimap m(source, momo::stdish::multimap<int, long>::allocator_type());
+    LIBCXX_TEST_CLASS<int, long> source;
+    LIBCXX_TEST_CLASS m(source, LIBCXX_TEST_CLASS<int, long>::allocator_type());
     ASSERT_SAME_TYPE(decltype(m), decltype(source));
     assert(m.size() == 0);
     }
-#endif
 
 #if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
-    momo::stdish::multimap m{ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
+    LIBCXX_TEST_CLASS m{ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
 
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, long>);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long>);
     const PC expected_m[] = { {1,1L}, {1,1L}, {2,2L}, {3,1L}, {INT_MAX,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 #endif
 
     {
-    momo::stdish::multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, std::greater<int>());
+    LIBCXX_TEST_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, std::greater<int>());
 
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, long, std::greater<int>>);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long, std::greater<int>>);
     const PC expected_m[] = { {INT_MAX,1L}, {3,1L}, {2,2L}, {1,1L}, {1,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
 
     {
-    momo::stdish::multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, std::greater<int>(), test_allocator<PC>(0, 43));
+    LIBCXX_TEST_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, std::greater<int>(), test_allocator<PC>(0, 43));
 
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, long, std::greater<int>, test_allocator<PC>>);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long, std::greater<int>, test_allocator<PC>>);
     const PC expected_m[] = { {INT_MAX,1L}, {3,1L}, {2,2L}, {1,1L}, {1,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 43);
@@ -124,18 +122,18 @@ void main()
 
     {
     const P arr[] = { {1,1L}, {2,2L}, {1,1L}, {INT_MAX,1L}, {3,1L} };
-    momo::stdish::multimap m(std::begin(arr), std::end(arr), test_allocator<PC>(0, 44));
+    LIBCXX_TEST_CLASS m(std::begin(arr), std::end(arr), test_allocator<PC>(0, 44));
 
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, long, std::less<int>, test_allocator<PC>>);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long, std::less<int>, test_allocator<PC>>);
     const PC expected_m[] = { {1,1L}, {1,1L}, {2,2L}, {3,1L}, {INT_MAX,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 44);
     }
 
     {
-    momo::stdish::multimap m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, test_allocator<PC>(0, 45));
+    LIBCXX_TEST_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, test_allocator<PC>(0, 45));
 
-    ASSERT_SAME_TYPE(decltype(m), momo::stdish::multimap<int, long, std::less<int>, test_allocator<PC>>);
+    ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long, std::less<int>, test_allocator<PC>>);
     const PC expected_m[] = { {1,1L}, {1,1L}, {2,2L}, {3,1L}, {INT_MAX,1L} };
     assert(std::equal(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     assert(m.get_allocator().get_id() == 45);

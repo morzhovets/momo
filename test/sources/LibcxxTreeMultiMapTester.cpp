@@ -28,18 +28,14 @@ namespace libcxx_tree_multimap
 {
 
 LIBCXX_NAMESPACE_STD_BEGIN
-template<typename TKey, typename TMapped,
-	typename TLessComparer = std::less<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using multimap = momo::stdish::multimap<TKey, TMapped, TLessComparer, TAllocator,
-	momo::TreeMapCore<momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
-		momo::TreeTraitsStd<TKey, TLessComparer, true, momo::TreeNode<4, 2, momo::MemPoolParams<>, false>>,
-		momo::TreeMapSettings>>;
+using momo::stdish::multimap;
 LIBCXX_NAMESPACE_STD_END
 
+#define LIBCXX_TEST_CLASS momo::stdish::multimap
 #define LIBCXX_TEST_PREFIX "tree_multimap"
 #include LIBCXX_HEADER(MultiMapTests.h)
 #undef LIBCXX_TEST_PREFIX
+#undef LIBCXX_TEST_CLASS
 
 } // namespace libcxx_tree_multimap
 

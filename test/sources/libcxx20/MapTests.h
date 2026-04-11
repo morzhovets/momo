@@ -100,6 +100,8 @@ LIBCXX_TEST_BEGIN(cons_copy_assign)
 #include "map/map.cons/copy_assign.pass.cpp"
 LIBCXX_TEST_END
 
+#ifdef LIBCXX_TEST_CLASS
+
 LIBCXX_TEST_BEGIN(cons_deduct)
 #include "map/map.cons/deduct.pass.cpp"
 LIBCXX_TEST_END
@@ -107,6 +109,8 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(cons_deduct_const)
 #include "map/map.cons/deduct_const.pass.cpp"
 LIBCXX_TEST_END
+
+#endif // LIBCXX_TEST_CLASS
 
 LIBCXX_TEST_BEGIN(cons_default)
 #include "map/map.cons/default.pass.cpp"
