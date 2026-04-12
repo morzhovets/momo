@@ -17,8 +17,8 @@
 
 #include "../../include/momo/details/HashBucketOpenN1.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketOpenN1<>
-#define LIBCXX_TEST_PREFIX_TAIL "openn1"
+#define LIBCXX_TEST_HASH_BUCKET momo::HashBucketOpenN1<>
+#define LIBCXX_TEST_PREFIX_TAIL "_openn1"
 
 #include "LibcxxHashSetTester.h"
 

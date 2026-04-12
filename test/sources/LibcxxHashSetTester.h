@@ -16,6 +16,10 @@
 
 #include "../../include/momo/stdish/unordered_set.h"
 
+#if !defined(LIBCXX_TEST_CLASS) && !defined(TEST_HAS_NO_EXCEPTIONS)
+# define LIBCXX_TEST_FAILURE
+#endif
+
 namespace
 {
 
@@ -25,18 +29,14 @@ using namespace libcxx_from_range_unord;
 namespace libcxx_hash_set
 {
 
-class LibcxxHashSetSettings : public momo::HashSetSettings
-{
-public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-};
+#ifndef LIBCXX_TEST_CLASS
 
 template<typename TKey, typename THasher, typename TEqualComparer>
-class LibcxxHashTraits : public momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>
+class LibcxxHashTraits
+	: public momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_HASH_BUCKET>
 {
 private:
-	typedef momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET> HashTraitsBase;
+	typedef momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_HASH_BUCKET> HashTraitsBase;
 
 public:
 #ifdef LIBCXX_TEST_HINT_ITERATORS
@@ -47,24 +47,35 @@ public:
 	using HashTraitsBase::HashTraitsBase;
 };
 
+class LibcxxHashSetSettings : public momo::HashSetSettings
+{
+public:
+	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+};
+
+#endif // LIBCXX_TEST_CLASS
+
 LIBCXX_NAMESPACE_STD_BEGIN
 template<typename TKey,
 	typename THasher = std::hash<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<TKey>>
-using unordered_set = momo::stdish::unordered_set<TKey, THasher, TEqualComparer, TAllocator,
-	momo::HashSetCore<momo::HashSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
-		LibcxxHashTraits<TKey, THasher, TEqualComparer>, LibcxxHashSetSettings>>;
+#ifdef LIBCXX_TEST_CLASS
+using unordered_set = LIBCXX_TEST_CLASS<TKey, THasher, TEqualComparer, TAllocator>;
+#else
+using unordered_set = momo::stdish::unordered_set_adaptor<momo::HashSetCore<
+	momo::HashSetItemTraits<TKey, momo::MemManagerStd<TAllocator>>,
+	LibcxxHashTraits<TKey, THasher, TEqualComparer>, LibcxxHashSetSettings>>;
+#endif
 LIBCXX_NAMESPACE_STD_END
 
-#ifndef TEST_HAS_NO_EXCEPTIONS
-# define LIBCXX_TEST_FAILURE
-#endif
-#define LIBCXX_TEST_PREFIX "hash_set_" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "hash_set" LIBCXX_TEST_PREFIX_TAIL
 #include LIBCXX_HEADER(UnorderedSetTests.h)
 #undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_hash_set
 
 } // namespace
+
+#undef LIBCXX_TEST_FAILURE

@@ -10,6 +10,8 @@
 
 \**********************************************************/
 
+#if !defined(LIBCXX_TEST_MERGE_SET)
+
 LIBCXX_TEST_BEGIN(bucket)
 #include "unord.set/bucket.pass.cpp"
 LIBCXX_TEST_END
@@ -21,6 +23,8 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(bucket_size)
 #include "unord.set/bucket_size.pass.cpp"
 LIBCXX_TEST_END
+
+#endif // LIBCXX_TEST_MERGE_SET
 
 LIBCXX_TEST_BEGIN(clear)
 #include "unord.set/clear.pass.cpp"
@@ -74,6 +78,8 @@ LIBCXX_TEST_BEGIN(equal_range_non_const)
 #include "unord.set/equal_range_non_const.pass.cpp"
 LIBCXX_TEST_END
 
+#if !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
+
 LIBCXX_TEST_BEGIN(erase_const_iter)
 #include "unord.set/erase_const_iter.pass.cpp"
 LIBCXX_TEST_END
@@ -90,6 +96,8 @@ LIBCXX_TEST_BEGIN(erase_range)
 #include "unord.set/erase_range.pass.cpp"
 LIBCXX_TEST_END
 
+#if !defined(LIBCXX_TEST_HASH_LIST_SET)
+
 LIBCXX_TEST_BEGIN(extract_iterator)
 #include "unord.set/extract_iterator.pass.cpp"
 LIBCXX_TEST_END
@@ -97,6 +105,10 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(extract_key)
 #include "unord.set/extract_key.pass.cpp"
 LIBCXX_TEST_END
+
+#endif // LIBCXX_TEST_HASH_LIST_SET
+
+#endif // !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
 
 LIBCXX_TEST_BEGIN(find_transparent)
 #include "unord.set/find.transparent.pass.cpp"
@@ -148,6 +160,8 @@ LIBCXX_TEST_BEGIN(insert_iter_iter)
 #include "unord.set/insert_iter_iter.pass.cpp"
 LIBCXX_TEST_END
 
+#if (!defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)) && !defined(LIBCXX_TEST_HASH_LIST_SET)
+
 LIBCXX_TEST_BEGIN(insert_node_type)
 #include "unord.set/insert_node_type.pass.cpp"
 LIBCXX_TEST_END
@@ -155,6 +169,8 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(insert_node_type_hint)
 #include "unord.set/insert_node_type_hint.pass.cpp"
 LIBCXX_TEST_END
+
+#endif // (!defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)) && !defined(LIBCXX_TEST_HASH_LIST_SET)
 
 #if TEST_STD_VER >= 23
 LIBCXX_TEST_BEGIN(insert_range)
@@ -182,9 +198,11 @@ LIBCXX_TEST_BEGIN(load_factor)
 #include "unord.set/load_factor.pass.cpp"
 LIBCXX_TEST_END
 
+#if !defined(LIBCXX_TEST_MERGE_SET)
 LIBCXX_TEST_BEGIN(local_iterators)
 #include "unord.set/local_iterators.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(max_bucket_count)
 #include "unord.set/max_bucket_count.pass.cpp"
@@ -198,9 +216,11 @@ LIBCXX_TEST_BEGIN(max_size)
 #include "unord.set/max_size.pass.cpp"
 LIBCXX_TEST_END
 
+#if !defined(LIBCXX_TEST_MERGE_SET) || defined(LIBCXX_TEST_MERGE_HASH)
 LIBCXX_TEST_BEGIN(merge)
 #include "unord.set/merge.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(range_concept_conformance)
 #include "unord.set/range_concept_conformance.compile.pass.cpp"
@@ -239,6 +259,8 @@ LIBCXX_TEST_END
 #ifndef TEST_HAS_NO_EXCEPTIONS
 #ifdef LIBCXX_TEST_FAILURE
 
+#if !defined(LIBCXX_TEST_MERGE_SET)
+
 LIBCXX_TEST_BEGIN(spec_assert_bucket)
 #include "unord.set/spec/assert.bucket.pass.cpp"
 LIBCXX_TEST_END
@@ -247,9 +269,13 @@ LIBCXX_TEST_BEGIN(spec_assert_bucket_size)
 #include "unord.set/spec/assert.bucket_size.pass.cpp"
 LIBCXX_TEST_END
 
+#endif // LIBCXX_TEST_MERGE_SET
+
 LIBCXX_TEST_BEGIN(spec_assert_max_load_factor)
 #include "unord.set/spec/assert.max_load_factor.pass.cpp"
 LIBCXX_TEST_END
+
+#if !defined(LIBCXX_TEST_MERGE_SET)
 
 LIBCXX_TEST_BEGIN(spec_debug_erase_iter)
 #include "unord.set/spec/debug.erase.iter.pass.cpp"
@@ -258,6 +284,8 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(spec_debug_erase_iter_iter)
 #include "unord.set/spec/debug.erase.iter_iter.pass.cpp"
 LIBCXX_TEST_END
+
+#endif // LIBCXX_TEST_MERGE_SET
 
 LIBCXX_TEST_BEGIN(spec_debug_insert_hint_const_lvalue)
 #include "unord.set/spec/debug.insert.hint_const_lvalue.pass.cpp"
@@ -277,6 +305,8 @@ LIBCXX_TEST_BEGIN(spec_debug_local_iterator_dereference)
 LIBCXX_TEST_END
 #endif
 
+#if !defined(LIBCXX_TEST_MERGE_SET)
+
 LIBCXX_TEST_BEGIN(spec_debug_local_iterator_increment)
 #include "unord.set/spec/debug.local_iterator.increment.pass.cpp"
 LIBCXX_TEST_END
@@ -284,6 +314,8 @@ LIBCXX_TEST_END
 LIBCXX_TEST_BEGIN(spec_debug_swap)
 #include "unord.set/spec/debug.swap.pass.cpp"
 LIBCXX_TEST_END
+
+#endif // LIBCXX_TEST_MERGE_SET
 
 #endif // LIBCXX_TEST_FAILURE
 #endif // TEST_HAS_NO_EXCEPTIONS
@@ -312,7 +344,7 @@ LIBCXX_TEST_BEGIN(cnstr_copy_alloc)
 #include "unord.set/unord.set.cnstr/copy_alloc.pass.cpp"
 LIBCXX_TEST_END
 
-#ifdef LIBCXX_TEST_DEFAULT_BUCKET
+#ifdef LIBCXX_TEST_CLASS
 LIBCXX_TEST_BEGIN(cnstr_deduct)
 #include "unord.set/unord.set.cnstr/deduct.pass.cpp"
 LIBCXX_TEST_END

@@ -66,133 +66,133 @@ void main()
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::unordered_set s(std::begin(arr), std::end(arr));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::unordered_set s(std::begin(arr), std::end(arr), 42);
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42);
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::unordered_set s(std::begin(arr), std::end(arr), 42, std::hash<int64_t>());
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42, std::hash<int64_t>());
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int64_t>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<int64_t>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::unordered_set s(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), test_allocator<int>(0, 40));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), test_allocator<int>(0, 40));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<int64_t>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 40);
     }
 
     {
-    momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>> source;
-    momo::stdish::unordered_set s(source);
+    LIBCXX_TEST_CLASS<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>> source;
+    LIBCXX_TEST_CLASS s(source);
     ASSERT_SAME_TYPE(decltype(s), decltype(source));
     assert(s.size() == 0);
     }
 
     {
-    momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>> source;
-    momo::stdish::unordered_set s{source};  // braces instead of parens
+    LIBCXX_TEST_CLASS<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>> source;
+    LIBCXX_TEST_CLASS s{source};  // braces instead of parens
     ASSERT_SAME_TYPE(decltype(s), decltype(source));
     assert(s.size() == 0);
     }
 
     {
-    momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>> source;
-    momo::stdish::unordered_set s(source, test_allocator<int>(0, 41));
+    LIBCXX_TEST_CLASS<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>> source;
+    LIBCXX_TEST_CLASS s(source, test_allocator<int>(0, 41));
     ASSERT_SAME_TYPE(decltype(s), decltype(source));
     assert(s.size() == 0);
     assert(s.get_allocator().get_id() == 41);
     }
 
     {
-    momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>> source;
-    momo::stdish::unordered_set s{source, test_allocator<int>(0, 42)};  // braces instead of parens
+    LIBCXX_TEST_CLASS<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>> source;
+    LIBCXX_TEST_CLASS s{source, test_allocator<int>(0, 42)};  // braces instead of parens
     ASSERT_SAME_TYPE(decltype(s), decltype(source));
     assert(s.size() == 0);
     assert(s.get_allocator().get_id() == 42);
     }
 
     {
-    momo::stdish::unordered_set s{ 1, 2, 1, INT_MAX, 3 };
+    LIBCXX_TEST_CLASS s{ 1, 2, 1, INT_MAX, 3 };
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
-    momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42);
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42);
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
-    momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>());
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>());
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int64_t>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<int64_t>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
-    momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>(), std::equal_to<>());
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>(), std::equal_to<>());
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<int64_t>, std::equal_to<>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
 
     {
-    momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>(), std::equal_to<>(), test_allocator<int>(0, 43));
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>(), std::equal_to<>(), test_allocator<int>(0, 43));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<int64_t>, std::equal_to<>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 43);
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::unordered_set s(std::begin(arr), std::end(arr), 42, test_allocator<int>(0, 44));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42, test_allocator<int>(0, 44));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 44);
     }
 
     {
     const int arr[] = { 1, 2, 1, INT_MAX, 3 };
-    momo::stdish::unordered_set s(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), test_allocator<int>(0, 44));
+    LIBCXX_TEST_CLASS s(std::begin(arr), std::end(arr), 42, std::hash<int64_t>(), test_allocator<int>(0, 44));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<int64_t>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 44);
     }
 
     {
-    momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, test_allocator<int>(0, 43));
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, test_allocator<int>(0, 43));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, momo::HashCoder<int>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 43);
     }
 
     {
-    momo::stdish::unordered_set s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>(), test_allocator<int>(0, 42));
+    LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42, std::hash<int64_t>(), test_allocator<int>(0, 42));
 
-    ASSERT_SAME_TYPE(decltype(s), momo::stdish::unordered_set<int, std::hash<int64_t>, std::equal_to<int>, test_allocator<int>>);
+    ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int, std::hash<int64_t>, std::equal_to<int>, test_allocator<int>>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     assert(s.get_allocator().get_id() == 42);
     }
