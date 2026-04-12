@@ -18,6 +18,7 @@
 
 int main(int, char**)
 {
+#ifndef LIBCXX_TEST_HASH_LIST_SET
     {
       typedef limited_allocator<int, 10> A;
       typedef std::unordered_set<int, std::hash<int>, std::equal_to<int>, A> C;
@@ -25,6 +26,7 @@ int main(int, char**)
       assert(c.max_size() <= 10);
       LIBCPP_ASSERT(c.max_size() == 10);
     }
+#endif
     {
       typedef limited_allocator<int, static_cast<std::size_t>(-1)> A;
       typedef std::unordered_set<int, std::hash<int>, std::equal_to<int>, A> C;

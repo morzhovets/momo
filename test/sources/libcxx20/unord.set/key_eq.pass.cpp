@@ -26,7 +26,8 @@ int main(int, char**) {
   std::pair<set_type::iterator, bool> p1 = s.insert(1);
   std::pair<set_type::iterator, bool> p2 = s.insert(2);
 
-#ifndef LIBCPP_HAS_BAD_NEWS_FOR_MOMO
+#ifdef LIBCXX_TEST_HASH_LIST_SET
+#else
   p1.first = s.find(1);
 #endif
 

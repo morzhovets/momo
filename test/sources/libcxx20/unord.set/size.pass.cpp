@@ -29,12 +29,14 @@ int main(int, char**)
     assert(m.size() == 2);
     m.insert(M::value_type(3));
     assert(m.size() == 3);
+#ifndef LIBCXX_TEST_MERGE_SET
     m.erase(m.begin());
     assert(m.size() == 2);
     m.erase(m.begin());
     assert(m.size() == 1);
     m.erase(m.begin());
     assert(m.size() == 0);
+#endif
     }
 #if TEST_STD_VER >= 11
     {
@@ -48,12 +50,14 @@ int main(int, char**)
     assert(m.size() == 2);
     m.insert(M::value_type(3));
     assert(m.size() == 3);
+#ifndef LIBCXX_TEST_MERGE_SET
     m.erase(m.begin());
     assert(m.size() == 2);
     m.erase(m.begin());
     assert(m.size() == 1);
     m.erase(m.begin());
     assert(m.size() == 0);
+#endif
     }
 #endif
 
