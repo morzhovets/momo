@@ -31,10 +31,7 @@ namespace std
 {
 	using namespace ::std;
 
-	template<typename TKey,
-		typename TLessComparer = std::less<TKey>,
-		typename TAllocator = std::allocator<TKey>>
-	using set = momo::stdish::set<TKey, TLessComparer, TAllocator>;
+	using momo::stdish::set;
 }
 
 #define LIBCXX_TEST_CLASS momo::stdish::set

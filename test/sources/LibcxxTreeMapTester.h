@@ -16,6 +16,8 @@
 
 #include "../../include/momo/stdish/map.h"
 
+#include "../../include/momo/stdish/vector.h"
+
 namespace
 {
 
@@ -60,6 +62,8 @@ namespace std
 		LibcxxTreeMapKeyValueTraits<TKey, TMapped, TAllocator>,
 		LibcxxTreeTraits<TKey, TLessComparer>>>;
 #endif
+
+	using momo::stdish::vector;
 }
 
 #define LIBCXX_TEST_PREFIX "tree_map" LIBCXX_TEST_PREFIX_TAIL
