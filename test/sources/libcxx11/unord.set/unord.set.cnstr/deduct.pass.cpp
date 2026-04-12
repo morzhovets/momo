@@ -127,12 +127,14 @@ void main()
     assert(s.get_allocator().get_id() == 42);
     }
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     LIBCXX_TEST_CLASS s{ 1, 2, 1, INT_MAX, 3 };
 
     ASSERT_SAME_TYPE(decltype(s), LIBCXX_TEST_CLASS<int>);
     assert(std::is_permutation(s.begin(), s.end(), std::begin(expected_s), std::end(expected_s)));
     }
+#endif
 
     {
     LIBCXX_TEST_CLASS s({ 1, 2, 1, INT_MAX, 3 }, 42);
