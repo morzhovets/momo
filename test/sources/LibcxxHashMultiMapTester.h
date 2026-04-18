@@ -62,11 +62,8 @@ namespace std
 		LibcxxHashMultiMapSettings>>;
 #endif
 
-	template<typename TKey>
-	using set = momo::stdish::set<TKey>;
-
-	template<typename TKey>
-	using multiset = momo::stdish::multiset<TKey>;
+	using momo::stdish::set;
+	using momo::stdish::multiset;
 }
 
 #define LIBCXX_TEST_PREFIX "hash_multimap" LIBCXX_TEST_PREFIX_TAIL

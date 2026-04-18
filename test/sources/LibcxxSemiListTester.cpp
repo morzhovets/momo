@@ -37,8 +37,7 @@ namespace std
 		typename TAllocator = std::allocator<TValue>>
 	using list = momo::stdish::semi_list<TValue, TAllocator>;
 
-	template<typename TKey>
-	using set = momo::stdish::set<TKey>;
+	using momo::stdish::set;
 }
 
 #define LIBCXX_TEST_CLASS momo::stdish::semi_list
