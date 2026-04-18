@@ -156,11 +156,13 @@ int main(int, char**)
     assert(m.size() == 0);
     }
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     LIBCXX_TEST_CLASS m { P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
     ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
+#endif
 
     {
     LIBCXX_TEST_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42);
@@ -217,6 +219,7 @@ int main(int, char**)
     assert(m.get_allocator().get_id() == 48);
     }
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     // Examples from LWG3025
     LIBCXX_TEST_CLASS m{std::pair{1, 1}, {2, 2}, {3, 3}};
@@ -225,6 +228,7 @@ int main(int, char**)
     LIBCXX_TEST_CLASS m2{m.begin(), m.end()};
     ASSERT_SAME_TYPE(decltype(m2), LIBCXX_TEST_CLASS<int, int>);
     }
+#endif
 
     {
     // Examples from LWG3531

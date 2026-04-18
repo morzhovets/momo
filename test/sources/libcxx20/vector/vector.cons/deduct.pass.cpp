@@ -65,12 +65,14 @@ TEST_CONSTEXPR_CXX20 bool tests() {
     assert(vec.size() == 1);
     }
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     LIBCXX_TEST_CLASS vec{1U, 2U, 3U, 4U, 5U}; // vector(initializer-list)
     static_assert(std::is_same_v<decltype(vec)::value_type, unsigned>, "");
     assert(vec.size() == 5);
     assert(vec[2] == 3U);
     }
+#endif
 
     {
     LIBCXX_TEST_CLASS vec({1.0, 2.0, 3.0, 4.0}, test_allocator<double>()); // vector(initializer-list, allocator)
