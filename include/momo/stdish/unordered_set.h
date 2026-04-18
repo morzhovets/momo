@@ -142,21 +142,20 @@ public:
 	{
 	}
 
-	unordered_set_adaptor(std::initializer_list<value_type> values,
-		size_type bucketCount, const allocator_type& alloc = allocator_type())
+	unordered_set_adaptor(std::initializer_list<value_type> values, size_type bucketCount,
+		const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount), MemManager(alloc))
 	{
 	}
 
-	unordered_set_adaptor(std::initializer_list<value_type> values,
-		size_type bucketCount, const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+	unordered_set_adaptor(std::initializer_list<value_type> values, size_type bucketCount,
+		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount, hashFunc), MemManager(alloc))
 	{
 	}
 
-	unordered_set_adaptor(std::initializer_list<value_type> values,
-		size_type bucketCount, const hasher& hashFunc, const key_equal& equalComp,
-		const allocator_type& alloc = allocator_type())
+	unordered_set_adaptor(std::initializer_list<value_type> values, size_type bucketCount,
+		const hasher& hashFunc, const key_equal& equalComp, const allocator_type& alloc = allocator_type())
 		: mHashSet(values, HashTraits(bucketCount, hashFunc, equalComp), MemManager(alloc))
 	{
 	}
@@ -180,8 +179,8 @@ public:
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_set_adaptor(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
-		const allocator_type& alloc = allocator_type())
+	unordered_set_adaptor(std::from_range_t, Range&& values, size_type bucketCount,
+		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
 		: unordered_set_adaptor(bucketCount, hashFunc, alloc)
 	{
 		insert_range(std::forward<Range>(values));
@@ -189,8 +188,8 @@ public:
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_set_adaptor(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalComp, const allocator_type& alloc = allocator_type())
+	unordered_set_adaptor(std::from_range_t, Range&& values, size_type bucketCount,
+		const hasher& hashFunc, const key_equal& equalComp, const allocator_type& alloc = allocator_type())
 		: unordered_set_adaptor(bucketCount, hashFunc, equalComp, alloc)
 	{
 		insert_range(std::forward<Range>(values));
