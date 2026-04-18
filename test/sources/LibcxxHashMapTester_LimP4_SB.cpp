@@ -16,8 +16,8 @@
 
 #include "../../include/momo/details/HashBucketLimP4.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketLimP4<3>
-#define LIBCXX_TEST_PREFIX_TAIL "limp4_sb"
+#define LIBCXX_TEST_HASH_BUCKET momo::HashBucketLimP4<3>
+#define LIBCXX_TEST_PREFIX_TAIL "_limp4_sb"
 #define LIBCXX_TEST_SAFE_MAP_BRACKETS
 
 #include "LibcxxHashMapTester.h"

@@ -16,39 +16,9 @@
 
 #include "../../include/momo/details/HashBucketOpen8.h"
 
-//#define LIBCXX_TEST_BUCKET momo::HashBucketOpen8
-//#define LIBCXX_TEST_PREFIX_TAIL "open8"
+#define LIBCXX_TEST_CLASS momo::stdish::unordered_map_open
+#define LIBCXX_TEST_PREFIX_TAIL "_open8"
 
-//#include "LibcxxHashMapTester.h"
-
-#include "LibcxxTester.h"
-
-#include "../../include/momo/stdish/unordered_map.h"
-
-namespace
-{
-
-using namespace libcxx_insert_range_maps_sets;
-using namespace libcxx_from_range_unord;
-
-namespace libcxx_hash_map
-{
-
-LIBCXX_NAMESPACE_STD_BEGIN
-template<typename TKey, typename TMapped,
-	typename THasher = std::hash<TKey>,
-	typename TEqualComparer = std::equal_to<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using unordered_map = momo::stdish::unordered_map_open<TKey, TMapped,
-	THasher, TEqualComparer, TAllocator>;
-LIBCXX_NAMESPACE_STD_END
-
-#define LIBCXX_TEST_PREFIX "hash_map_open"
-#include LIBCXX_HEADER(UnorderedMapTests.h)
-#undef LIBCXX_TEST_PREFIX
-
-} // namespace libcxx_hash_map
-
-} // namespace
+#include "LibcxxHashMapTester.h"
 
 #endif // TEST_LIBCXX_HASH_MAP

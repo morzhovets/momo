@@ -9,6 +9,7 @@
   momo/stdish/unordered_map.h
 
   namespace momo::stdish:
+    class unordered_map_adaptor
     class unordered_map
     class unordered_map_open
 
@@ -26,39 +27,8 @@ namespace momo
 namespace stdish
 {
 
-/*!
-	\brief
-	`momo::stdish::unordered_map` is similar to `std::unordered_map`, but
-	much more efficient in memory usage. The implementation is based on
-	hash table with buckets in the form of small arrays.
-
-	\details
-	Deviations from the `std::unordered_map`:
-	1. Container items must be movable (preferably without exceptions)
-	or copyable, similar to items of `std::vector`.
-	2. After each addition or removal of the item all iterators and
-	references to items become invalid and should not be used.
-	3. Type `reference` is not the same as `value_type&`, so
-	`for (auto& p : map)` is illegal, but `for (auto p : map)` or
-	`for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
-	4. Functions `clear`, `begin`, `cbegin` and iterator increment take
-	O(bucket_count) time in worst case.
-	5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
-	or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
-	functions `erase` can throw exceptions.
-	6. Functions `merge`, `extract` and `insert(node_type&&)` move items.
-
-	It is allowed to pass to functions `insert` and `emplace` references
-	to items within the container.
-*/
-
-template<typename TKey, typename TMapped,
-	typename THasher = HashCoder<TKey>,
-	typename TEqualComparer = std::equal_to<TKey>,
-	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>,
-	typename THashMap = HashMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualComparer>,
-		MemManagerStd<TAllocator>>>
-class unordered_map
+template<typename THashMap>
+class unordered_map_adaptor
 {
 private:
 	typedef THashMap HashMap;
@@ -68,11 +38,10 @@ private:
 	typedef typename HashMap::Iterator HashMapIterator;
 
 public:
-	typedef TKey key_type;
-	typedef TMapped mapped_type;
-	typedef THasher hasher;
-	typedef TEqualComparer key_equal;
-	typedef TAllocator allocator_type;
+	typedef typename HashMap::Key key_type;
+	typedef typename HashMap::Value mapped_type;
+	typedef typename HashTraits::Hasher hasher;
+	typedef typename HashTraits::EqualComparer key_equal;
 
 	typedef HashMap nested_container_type;
 
@@ -80,6 +49,8 @@ public:
 	typedef ptrdiff_t difference_type;
 
 	typedef std::pair<const key_type, mapped_type> value_type;
+	typedef typename std::allocator_traits<typename MemManager::ByteAllocator>
+		::template rebind_alloc<value_type> allocator_type;
 
 	typedef momo::internal::HashDerivedIterator<HashMapIterator,
 		momo::internal::MapReferenceStd> iterator;
@@ -125,128 +96,127 @@ private:
 	};
 
 public:
-	unordered_map()
+	unordered_map_adaptor()
 	{
 	}
 
-	explicit unordered_map(const allocator_type& alloc)
+	explicit unordered_map_adaptor(const allocator_type& alloc)
 		: mHashMap(HashTraits(), MemManager(alloc))
 	{
 	}
 
-	explicit unordered_map(size_type bucketCount, const allocator_type& alloc = allocator_type())
+	explicit unordered_map_adaptor(size_type bucketCount, const allocator_type& alloc = allocator_type())
 		: mHashMap(HashTraits(bucketCount), MemManager(alloc))
 	{
 	}
 
-	unordered_map(size_type bucketCount, const hasher& hashFunc,
+	unordered_map_adaptor(size_type bucketCount, const hasher& hashFunc,
 		const allocator_type& alloc = allocator_type())
 		: mHashMap(HashTraits(bucketCount, hashFunc), MemManager(alloc))
 	{
 	}
 
-	unordered_map(size_type bucketCount, const hasher& hashFunc, const key_equal& equalComp,
+	unordered_map_adaptor(size_type bucketCount, const hasher& hashFunc, const key_equal& equalComp,
 		const allocator_type& alloc = allocator_type())
 		: mHashMap(HashTraits(bucketCount, hashFunc, equalComp), MemManager(alloc))
 	{
 	}
 
 	template<typename Iterator>
-	unordered_map(Iterator first, Iterator last)
+	unordered_map_adaptor(Iterator first, Iterator last)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	unordered_map(Iterator first, Iterator last, size_type bucketCount,
+	unordered_map_adaptor(Iterator first, Iterator last, size_type bucketCount,
 		const allocator_type& alloc = allocator_type())
-		: unordered_map(bucketCount, alloc)
+		: unordered_map_adaptor(bucketCount, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	unordered_map(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
+	unordered_map_adaptor(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
 		const allocator_type& alloc = allocator_type())
-		: unordered_map(bucketCount, hashFunc, alloc)
+		: unordered_map_adaptor(bucketCount, hashFunc, alloc)
 	{
 		insert(first, last);
 	}
 
 	template<typename Iterator>
-	unordered_map(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
+	unordered_map_adaptor(Iterator first, Iterator last, size_type bucketCount, const hasher& hashFunc,
 		const key_equal& equalComp, const allocator_type& alloc = allocator_type())
-		: unordered_map(bucketCount, hashFunc, equalComp, alloc)
+		: unordered_map_adaptor(bucketCount, hashFunc, equalComp, alloc)
 	{
 		insert(first, last);
 	}
 
-	unordered_map(std::initializer_list<momo::internal::Identity<value_type>> values)
-		: unordered_map(values.begin(), values.end())
+	unordered_map_adaptor(std::initializer_list<value_type> values)
+		: unordered_map_adaptor(values.begin(), values.end())
 	{
 	}
 
-	unordered_map(std::initializer_list<momo::internal::Identity<value_type>> values,
-		size_type bucketCount, const allocator_type& alloc = allocator_type())
-		: unordered_map(values.begin(), values.end(), bucketCount, alloc)
-	{
-	}
-
-	unordered_map(std::initializer_list<momo::internal::Identity<value_type>> values,
-		size_type bucketCount, const hasher& hashFunc, const allocator_type& alloc = allocator_type())
-		: unordered_map(values.begin(), values.end(), bucketCount, hashFunc, alloc)
-	{
-	}
-
-	unordered_map(std::initializer_list<momo::internal::Identity<value_type>> values,
-		size_type bucketCount, const hasher& hashFunc, const key_equal& equalComp,
+	unordered_map_adaptor(std::initializer_list<value_type> values, size_type bucketCount,
 		const allocator_type& alloc = allocator_type())
-		: unordered_map(values.begin(), values.end(), bucketCount, hashFunc, equalComp, alloc)
+		: unordered_map_adaptor(values.begin(), values.end(), bucketCount, alloc)
+	{
+	}
+
+	unordered_map_adaptor(std::initializer_list<value_type> values, size_type bucketCount,
+		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+		: unordered_map_adaptor(values.begin(), values.end(), bucketCount, hashFunc, alloc)
+	{
+	}
+
+	unordered_map_adaptor(std::initializer_list<value_type> values, size_type bucketCount,
+		const hasher& hashFunc, const key_equal& equalComp, const allocator_type& alloc = allocator_type())
+		: unordered_map_adaptor(values.begin(), values.end(), bucketCount, hashFunc, equalComp, alloc)
 	{
 	}
 
 #ifdef MOMO_HAS_CONTAINERS_RANGES
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_map(std::from_range_t, Range&& values)
+	unordered_map_adaptor(std::from_range_t, Range&& values)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_map(std::from_range_t, Range&& values, size_type bucketCount,
+	unordered_map_adaptor(std::from_range_t, Range&& values, size_type bucketCount,
 		const allocator_type& alloc = allocator_type())
-		: unordered_map(bucketCount, alloc)
+		: unordered_map_adaptor(bucketCount, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_map(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
-		const allocator_type& alloc = allocator_type())
-		: unordered_map(bucketCount, hashFunc, alloc)
+	unordered_map_adaptor(std::from_range_t, Range&& values, size_type bucketCount,
+		const hasher& hashFunc, const allocator_type& alloc = allocator_type())
+		: unordered_map_adaptor(bucketCount, hashFunc, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
-	unordered_map(std::from_range_t, Range&& values, size_type bucketCount, const hasher& hashFunc,
-		const key_equal& equalComp, const allocator_type& alloc = allocator_type())
-		: unordered_map(bucketCount, hashFunc, equalComp, alloc)
+	unordered_map_adaptor(std::from_range_t, Range&& values, size_type bucketCount,
+		const hasher& hashFunc, const key_equal& equalComp, const allocator_type& alloc = allocator_type())
+		: unordered_map_adaptor(bucketCount, hashFunc, equalComp, alloc)
 	{
 		insert_range(std::forward<Range>(values));
 	}
 #endif // MOMO_HAS_CONTAINERS_RANGES
 
-	unordered_map(unordered_map&& right)
-		: unordered_map(std::move(right), right.get_allocator())
+	unordered_map_adaptor(unordered_map_adaptor&& right)
+		: unordered_map_adaptor(std::move(right), right.get_allocator())
 	{
 	}
 
-	unordered_map(unordered_map&& right, const momo::internal::Identity<allocator_type>& alloc)
+	unordered_map_adaptor(unordered_map_adaptor&& right, const allocator_type& alloc)
 		: mHashMap(right.mHashMap.GetHashTraits(), MemManager(alloc))
 	{
 		if (right.get_allocator() == alloc)
@@ -260,41 +230,41 @@ public:
 		}
 	}
 
-	unordered_map(const unordered_map& right)
+	unordered_map_adaptor(const unordered_map_adaptor& right)
 		: mHashMap(right.mHashMap)
 	{
 	}
 
-	unordered_map(const unordered_map& right, const momo::internal::Identity<allocator_type>& alloc)
+	unordered_map_adaptor(const unordered_map_adaptor& right, const allocator_type& alloc)
 		: mHashMap(right.mHashMap, MemManager(alloc))
 	{
 	}
 
-	~unordered_map() = default;
+	~unordered_map_adaptor() = default;
 
-	unordered_map& operator=(unordered_map&& right)
-		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<unordered_map>::value)
+	unordered_map_adaptor& operator=(unordered_map_adaptor&& right)
+		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<unordered_map_adaptor>::value)
 	{
 		return momo::internal::ContainerAssignerStd::Move(std::move(right), *this);
 	}
 
-	unordered_map& operator=(const unordered_map& right)
+	unordered_map_adaptor& operator=(const unordered_map_adaptor& right)
 	{
 		return momo::internal::ContainerAssignerStd::Copy(right, *this);
 	}
 
-	unordered_map& operator=(std::initializer_list<value_type> values)
+	unordered_map_adaptor& operator=(std::initializer_list<value_type> values)
 	{
 		mHashMap = HashMap(values, mHashMap.GetHashTraits(), MemManager(get_allocator()));
 		return *this;
 	}
 
-	void swap(unordered_map& right) noexcept
+	void swap(unordered_map_adaptor& right) noexcept
 	{
 		momo::internal::ContainerAssignerStd::Swap(*this, right);
 	}
 
-	friend void swap(unordered_map& left, unordered_map& right) noexcept
+	friend void swap(unordered_map_adaptor& left, unordered_map_adaptor& right) noexcept
 	{
 		left.swap(right);
 	}
@@ -625,7 +595,7 @@ public:
 	}
 
 	template<typename ValueFilter>
-	friend size_type erase_if(unordered_map& cont, const ValueFilter& valueFilter)
+	friend size_type erase_if(unordered_map_adaptor& cont, const ValueFilter& valueFilter)
 	{
 		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
 			{ return valueFilter(const_reference(key, mapped)); };
@@ -793,7 +763,7 @@ public:
 		return static_cast<float>(count) / static_cast<float>(bucketCount);
 	}
 
-	friend bool operator==(const unordered_map& left, const unordered_map& right)
+	friend bool operator==(const unordered_map_adaptor& left, const unordered_map_adaptor& right)
 	{
 		if (left.size() != right.size())
 			return false;
@@ -808,7 +778,7 @@ public:
 		return true;
 	}
 
-	friend bool operator!=(const unordered_map& left, const unordered_map& right)
+	friend bool operator!=(const unordered_map_adaptor& left, const unordered_map_adaptor& right)
 	{
 		return !(left == right);
 	}
@@ -939,6 +909,59 @@ private:
 
 /*!
 	\brief
+	`momo::stdish::unordered_map` is similar to `std::unordered_map`, but
+	much more efficient in memory usage. The implementation is based on
+	hash table with buckets in the form of small arrays.
+
+	\details
+	Deviations from the `std::unordered_map`:
+	1. Container items must be movable (preferably without exceptions)
+	or copyable, similar to items of `std::vector`.
+	2. After each addition or removal of the item all iterators and
+	references to items become invalid and should not be used.
+	3. Type `reference` is not the same as `value_type&`, so
+	`for (auto& p : map)` is illegal, but `for (auto p : map)` or
+	`for (const auto& p : map)` or `for (auto&& p : map)` is allowed.
+	4. Functions `clear`, `begin`, `cbegin` and iterator increment take
+	O(bucket_count) time in worst case.
+	5. If `ObjectManager<key_type>::isNothrowAnywayAssignable` is false
+	or `ObjectManager<mapped_type>::isNothrowAnywayAssignable` is false,
+	functions `erase` can throw exceptions.
+	6. Functions `merge`, `extract` and `insert(node_type&&)` move items.
+
+	It is allowed to pass to functions `insert` and `emplace` references
+	to items within the container.
+*/
+
+template<typename TKey, typename TMapped,
+	typename THasher = HashCoder<TKey>,
+	typename TEqualComparer = std::equal_to<TKey>,
+	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
+class unordered_map : public unordered_map_adaptor<HashMap<TKey, TMapped,
+	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>, MemManagerStd<TAllocator>>>
+{
+private:
+	typedef unordered_map_adaptor<momo::HashMap<TKey, TMapped,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketDefault>,
+			MemManagerStd<TAllocator>>> UnorderedMapAdaptor;
+
+public:
+	using UnorderedMapAdaptor::UnorderedMapAdaptor;
+
+	unordered_map& operator=(std::initializer_list<typename UnorderedMapAdaptor::value_type> values)
+	{
+		UnorderedMapAdaptor::operator=(values);
+		return *this;
+	}
+
+	friend void swap(unordered_map& left, unordered_map& right) noexcept
+	{
+		left.swap(right);
+	}
+};
+
+/*!
+	\brief
 	`momo::stdish::unordered_map_open` is similar to `std::unordered_map`,
 	but much more efficient in operation speed. The implementation is based
 	on open addressing hash table.
@@ -950,42 +973,26 @@ template<typename TKey, typename TMapped,
 	typename THasher = HashCoder<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-class unordered_map_open : public unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
-	HashMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
-		MemManagerStd<TAllocator>>>
+class unordered_map_open : public unordered_map_adaptor<HashMap<TKey, TMapped,
+	HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>, MemManagerStd<TAllocator>>>
 {
 private:
-	typedef unordered_map<TKey, TMapped, THasher, TEqualComparer, TAllocator,
-		momo::HashMap<TKey, TMapped, HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
-		MemManagerStd<TAllocator>>> UnorderedMap;
+	typedef unordered_map_adaptor<momo::HashMap<TKey, TMapped,
+		HashTraitsStd<TKey, THasher, TEqualComparer, HashBucketOpenDefault>,
+			MemManagerStd<TAllocator>>> UnorderedMapAdaptor;
 
 public:
-	using typename UnorderedMap::key_type;
-	using typename UnorderedMap::mapped_type;
-	using typename UnorderedMap::size_type;
-	using typename UnorderedMap::value_type;
-	using typename UnorderedMap::const_reference;
+	using UnorderedMapAdaptor::UnorderedMapAdaptor;
 
-public:
-	using UnorderedMap::UnorderedMap;
-
-	unordered_map_open& operator=(std::initializer_list<value_type> values)
+	unordered_map_open& operator=(std::initializer_list<typename UnorderedMapAdaptor::value_type> values)
 	{
-		UnorderedMap::operator=(values);
+		UnorderedMapAdaptor::operator=(values);
 		return *this;
 	}
 
 	friend void swap(unordered_map_open& left, unordered_map_open& right) noexcept
 	{
 		left.swap(right);
-	}
-
-	template<typename ValueFilter>
-	friend size_type erase_if(unordered_map_open& cont, const ValueFilter& valueFilter)
-	{
-		auto pairFilter = [&valueFilter] (const key_type& key, const mapped_type& mapped)
-			{ return valueFilter(const_reference(key, mapped)); };
-		return cont.get_nested_container().Remove(pairFilter);
 	}
 };
 
@@ -1042,7 +1049,12 @@ template<typename QKey, typename Mapped, typename Hasher, typename EqualComparer
 	typename Key = std::remove_const_t<QKey>, \
 	typename Allocator = std::allocator<std::pair<const Key, Mapped>>, \
 	typename = internal::hash_checker<Key, Allocator, Hasher, EqualComparer>> \
-unordered_map(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
+unordered_map(std::initializer_list<std::pair<QKey, Mapped>>, size_t, \
+	Hasher, EqualComparer, Allocator = Allocator()) \
+	-> unordered_map<Key, Mapped, Hasher, EqualComparer, Allocator>; \
+template<typename Key, typename Mapped, typename Hasher, typename EqualComparer, typename Allocator> \
+unordered_map(unordered_map<Key, Mapped, Hasher, EqualComparer, Allocator>, \
+	momo::internal::Identity<Allocator>) \
 	-> unordered_map<Key, Mapped, Hasher, EqualComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_map)

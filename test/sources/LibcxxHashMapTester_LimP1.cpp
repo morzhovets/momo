@@ -17,8 +17,8 @@
 
 #include "../../include/momo/details/HashBucketLimP1.h"
 
-#define LIBCXX_TEST_BUCKET momo::HashBucketLimP1<>
-#define LIBCXX_TEST_PREFIX_TAIL "limp1"
+#define LIBCXX_TEST_HASH_BUCKET momo::HashBucketLimP1<>
+#define LIBCXX_TEST_PREFIX_TAIL "_limp1"
 
 #include "LibcxxHashMapTester.h"
 
