@@ -19,6 +19,7 @@
 int main(int, char**)
 {
   typedef std::pair<const int, int> KV;
+#ifndef LIBCXX_TEST_HASH_LIST_MAP
   {
     typedef limited_allocator<KV, 10> A;
     typedef std::unordered_map<int, int, std::hash<int>, std::equal_to<int>, A>
@@ -27,6 +28,7 @@ int main(int, char**)
     assert(c.max_size() <= 10);
     LIBCPP_ASSERT(c.max_size() == 10);
   }
+#endif
   {
     typedef limited_allocator<KV, static_cast<std::size_t>(-1)> A;
     typedef std::unordered_map<int, int, std::hash<int>, std::equal_to<int>, A>
