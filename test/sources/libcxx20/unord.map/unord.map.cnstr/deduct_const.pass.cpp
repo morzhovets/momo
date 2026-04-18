@@ -102,11 +102,13 @@ int main(int, char**)
     assert(m.get_allocator().get_id() == 41);
     }
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     LIBCXX_TEST_CLASS m { PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} };
     ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
+#endif
 
     {
     LIBCXX_TEST_CLASS m({ PC{1,1L}, PC{2,2L}, PC{1,1L}, PC{INT_MAX,1L}, PC{3,1L} }, 42);

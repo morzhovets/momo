@@ -143,11 +143,13 @@ void main()
     assert(m.size() == 0);
     }
 
+#if !(defined(TEST_GCC) && __GNUC__ < 13)
     {
     LIBCXX_TEST_CLASS m { P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} };
     ASSERT_SAME_TYPE(decltype(m), LIBCXX_TEST_CLASS<int, long>);
     assert(std::is_permutation(m.begin(), m.end(), std::begin(expected_m), std::end(expected_m)));
     }
+#endif
 
     {
     LIBCXX_TEST_CLASS m({ P{1,1L}, P{2,2L}, P{1,1L}, P{INT_MAX,1L}, P{3,1L} }, 42);
