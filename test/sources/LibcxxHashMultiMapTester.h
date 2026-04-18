@@ -20,6 +20,10 @@
 # include "../../include/momo/stdish/set.h"
 #endif
 
+#if !defined(LIBCXX_TEST_CLASS) && !defined(TEST_HAS_NO_EXCEPTIONS)
+# define LIBCXX_TEST_FAILURE
+#endif
+
 namespace
 {
 
@@ -29,6 +33,8 @@ namespace libcxx_hash_multimap
 using namespace libcxx_insert_range_maps_sets;
 using namespace libcxx_from_range_unord;
 
+#ifndef LIBCXX_TEST_CLASS
+
 class LibcxxHashMultiMapSettings : public momo::HashMultiMapSettings
 {
 public:
@@ -37,34 +43,36 @@ public:
 	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
 
+#endif // LIBCXX_TEST_CLASS
+
 LIBCXX_NAMESPACE_STD_BEGIN
 
 template<typename TKey, typename TMapped,
 	typename THasher = std::hash<TKey>,
 	typename TEqualComparer = std::equal_to<TKey>,
 	typename TAllocator = std::allocator<std::pair<const TKey, TMapped>>>
-using unordered_multimap = momo::stdish::unordered_multimap<TKey, TMapped, THasher, TEqualComparer, TAllocator,
-	momo::HashMultiMapCore<momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
-		momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_BUCKET>,
+#ifdef LIBCXX_TEST_CLASS
+	using unordered_multimap = LIBCXX_TEST_CLASS<TKey, TMapped, THasher, TEqualComparer, TAllocator>;
+#else
+	using unordered_multimap = momo::stdish::unordered_multimap_adaptor<momo::HashMultiMapCore<
+		momo::HashMultiMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>,
+		momo::HashTraitsStd<TKey, THasher, TEqualComparer, LIBCXX_TEST_HASH_BUCKET>,
 		LibcxxHashMultiMapSettings>>;
+#endif
 
 #if TEST_LIBCXX_VERSION >= 20
-template<typename TKey>
-using set = momo::stdish::set<TKey>;
-template<typename TKey>
-using multiset = momo::stdish::multiset<TKey>;
+using momo::stdish::set;
+using momo::stdish::multiset;
 #endif
 
 LIBCXX_NAMESPACE_STD_END
 
-#ifndef TEST_HAS_NO_EXCEPTIONS
-# define LIBCXX_TEST_FAILURE
-#endif
-#define LIBCXX_TEST_PREFIX "hash_multimap_" LIBCXX_TEST_PREFIX_TAIL
+#define LIBCXX_TEST_PREFIX "hash_multimap" LIBCXX_TEST_PREFIX_TAIL
 #include LIBCXX_HEADER(UnorderedMultiMapTests.h)
 #undef LIBCXX_TEST_PREFIX
-#undef LIBCXX_TEST_FAILURE
 
 } // namespace libcxx_hash_multimap
 
 } // namespace
+
+#undef LIBCXX_TEST_FAILURE

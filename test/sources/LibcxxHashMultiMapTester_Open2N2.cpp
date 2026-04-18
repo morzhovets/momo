@@ -6,7 +6,7 @@
   https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
   for details.
 
-  test/sources/LibcxxHashMultiMapTester_Open8.cpp
+  test/sources/LibcxxHashMultiMapTester_Open2N2.cpp
 
 \**********************************************************/
 
@@ -14,10 +14,10 @@
 
 #ifdef TEST_LIBCXX_HASH_MULTI_MAP
 
-#include "../../include/momo/details/HashBucketOpen8.h"
+#include "../../include/momo/details/HashBucketOpen2N2.h"
 
-#define LIBCXX_TEST_CLASS momo::stdish::unordered_multimap_open
-#define LIBCXX_TEST_PREFIX_TAIL "_open8"
+#define LIBCXX_TEST_HASH_BUCKET momo::HashBucketOpen2N2<>
+#define LIBCXX_TEST_PREFIX_TAIL "_open2n2"
 
 #include "LibcxxHashMultiMapTester.h"
 
