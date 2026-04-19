@@ -492,7 +492,7 @@ jobs:
         apt-get install -y ninja-build
         apt-get install -y g++
     - name: Prepare Xenial
-      if: matrix.ubuntu_ver == '18.04'
+      if: matrix.cont_ver == '18.04'
       run: |
         echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main universe" | tee -a /etc/apt/sources.list
         apt-get update
