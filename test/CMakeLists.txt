@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10...4.0)
+cmake_minimum_required(VERSION 3.10...3.28)
 
 project(momo_test
   LANGUAGES CXX)
@@ -53,7 +53,7 @@ if(MOMO_TEST_NO_EXCEPTIONS_RTTI)
   target_compile_definitions(momo_test PRIVATE MOMO_TEST_NO_EXCEPTIONS_RTTI)
   if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    string(REPLACE "/GR" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    string(REPLACE "/GR" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")   # CMP0117, 3.20+
     if(MSVC_VERSION LESS 1910)
       target_compile_options(momo_test PRIVATE /wd4577)
     endif()
@@ -71,7 +71,7 @@ if(MOMO_TEST_EXTRA_SETTINGS)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-  string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")   # CMP0092, 3.15+
   target_compile_options(momo_test PRIVATE /W4 /wd4127 /wd4458 /bigobj)
   target_compile_options(momo_test PRIVATE $<$<NOT:$<CONFIG:Debug>>:/wd4702>)
   if(MSVC_VERSION LESS 1910)
