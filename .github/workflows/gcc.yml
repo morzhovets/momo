@@ -12,86 +12,100 @@ jobs:
         include:
 
         # x64
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
+          cont_ver: '25.10'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
+          cont_ver: '25.10'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04'
           build_type: 'Debug'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
+          cont_ver: '25.10'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
+          cont_ver: '25.10'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26'
+          cont_ver: '25.10'
 
         # ARM64
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23 -Werror -Wno-psabi'
+          cont_ver: '25.10'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror -Wno-psabi'
+          cont_ver: '25.10'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
           build_type: 'Debug'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror -Wno-psabi'
+          cont_ver: '25.10'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror -Wno-psabi'
+          cont_ver: '25.10'
 
-        - gcc_ver: '14'
+        - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26 -Wno-psabi'
+          cont_ver: '25.10'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
+    container: ubuntu:${{ matrix.cont_ver }}
 
     steps:
+    - name: Install tools
+      run: |
+        apt-get update
+        apt-get install -y cmake
+        apt-get install -y ninja-build
     - name: Checkout
       uses: actions/checkout@v6
-#    - name: Install Ninja
-#      run: sudo apt install ninja-build
     - name: Install GCC
-      run: sudo apt install g++-${{ matrix.gcc_ver }}
+      run: apt-get install -y g++-${{ matrix.gcc_ver }}
     - name: Build
       env:
         CXX: g++-${{ matrix.gcc_ver }}
