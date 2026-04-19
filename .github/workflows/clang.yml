@@ -12,31 +12,31 @@ jobs:
         include:
 
         # x64
-        - clang_ver: '3.9'
+        - clang_ver: '3.8'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror'
+          flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
           cont_ver: '18.04'
 
-        - clang_ver: '3.9'
+        - clang_ver: '3.8'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror'
+          flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
           cont_ver: '18.04'
 
-        - clang_ver: '3.9'
+        - clang_ver: '3.8'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
-          flags: '-std=c++11 -Werror'
+          flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
           cont_ver: '18.04'
 
         - clang_ver: '3.9'
@@ -247,31 +247,31 @@ jobs:
           cont_ver: '24.04'
 
         # ARM64
-        - clang_ver: '3.9'
+        - clang_ver: '3.8'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror'
+          flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
           cont_ver: '18.04'
 
-        - clang_ver: '3.9'
+        - clang_ver: '3.8'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror'
+          flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
           cont_ver: '18.04'
 
-        - clang_ver: '3.9'
+        - clang_ver: '3.8'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
-          flags: '-std=c++11 -Werror'
+          flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
           cont_ver: '18.04'
 
         - clang_ver: '3.9'
@@ -491,15 +491,19 @@ jobs:
         apt-get install -y cmake
         apt-get install -y ninja-build
         apt-get install -y g++
+    - name: Prepare Xenial
+      if: matrix.ubuntu_ver == '18.04'
+      run: |
+        echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main universe" | tee -a /etc/apt/sources.list
+        apt-get update
     - name: Checkout
       if: matrix.cont_ver != '18.04'
       uses: actions/checkout@v6
     - name: Checkout 18.04
       if: matrix.cont_ver == '18.04'
-      # Checkout branch_cpp11
       run: |
         apt-get install -y git
-        git clone --depth=1 https://github.com/${{ github.repository }} .
+        git clone --depth=1 --single-branch --branch ${{ github.ref_name }} https://github.com/${{ github.repository }} .
     - name: Install Clang
       run: apt-get install -y clang-${{ matrix.clang_ver }}
     - name: Build

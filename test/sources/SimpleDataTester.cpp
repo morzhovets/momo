@@ -21,6 +21,20 @@
 #include <iostream>
 #include <sstream>
 
+#ifdef MOMO_TEST_HAS_NO_ENUM_HASH
+namespace momo
+{
+	template<>
+	struct HashCoder<DataColumnCodeOffset, size_t>
+	{
+		size_t operator()(const DataColumnCodeOffset& key) const noexcept
+		{
+			return HashCoder<size_t>()(static_cast<size_t>(key));
+		}
+	};
+}
+#endif
+
 namespace
 {
 	typedef momo::DataStructDefault<int, double, std::string> BaseStruct;
@@ -104,7 +118,6 @@ public:
 			std::cout << "ok" << std::endl;
 		}
 
-#if !(defined(TEST_GCC) && __GNUC__ < 6)	// std::hash<enum class>
 		{
 			std::cout << "momo::DataColumnList (struct, -RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<Struct, 4>,
@@ -115,7 +128,6 @@ public:
 			TestData<true>(table, intStruct, dblStruct, strStruct);
 			std::cout << "ok" << std::endl;
 		}
-#endif
 
 		{
 			std::cout << "momo::DataColumnList (string, +RowNumber): " << std::flush;
