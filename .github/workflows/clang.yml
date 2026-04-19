@@ -247,7 +247,7 @@ jobs:
           cont_ver: '24.04'
 
         # ARM64
-        - clang_ver: '3.8'
+        - clang_ver: '3.7'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
@@ -256,7 +256,7 @@ jobs:
           flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
           cont_ver: '18.04'
 
-        - clang_ver: '3.8'
+        - clang_ver: '3.7'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
@@ -265,7 +265,7 @@ jobs:
           flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
           cont_ver: '18.04'
 
-        - clang_ver: '3.8'
+        - clang_ver: '3.7'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           test_libcxx20: 'Off'
@@ -492,7 +492,7 @@ jobs:
         apt-get install -y ninja-build
         apt-get install -y g++
     - name: Prepare Xenial
-      if: matrix.cont_ver == '18.04'
+      if: matrix.cont_ver == '18.04' && matrix.ubuntu_ver == '24.04'
       run: |
         echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main universe" | tee -a /etc/apt/sources.list
         apt-get update
