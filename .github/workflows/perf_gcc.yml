@@ -12,19 +12,20 @@ jobs:
         include:
 
         - type: 'unordered_map'
-          gcc_ver: '14'
+          gcc_ver: '15'
 
         - type: 'unordered_map_open'
-          gcc_ver: '14'
+          gcc_ver: '15'
 
         - type: 'map'
-          gcc_ver: '14'
+          gcc_ver: '15'
 
         - type: 'data_table_static'
-          gcc_ver: '14'
+          gcc_ver: '15'
 
     # x64
     runs-on: ubuntu-24.04
+    container: ubuntu:25.10
 
     steps:
     - name: Checkout hash-table-shootout
@@ -61,7 +62,9 @@ jobs:
       with:
         path: 'momo_cur'
     - name: Install GCC
-      run: sudo apt install g++-${{ matrix.gcc_ver }}
+      run: |
+        apt-get update
+        apt-get install -y g++-${{ matrix.gcc_ver }}
     - name: Build
       run: |
         mkdir build

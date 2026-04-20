@@ -11,43 +11,79 @@ jobs:
       matrix:
         include:
 
-        - win_ver: '2025'
+        # x64
+        - arch: 'x64'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23'
 
-        - win_ver: '2025'
+        - arch: 'x64'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26'
 
-        - win_ver: '2025'
+        - arch: 'x64'
           build_type: 'Debug'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26'
+          flags: '-std=c++26 -Werror'
 
-        - win_ver: '2025'
+        - arch: 'x64'
           build_type: 'Release'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26'
 
-        - win_ver: '2025'
+        - arch: 'x64'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26'
 
-    runs-on: windows-${{ matrix.win_ver }}
+        # x86
+        - arch: 'x86'
+          build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++23'
+
+        - arch: 'x86'
+          build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26'
+
+        - arch: 'x86'
+          build_type: 'Debug'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - arch: 'x86'
+          build_type: 'Release'
+          no_exceptions_rtti: 'On'
+          extra_settings: 'Off'
+          flags: '-std=c++26'
+
+        - arch: 'x86'
+          build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'On'
+          flags: '-std=c++26'
+
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v6
 #    - name: Install Ninja
 #      run: choco install ninja
+    - name: Setup MinGW
+      uses: egor-tensin/setup-mingw@v3
+      with:
+        platform: ${{ matrix.arch }}
     - name: Build
       env:
         CXX: g++

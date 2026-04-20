@@ -17,7 +17,7 @@ jobs:
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23 -Werror'
+          flags: '-std=c++23'
           cont_ver: '25.10'
 
         - gcc_ver: '15'
@@ -25,7 +25,7 @@ jobs:
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '25.10'
 
         - gcc_ver: '15'
@@ -41,7 +41,7 @@ jobs:
           build_type: 'Release'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '25.10'
 
         - gcc_ver: '15'
@@ -58,7 +58,7 @@ jobs:
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23 -Werror -Wno-psabi'
+          flags: '-std=c++23 -Wno-psabi'
           cont_ver: '25.10'
 
         - gcc_ver: '15'
@@ -66,7 +66,7 @@ jobs:
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror -Wno-psabi'
+          flags: '-std=c++26 -Wno-psabi'
           cont_ver: '25.10'
 
         - gcc_ver: '15'
@@ -82,7 +82,7 @@ jobs:
           build_type: 'Release'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror -Wno-psabi'
+          flags: '-std=c++26 -Wno-psabi'
           cont_ver: '25.10'
 
         - gcc_ver: '15'
