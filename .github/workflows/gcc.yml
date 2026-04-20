@@ -18,7 +18,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -Wno-unused-variable -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++11 -Werror -Wno-unused-variable'
           cont_ver: '18.04'
 
         - gcc_ver: '5'
@@ -27,7 +27,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -Wno-unused-variable -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++11 -Werror -Wno-unused-variable'
           cont_ver: '18.04'
 
         - gcc_ver: '5'
@@ -36,7 +36,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
-          flags: '-std=c++11 -Werror -Wno-unused-variable -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++11 -Werror -Wno-unused-variable'
           cont_ver: '18.04'
 
         - gcc_ver: '5'
@@ -45,7 +45,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++14 -Werror -Wno-unused-variable -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++14 -Werror -Wno-unused-variable'
           cont_ver: '18.04'
 
         - gcc_ver: '6'
@@ -199,7 +199,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -Wno-unused-variable -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++11 -Werror -Wno-unused-variable'
           cont_ver: '18.04'
 
         - gcc_ver: '5'
@@ -208,7 +208,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -Wno-unused-variable -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++11 -Werror -Wno-unused-variable'
           cont_ver: '18.04'
 
         - gcc_ver: '5'
@@ -217,7 +217,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
-          flags: '-std=c++11 -Werror -Wno-unused-variable -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++11 -Werror -Wno-unused-variable'
           cont_ver: '18.04'
 
         - gcc_ver: '5'
@@ -226,7 +226,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++14 -Werror -Wno-unused-variable -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++14 -Werror -Wno-unused-variable'
           cont_ver: '18.04'
 
         - gcc_ver: '6'

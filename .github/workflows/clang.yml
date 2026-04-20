@@ -12,31 +12,31 @@ jobs:
         include:
 
         # x64
-        - clang_ver: '3.8'
+        - clang_ver: '3.9'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++11 -Werror'
           cont_ver: '18.04'
 
-        - clang_ver: '3.8'
+        - clang_ver: '3.9'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++11 -Werror'
           cont_ver: '18.04'
 
-        - clang_ver: '3.8'
+        - clang_ver: '3.9'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
-          flags: '-std=c++11 -Werror -DMOMO_TEST_HAS_NO_ENUM_HASH'
+          flags: '-std=c++11 -Werror'
           cont_ver: '18.04'
 
         - clang_ver: '3.9'
@@ -491,11 +491,6 @@ jobs:
         apt-get install -y cmake
         apt-get install -y ninja-build
         apt-get install -y g++
-    - name: Prepare Xenial
-      if: matrix.clang_ver == '3.8'
-      run: |
-        echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main universe" | tee -a /etc/apt/sources.list
-        apt-get update
     - name: Checkout
       if: matrix.cont_ver != '18.04'
       uses: actions/checkout@v6

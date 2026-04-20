@@ -21,7 +21,7 @@
 #include <iostream>
 #include <sstream>
 
-#ifdef MOMO_TEST_HAS_NO_ENUM_HASH
+#if defined(TEST_GCC) && __GNUC__ < 6	// std::hash<enum>
 namespace momo
 {
 	template<>
