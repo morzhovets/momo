@@ -72,6 +72,6 @@ Some examples are [here](https://github.com/morzhovets/momo/blob/master/test/sou
 
 - MS Visual C++ (Visual Studio 2022+, toolset 14.4+) with /std:c++23preview
 
-- GCC (14+) with -std=c++23
+- GCC (15+) with -std=c++23
 
-- Clang (18+) with -std=c++23
+- Clang (19+) with -std=c++23

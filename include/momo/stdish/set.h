@@ -117,7 +117,6 @@ public:
 	{
 	}
 
-#if defined(__cpp_lib_containers_ranges)
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	set_adaptor(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
@@ -134,7 +133,6 @@ public:
 	{
 		insert_range(std::forward<Range>(values));
 	}
-#endif // __cpp_lib_containers_ranges
 
 	set_adaptor(set_adaptor&& right)
 		: set_adaptor(std::move(right), right.get_allocator())
@@ -736,11 +734,6 @@ template<typename Key, \
 	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 set(std::initializer_list<Key>, LessComparer, Allocator = Allocator()) \
 	-> set<Key, LessComparer, Allocator>; \
-template<typename Key, typename LessComparer, typename Allocator> \
-set(set<Key, LessComparer, Allocator>, std::type_identity_t<Allocator>) \
-	-> set<Key, LessComparer, Allocator>;
-
-#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set) \
 template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>, \
 	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
@@ -751,17 +744,14 @@ template<std::ranges::input_range Range, \
 	momo::internal::conceptCopyableLessComparer<Key> LessComparer, \
 	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 set(std::from_range_t, Range&&, LessComparer, Allocator = Allocator()) \
+	-> set<Key, LessComparer, Allocator>; \
+template<typename Key, typename LessComparer, typename Allocator> \
+set(set<Key, LessComparer, Allocator>, std::type_identity_t<Allocator>) \
 	-> set<Key, LessComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(set)
 MOMO_DECLARE_DEDUCTION_GUIDES(multiset)
 
-#if defined(__cpp_lib_containers_ranges)
-MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(set)
-MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multiset)
-#endif
-
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace momo::stdish

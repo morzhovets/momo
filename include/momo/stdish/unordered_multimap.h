@@ -157,7 +157,6 @@ public:
 	{
 	}
 
-#if defined(__cpp_lib_containers_ranges)
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	unordered_multimap_adaptor(std::from_range_t, Range&& values)
@@ -192,7 +191,6 @@ public:
 	{
 		insert_range(std::forward<Range>(values));
 	}
-#endif // __cpp_lib_containers_ranges
 
 	unordered_multimap_adaptor(unordered_multimap_adaptor&& right)
 		: unordered_multimap_adaptor(std::move(right), right.get_allocator())
@@ -795,11 +793,6 @@ template<typename QKey, typename Mapped, \
 	momo::internal::conceptAllocator Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_multimap(std::initializer_list<std::pair<QKey, Mapped>>, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
 	-> unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>; \
-template<typename Key, typename Mapped, typename Hasher, typename EqualComparer, typename Allocator> \
-unordered_multimap(unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>, std::type_identity_t<Allocator>) \
-	-> unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>;
-
-#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_multimap) \
 template<std::ranges::input_range Range, \
 	typename Value = std::ranges::range_value_t<Range>, \
 	typename Key = std::decay_t<typename Value::first_type>, \
@@ -829,17 +822,14 @@ template<std::ranges::input_range Range, \
 	momo::internal::conceptCopyableEqualComparer<Key> EqualComparer, \
 	momo::internal::conceptAllocator Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 unordered_multimap(std::from_range_t, Range&&, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
+	-> unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>; \
+template<typename Key, typename Mapped, typename Hasher, typename EqualComparer, typename Allocator> \
+unordered_multimap(unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>, std::type_identity_t<Allocator>) \
 	-> unordered_multimap<Key, Mapped, Hasher, EqualComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_multimap_open)
 
-#if defined(__cpp_lib_containers_ranges)
-MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_multimap)
-MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_multimap_open)
-#endif
-
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace momo::stdish

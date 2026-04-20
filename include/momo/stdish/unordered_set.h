@@ -161,7 +161,6 @@ public:
 	{
 	}
 
-#if defined(__cpp_lib_containers_ranges)
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	unordered_set_adaptor(std::from_range_t, Range&& values)
@@ -195,7 +194,6 @@ public:
 	{
 		insert_range(std::forward<Range>(values));
 	}
-#endif // __cpp_lib_containers_ranges
 
 	unordered_set_adaptor(unordered_set_adaptor&& right)
 		: unordered_set_adaptor(std::move(right), right.get_allocator())
@@ -811,11 +809,6 @@ template<typename Key, \
 	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(std::initializer_list<Key>, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
 	-> unordered_set<Key, Hasher, EqualComparer, Allocator>; \
-template<typename Key, typename Hasher, typename EqualComparer, typename Allocator> \
-unordered_set(unordered_set<Key, Hasher, EqualComparer, Allocator>, std::type_identity_t<Allocator>) \
-	-> unordered_set<Key, Hasher, EqualComparer, Allocator>;
-
-#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set) \
 template<std::ranges::input_range Range, \
 	typename Key = std::ranges::range_value_t<Range>> \
 unordered_set(std::from_range_t, Range&&) \
@@ -837,19 +830,15 @@ template<std::ranges::input_range Range, \
 	momo::internal::conceptCopyableEqualComparer<Key> EqualComparer, \
 	momo::internal::conceptAllocator Allocator = std::allocator<Key>> \
 unordered_set(std::from_range_t, Range&&, size_t, Hasher, EqualComparer, Allocator = Allocator()) \
+	-> unordered_set<Key, Hasher, EqualComparer, Allocator>; \
+template<typename Key, typename Hasher, typename EqualComparer, typename Allocator> \
+unordered_set(unordered_set<Key, Hasher, EqualComparer, Allocator>, std::type_identity_t<Allocator>) \
 	-> unordered_set<Key, Hasher, EqualComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set)
 MOMO_DECLARE_DEDUCTION_GUIDES(unordered_set_open)
 MOMO_DECLARE_DEDUCTION_GUIDES(ordered_set)
 
-#if defined(__cpp_lib_containers_ranges)
-MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set)
-MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(unordered_set_open)
-MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(ordered_set)
-#endif
-
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace momo::stdish

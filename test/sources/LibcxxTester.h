@@ -23,6 +23,8 @@
 
 #include "libcxx20/Support.h"
 
+static_assert(TEST_STD_VER >= 23);
+
 #include "../../include/momo/ObjectManager.h"
 
 #include <iostream>

@@ -84,14 +84,12 @@ public:
 	{
 	}
 
-#if defined(__cpp_lib_containers_ranges)
 	template<std::ranges::input_range Range>
 	requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 	semi_list_adaptor(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
 		: mSemiList(std::ranges::begin(values), std::ranges::end(values), MemManager(alloc))
 	{
 	}
-#endif
 
 	semi_list_adaptor(semi_list_adaptor&& right)
 		: semi_list_adaptor(std::move(right), right.get_allocator())
@@ -489,16 +487,13 @@ template<typename Value,
 	momo::internal::conceptAllocator Allocator = std::allocator<Value>>
 semi_list(std::initializer_list<Value>, Allocator = Allocator())
 	-> semi_list<Value, Allocator>;
-template<typename Value, typename Allocator>
-semi_list(semi_list<Value, Allocator>, std::type_identity_t<Allocator>)
-	-> semi_list<Value, Allocator>;
-
-#if defined(__cpp_lib_containers_ranges)
 template<std::ranges::input_range Range,
 	typename Value = std::ranges::range_value_t<Range>,
 	momo::internal::conceptAllocator Allocator = std::allocator<Value>>
 semi_list(std::from_range_t, Range&&, Allocator = Allocator())
 	-> semi_list<Value, Allocator>;
-#endif
+template<typename Value, typename Allocator>
+semi_list(semi_list<Value, Allocator>, std::type_identity_t<Allocator>)
+	-> semi_list<Value, Allocator>;
 
 } // namespace momo::stdish

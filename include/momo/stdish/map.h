@@ -160,7 +160,6 @@ namespace internal
 		{
 		}
 
-#if defined(__cpp_lib_containers_ranges)
 		template<std::ranges::input_range Range>
 		requires std::convertible_to<std::ranges::range_reference_t<Range>, value_type>
 		map_adaptor_base(std::from_range_t, Range&& values, const allocator_type& alloc = allocator_type())
@@ -177,7 +176,6 @@ namespace internal
 		{
 			insert_range(std::forward<Range>(values));
 		}
-#endif // __cpp_lib_containers_ranges
 
 		map_adaptor_base(map_adaptor_base&& right)
 			: map_adaptor_base(std::move(right), right.get_allocator())
@@ -1068,11 +1066,6 @@ template<typename QKey, typename Mapped, \
 	momo::internal::conceptAllocator Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 map(std::initializer_list<std::pair<QKey, Mapped>>, LessComparer, Allocator = Allocator()) \
 	-> map<Key, Mapped, LessComparer, Allocator>; \
-template<typename Key, typename Mapped, typename LessComparer, typename Allocator> \
-map(map<Key, Mapped, LessComparer, Allocator>, std::type_identity_t<Allocator>) \
-	-> map<Key, Mapped, LessComparer, Allocator>;
-
-#define MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map) \
 template<std::ranges::input_range Range, \
 	typename Value = std::ranges::range_value_t<Range>, \
 	typename Key = std::decay_t<typename Value::first_type>, \
@@ -1087,17 +1080,14 @@ template<std::ranges::input_range Range, \
 	momo::internal::conceptCopyableLessComparer<Key> LessComparer, \
 	momo::internal::conceptAllocator Allocator = std::allocator<std::pair<const Key, Mapped>>> \
 map(std::from_range_t, Range&&, LessComparer, Allocator = Allocator()) \
+	-> map<Key, Mapped, LessComparer, Allocator>; \
+template<typename Key, typename Mapped, typename LessComparer, typename Allocator> \
+map(map<Key, Mapped, LessComparer, Allocator>, std::type_identity_t<Allocator>) \
 	-> map<Key, Mapped, LessComparer, Allocator>;
 
 MOMO_DECLARE_DEDUCTION_GUIDES(map)
 MOMO_DECLARE_DEDUCTION_GUIDES(multimap)
 
-#if defined(__cpp_lib_containers_ranges)
-MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(map)
-MOMO_DECLARE_DEDUCTION_GUIDES_RANGES(multimap)
-#endif
-
 #undef MOMO_DECLARE_DEDUCTION_GUIDES
-#undef MOMO_DECLARE_DEDUCTION_GUIDES_RANGES
 
 } // namespace momo::stdish
