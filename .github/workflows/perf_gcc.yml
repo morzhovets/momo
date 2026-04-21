@@ -12,16 +12,16 @@ jobs:
         include:
 
         - type: 'unordered_map'
-          gcc_ver: '14'
+          gcc_ver: '15'
 
         - type: 'unordered_map_open'
-          gcc_ver: '14'
+          gcc_ver: '15'
 
         - type: 'map'
-          gcc_ver: '14'
+          gcc_ver: '15'
 
         - type: 'data_table_static'
-          gcc_ver: '14'
+          gcc_ver: '15'
 
     # x64
     runs-on: ubuntu-24.04
@@ -60,8 +60,12 @@ jobs:
       uses: actions/checkout@v6
       with:
         path: 'momo_cur'
-    - name: Install GCC
-      run: sudo apt install g++-${{ matrix.gcc_ver }}
+    - name: Setup GCC
+      uses: egor-tensin/setup-gcc@v2
+      with:
+        version: ${{ matrix.gcc_ver }}
+#    - name: Install GCC
+#      run: sudo apt install g++-${{ matrix.gcc_ver }}
     - name: Build
       run: |
         mkdir build
