@@ -12,6 +12,14 @@ jobs:
         include:
 
         # ARM64
+        - clang_ver: '20'
+          macos_ver: 'latest'
+          build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
+          path_prefix: '/opt/homebrew'
+
         - clang_ver: '21'
           macos_ver: 'latest'
           build_type: 'Release'
@@ -29,6 +37,14 @@ jobs:
           path_prefix: '/opt/homebrew'
 
         # x64
+        - clang_ver: '20'
+          macos_ver: '15-intel'
+          build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
+          path_prefix: '/usr/local'
+
         - clang_ver: '21'
           macos_ver: '15-intel'
           build_type: 'Release'

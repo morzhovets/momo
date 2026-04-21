@@ -12,7 +12,7 @@ jobs:
         include:
 
         # x64
-        - gcc_ver: '15'
+        - gcc_ver: '14'
           ubuntu_ver: '24.04'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
@@ -53,7 +53,7 @@ jobs:
           cont_ver: '25.10'
 
         # ARM64
-        - gcc_ver: '15'
+        - gcc_ver: '14'
           ubuntu_ver: '24.04-arm'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
