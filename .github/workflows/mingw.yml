@@ -90,12 +90,13 @@ jobs:
           extra_settings: 'Off'
           flags: '-std=c++26'
 
-        - arch: 'x86'
-          build_type: 'Debug'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'Off'
-          flags: '-std=c++26'
+         # out of memory
+#        - arch: 'x86'
+#          build_type: 'Debug'
+#          test_libcxx20: 'On'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'Off'
+#          flags: '-std=c++26'
 
         - arch: 'x86'
           build_type: 'Release'
