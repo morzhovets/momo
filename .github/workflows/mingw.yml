@@ -31,7 +31,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26'
+          flags: '-std=c++26 -Werror'
 
         - arch: 'x64'
           build_type: 'Release'
@@ -96,7 +96,7 @@ jobs:
 #          test_libcxx20: 'On'
 #          no_exceptions_rtti: 'Off'
 #          extra_settings: 'Off'
-#          flags: '-std=c++26'
+#          flags: '-std=c++26 -Werror'
 
         - arch: 'x86'
           build_type: 'Release'
