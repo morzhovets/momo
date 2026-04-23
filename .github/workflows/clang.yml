@@ -113,6 +113,7 @@ jobs:
     container: ubuntu:${{ matrix.cont_ver }}
 
     steps:
+    - uses: actionhippie/swap-space@v1 # 10G
     - name: Install tools
       run: |
         apt-get update
