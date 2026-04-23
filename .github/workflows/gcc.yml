@@ -18,7 +18,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23'
-          cont_ver: '25.10'
+          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04'
@@ -26,7 +26,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26'
-          cont_ver: '25.10'
+          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04'
@@ -34,7 +34,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
-          cont_ver: '25.10'
+          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04'
@@ -42,7 +42,7 @@ jobs:
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26'
-          cont_ver: '25.10'
+          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04'
@@ -50,7 +50,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26'
-          cont_ver: '25.10'
+          cont_ver: '26.04'
 
         # ARM64
         - gcc_ver: '15'
@@ -59,7 +59,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23 -Wno-psabi'
-          cont_ver: '25.10'
+          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
@@ -67,15 +67,15 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Wno-psabi'
-          cont_ver: '25.10'
+          cont_ver: '26.04'
 
-#        - gcc_ver: '15'
-#          ubuntu_ver: '24.04-arm'
-#          build_type: 'Debug'
-#          no_exceptions_rtti: 'Off'
-#          extra_settings: 'Off'
-#          flags: '-std=c++26 -Werror -Wno-psabi'
-#          cont_ver: '25.10'
+        - gcc_ver: '15'
+          ubuntu_ver: '24.04-arm'
+          build_type: 'Debug'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror -Wno-psabi'
+          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
@@ -83,7 +83,7 @@ jobs:
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26 -Wno-psabi'
-          cont_ver: '25.10'
+          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
@@ -91,7 +91,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26 -Wno-psabi'
-          cont_ver: '25.10'
+          cont_ver: '26.04'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
     container: ubuntu:${{ matrix.cont_ver }}
