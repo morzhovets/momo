@@ -99,7 +99,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23'
+          flags: '-std=c++23 -Werror'
           cont_ver: '26.04'
 
         - gcc_ver: '12'
@@ -189,7 +189,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++26'
+          flags: '-std=c++26 -Werror'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -289,7 +289,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23'
+          flags: '-std=c++23 -Werror'
           cont_ver: '26.04'
 
         - gcc_ver: '12'
@@ -379,7 +379,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++26'
+          flags: '-std=c++26 -Werror'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
