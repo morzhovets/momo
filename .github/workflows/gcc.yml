@@ -67,7 +67,7 @@ jobs:
           build_type: 'Debug'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror -Wno-psabi -fPIC'
+          flags: '-std=c++26 -Werror -Wno-psabi -mcmodel=large'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
