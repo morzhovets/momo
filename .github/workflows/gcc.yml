@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
 
     steps:
-#    - uses: actionhippie/swap-space@v1 # 10G
+    - uses: actionhippie/swap-space@v1 # 10G
     - name: Checkout
       uses: actions/checkout@v6
     - name: Setup GCC
