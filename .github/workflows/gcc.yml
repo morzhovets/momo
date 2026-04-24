@@ -18,7 +18,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23'
-          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04'
@@ -26,7 +25,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26'
-          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04'
@@ -34,7 +32,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
-          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04'
@@ -42,7 +39,6 @@ jobs:
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26'
-          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04'
@@ -50,7 +46,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26'
-          cont_ver: '26.04'
 
         # ARM64
         - gcc_ver: '15'
@@ -59,7 +54,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23 -Wno-psabi'
-          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
@@ -67,7 +61,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Wno-psabi'
-          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
@@ -75,7 +68,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror -Wno-psabi'
-          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
@@ -83,7 +75,6 @@ jobs:
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26 -Wno-psabi'
-          cont_ver: '26.04'
 
         - gcc_ver: '15'
           ubuntu_ver: '24.04-arm'
@@ -91,22 +82,19 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26 -Wno-psabi'
-          cont_ver: '26.04'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
-    container: ubuntu:${{ matrix.cont_ver }}
 
     steps:
-    - uses: actionhippie/swap-space@v1 # 10G
-    - name: Install tools
-      run: |
-        apt-get update
-        apt-get install -y cmake
-        apt-get install -y ninja-build
+#    - uses: actionhippie/swap-space@v1 # 10G
     - name: Checkout
       uses: actions/checkout@v6
-    - name: Install GCC
-      run: apt-get install -y g++-${{ matrix.gcc_ver }}
+    - name: Setup GCC
+      uses: egor-tensin/setup-gcc@v2
+      with:
+        version: ${{ matrix.gcc_ver }}
+#    - name: Install GCC
+#      run: sudo apt install g++-${{ matrix.gcc_ver }}
     - name: Build
       env:
         CXX: g++-${{ matrix.gcc_ver }}
