@@ -157,7 +157,7 @@ namespace internal
 		template<bool isWithinLifetime = true>
 		Bucket* pvGetBuckets() noexcept
 		{
-			return PtrCaster::FromBytePtr<Bucket, /*isWithinLifetime*/false>(
+			return PtrCaster::FromBytePtr<Bucket, isWithinLifetime>(
 				PtrCaster::ToBytePtr(this) + pvGetBucketOffset());
 		}
 
