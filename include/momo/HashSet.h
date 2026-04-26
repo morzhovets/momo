@@ -157,7 +157,13 @@ namespace internal
 		template<bool isWithinLifetime = true>
 		Bucket* pvGetBuckets() noexcept
 		{
-			return reinterpret_cast<Bucket*>(this + 1);
+			Bucket* buckets = reinterpret_cast<Bucket*>(
+				reinterpret_cast<internal::Byte*>(this) + pvGetBucketOffset());
+#if defined(__cpp_lib_launder) && !(defined(_MSC_VER) && defined(_M_CEE))
+			if (isWithinLifetime)
+				buckets = std::launder(buckets);
+#endif
+			return buckets;
 			//return PtrCaster::FromBytePtr<Bucket, isWithinLifetime>(
 			//	PtrCaster::ToBytePtr(this) + pvGetBucketOffset());
 		}
