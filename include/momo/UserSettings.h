@@ -201,13 +201,13 @@
 
 #define MOMO_COPY_MEMORY(dst, src, size) std::memcpy(dst, src, size)
 
-#define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) reinterpret_cast<ResObject*>(ptr)
-//#define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
-//	((isWithinLifetime) ? std::launder(reinterpret_cast<ResObject*>(ptr)) : reinterpret_cast<ResObject*>(ptr))
-//#if !defined(__cpp_lib_launder) || (defined(_MSC_VER) && defined(_M_CEE))
-//# undef MOMO_CAST_POINTER
-//# define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) reinterpret_cast<ResObject*>(ptr)
-//#endif
+#define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
+	((isWithinLifetime && isSingleObject) ? std::launder(reinterpret_cast<ResObject*>(ptr)) \
+		: reinterpret_cast<ResObject*>(ptr))
+#if !defined(__cpp_lib_launder) || (defined(_MSC_VER) && defined(_M_CEE))
+# undef MOMO_CAST_POINTER
+# define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) reinterpret_cast<ResObject*>(ptr)
+#endif
 
 #ifdef __cpp_constexpr
 # define MOMO_CONSTEXPR_VERSION __cpp_constexpr
