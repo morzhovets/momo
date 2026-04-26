@@ -158,11 +158,7 @@ namespace internal
 		Bucket* pvGetBuckets() noexcept
 		{
 			Bucket* buckets = reinterpret_cast<Bucket*>(
-				reinterpret_cast<internal::Byte*>(this) + pvGetBucketOffset());
-#if defined(__cpp_lib_launder) && !(defined(_MSC_VER) && defined(_M_CEE))
-			if (isWithinLifetime)
-				buckets = std::launder(buckets);
-#endif
+				reinterpret_cast<Byte*>(this) + pvGetBucketOffset());
 			return buckets;
 			//return PtrCaster::FromBytePtr<Bucket, isWithinLifetime>(
 			//	PtrCaster::ToBytePtr(this) + pvGetBucketOffset());
