@@ -171,4 +171,5 @@
 #define MOMO_COPY_MEMORY(dst, src, size) std::memcpy(dst, src, size)
 
 #define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
-	((isWithinLifetime) ? std::launder(reinterpret_cast<ResObject*>(ptr)) : reinterpret_cast<ResObject*>(ptr))
+	((isWithinLifetime && isSingleObject) ? std::launder(reinterpret_cast<ResObject*>(ptr)) \
+		: reinterpret_cast<ResObject*>(ptr))
