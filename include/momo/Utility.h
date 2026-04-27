@@ -147,8 +147,8 @@ namespace internal
 		requires (std::is_trivially_copyable_v<Object>)
 		static void ToBuffer(Object object, void* buffer) noexcept
 		{
-			//CopyBuffer<sizeof(Object)>(&object, buffer);	// gcc perf
-			MOMO_COPY_MEMORY(buffer, &object, sizeof(Object));
+			CopyBuffer<sizeof(Object)>(&object, buffer);	// gcc perf
+			//MOMO_COPY_MEMORY(buffer, &object, sizeof(Object));
 		}
 
 		template<typename ResObject>
@@ -157,8 +157,8 @@ namespace internal
 		static ResObject FromBuffer(const void* buffer) noexcept
 		{
 			ResObject object{};
-			//CopyBuffer<sizeof(ResObject)>(buffer, &object);	// gcc perf
-			MOMO_COPY_MEMORY(&object, buffer, sizeof(ResObject));
+			CopyBuffer<sizeof(ResObject)>(buffer, &object);	// gcc perf
+			//MOMO_COPY_MEMORY(&object, buffer, sizeof(ResObject));
 			return object;
 		}
 
