@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.10...3.28)
+#  This file is part of the https://github.com/morzhovets/momo
+#  project, distributed under the MIT License. See
+#  https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
+#  for details.
+
+cmake_minimum_required(VERSION 3.10...4.2)
 
 project(momo_test
   LANGUAGES CXX)
