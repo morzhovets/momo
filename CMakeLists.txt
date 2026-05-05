@@ -6,7 +6,7 @@
 cmake_minimum_required(VERSION 3.10...4.2)
 
 project(momo
-  VERSION 3.11
+  VERSION 3.12
   LANGUAGES CXX)
 
 option(MOMO_TEST "Build momo tests" OFF)
