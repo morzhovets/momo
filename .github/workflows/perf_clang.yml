@@ -38,24 +38,24 @@ jobs:
         repository: 'morzhovets/momo'
         ref: 'v3.2'
         path: 'momo_v3_2'
-    - name: Checkout momo_v3_5
+    - name: Checkout momo_v3_6
       uses: actions/checkout@v6
       with:
         repository: 'morzhovets/momo'
-        ref: 'v3.5'
-        path: 'momo_v3_5'
-    - name: Checkout momo_v3_8
+        ref: 'v3.6'
+        path: 'momo_v3_6'
+    - name: Checkout momo_v3_9
       uses: actions/checkout@v6
       with:
         repository: 'morzhovets/momo'
-        ref: 'v3.8'
-        path: 'momo_v3_8'
-    - name: Checkout momo_v3_11
+        ref: 'v3.9'
+        path: 'momo_v3_9'
+    - name: Checkout momo_v3_12
       uses: actions/checkout@v6
       with:
         repository: 'morzhovets/momo'
-        ref: 'v3.11'
-        path: 'momo_v3_11'
+        ref: 'v3.12'
+        path: 'momo_v3_12'
     - name: Checkout momo_cur
       uses: actions/checkout@v6
       with:
@@ -66,9 +66,9 @@ jobs:
       run: |
         mkdir build
         clang++-${{ matrix.clang_ver }} -Imomo_v3_2 -O3 -DNDEBUG -std=c++20 -o build/momo_${{ matrix.type }}_1 src/momo_${{ matrix.type }}.cc
-        clang++-${{ matrix.clang_ver }} -Imomo_v3_5 -O3 -DNDEBUG -std=c++20 -o build/momo_${{ matrix.type }}_2 src/momo_${{ matrix.type }}.cc
-        clang++-${{ matrix.clang_ver }} -Imomo_v3_8/include -O3 -DNDEBUG -std=c++23 -o build/momo_${{ matrix.type }}_3 src/momo_${{ matrix.type }}.cc
-        clang++-${{ matrix.clang_ver }} -Imomo_v3_11/include -O3 -DNDEBUG -std=c++23 -o build/momo_${{ matrix.type }}_4 src/momo_${{ matrix.type }}.cc
+        clang++-${{ matrix.clang_ver }} -Imomo_v3_6 -O3 -DNDEBUG -std=c++20 -o build/momo_${{ matrix.type }}_2 src/momo_${{ matrix.type }}.cc
+        clang++-${{ matrix.clang_ver }} -Imomo_v3_9/include -O3 -DNDEBUG -std=c++23 -o build/momo_${{ matrix.type }}_3 src/momo_${{ matrix.type }}.cc
+        clang++-${{ matrix.clang_ver }} -Imomo_v3_12/include -O3 -DNDEBUG -std=c++23 -o build/momo_${{ matrix.type }}_4 src/momo_${{ matrix.type }}.cc
         clang++-${{ matrix.clang_ver }} -Imomo_cur/include -O3 -DNDEBUG -std=c++23 -o build/momo_${{ matrix.type }}_0 src/momo_${{ matrix.type }}.cc
     - name: Test
       run: |
