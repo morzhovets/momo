@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -83,7 +83,6 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_object_manag
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
@@ -95,21 +94,21 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_object_manag
 
 <p><code>#include &lt;<a class="el" href="_object_manager_8h_source.html">ObjectManager.h</a>&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager_1_1_creator.html">Creator</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a4e18f2329c59d9d4b7b9b26cc9b68020"><td class="memItemLeft" align="right" valign="top">typedef TObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a></td></tr>
 <tr class="separator:a4e18f2329c59d9d4b7b9b26cc9b68020"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3465c0fd6e559239c199fc593eef4863"><td class="memItemLeft" align="right" valign="top">typedef TMemManager&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a></td></tr>
 <tr class="separator:a3465c0fd6e559239c199fc593eef4863"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4f31a683d71465b99c02cfce03642ef"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:ab4f31a683d71465b99c02cfce03642ef"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#ab4f31a683d71465b99c02cfce03642ef">Creator</a> = <a class="el" href="classmomo_1_1internal_1_1_object_creator.html">ObjectCreator</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>, <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a>, Args... &gt;</td></tr>
+<tr class="separator:ab4f31a683d71465b99c02cfce03642ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bf5684101726f9d72909f4ad26f87a4"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_object_destroyer.html">ObjectDestroyer</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>, <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4bf5684101726f9d72909f4ad26f87a4">Destroyer</a></td></tr>
 <tr class="separator:a4bf5684101726f9d72909f4ad26f87a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae16da6ec3e662571311d212eec4830f3"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1_object_relocator.html">ObjectRelocator</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>, <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#ae16da6ec3e662571311d212eec4830f3">Relocator</a></td></tr>
 <tr class="separator:ae16da6ec3e662571311d212eec4830f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2aac1db496f3e77cbd8d7bb9c63508f2"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_object_destroy_finalizer.html">ObjectDestroyFinalizer</a>&lt; <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>, <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a2aac1db496f3e77cbd8d7bb9c63508f2">DestroyFinalizer</a></td></tr>
+<tr class="separator:a2aac1db496f3e77cbd8d7bb9c63508f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -140,7 +139,7 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a980bff7493d8599f3eccb1452133a880"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a980bff7493d8599f3eccb1452133a880">Relocate</a> (<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a> &amp;memManager, Iterator srcBegin, Iterator dstBegin, size_t count) noexcept(<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">isNothrowRelocatable</a>)</td></tr>
 <tr class="separator:a980bff7493d8599f3eccb1452133a880"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff73d77a97eb00af07e5646cd50bf993"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename ObjectCreator &gt; </td></tr>
-<tr class="memitem:aff73d77a97eb00af07e5646cd50bf993"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#aff73d77a97eb00af07e5646cd50bf993">RelocateCreate</a> (<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a> &amp;memManager, Iterator srcBegin, Iterator dstBegin, size_t count, ObjectCreator &amp;&amp;objectCreator, <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a> *newObject)</td></tr>
+<tr class="memitem:aff73d77a97eb00af07e5646cd50bf993"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#aff73d77a97eb00af07e5646cd50bf993">RelocateCreate</a> (<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a> &amp;memManager, Iterator srcBegin, Iterator dstBegin, size_t count, <a class="el" href="classmomo_1_1internal_1_1_object_creator.html">ObjectCreator</a> &amp;&amp;objectCreator, <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a> *newObject)</td></tr>
 <tr class="separator:aff73d77a97eb00af07e5646cd50bf993"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c4a1b0491790a49f69503ad66c96251"><td class="memTemplParams" colspan="2">template&lt;typename Iterator , typename Executor &gt; </td></tr>
 <tr class="memitem:a3c4a1b0491790a49f69503ad66c96251"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3c4a1b0491790a49f69503ad66c96251">RelocateExec</a> (<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a> &amp;memManager, Iterator srcBegin, Iterator dstBegin, size_t count, Executor &amp;&amp;exec)</td></tr>
@@ -167,6 +166,24 @@ Static Public Attributes</h2></td></tr>
 <tr class="separator:a99bb4026112bfe291a0a5b06bdf87435"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="ab4f31a683d71465b99c02cfce03642ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4f31a683d71465b99c02cfce03642ef">&#9670;&nbsp;</a></span>Creator</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TObject , typename TMemManager &gt; </div>
+<div class="memtemplate">
+template&lt;typename... Args&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classmomo_1_1internal_1_1_object_manager.html">momo::internal::ObjectManager</a>&lt; TObject, TMemManager &gt;::<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#ab4f31a683d71465b99c02cfce03642ef">Creator</a> =  <a class="el" href="classmomo_1_1internal_1_1_object_creator.html">ObjectCreator</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>, <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a>, Args...&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a4bf5684101726f9d72909f4ad26f87a4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4bf5684101726f9d72909f4ad26f87a4">&#9670;&nbsp;</a></span>Destroyer</h2>
 
@@ -177,6 +194,22 @@ template&lt;typename TObject , typename TMemManager &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">typedef <a class="el" href="classmomo_1_1_object_destroyer.html">ObjectDestroyer</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>, <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_object_manager.html">momo::internal::ObjectManager</a>&lt; TObject, TMemManager &gt;::<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4bf5684101726f9d72909f4ad26f87a4">Destroyer</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2aac1db496f3e77cbd8d7bb9c63508f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2aac1db496f3e77cbd8d7bb9c63508f2">&#9670;&nbsp;</a></span>DestroyFinalizer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TObject , typename TMemManager &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_object_destroy_finalizer.html">ObjectDestroyFinalizer</a>&lt;<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a4e18f2329c59d9d4b7b9b26cc9b68020">Object</a>, <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a3465c0fd6e559239c199fc593eef4863">MemManager</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_object_manager.html">momo::internal::ObjectManager</a>&lt; TObject, TMemManager &gt;::<a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a2aac1db496f3e77cbd8d7bb9c63508f2">DestroyFinalizer</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -688,7 +721,7 @@ template&lt;typename Iterator , typename ObjectCreator &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ObjectCreator &amp;&amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_object_creator.html">ObjectCreator</a> &amp;&amp;&#160;</td>
           <td class="paramname"><em>objectCreator</em>, </td>
         </tr>
         <tr>
@@ -1088,8 +1121,8 @@ template&lt;typename TObject , typename TMemManager &gt; </div>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="aclassmomo_1_1internal_1_1_object_manager_html_a1f4cc24e5516e09444e4115629b76891"><div class="ttname"><a href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">momo::internal::ObjectManager::isNothrowRelocatable</a></div><div class="ttdeci">static const bool isNothrowRelocatable</div><div class="ttdef"><b>Definition:</b> ObjectManager.h:250</div></div>
-<div class="ttc" id="aclassmomo_1_1internal_1_1_object_manager_html_af4df37622a609c1ee12742ead066070d"><div class="ttname"><a href="classmomo_1_1internal_1_1_object_manager.html#af4df37622a609c1ee12742ead066070d">momo::internal::ObjectManager::isNothrowSwappable</a></div><div class="ttdeci">static const bool isNothrowSwappable</div><div class="ttdef"><b>Definition:</b> ObjectManager.h:255</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_object_manager_html_a1f4cc24e5516e09444e4115629b76891"><div class="ttname"><a href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">momo::internal::ObjectManager::isNothrowRelocatable</a></div><div class="ttdeci">static const bool isNothrowRelocatable</div><div class="ttdef"><b>Definition:</b> ObjectManager.h:408</div></div>
+<div class="ttc" id="aclassmomo_1_1internal_1_1_object_manager_html_af4df37622a609c1ee12742ead066070d"><div class="ttname"><a href="classmomo_1_1internal_1_1_object_manager.html#af4df37622a609c1ee12742ead066070d">momo::internal::ObjectManager::isNothrowSwappable</a></div><div class="ttdeci">static const bool isNothrowSwappable</div><div class="ttdef"><b>Definition:</b> ObjectManager.h:413</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

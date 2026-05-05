@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -94,18 +94,16 @@ $(document).ready(function(){initNavTree('_utility_8h.html',''); initResizable()
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="_user_settings_8h_source.html">UserSettings.h</a>&quot;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
-<code>#include &lt;cstring&gt;</code><br />
-<code>#include &lt;cstdlib&gt;</code><br />
-<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
-<code>#include &lt;exception&gt;</code><br />
-<code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;new&gt;</code><br />
 <code>#include &lt;iterator&gt;</code><br />
+<code>#include &lt;exception&gt;</code><br />
+<code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;array&gt;</code><br />
 <code>#include &lt;tuple&gt;</code><br />
 <code>#include &lt;initializer_list&gt;</code><br />
@@ -136,6 +134,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_u_int_selector_3_01size_00_01_enable_if_3_074_3_01size_01_6_6size_3_0a8_08_4_01_4.html">momo::internal::UIntSelector&lt; size, EnableIf&lt;(4&lt; size &amp;&amp;size&lt;=8)&gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_proxy_constructor.html">momo::internal::ProxyConstructor&lt; Class &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_mem_copyer.html">momo::internal::MemCopyer</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_ptr_caster.html">momo::internal::PtrCaster</a></td></tr>
@@ -164,24 +164,24 @@ Macros</h2></td></tr>
 <tr class="separator:a7b41ea8eb537f91b2839491425faeaf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e81d84440267e8d3988fafdb1f864ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a5e81d84440267e8d3988fafdb1f864ff">MOMO_PARENT_HEADER</a>(file)&#160;&#160;&#160;<a class="el" href="_utility_8h.html#a7b41ea8eb537f91b2839491425faeaf8">MOMO_PARENT_HEADER_STRING</a>(../file.h)</td></tr>
 <tr class="separator:a5e81d84440267e8d3988fafdb1f864ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65ae06427a3698333cc5565d13c2c257"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a65ae06427a3698333cc5565d13c2c257">MOMO_FRIEND_SWAP</a>(Object)</td></tr>
-<tr class="separator:a65ae06427a3698333cc5565d13c2c257"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f7b972f009703f55f5c266ec9f14f74"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a3f7b972f009703f55f5c266ec9f14f74">MOMO_FRIENDS_SIZE_BEGIN_END_CONST</a>(Object,  ConstIterator)</td></tr>
-<tr class="separator:a3f7b972f009703f55f5c266ec9f14f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3e568105cafe85417b46d364a5452b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#ad3e568105cafe85417b46d364a5452b9">MOMO_FRIENDS_BEGIN_END</a>(Object,  Iterator)</td></tr>
-<tr class="separator:ad3e568105cafe85417b46d364a5452b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad50ed391f02319ae45e200e5b9d756fe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#ad50ed391f02319ae45e200e5b9d756fe">MOMO_MORE_COMPARISON_OPERATORS</a>(RObject)</td></tr>
-<tr class="separator:ad50ed391f02319ae45e200e5b9d756fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7607a276f5f315e25296846ccb25105d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a7607a276f5f315e25296846ccb25105d">MOMO_FRIEND_SWAP</a>(Class)</td></tr>
+<tr class="separator:a7607a276f5f315e25296846ccb25105d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab55ca410e2c680ab3414b2a8c8580b64"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#ab55ca410e2c680ab3414b2a8c8580b64">MOMO_FRIENDS_SIZE_BEGIN_END_CONST</a>(Class,  ConstIterator)</td></tr>
+<tr class="separator:ab55ca410e2c680ab3414b2a8c8580b64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a6eaeb1727e3de4fd1ff00fe5f80e71"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a7a6eaeb1727e3de4fd1ff00fe5f80e71">MOMO_FRIENDS_BEGIN_END</a>(Class,  Iterator)</td></tr>
+<tr class="separator:a7a6eaeb1727e3de4fd1ff00fe5f80e71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0edd0a6e95a056a608ef95f68c19fc5c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a0edd0a6e95a056a608ef95f68c19fc5c">MOMO_MORE_COMPARISON_OPERATORS</a>(RClass)</td></tr>
+<tr class="separator:a0edd0a6e95a056a608ef95f68c19fc5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7228872edae4aafa07e4d24917c305c6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a7228872edae4aafa07e4d24917c305c6">MOMO_STATIC_ASSERT</a>(...)&#160;&#160;&#160;static_assert((__VA_ARGS__), #__VA_ARGS__)</td></tr>
 <tr class="separator:a7228872edae4aafa07e4d24917c305c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61ba943cf82f91b4594bcc6021b291df"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a61ba943cf82f91b4594bcc6021b291df">MOMO_CHECK</a>(expr)</td></tr>
 <tr class="separator:a61ba943cf82f91b4594bcc6021b291df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a275fbe2372c7324122b63eafa07da721"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a275fbe2372c7324122b63eafa07da721">MOMO_EXTRA_CHECK</a>(expr)&#160;&#160;&#160;	<a class="el" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(Settings::extraCheckMode != ExtraCheckMode::assertion || (expr))</td></tr>
 <tr class="separator:a275fbe2372c7324122b63eafa07da721"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb0350eacdbc910de329afae60a2f31e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#adb0350eacdbc910de329afae60a2f31e">MOMO_DECLARE_PROXY_CONSTRUCTOR</a>(Object)</td></tr>
-<tr class="separator:adb0350eacdbc910de329afae60a2f31e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06ad84d8374dcefbaa5df35b5034d05d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a06ad84d8374dcefbaa5df35b5034d05d">MOMO_DECLARE_PROXY_FUNCTION</a>(Object,  Func)</td></tr>
-<tr class="separator:a06ad84d8374dcefbaa5df35b5034d05d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46c030b1317917e09dd3750d1c6acbd5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a46c030b1317917e09dd3750d1c6acbd5">MOMO_DECLARE_PROXY_FUNCTION</a>(Class,  Func)</td></tr>
+<tr class="separator:a46c030b1317917e09dd3750d1c6acbd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5069578998434d71dbae20eeb308716d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_utility_8h.html#a5069578998434d71dbae20eeb308716d">MOMO_DIV_BY_SMALL_CASE</a>(mod)&#160;&#160;&#160;case mod: return DivByConst&lt;mod&gt;(value);</td></tr>
+<tr class="separator:a5069578998434d71dbae20eeb308716d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -239,32 +239,8 @@ Enumerations</h2></td></tr>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="adb0350eacdbc910de329afae60a2f31e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb0350eacdbc910de329afae60a2f31e">&#9670;&nbsp;</a></span>MOMO_DECLARE_PROXY_CONSTRUCTOR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define MOMO_DECLARE_PROXY_CONSTRUCTOR</td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">Object</td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Args&gt; \</div>
-<div class="line">    explicit Object##Proxy(Args&amp;&amp;... args) \</div>
-<div class="line">        noexcept(std::is_nothrow_constructible&lt;Object, Args&amp;&amp;...&gt;::value) \</div>
-<div class="line">        : Object(std::forward&lt;Args&gt;(args)...) \</div>
-<div class="line">    { \</div>
-<div class="line">    }</div>
-</div><!-- fragment -->
-</div>
-</div>
-<a id="a06ad84d8374dcefbaa5df35b5034d05d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06ad84d8374dcefbaa5df35b5034d05d">&#9670;&nbsp;</a></span>MOMO_DECLARE_PROXY_FUNCTION</h2>
+<a id="a46c030b1317917e09dd3750d1c6acbd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46c030b1317917e09dd3750d1c6acbd5">&#9670;&nbsp;</a></span>MOMO_DECLARE_PROXY_FUNCTION</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -273,7 +249,7 @@ Enumerations</h2></td></tr>
           <td class="memname">#define MOMO_DECLARE_PROXY_FUNCTION</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">Object, </td>
+          <td class="paramname">Class, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -288,17 +264,35 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> RObject, <span class="keyword">typename</span>... Args, <span class="keyword">typename</span> Result = decltype( \</div>
-<div class="line">        (std::declval&lt;RObject&amp;&amp;&gt;().*&amp;Object##Proxy::pt##Func)(std::declval&lt;Args&amp;&amp;&gt;()...))&gt; \</div>
-<div class="line">    static Result Func(RObject&amp;&amp; <span class="keywordtype">object</span>, Args&amp;&amp;... args) \</div>
-<div class="line">        noexcept(noexcept((std::forward&lt;RObject&gt;(<span class="keywordtype">object</span>).*&amp;Object##Proxy::pt##Func) \</div>
+<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> RClass, <span class="keyword">typename</span>... Args, <span class="keyword">typename</span> Result = decltype( \</div>
+<div class="line">        (std::declval&lt;RClass&amp;&amp;&gt;().*&amp;Class##Proxy::pt##Func)(std::declval&lt;Args&amp;&amp;&gt;()...))&gt; \</div>
+<div class="line">    static Result Func(RClass&amp;&amp; <span class="keywordtype">object</span>, Args&amp;&amp;... args) \</div>
+<div class="line">        noexcept(noexcept((std::forward&lt;RClass&gt;(<span class="keywordtype">object</span>).*&amp;Class##Proxy::pt##Func) \</div>
 <div class="line">            (std::forward&lt;Args&gt;(args)...))) \</div>
 <div class="line">    { \</div>
-<div class="line">        MOMO_STATIC_ASSERT(std::is_same&lt;Object, <span class="keyword">typename</span> std::decay&lt;RObject&gt;::type&gt;::value); \</div>
-<div class="line">        return (std::forward&lt;RObject&gt;(<span class="keywordtype">object</span>).*&amp;Object##Proxy::pt##Func) \</div>
+<div class="line">        MOMO_STATIC_ASSERT(std::is_same&lt;Class, <span class="keyword">typename</span> std::decay&lt;RClass&gt;::type&gt;::value); \</div>
+<div class="line">        return (std::forward&lt;RClass&gt;(<span class="keywordtype">object</span>).*&amp;Class##Proxy::pt##Func) \</div>
 <div class="line">            (std::forward&lt;Args&gt;(args)...); \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
+</div>
+</div>
+<a id="a5069578998434d71dbae20eeb308716d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5069578998434d71dbae20eeb308716d">&#9670;&nbsp;</a></span>MOMO_DIV_BY_SMALL_CASE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_DIV_BY_SMALL_CASE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">mod</td><td>)</td>
+          <td>&#160;&#160;&#160;case mod: return DivByConst&lt;mod&gt;(value);</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
 </div>
 </div>
 <a id="a275fbe2372c7324122b63eafa07da721"></a>
@@ -319,8 +313,8 @@ Enumerations</h2></td></tr>
 
 </div>
 </div>
-<a id="a65ae06427a3698333cc5565d13c2c257"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65ae06427a3698333cc5565d13c2c257">&#9670;&nbsp;</a></span>MOMO_FRIEND_SWAP</h2>
+<a id="a7607a276f5f315e25296846ccb25105d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7607a276f5f315e25296846ccb25105d">&#9670;&nbsp;</a></span>MOMO_FRIEND_SWAP</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -329,12 +323,12 @@ Enumerations</h2></td></tr>
           <td class="memname">#define MOMO_FRIEND_SWAP</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">Object</td><td>)</td>
+          <td class="paramname">Class</td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">friend</span> <span class="keywordtype">void</span> swap(Object&amp; object1, Object&amp; object2) \</div>
+<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">friend</span> <span class="keywordtype">void</span> swap(Class&amp; object1, Class&amp; object2) \</div>
 <div class="line">        noexcept(noexcept(object1.Swap(object2))) \</div>
 <div class="line">    { \</div>
 <div class="line">        object1.Swap(object2); \</div>
@@ -342,8 +336,8 @@ Enumerations</h2></td></tr>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="ad3e568105cafe85417b46d364a5452b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3e568105cafe85417b46d364a5452b9">&#9670;&nbsp;</a></span>MOMO_FRIENDS_BEGIN_END</h2>
+<a id="a7a6eaeb1727e3de4fd1ff00fe5f80e71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a6eaeb1727e3de4fd1ff00fe5f80e71">&#9670;&nbsp;</a></span>MOMO_FRIENDS_BEGIN_END</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -352,7 +346,7 @@ Enumerations</h2></td></tr>
           <td class="memname">#define MOMO_FRIENDS_BEGIN_END</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">Object, </td>
+          <td class="paramname">Class, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -367,19 +361,19 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">friend</span> Iterator begin(Object&amp; <span class="keywordtype">object</span>) noexcept(noexcept(<span class="keywordtype">object</span>.GetBegin())) \</div>
+<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">friend</span> Iterator begin(Class&amp; <span class="keywordtype">object</span>) noexcept \</div>
 <div class="line">    { \</div>
 <div class="line">        return <span class="keywordtype">object</span>.GetBegin(); \</div>
 <div class="line">    } \</div>
-<div class="line">    friend Iterator end(Object&amp; <span class="keywordtype">object</span>) noexcept(noexcept(<span class="keywordtype">object</span>.GetEnd())) \</div>
+<div class="line">    friend Iterator end(Class&amp; <span class="keywordtype">object</span>) noexcept \</div>
 <div class="line">    { \</div>
 <div class="line">        return <span class="keywordtype">object</span>.GetEnd(); \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="a3f7b972f009703f55f5c266ec9f14f74"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f7b972f009703f55f5c266ec9f14f74">&#9670;&nbsp;</a></span>MOMO_FRIENDS_SIZE_BEGIN_END_CONST</h2>
+<a id="ab55ca410e2c680ab3414b2a8c8580b64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab55ca410e2c680ab3414b2a8c8580b64">&#9670;&nbsp;</a></span>MOMO_FRIENDS_SIZE_BEGIN_END_CONST</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -388,7 +382,7 @@ Enumerations</h2></td></tr>
           <td class="memname">#define MOMO_FRIENDS_SIZE_BEGIN_END_CONST</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">Object, </td>
+          <td class="paramname">Class, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -403,23 +397,23 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">friend</span> <span class="keywordtype">size_t</span> size(<span class="keyword">const</span> Object&amp; <span class="keywordtype">object</span>) noexcept(noexcept(<span class="keywordtype">object</span>.GetCount())) \</div>
+<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">friend</span> <span class="keywordtype">size_t</span> size(<span class="keyword">const</span> Class&amp; <span class="keywordtype">object</span>) noexcept \</div>
 <div class="line">    { \</div>
 <div class="line">        return <span class="keywordtype">object</span>.GetCount(); \</div>
 <div class="line">    } \</div>
-<div class="line">    friend ConstIterator begin(<span class="keyword">const</span> Object&amp; <span class="keywordtype">object</span>) noexcept(noexcept(<span class="keywordtype">object</span>.GetBegin())) \</div>
+<div class="line">    friend ConstIterator begin(<span class="keyword">const</span> Class&amp; <span class="keywordtype">object</span>) noexcept \</div>
 <div class="line">    { \</div>
 <div class="line">        return <span class="keywordtype">object</span>.GetBegin(); \</div>
 <div class="line">    } \</div>
-<div class="line">    friend ConstIterator end(<span class="keyword">const</span> Object&amp; <span class="keywordtype">object</span>) noexcept(noexcept(<span class="keywordtype">object</span>.GetEnd())) \</div>
+<div class="line">    friend ConstIterator end(<span class="keyword">const</span> Class&amp; <span class="keywordtype">object</span>) noexcept \</div>
 <div class="line">    { \</div>
 <div class="line">        return <span class="keywordtype">object</span>.GetEnd(); \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="ad50ed391f02319ae45e200e5b9d756fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad50ed391f02319ae45e200e5b9d756fe">&#9670;&nbsp;</a></span>MOMO_MORE_COMPARISON_OPERATORS</h2>
+<a id="a0edd0a6e95a056a608ef95f68c19fc5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0edd0a6e95a056a608ef95f68c19fc5c">&#9670;&nbsp;</a></span>MOMO_MORE_COMPARISON_OPERATORS</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -428,24 +422,24 @@ Enumerations</h2></td></tr>
           <td class="memname">#define MOMO_MORE_COMPARISON_OPERATORS</td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname">RObject</td><td>)</td>
+          <td class="paramname">RClass</td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator!=(RObject obj1, RObject obj2) noexcept(noexcept(obj1 == obj2)) \</div>
+<b>Value:</b><div class="fragment"><div class="line">    <span class="keyword">friend</span> <span class="keywordtype">bool</span> operator!=(RClass obj1, RClass obj2) noexcept(noexcept(obj1 == obj2)) \</div>
 <div class="line">    { \</div>
 <div class="line">        return !(obj1 == obj2); \</div>
 <div class="line">    } \</div>
-<div class="line">    friend <span class="keywordtype">bool</span> operator&gt;(RObject obj1, RObject obj2) \</div>
+<div class="line">    friend <span class="keywordtype">bool</span> operator&gt;(RClass obj1, RClass obj2) \</div>
 <div class="line">    { \</div>
 <div class="line">        return obj2 &lt; obj1; \</div>
 <div class="line">    } \</div>
-<div class="line">    friend <span class="keywordtype">bool</span> operator&lt;=(RObject obj1, RObject obj2) \</div>
+<div class="line">    friend <span class="keywordtype">bool</span> operator&lt;=(RClass obj1, RClass obj2) \</div>
 <div class="line">    { \</div>
 <div class="line">        return !(obj2 &lt; obj1); \</div>
 <div class="line">    } \</div>
-<div class="line">    friend <span class="keywordtype">bool</span> operator&gt;=(RObject obj1, RObject obj2) \</div>
+<div class="line">    friend <span class="keywordtype">bool</span> operator&gt;=(RClass obj1, RClass obj2) \</div>
 <div class="line">    { \</div>
 <div class="line">        return obj2 &lt;= obj1; \</div>
 <div class="line">    }</div>
@@ -508,7 +502,7 @@ Enumerations</h2></td></tr>
 </div>
 </div><!-- contents -->
 </div><!-- doc-content -->
-<div class="ttc" id="a_user_settings_8h_html_af8bcba5a2dae5b1ce92b79f769aad846"><div class="ttname"><a href="_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846">MOMO_CHECK_EXCEPTION</a></div><div class="ttdeci">#define MOMO_CHECK_EXCEPTION(expr)</div><div class="ttdef"><b>Definition:</b> UserSettings.h:176</div></div>
+<div class="ttc" id="a_user_settings_8h_html_af8bcba5a2dae5b1ce92b79f769aad846"><div class="ttname"><a href="_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846">MOMO_CHECK_EXCEPTION</a></div><div class="ttdeci">#define MOMO_CHECK_EXCEPTION(expr)</div><div class="ttdef"><b>Definition:</b> UserSettings.h:199</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

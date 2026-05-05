@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -108,9 +108,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_set_settings.html">momo::TreeSetSettings</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_set.html">momo::TreeSet&lt; TKey, TTreeTraits, TMemManager, TItemTraits, TSettings &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_tree_set_core.html">momo::TreeSetCore&lt; TItemTraits, TTreeTraits, TSettings &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1_tree_set_1_1_relocator_1_1_split_result.html">momo::TreeSet&lt; TKey, TTreeTraits, TMemManager, TItemTraits, TSettings &gt;::Relocator::SplitResult</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1_tree_set_core_1_1_relocator_1_1_split_result.html">momo::TreeSetCore&lt; TItemTraits, TTreeTraits, TSettings &gt;::Relocator::SplitResult</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_tree_set_const_iterator_3_01_n_00_01_s_01_4_01_4.html">std::iterator_traits&lt; momo::internal::TreeSetConstIterator&lt; N, S &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,6 +128,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:a0a555820907450643bfb6e64a365934c"><td class="memTemplParams" colspan="2">template&lt;typename TKey , typename TTreeTraits  = TreeTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault&gt; </td></tr>
+<tr class="memitem:a0a555820907450643bfb6e64a365934c"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a0a555820907450643bfb6e64a365934c">momo::TreeSet</a> = TreeSetCore&lt; TreeSetItemTraits&lt; TKey, TMemManager &gt;, TTreeTraits &gt;</td></tr>
+<tr class="separator:a0a555820907450643bfb6e64a365934c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad421a1a7ba18f323dcc4b9a33572744c"><td class="memTemplParams" colspan="2">template&lt;typename TKey &gt; </td></tr>
 <tr class="memitem:ad421a1a7ba18f323dcc4b9a33572744c"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#ad421a1a7ba18f323dcc4b9a33572744c">momo::TreeMultiSet</a> = TreeSet&lt; TKey, TreeTraits&lt; TKey, true &gt; &gt;</td></tr>
 <tr class="separator:ad421a1a7ba18f323dcc4b9a33572744c"><td class="memSeparator" colspan="2">&#160;</td></tr>

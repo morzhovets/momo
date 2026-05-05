@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::ArrayIndexIterator&lt; TQArray, TQItem &gt; Class Template Reference</title>
+<title>momo: momo::internal::ArrayIndexIterator&lt; TQArray, TQItem, TSettings &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -83,7 +83,6 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_array_index_
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-types">Protected Types</a> &#124;
@@ -91,7 +90,7 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_array_index_
 <a href="#friends">Friends</a> &#124;
 <a href="classmomo_1_1internal_1_1_array_index_iterator-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::ArrayIndexIterator&lt; TQArray, TQItem &gt; Class Template Reference</div>  </div>
+<div class="title">momo::internal::ArrayIndexIterator&lt; TQArray, TQItem, TSettings &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -99,41 +98,41 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_array_index_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:aa1c72fcfd33751b2d79180ec94762a7e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa8055468ed2cc43c10679181ade3b789">QItem</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa1c72fcfd33751b2d79180ec94762a7e">Reference</a></td></tr>
-<tr class="separator:aa1c72fcfd33751b2d79180ec94762a7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad88109e09aba743beaae01050275c96c"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa8055468ed2cc43c10679181ade3b789">QItem</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#ad88109e09aba743beaae01050275c96c">Pointer</a></td></tr>
-<tr class="separator:ad88109e09aba743beaae01050275c96c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afae521c0e9151eef0ec75f82e4d39660"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; const <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a27f5ebf98fd69580b386e7dd7995831a">QArray</a>, const <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa8055468ed2cc43c10679181ade3b789">QItem</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#afae521c0e9151eef0ec75f82e4d39660">ConstIterator</a></td></tr>
-<tr class="separator:afae521c0e9151eef0ec75f82e4d39660"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca224cc5b0ebe062ee2fbd8510ec721c"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a510a980fda9b6db1fc39ab0ac5601224">QItem</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aca224cc5b0ebe062ee2fbd8510ec721c">Reference</a></td></tr>
+<tr class="separator:aca224cc5b0ebe062ee2fbd8510ec721c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdcd6714b7c6a6ef5af2d0a7eec1f3db"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a510a980fda9b6db1fc39ab0ac5601224">QItem</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#abdcd6714b7c6a6ef5af2d0a7eec1f3db">Pointer</a></td></tr>
+<tr class="separator:abdcd6714b7c6a6ef5af2d0a7eec1f3db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbdd3142f7c87183402909e482f30e80"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; const <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a31f47ac860583ca81b547f76f9762586">QArray</a>, const <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a510a980fda9b6db1fc39ab0ac5601224">QItem</a>, <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a7a4419cab106cf8670f167358ec7bcc6">Settings</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#afbdd3142f7c87183402909e482f30e80">ConstIterator</a></td></tr>
+<tr class="separator:afbdd3142f7c87183402909e482f30e80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab3f2f5d43f203502fdb9cf2acd235c1c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#ab3f2f5d43f203502fdb9cf2acd235c1c">ArrayIndexIterator</a> () noexcept</td></tr>
-<tr class="separator:ab3f2f5d43f203502fdb9cf2acd235c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbe306680df418487485520231d2db48"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#adbe306680df418487485520231d2db48">operator ConstIterator</a> () const noexcept</td></tr>
-<tr class="separator:adbe306680df418487485520231d2db48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b59d5b6e76775e8e7302a41e3280faa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a0b59d5b6e76775e8e7302a41e3280faa">operator+=</a> (ptrdiff_t diff)</td></tr>
-<tr class="separator:a0b59d5b6e76775e8e7302a41e3280faa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e2fca291a947d841ccfdac8e7fe7021"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#ad88109e09aba743beaae01050275c96c">Pointer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a0e2fca291a947d841ccfdac8e7fe7021">operator-&gt;</a> () const</td></tr>
-<tr class="separator:a0e2fca291a947d841ccfdac8e7fe7021"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4321cb5b8dd9ebe4c2a91a86e3096e78"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a4321cb5b8dd9ebe4c2a91a86e3096e78">ArrayIndexIterator</a> () noexcept</td></tr>
+<tr class="separator:a4321cb5b8dd9ebe4c2a91a86e3096e78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bc3673ca2a3816d9bc353a7b0c31c24"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a2bc3673ca2a3816d9bc353a7b0c31c24">operator ConstIterator</a> () const noexcept</td></tr>
+<tr class="separator:a2bc3673ca2a3816d9bc353a7b0c31c24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1641deb1646f89c8d7b337aa321fab6e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a1641deb1646f89c8d7b337aa321fab6e">operator+=</a> (ptrdiff_t diff)</td></tr>
+<tr class="separator:a1641deb1646f89c8d7b337aa321fab6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a960f2409c58ccbda7d757886a63e1a3f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#abdcd6714b7c6a6ef5af2d0a7eec1f3db">Pointer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a960f2409c58ccbda7d757886a63e1a3f">operator-&gt;</a> () const</td></tr>
+<tr class="separator:a960f2409c58ccbda7d757886a63e1a3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
-<tr class="memitem:aa8055468ed2cc43c10679181ade3b789"><td class="memItemLeft" align="right" valign="top">typedef TQItem&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa8055468ed2cc43c10679181ade3b789">QItem</a></td></tr>
-<tr class="separator:aa8055468ed2cc43c10679181ade3b789"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27f5ebf98fd69580b386e7dd7995831a"><td class="memItemLeft" align="right" valign="top">typedef TQArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a27f5ebf98fd69580b386e7dd7995831a">QArray</a></td></tr>
-<tr class="separator:a27f5ebf98fd69580b386e7dd7995831a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecd68e6ed7c3e3daa361a53acc4ae3e9"><td class="memItemLeft" align="right" valign="top">typedef QArray::Settings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aecd68e6ed7c3e3daa361a53acc4ae3e9">Settings</a></td></tr>
-<tr class="separator:aecd68e6ed7c3e3daa361a53acc4ae3e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a510a980fda9b6db1fc39ab0ac5601224"><td class="memItemLeft" align="right" valign="top">typedef TQItem&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a510a980fda9b6db1fc39ab0ac5601224">QItem</a></td></tr>
+<tr class="separator:a510a980fda9b6db1fc39ab0ac5601224"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31f47ac860583ca81b547f76f9762586"><td class="memItemLeft" align="right" valign="top">typedef TQArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a31f47ac860583ca81b547f76f9762586">QArray</a></td></tr>
+<tr class="separator:a31f47ac860583ca81b547f76f9762586"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a4419cab106cf8670f167358ec7bcc6"><td class="memItemLeft" align="right" valign="top">typedef TSettings&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a7a4419cab106cf8670f167358ec7bcc6">Settings</a></td></tr>
+<tr class="separator:a7a4419cab106cf8670f167358ec7bcc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:acf06379e8b72c4504123dce65abb0f24"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#acf06379e8b72c4504123dce65abb0f24">ArrayIndexIterator</a> (<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a27f5ebf98fd69580b386e7dd7995831a">QArray</a> *array, size_t index) noexcept</td></tr>
-<tr class="separator:acf06379e8b72c4504123dce65abb0f24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a194db841001a0b358974daed858f7c07"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a27f5ebf98fd69580b386e7dd7995831a">QArray</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a194db841001a0b358974daed858f7c07">ptGetArray</a> () const noexcept</td></tr>
-<tr class="separator:a194db841001a0b358974daed858f7c07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d3c92e80892ba96be3ebf1e202c80a2"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a0d3c92e80892ba96be3ebf1e202c80a2">ptGetIndex</a> () const noexcept</td></tr>
-<tr class="separator:a0d3c92e80892ba96be3ebf1e202c80a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12ecd82638b29b976cc50bc9b36bf7a6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a12ecd82638b29b976cc50bc9b36bf7a6">ArrayIndexIterator</a> (<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a31f47ac860583ca81b547f76f9762586">QArray</a> *array, size_t index) noexcept</td></tr>
+<tr class="separator:a12ecd82638b29b976cc50bc9b36bf7a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdae34151a018fce40a6843a46f9e252"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a31f47ac860583ca81b547f76f9762586">QArray</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#acdae34151a018fce40a6843a46f9e252">ptGetArray</a> () const noexcept</td></tr>
+<tr class="separator:acdae34151a018fce40a6843a46f9e252"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c47a50ed443fb2847f23948d364e311"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a8c47a50ed443fb2847f23948d364e311">ptGetIndex</a> () const noexcept</td></tr>
+<tr class="separator:a8c47a50ed443fb2847f23948d364e311"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -145,51 +144,51 @@ Friends</h2></td></tr>
 <tr class="separator:a2ddff5c0dfb8b244864b3c94d60189f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="afae521c0e9151eef0ec75f82e4d39660"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afae521c0e9151eef0ec75f82e4d39660">&#9670;&nbsp;</a></span>ConstIterator</h2>
+<a id="afbdd3142f7c87183402909e482f30e80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afbdd3142f7c87183402909e482f30e80">&#9670;&nbsp;</a></span>ConstIterator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt;const <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a27f5ebf98fd69580b386e7dd7995831a">QArray</a>, const <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa8055468ed2cc43c10679181ade3b789">QItem</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#afae521c0e9151eef0ec75f82e4d39660">ConstIterator</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt;const <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a31f47ac860583ca81b547f76f9762586">QArray</a>, const <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a510a980fda9b6db1fc39ab0ac5601224">QItem</a>, <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a7a4419cab106cf8670f167358ec7bcc6">Settings</a>&gt; <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#afbdd3142f7c87183402909e482f30e80">ConstIterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ad88109e09aba743beaae01050275c96c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad88109e09aba743beaae01050275c96c">&#9670;&nbsp;</a></span>Pointer</h2>
+<a id="abdcd6714b7c6a6ef5af2d0a7eec1f3db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abdcd6714b7c6a6ef5af2d0a7eec1f3db">&#9670;&nbsp;</a></span>Pointer</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa8055468ed2cc43c10679181ade3b789">QItem</a>* <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#ad88109e09aba743beaae01050275c96c">Pointer</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a510a980fda9b6db1fc39ab0ac5601224">QItem</a>* <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#abdcd6714b7c6a6ef5af2d0a7eec1f3db">Pointer</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a27f5ebf98fd69580b386e7dd7995831a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27f5ebf98fd69580b386e7dd7995831a">&#9670;&nbsp;</a></span>QArray</h2>
+<a id="a31f47ac860583ca81b547f76f9762586"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31f47ac860583ca81b547f76f9762586">&#9670;&nbsp;</a></span>QArray</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef TQArray <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a27f5ebf98fd69580b386e7dd7995831a">QArray</a></td>
+          <td class="memname">typedef TQArray <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a31f47ac860583ca81b547f76f9762586">QArray</a></td>
         </tr>
       </table>
   </td>
@@ -201,19 +200,19 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 
 </div>
 </div>
-<a id="aa8055468ed2cc43c10679181ade3b789"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8055468ed2cc43c10679181ade3b789">&#9670;&nbsp;</a></span>QItem</h2>
+<a id="a510a980fda9b6db1fc39ab0ac5601224"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a510a980fda9b6db1fc39ab0ac5601224">&#9670;&nbsp;</a></span>QItem</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef TQItem <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa8055468ed2cc43c10679181ade3b789">QItem</a></td>
+          <td class="memname">typedef TQItem <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a510a980fda9b6db1fc39ab0ac5601224">QItem</a></td>
         </tr>
       </table>
   </td>
@@ -225,35 +224,35 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 
 </div>
 </div>
-<a id="aa1c72fcfd33751b2d79180ec94762a7e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa1c72fcfd33751b2d79180ec94762a7e">&#9670;&nbsp;</a></span>Reference</h2>
+<a id="aca224cc5b0ebe062ee2fbd8510ec721c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca224cc5b0ebe062ee2fbd8510ec721c">&#9670;&nbsp;</a></span>Reference</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa8055468ed2cc43c10679181ade3b789">QItem</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aa1c72fcfd33751b2d79180ec94762a7e">Reference</a></td>
+          <td class="memname">typedef <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a510a980fda9b6db1fc39ab0ac5601224">QItem</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aca224cc5b0ebe062ee2fbd8510ec721c">Reference</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aecd68e6ed7c3e3daa361a53acc4ae3e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aecd68e6ed7c3e3daa361a53acc4ae3e9">&#9670;&nbsp;</a></span>Settings</h2>
+<a id="a7a4419cab106cf8670f167358ec7bcc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a4419cab106cf8670f167358ec7bcc6">&#9670;&nbsp;</a></span>Settings</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">typedef QArray::Settings <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#aecd68e6ed7c3e3daa361a53acc4ae3e9">Settings</a></td>
+          <td class="memname">typedef TSettings <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a7a4419cab106cf8670f167358ec7bcc6">Settings</a></td>
         </tr>
       </table>
   </td>
@@ -266,19 +265,19 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab3f2f5d43f203502fdb9cf2acd235c1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3f2f5d43f203502fdb9cf2acd235c1c">&#9670;&nbsp;</a></span>ArrayIndexIterator() <span class="overload">[1/2]</span></h2>
+<a id="a4321cb5b8dd9ebe4c2a91a86e3096e78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4321cb5b8dd9ebe4c2a91a86e3096e78">&#9670;&nbsp;</a></span>ArrayIndexIterator() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -293,21 +292,21 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 
 </div>
 </div>
-<a id="acf06379e8b72c4504123dce65abb0f24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf06379e8b72c4504123dce65abb0f24">&#9670;&nbsp;</a></span>ArrayIndexIterator() <span class="overload">[2/2]</span></h2>
+<a id="a12ecd82638b29b976cc50bc9b36bf7a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12ecd82638b29b976cc50bc9b36bf7a6">&#9670;&nbsp;</a></span>ArrayIndexIterator() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::<a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a27f5ebf98fd69580b386e7dd7995831a">QArray</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a31f47ac860583ca81b547f76f9762586">QArray</a> *&#160;</td>
           <td class="paramname"><em>array</em>, </td>
         </tr>
         <tr>
@@ -332,19 +331,19 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="adbe306680df418487485520231d2db48"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adbe306680df418487485520231d2db48">&#9670;&nbsp;</a></span>operator ConstIterator()</h2>
+<a id="a2bc3673ca2a3816d9bc353a7b0c31c24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bc3673ca2a3816d9bc353a7b0c31c24">&#9670;&nbsp;</a></span>operator ConstIterator()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::operator <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#afae521c0e9151eef0ec75f82e4d39660">ConstIterator</a> </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::operator <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#afbdd3142f7c87183402909e482f30e80">ConstIterator</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -359,19 +358,19 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 
 </div>
 </div>
-<a id="a0b59d5b6e76775e8e7302a41e3280faa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b59d5b6e76775e8e7302a41e3280faa">&#9670;&nbsp;</a></span>operator+=()</h2>
+<a id="a1641deb1646f89c8d7b337aa321fab6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1641deb1646f89c8d7b337aa321fab6e">&#9670;&nbsp;</a></span>operator+=()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::operator+= </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&amp; <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::operator+= </td>
           <td>(</td>
           <td class="paramtype">ptrdiff_t&#160;</td>
           <td class="paramname"><em>diff</em></td><td>)</td>
@@ -387,19 +386,19 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 
 </div>
 </div>
-<a id="a0e2fca291a947d841ccfdac8e7fe7021"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e2fca291a947d841ccfdac8e7fe7021">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
+<a id="a960f2409c58ccbda7d757886a63e1a3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a960f2409c58ccbda7d757886a63e1a3f">&#9670;&nbsp;</a></span>operator-&gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#ad88109e09aba743beaae01050275c96c">Pointer</a> <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::operator-&gt; </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#abdcd6714b7c6a6ef5af2d0a7eec1f3db">Pointer</a> <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::operator-&gt; </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -414,19 +413,19 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 
 </div>
 </div>
-<a id="a194db841001a0b358974daed858f7c07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a194db841001a0b358974daed858f7c07">&#9670;&nbsp;</a></span>ptGetArray()</h2>
+<a id="acdae34151a018fce40a6843a46f9e252"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdae34151a018fce40a6843a46f9e252">&#9670;&nbsp;</a></span>ptGetArray()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a27f5ebf98fd69580b386e7dd7995831a">QArray</a>* <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::ptGetArray </td>
+          <td class="memname"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html#a31f47ac860583ca81b547f76f9762586">QArray</a>* <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::ptGetArray </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -441,19 +440,19 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 
 </div>
 </div>
-<a id="a0d3c92e80892ba96be3ebf1e202c80a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d3c92e80892ba96be3ebf1e202c80a2">&#9670;&nbsp;</a></span>ptGetIndex()</h2>
+<a id="a8c47a50ed443fb2847f23948d364e311"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c47a50ed443fb2847f23948d364e311">&#9670;&nbsp;</a></span>ptGetIndex()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;::ptGetIndex </td>
+          <td class="memname">size_t <a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">momo::internal::ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;::ptGetIndex </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -475,7 +474,7 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -483,13 +482,13 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
         <tr>
           <td class="memname">ptrdiff_t operator- </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;&#160;</td>
           <td class="paramname"><em>iter1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;&#160;</td>
           <td class="paramname"><em>iter2</em>&#160;</td>
         </tr>
         <tr>
@@ -513,7 +512,7 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -521,13 +520,13 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
         <tr>
           <td class="memname">bool operator&lt; </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;&#160;</td>
           <td class="paramname"><em>iter1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;&#160;</td>
           <td class="paramname"><em>iter2</em>&#160;</td>
         </tr>
         <tr>
@@ -551,7 +550,7 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TQArray , typename TQItem &gt; </div>
+template&lt;typename TQArray , typename TQItem , typename TSettings  = typename TQArray::Settings&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -559,13 +558,13 @@ template&lt;typename TQArray , typename TQItem &gt; </div>
         <tr>
           <td class="memname">bool operator== </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;&#160;</td>
           <td class="paramname"><em>iter1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_array_index_iterator.html">ArrayIndexIterator</a>&lt; TQArray, TQItem, TSettings &gt;&#160;</td>
           <td class="paramname"><em>iter2</em>&#160;</td>
         </tr>
         <tr>

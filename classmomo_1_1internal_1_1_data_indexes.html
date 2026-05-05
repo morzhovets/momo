@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -144,12 +144,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0d98bc5e6a15904ae1f309333738ebef"><td class="memTemplParams" colspan="2">template&lt;size_t columnCount&gt; </td></tr>
 <tr class="memitem:a0d98bc5e6a15904ae1f309333738ebef"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo.html#ad431268a903997691474fa55f25f7ec9">MultiHashIndex</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_indexes.html#a0d98bc5e6a15904ae1f309333738ebef">GetMultiHashIndex</a> (const std::array&lt; size_t, columnCount &gt; &amp;offsets) const</td></tr>
 <tr class="separator:a0d98bc5e6a15904ae1f309333738ebef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a970e8c6ba9e1ff9329a0e591fa2a0fbd"><td class="memTemplParams" colspan="2">template&lt;typename... Items, typename Raws , size_t columnCount = sizeof...(Items)&gt; </td></tr>
-<tr class="memitem:a970e8c6ba9e1ff9329a0e591fa2a0fbd"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structmomo_1_1internal_1_1_data_indexes_1_1_result.html">Result</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_indexes.html#a970e8c6ba9e1ff9329a0e591fa2a0fbd">AddUniqueHashIndex</a> (const Raws &amp;raws, const std::array&lt; size_t, columnCount &gt; &amp;offsets)</td></tr>
-<tr class="separator:a970e8c6ba9e1ff9329a0e591fa2a0fbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ff4b8152efd6905ef02c4b0223f5c4c"><td class="memTemplParams" colspan="2">template&lt;typename... Items, typename Raws , size_t columnCount = sizeof...(Items)&gt; </td></tr>
-<tr class="memitem:a3ff4b8152efd6905ef02c4b0223f5c4c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo.html#ad431268a903997691474fa55f25f7ec9">MultiHashIndex</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_indexes.html#a3ff4b8152efd6905ef02c4b0223f5c4c">AddMultiHashIndex</a> (const Raws &amp;raws, const std::array&lt; size_t, columnCount &gt; &amp;offsets)</td></tr>
-<tr class="separator:a3ff4b8152efd6905ef02c4b0223f5c4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93085a739f819b01f0be3c03ab4dad97"><td class="memTemplParams" colspan="2">template&lt;typename... Items, typename Raws &gt; </td></tr>
+<tr class="memitem:a93085a739f819b01f0be3c03ab4dad97"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structmomo_1_1internal_1_1_data_indexes_1_1_result.html">Result</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_indexes.html#a93085a739f819b01f0be3c03ab4dad97">AddUniqueHashIndex</a> (const Raws &amp;raws, const std::array&lt; size_t, sizeof...(Items)&gt; &amp;offsets)</td></tr>
+<tr class="separator:a93085a739f819b01f0be3c03ab4dad97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86fd7b21ea5c997e9af4387dc4d06db0"><td class="memTemplParams" colspan="2">template&lt;typename... Items, typename Raws &gt; </td></tr>
+<tr class="memitem:a86fd7b21ea5c997e9af4387dc4d06db0"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="namespacemomo.html#ad431268a903997691474fa55f25f7ec9">MultiHashIndex</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_indexes.html#a86fd7b21ea5c997e9af4387dc4d06db0">AddMultiHashIndex</a> (const Raws &amp;raws, const std::array&lt; size_t, sizeof...(Items)&gt; &amp;offsets)</td></tr>
+<tr class="separator:a86fd7b21ea5c997e9af4387dc4d06db0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3fb80acba08602e75a928d62deda05c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_indexes.html#a3fb80acba08602e75a928d62deda05c7">RemoveUniqueHashIndexes</a> () noexcept</td></tr>
 <tr class="separator:a3fb80acba08602e75a928d62deda05c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ae1ef8e0c4edfab29146b650abe7c3b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_data_indexes.html#a3ae1ef8e0c4edfab29146b650abe7c3b">RemoveMultiHashIndexes</a> () noexcept</td></tr>
@@ -479,15 +479,15 @@ template&lt;typename TColumnList , typename TDataTraits &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3ff4b8152efd6905ef02c4b0223f5c4c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ff4b8152efd6905ef02c4b0223f5c4c">&#9670;&nbsp;</a></span>AddMultiHashIndex()</h2>
+<a id="a86fd7b21ea5c997e9af4387dc4d06db0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86fd7b21ea5c997e9af4387dc4d06db0">&#9670;&nbsp;</a></span>AddMultiHashIndex()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TColumnList , typename TDataTraits &gt; </div>
 <div class="memtemplate">
-template&lt;typename... Items, typename Raws , size_t columnCount = sizeof...(Items)&gt; </div>
+template&lt;typename... Items, typename Raws &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -501,7 +501,7 @@ template&lt;typename... Items, typename Raws , size_t columnCount = sizeof...(It
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::array&lt; size_t, columnCount &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::array&lt; size_t, sizeof...(Items)&gt; &amp;&#160;</td>
           <td class="paramname"><em>offsets</em>&#160;</td>
         </tr>
         <tr>
@@ -547,15 +547,15 @@ template&lt;typename TColumnList , typename TDataTraits &gt; </div>
 
 </div>
 </div>
-<a id="a970e8c6ba9e1ff9329a0e591fa2a0fbd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a970e8c6ba9e1ff9329a0e591fa2a0fbd">&#9670;&nbsp;</a></span>AddUniqueHashIndex()</h2>
+<a id="a93085a739f819b01f0be3c03ab4dad97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93085a739f819b01f0be3c03ab4dad97">&#9670;&nbsp;</a></span>AddUniqueHashIndex()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename TColumnList , typename TDataTraits &gt; </div>
 <div class="memtemplate">
-template&lt;typename... Items, typename Raws , size_t columnCount = sizeof...(Items)&gt; </div>
+template&lt;typename... Items, typename Raws &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -569,7 +569,7 @@ template&lt;typename... Items, typename Raws , size_t columnCount = sizeof...(It
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::array&lt; size_t, columnCount &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::array&lt; size_t, sizeof...(Items)&gt; &amp;&#160;</td>
           <td class="paramname"><em>offsets</em>&#160;</td>
         </tr>
         <tr>

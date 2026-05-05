@@ -4,8 +4,12 @@ var _user_settings_8h =
     [ "MOMO_ASSERT", "_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f", null ],
     [ "MOMO_CAST_POINTER", "_user_settings_8h.html#a094f676cd5f422d80f3be631dc2add3f", null ],
     [ "MOMO_CAST_POINTER", "_user_settings_8h.html#a094f676cd5f422d80f3be631dc2add3f", null ],
+    [ "MOMO_CATCH_ALL", "_user_settings_8h.html#a9ff696dc8a89a829ba304dc473b891be", null ],
     [ "MOMO_CHECK_EXCEPTION", "_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846", null ],
     [ "MOMO_CHECK_ITERATOR_VERSION", "_user_settings_8h.html#a4bde5f20e4a900321ff77b25d9cfebb4", null ],
+    [ "MOMO_CONSTEXPR_IF", "_user_settings_8h.html#a167b2352a32562bf2344b32a3ac73afc", null ],
+    [ "MOMO_CONSTEXPR_VERSION", "_user_settings_8h.html#a46ffd3f7a88ddedf78819a8dbd2fffe1", null ],
+    [ "MOMO_COPY_MEMORY", "_user_settings_8h.html#a00cc43420e9b0d1157b053a71de9cf78", null ],
     [ "MOMO_DEFAULT_CHECK_MODE", "_user_settings_8h.html#a61ea4e5dbf67f107ce2a9701a8bcf53a", null ],
     [ "MOMO_DEFAULT_EXTRA_CHECK_MODE", "_user_settings_8h.html#ad3bb700413d84463c44bde2b01f8eb3c", null ],
     [ "MOMO_DEFAULT_HASH_BUCKET", "_user_settings_8h.html#a9969976973e664f80cf1dc1166d2195c", null ],
@@ -15,6 +19,7 @@ var _user_settings_8h =
     [ "MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT", "_user_settings_8h.html#a9769d16036b136410a1e7cafad0af1f7", null ],
     [ "MOMO_DEFAULT_TREE_NODE", "_user_settings_8h.html#a897cef27bd0db01f4762a3f7651b52da", null ],
     [ "MOMO_DEPRECATED", "_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1", null ],
+    [ "MOMO_DIV_BY_SMALL_SWITCH", "_user_settings_8h.html#a1eb03d00ca9756f286081f6752fb79cc", null ],
     [ "MOMO_EMPTY_BASES", "_user_settings_8h.html#a05da9c2a8fdacc1b099eee384a684152", null ],
     [ "MOMO_FORCEINLINE", "_user_settings_8h.html#a385418dc0e5a2df292e94ed0a9036559", null ],
     [ "MOMO_INVALID_UINTPTR", "_user_settings_8h.html#adc3d49e50add6f931606ec489db2e7b9", null ],
@@ -26,5 +31,6 @@ var _user_settings_8h =
     [ "MOMO_NODISCARD", "_user_settings_8h.html#ac91901db38c236c1614113e4759195ff", null ],
     [ "MOMO_NOINLINE", "_user_settings_8h.html#af452a6b523eb6408184b712b0bafcd8c", null ],
     [ "MOMO_NULL_UINTPTR", "_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845", null ],
+    [ "MOMO_THROW", "_user_settings_8h.html#ad5a50a8c41fd4fb8b1cf8dac2e86b551", null ],
     [ "MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD", "_user_settings_8h.html#a465b4e68c7701a2a207206b4af6177cd", null ]
 ];

@@ -8,6 +8,7 @@ var classmomo_1_1internal_1_1_hash_map_position =
     [ "HashMapPosition", "classmomo_1_1internal_1_1_hash_map_position.html#a126f8a3fbe0f0267567a21b836d320a5", null ],
     [ "HashMapPosition", "classmomo_1_1internal_1_1_hash_map_position.html#a751d3b704280ec553e3e1088edffd638", null ],
     [ "HashMapPosition", "classmomo_1_1internal_1_1_hash_map_position.html#ad4925914cd3a8befb684c1519f04725b", null ],
+    [ "operator bool", "classmomo_1_1internal_1_1_hash_map_position.html#a535162d8e463016488a5e3d155ba02d1", null ],
     [ "operator ConstPosition", "classmomo_1_1internal_1_1_hash_map_position.html#acb7eccc125af8d2cb0fa109d1ae6dba3", null ],
     [ "operator ResIterator", "classmomo_1_1internal_1_1_hash_map_position.html#a5c1b114f4cf7d926b8c632c4d1a48f07", null ],
     [ "operator->", "classmomo_1_1internal_1_1_hash_map_position.html#a1dcc8341bca28809d5282eb29da58e33", null ],

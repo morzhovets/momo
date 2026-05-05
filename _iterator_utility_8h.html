@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -138,10 +138,10 @@ Namespaces</h2></td></tr>
 Macros</h2></td></tr>
 <tr class="memitem:a6a67f67bbca004172d8d1c68b2048222"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_iterator_utility_8h.html#a6a67f67bbca004172d8d1c68b2048222">MOMO_MORE_ARRAY_ITERATOR_OPERATORS</a>(Iterator)</td></tr>
 <tr class="separator:a6a67f67bbca004172d8d1c68b2048222"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa49ea2c6a2ffa24599b3731888b77293"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_iterator_utility_8h.html#aa49ea2c6a2ffa24599b3731888b77293">MOMO_MORE_HASH_ITERATOR_OPERATORS</a>(Iterator)</td></tr>
-<tr class="separator:aa49ea2c6a2ffa24599b3731888b77293"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab767e50f3b158f27347abb541373e0f0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_iterator_utility_8h.html#ab767e50f3b158f27347abb541373e0f0">MOMO_MORE_HASH_POSITION_OPERATORS</a>(Position)</td></tr>
 <tr class="separator:ab767e50f3b158f27347abb541373e0f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa49ea2c6a2ffa24599b3731888b77293"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_iterator_utility_8h.html#aa49ea2c6a2ffa24599b3731888b77293">MOMO_MORE_HASH_ITERATOR_OPERATORS</a>(Iterator)</td></tr>
+<tr class="separator:aa49ea2c6a2ffa24599b3731888b77293"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c015b8d1afb6162b13679494ed38709"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_iterator_utility_8h.html#a7c015b8d1afb6162b13679494ed38709">MOMO_MORE_TREE_ITERATOR_OPERATORS</a>(Iterator)</td></tr>
 <tr class="separator:a7c015b8d1afb6162b13679494ed38709"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -179,27 +179,12 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    Iterator operator++(<span class="keywordtype">int</span>) \</div>
+<b>Value:</b><div class="fragment"><div class="line">    <a class="code" href="_iterator_utility_8h.html#ab767e50f3b158f27347abb541373e0f0">MOMO_MORE_HASH_POSITION_OPERATORS</a>(Iterator) \</div>
+<div class="line">    Iterator operator++(<span class="keywordtype">int</span>) \</div>
 <div class="line">    { \</div>
-<div class="line">        Iterator tempIter = *<span class="keyword">this</span>; \</div>
+<div class="line">        Iterator resIter = *<span class="keyword">this</span>; \</div>
 <div class="line">        ++*<span class="keyword">this</span>; \</div>
-<div class="line">        return tempIter; \</div>
-<div class="line">    } \</div>
-<div class="line">    Reference operator*() const \</div>
-<div class="line">    { \</div>
-<div class="line">        return *operator-&gt;(); \</div>
-<div class="line">    } \</div>
-<div class="line">    friend <span class="keywordtype">bool</span> operator!=(Iterator iter1, Iterator iter2) noexcept \</div>
-<div class="line">    { \</div>
-<div class="line">        return !(iter1 == iter2); \</div>
-<div class="line">    } \</div>
-<div class="line">    bool operator!() const noexcept \</div>
-<div class="line">    { \</div>
-<div class="line">        return *<span class="keyword">this</span> == Iterator(); \</div>
-<div class="line">    } \</div>
-<div class="line">    explicit <span class="keyword">operator</span> bool() const noexcept \</div>
-<div class="line">    { \</div>
-<div class="line">        return !!*<span class="keyword">this</span>; \</div>
+<div class="line">        return resIter; \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>
@@ -226,14 +211,6 @@ Macros</h2></td></tr>
 <div class="line">    friend <span class="keywordtype">bool</span> operator!=(Position pos1, Position pos2) noexcept \</div>
 <div class="line">    { \</div>
 <div class="line">        return !(pos1 == pos2); \</div>
-<div class="line">    } \</div>
-<div class="line">    bool operator!() const noexcept \</div>
-<div class="line">    { \</div>
-<div class="line">        return *<span class="keyword">this</span> == Position(); \</div>
-<div class="line">    } \</div>
-<div class="line">    explicit <span class="keyword">operator</span> bool() const noexcept \</div>
-<div class="line">    { \</div>
-<div class="line">        return !!*<span class="keyword">this</span>; \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>
@@ -253,31 +230,20 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">    Iterator operator++(<span class="keywordtype">int</span>) \</div>
-<div class="line">    { \</div>
-<div class="line">        Iterator tempIter = *<span class="keyword">this</span>; \</div>
-<div class="line">        ++*<span class="keyword">this</span>; \</div>
-<div class="line">        return tempIter; \</div>
-<div class="line">    } \</div>
+<b>Value:</b><div class="fragment"><div class="line">    <a class="code" href="_iterator_utility_8h.html#aa49ea2c6a2ffa24599b3731888b77293">MOMO_MORE_HASH_ITERATOR_OPERATORS</a>(Iterator) \</div>
 <div class="line">    Iterator operator--(<span class="keywordtype">int</span>) \</div>
 <div class="line">    { \</div>
-<div class="line">        Iterator tempIter = *<span class="keyword">this</span>; \</div>
+<div class="line">        Iterator resIter = *<span class="keyword">this</span>; \</div>
 <div class="line">        --*<span class="keyword">this</span>; \</div>
-<div class="line">        return tempIter; \</div>
-<div class="line">    } \</div>
-<div class="line">    Reference operator*() const \</div>
-<div class="line">    { \</div>
-<div class="line">        return *operator-&gt;(); \</div>
-<div class="line">    } \</div>
-<div class="line">    friend <span class="keywordtype">bool</span> operator!=(Iterator iter1, Iterator iter2) noexcept \</div>
-<div class="line">    { \</div>
-<div class="line">        return !(iter1 == iter2); \</div>
+<div class="line">        return resIter; \</div>
 <div class="line">    }</div>
 </div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->
 </div><!-- doc-content -->
+<div class="ttc" id="a_iterator_utility_8h_html_aa49ea2c6a2ffa24599b3731888b77293"><div class="ttname"><a href="_iterator_utility_8h.html#aa49ea2c6a2ffa24599b3731888b77293">MOMO_MORE_HASH_ITERATOR_OPERATORS</a></div><div class="ttdeci">#define MOMO_MORE_HASH_ITERATOR_OPERATORS(Iterator)</div><div class="ttdef"><b>Definition:</b> IteratorUtility.h:75</div></div>
+<div class="ttc" id="a_iterator_utility_8h_html_ab767e50f3b158f27347abb541373e0f0"><div class="ttname"><a href="_iterator_utility_8h.html#ab767e50f3b158f27347abb541373e0f0">MOMO_MORE_HASH_POSITION_OPERATORS</a></div><div class="ttdeci">#define MOMO_MORE_HASH_POSITION_OPERATORS(Position)</div><div class="ttdef"><b>Definition:</b> IteratorUtility.h:65</div></div>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>

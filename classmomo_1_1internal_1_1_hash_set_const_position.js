@@ -9,6 +9,7 @@ var classmomo_1_1internal_1_1_hash_set_const_position =
     [ "Settings", "classmomo_1_1internal_1_1_hash_set_const_position.html#a3aee79852a9d211b498cadfcc5a1a9ea", null ],
     [ "HashSetConstPosition", "classmomo_1_1internal_1_1_hash_set_const_position.html#ac8af892ac8b862680c712b91630a0d9c", null ],
     [ "HashSetConstPosition", "classmomo_1_1internal_1_1_hash_set_const_position.html#a54011b860711baeca13b24bcade2cbab", null ],
+    [ "operator bool", "classmomo_1_1internal_1_1_hash_set_const_position.html#a0ab71bb72c2779e410e2fffef8bb75a4", null ],
     [ "operator->", "classmomo_1_1internal_1_1_hash_set_const_position.html#a880f2643eb79354cc0df85aa7cb9341f", null ],
     [ "ptCheck", "classmomo_1_1internal_1_1_hash_set_const_position.html#a1643e615c01bb0aa1cd4c9b9b2816baf", null ],
     [ "ptGetBucketIndex", "classmomo_1_1internal_1_1_hash_set_const_position.html#a4f27f4bca478c211049bfdc8cb879fe6", null ],

@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -109,11 +109,11 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_settings.html">momo::ArraySettings&lt; tInternalCapacity, tGrowOnReserve, tUsePtrIterator &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array.html">momo::Array&lt; TItem, TMemManager, TItemTraits, TSettings &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_core.html">momo::ArrayCore&lt; TItemTraits, TSettings &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_nested_array_settings.html">momo::internal::NestedArraySettings&lt; TBaseArraySettings &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_nested_array_settings.html">momo::internal::NestedArraySettings&lt; TBaseArraySettings, tAllowExceptionSuppression &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstd_1_1back__insert__iterator_3_01momo_1_1_array_3_01_params_8_8_8_01_4_01_4.html">std::back_insert_iterator&lt; momo::Array&lt; Params... &gt; &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstd_1_1back__insert__iterator_3_01momo_1_1_array_core_3_01_params_8_8_8_01_4_01_4.html">std::back_insert_iterator&lt; momo::ArrayCore&lt; Params... &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
@@ -127,12 +127,15 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a92e2dbdb50d3374abc99d370886207c5"><td class="memTemplParams" colspan="2">template&lt;size_t tInternalCapacity, typename TItem , typename TMemManager  = MemManagerDefault, typename TItemTraits  = ArrayItemTraits&lt;TItem, TMemManager&gt;&gt; </td></tr>
-<tr class="memitem:a92e2dbdb50d3374abc99d370886207c5"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a92e2dbdb50d3374abc99d370886207c5">momo::ArrayIntCap</a> = Array&lt; TItem, TMemManager, TItemTraits, ArraySettings&lt; tInternalCapacity &gt; &gt;</td></tr>
-<tr class="separator:a92e2dbdb50d3374abc99d370886207c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e9b1870c9787d1fe7ea1d37b5b7526b"><td class="memTemplParams" colspan="2">template&lt;size_t tInternalCapacity, typename TItem , typename TMemManager &gt; </td></tr>
-<tr class="memitem:a1e9b1870c9787d1fe7ea1d37b5b7526b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a1e9b1870c9787d1fe7ea1d37b5b7526b">momo::internal::NestedArrayIntCap</a> = Array&lt; TItem, TMemManager, ArrayItemTraits&lt; TItem, TMemManager &gt;, NestedArraySettings&lt; ArraySettings&lt; tInternalCapacity &gt; &gt;&gt;</td></tr>
-<tr class="separator:a1e9b1870c9787d1fe7ea1d37b5b7526b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48042b9fa27af1fbe9944086645945f9"><td class="memTemplParams" colspan="2">template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </td></tr>
+<tr class="memitem:a48042b9fa27af1fbe9944086645945f9"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a48042b9fa27af1fbe9944086645945f9">momo::Array</a> = ArrayCore&lt; ArrayItemTraits&lt; TItem, TMemManager &gt; &gt;</td></tr>
+<tr class="separator:a48042b9fa27af1fbe9944086645945f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51d43dde16391cdd9cf294ff8c3506f2"><td class="memTemplParams" colspan="2">template&lt;size_t tInternalCapacity, typename TItem , typename TMemManager  = MemManagerDefault&gt; </td></tr>
+<tr class="memitem:a51d43dde16391cdd9cf294ff8c3506f2"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a51d43dde16391cdd9cf294ff8c3506f2">momo::ArrayIntCap</a> = ArrayCore&lt; ArrayItemTraits&lt; TItem, TMemManager &gt;, ArraySettings&lt; tInternalCapacity &gt; &gt;</td></tr>
+<tr class="separator:a51d43dde16391cdd9cf294ff8c3506f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e8c933dd2bcd381bffcc5b282a5d333"><td class="memTemplParams" colspan="2">template&lt;size_t tInternalCapacity, typename TItem , typename TMemManager &gt; </td></tr>
+<tr class="memitem:a1e8c933dd2bcd381bffcc5b282a5d333"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo_1_1internal.html#a1e8c933dd2bcd381bffcc5b282a5d333">momo::internal::NestedArrayIntCap</a> = ArrayCore&lt; ArrayItemTraits&lt; TItem, TMemManager &gt;, NestedArraySettings&lt; ArraySettings&lt; tInternalCapacity &gt; &gt;&gt;</td></tr>
+<tr class="separator:a1e8c933dd2bcd381bffcc5b282a5d333"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>

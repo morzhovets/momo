@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -93,16 +93,6 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_map_key_valu
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="_map_utility_8h_source.html">MapUtility.h</a>&gt;</code></p>
-<div class="dynheader">
-Inheritance diagram for momo::internal::MapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classmomo_1_1internal_1_1_map_key_value_traits.png" usemap="#momo::internal::MapKeyValueTraits_3C_20TKey_2C_20TValue_2C_20TMemManager_20_3E_map" alt=""/>
-  <map id="momo::internal::MapKeyValueTraits_3C_20TKey_2C_20TValue_2C_20TMemManager_20_3E_map" name="momo::internal::MapKeyValueTraits_3C_20TKey_2C_20TValue_2C_20TMemManager_20_3E_map">
-<area href="classmomo_1_1_hash_map_key_value_traits.html" alt="momo::HashMapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;" shape="rect" coords="0,56,405,80"/>
-<area href="classmomo_1_1_tree_map_key_value_traits.html" alt="momo::TreeMapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;" shape="rect" coords="415,56,820,80"/>
-  </map>
-</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
@@ -138,6 +128,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a4d846fed9076c7695d3b2fef4eb4f0ec"><td class="memTemplParams" colspan="2">template&lt;typename KeyArg &gt; </td></tr>
 <tr class="memitem:a4d846fed9076c7695d3b2fef4eb4f0ec"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a4d846fed9076c7695d3b2fef4eb4f0ec">AssignKey</a> (<a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a4fa44ccda6bc080481c0d3e685bb0749">MemManager</a> &amp;, KeyArg &amp;&amp;keyArg, <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ab8011d130a0f5dc9e24043e18c92b090">Key</a> &amp;key)</td></tr>
 <tr class="separator:a4d846fed9076c7695d3b2fef4eb4f0ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40e9ddfeb052f947d55dd42dfba17623"><td class="memTemplParams" colspan="2">template&lt;typename ValueArg &gt; </td></tr>
+<tr class="memitem:a40e9ddfeb052f947d55dd42dfba17623"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a40e9ddfeb052f947d55dd42dfba17623">AssignValue</a> (<a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a4fa44ccda6bc080481c0d3e685bb0749">MemManager</a> &amp;, ValueArg &amp;&amp;valueArg, <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a600f867676696d2b2405d5e0885a01b7">Value</a> &amp;value)</td></tr>
+<tr class="separator:a40e9ddfeb052f947d55dd42dfba17623"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -149,6 +142,8 @@ Static Public Attributes</h2></td></tr>
 <tr class="separator:ae9eb6114d0142135f81c39ca5159a9d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2cc394d0e9a4589bceaf6644b10b776"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ad2cc394d0e9a4589bceaf6644b10b776">isValueNothrowRelocatable</a> = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a1f4cc24e5516e09444e4115629b76891">ValueManager::isNothrowRelocatable</a></td></tr>
 <tr class="separator:ad2cc394d0e9a4589bceaf6644b10b776"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b315dbec21febc96dbccb7cb39f2c5c"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a5b315dbec21febc96dbccb7cb39f2c5c">useSafeValueReference</a> = false</td></tr>
+<tr class="separator:a5b315dbec21febc96dbccb7cb39f2c5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ab8011d130a0f5dc9e24043e18c92b090"></a>
@@ -248,6 +243,52 @@ template&lt;typename KeyArg &gt; </div>
           <td></td>
           <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#ab8011d130a0f5dc9e24043e18c92b090">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>key</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a40e9ddfeb052f947d55dd42dfba17623"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40e9ddfeb052f947d55dd42dfba17623">&#9670;&nbsp;</a></span>AssignValue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TValue , typename TMemManager &gt; </div>
+<div class="memtemplate">
+template&lt;typename ValueArg &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html">momo::internal::MapKeyValueTraits</a>&lt; TKey, TValue, TMemManager &gt;::AssignValue </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a4fa44ccda6bc080481c0d3e685bb0749">MemManager</a> &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ValueArg &amp;&amp;&#160;</td>
+          <td class="paramname"><em>valueArg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html#a600f867676696d2b2405d5e0885a01b7">Value</a> &amp;&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -736,6 +777,30 @@ template&lt;typename TKey , typename TValue , typename TMemManager &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html">momo::internal::MapKeyValueTraits</a>&lt; TKey, TValue, TMemManager &gt;::keyAlignment = <a class="el" href="classmomo_1_1internal_1_1_object_manager.html#a99bb4026112bfe291a0a5b06bdf87435">KeyManager::alignment</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5b315dbec21febc96dbccb7cb39f2c5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b315dbec21febc96dbccb7cb39f2c5c">&#9670;&nbsp;</a></span>useSafeValueReference</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename TValue , typename TMemManager &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool <a class="el" href="classmomo_1_1internal_1_1_map_key_value_traits.html">momo::internal::MapKeyValueTraits</a>&lt; TKey, TValue, TMemManager &gt;::useSafeValueReference = false</td>
         </tr>
       </table>
   </td>

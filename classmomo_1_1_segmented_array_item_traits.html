@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -85,7 +85,6 @@ $(document).ready(function(){initNavTree('classmomo_1_1_segmented_array_item_tra
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classmomo_1_1_segmented_array_item_traits-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">momo::SegmentedArrayItemTraits&lt; TItem, TMemManager &gt; Class Template Reference</div>  </div>
@@ -100,36 +99,33 @@ Public Types</h2></td></tr>
 <tr class="separator:a40c19248716d96c7cc6525efd8f9d55d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3891a7ece87cc16b49190c5ffdf8b1b"><td class="memItemLeft" align="right" valign="top">typedef TMemManager&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array_item_traits.html#aa3891a7ece87cc16b49190c5ffdf8b1b">MemManager</a></td></tr>
 <tr class="separator:aa3891a7ece87cc16b49190c5ffdf8b1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac440054f95ceb8fd99e2e5bbb60f724d"><td class="memTemplParams" colspan="2">template&lt;typename... ItemArgs&gt; </td></tr>
-<tr class="memitem:ac440054f95ceb8fd99e2e5bbb60f724d"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array_item_traits.html#ac440054f95ceb8fd99e2e5bbb60f724d">Creator</a> = typename ItemManager::template <a class="el" href="classmomo_1_1_segmented_array_item_traits.html#ac440054f95ceb8fd99e2e5bbb60f724d">Creator</a>&lt; ItemArgs... &gt;</td></tr>
-<tr class="separator:ac440054f95ceb8fd99e2e5bbb60f724d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea8b35d0b5465d6d3792055eca60c1af"><td class="memTemplParams" colspan="2">template&lt;typename... ItemArgs&gt; </td></tr>
+<tr class="memitem:aea8b35d0b5465d6d3792055eca60c1af"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array_item_traits.html#aea8b35d0b5465d6d3792055eca60c1af">Creator</a> = <a class="el" href="classmomo_1_1internal_1_1_object_creator.html">internal::ObjectCreator</a>&lt; <a class="el" href="classmomo_1_1_segmented_array_item_traits.html#a40c19248716d96c7cc6525efd8f9d55d">Item</a>, <a class="el" href="classmomo_1_1_segmented_array_item_traits.html#aa3891a7ece87cc16b49190c5ffdf8b1b">MemManager</a>, ItemArgs... &gt;</td></tr>
+<tr class="separator:aea8b35d0b5465d6d3792055eca60c1af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:af844f2c9410b99479c72b0887ec82e88"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array_item_traits.html#af844f2c9410b99479c72b0887ec82e88">GetAlignment</a> () noexcept</td></tr>
+<tr class="separator:af844f2c9410b99479c72b0887ec82e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af985770b61bdc2c884b89e0bf04dc864"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array_item_traits.html#af985770b61bdc2c884b89e0bf04dc864">Destroy</a> (<a class="el" href="classmomo_1_1_segmented_array_item_traits.html#aa3891a7ece87cc16b49190c5ffdf8b1b">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1_segmented_array_item_traits.html#a40c19248716d96c7cc6525efd8f9d55d">Item</a> *items, size_t count) noexcept</td></tr>
 <tr class="separator:af985770b61bdc2c884b89e0bf04dc864"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e2482c9c3296449549b2c76ba84c2e4"><td class="memTemplParams" colspan="2">template&lt;typename ItemArg &gt; </td></tr>
 <tr class="memitem:a8e2482c9c3296449549b2c76ba84c2e4"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array_item_traits.html#a8e2482c9c3296449549b2c76ba84c2e4">Assign</a> (<a class="el" href="classmomo_1_1_segmented_array_item_traits.html#aa3891a7ece87cc16b49190c5ffdf8b1b">MemManager</a> &amp;, ItemArg &amp;&amp;itemArg, <a class="el" href="classmomo_1_1_segmented_array_item_traits.html#a40c19248716d96c7cc6525efd8f9d55d">Item</a> &amp;item)</td></tr>
 <tr class="separator:a8e2482c9c3296449549b2c76ba84c2e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a276cfea09b7664a6b4a21fbae93380b7"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_segmented_array_item_traits.html#a276cfea09b7664a6b4a21fbae93380b7">alignment</a> = ItemManager::alignment</td></tr>
-<tr class="separator:a276cfea09b7664a6b4a21fbae93380b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="ac440054f95ceb8fd99e2e5bbb60f724d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac440054f95ceb8fd99e2e5bbb60f724d">&#9670;&nbsp;</a></span>Creator</h2>
+<a id="aea8b35d0b5465d6d3792055eca60c1af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea8b35d0b5465d6d3792055eca60c1af">&#9670;&nbsp;</a></span>Creator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename... ItemArgs&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1_segmented_array_item_traits.html">momo::SegmentedArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="classmomo_1_1_segmented_array_item_traits.html#ac440054f95ceb8fd99e2e5bbb60f724d">Creator</a> =  typename ItemManager::template <a class="el" href="classmomo_1_1_segmented_array_item_traits.html#ac440054f95ceb8fd99e2e5bbb60f724d">Creator</a>&lt;ItemArgs...&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1_segmented_array_item_traits.html">momo::SegmentedArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="classmomo_1_1_segmented_array_item_traits.html#aea8b35d0b5465d6d3792055eca60c1af">Creator</a> =  <a class="el" href="classmomo_1_1internal_1_1_object_creator.html">internal::ObjectCreator</a>&lt;<a class="el" href="classmomo_1_1_segmented_array_item_traits.html#a40c19248716d96c7cc6525efd8f9d55d">Item</a>, <a class="el" href="classmomo_1_1_segmented_array_item_traits.html#aa3891a7ece87cc16b49190c5ffdf8b1b">MemManager</a>, ItemArgs...&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -142,7 +138,7 @@ template&lt;typename... ItemArgs&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">typedef TItem <a class="el" href="classmomo_1_1_segmented_array_item_traits.html">momo::SegmentedArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="classmomo_1_1_segmented_array_item_traits.html#a40c19248716d96c7cc6525efd8f9d55d">Item</a></td>
@@ -158,7 +154,7 @@ template&lt;typename TItem , typename TMemManager &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">typedef TMemManager <a class="el" href="classmomo_1_1_segmented_array_item_traits.html">momo::SegmentedArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="classmomo_1_1_segmented_array_item_traits.html#aa3891a7ece87cc16b49190c5ffdf8b1b">MemManager</a></td>
@@ -175,7 +171,7 @@ template&lt;typename TItem , typename TMemManager &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename ItemArg &gt; </div>
 <table class="mlabels">
@@ -221,7 +217,7 @@ template&lt;typename ItemArg &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -259,25 +255,27 @@ template&lt;typename TItem , typename TMemManager &gt; </div>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a276cfea09b7664a6b4a21fbae93380b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a276cfea09b7664a6b4a21fbae93380b7">&#9670;&nbsp;</a></span>alignment</h2>
+<a id="af844f2c9410b99479c72b0887ec82e88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af844f2c9410b99479c72b0887ec82e88">&#9670;&nbsp;</a></span>GetAlignment()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1_segmented_array_item_traits.html">momo::SegmentedArrayItemTraits</a>&lt; TItem, TMemManager &gt;::alignment = ItemManager::alignment</td>
+          <td class="memname">static constexpr size_t <a class="el" href="classmomo_1_1_segmented_array_item_traits.html">momo::SegmentedArrayItemTraits</a>&lt; TItem, TMemManager &gt;::GetAlignment </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

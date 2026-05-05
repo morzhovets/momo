@@ -5,12 +5,12 @@ var dir_f60e7dbcfd88bfb6ae5efd67bdf84475 =
     [ "Array.h", "_array_8h.html", "_array_8h" ],
     [ "ArrayUtility.h", "_array_utility_8h.html", [
       [ "ArrayIndexIteratorTraitsStd", "structmomo_1_1internal_1_1_array_index_iterator_traits_std.html", null ],
-      [ "ArrayIndexIteratorTraitsStd< QArray, QItem, decltype(std::declval< QArray & >().GetItems())>", "structmomo_1_1internal_1_1_array_index_iterator_traits_std_3_01_q_array_00_01_q_item_00_01declty9cb811d85fd48029df89d476b37ffdef.html", null ],
+      [ "ArrayIndexIteratorTraitsStd< QArray, QItem, Settings, decltype(std::declval< QArray & >().GetItems())>", "structmomo_1_1internal_1_1_array_index_iterator_traits_std_3_01_q_array_00_01_q_item_00_01_setti270e936acae33ed2d2f103fc2658cac7.html", null ],
       [ "ArrayIndexIterator", "classmomo_1_1internal_1_1_array_index_iterator.html", "classmomo_1_1internal_1_1_array_index_iterator" ],
       [ "ArrayItemHandler", "classmomo_1_1internal_1_1_array_item_handler.html", "classmomo_1_1internal_1_1_array_item_handler" ],
       [ "ArrayShifter", "classmomo_1_1internal_1_1_array_shifter.html", "classmomo_1_1internal_1_1_array_shifter" ],
       [ "BackInsertIteratorStdBase", "classmomo_1_1internal_1_1_back_insert_iterator_std_base.html", "classmomo_1_1internal_1_1_back_insert_iterator_std_base" ],
-      [ "iterator_traits< momo::internal::ArrayIndexIterator< A, I > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_array_index_iterator_3_01_a_00_01_i_01_4_01_4.html", null ]
+      [ "iterator_traits< momo::internal::ArrayIndexIterator< A, I, S > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_array_index_iterator_3_01_a_00_01_i_00_01_s_01_4_01_4.html", null ]
     ] ],
     [ "DataColumn.h", "_data_column_8h.html", "_data_column_8h" ],
     [ "DataIndexes.h", "_data_indexes_8h.html", "_data_indexes_8h" ],
@@ -33,6 +33,18 @@ var dir_f60e7dbcfd88bfb6ae5efd67bdf84475 =
       [ "iterator_traits< momo::internal::DataConstItemIterator< RI, I > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_data_const_item_iterator_3_01_r_i_00_01_i_01_4_01_4.html", null ]
     ] ],
     [ "DataTable.h", "_data_table_8h.html", "_data_table_8h" ],
+    [ "FunctionUtility.h", "_function_utility_8h.html", [
+      [ "FinalizerArgs", "classmomo_1_1internal_1_1_finalizer_args.html", "classmomo_1_1internal_1_1_finalizer_args" ],
+      [ "FinalizerArgs<>", "classmomo_1_1internal_1_1_finalizer_args_3_4.html", "classmomo_1_1internal_1_1_finalizer_args_3_4" ],
+      [ "FinalizerArgs< Arg0 >", "classmomo_1_1internal_1_1_finalizer_args_3_01_arg0_01_4.html", "classmomo_1_1internal_1_1_finalizer_args_3_01_arg0_01_4" ],
+      [ "FinalizerArgs< Arg0, Arg1 >", "classmomo_1_1internal_1_1_finalizer_args_3_01_arg0_00_01_arg1_01_4.html", "classmomo_1_1internal_1_1_finalizer_args_3_01_arg0_00_01_arg1_01_4" ],
+      [ "FinalizerArgs< Arg0, Arg1, Arg2 >", "classmomo_1_1internal_1_1_finalizer_args_3_01_arg0_00_01_arg1_00_01_arg2_01_4.html", "classmomo_1_1internal_1_1_finalizer_args_3_01_arg0_00_01_arg1_00_01_arg2_01_4" ],
+      [ "Finalizer< void(*)(Args...)>", "classmomo_1_1internal_1_1_finalizer_3_01void_07_5_08_07_args_8_8_8_08_4.html", "classmomo_1_1internal_1_1_finalizer_3_01void_07_5_08_07_args_8_8_8_08_4" ],
+      [ "Finalizer< void(Class::*)(Args...)>", "classmomo_1_1internal_1_1_finalizer_3_01void_07_class_1_1_5_08_07_args_8_8_8_08_4.html", "classmomo_1_1internal_1_1_finalizer_3_01void_07_class_1_1_5_08_07_args_8_8_8_08_4" ],
+      [ "Catcher", "classmomo_1_1internal_1_1_catcher.html", "classmomo_1_1internal_1_1_catcher" ],
+      [ "AllowExceptionSuppression", "classmomo_1_1internal_1_1_catcher_1_1_allow_exception_suppression.html", null ],
+      [ "AllowExceptionSuppression< Settings, typename std::decay< decltype(Settings::allowExceptionSuppression)>::type >", "classmomo_1_1internal_1_1_catcher_1_1_allow_exception_suppression_3_01_settings_00_01typename_0157dd7a9d4b5241e3bf50791d06f0cfcd.html", null ]
+    ] ],
     [ "HashMap.h", "_hash_map_8h.html", "_hash_map_8h" ],
     [ "HashMultiMap.h", "_hash_multi_map_8h.html", "_hash_multi_map_8h" ],
     [ "HashSet.h", "_hash_set_8h.html", "_hash_set_8h" ],
@@ -53,7 +65,9 @@ var dir_f60e7dbcfd88bfb6ae5efd67bdf84475 =
       [ "MapKeyValuePair", "classmomo_1_1internal_1_1_map_key_value_pair.html", "classmomo_1_1internal_1_1_map_key_value_pair" ],
       [ "MapNestedSetItemTraits", "classmomo_1_1internal_1_1_map_nested_set_item_traits.html", "classmomo_1_1internal_1_1_map_nested_set_item_traits" ],
       [ "Creator", "classmomo_1_1internal_1_1_map_nested_set_item_traits_1_1_creator.html", "classmomo_1_1internal_1_1_map_nested_set_item_traits_1_1_creator" ],
-      [ "MapValueReferencer", "classmomo_1_1internal_1_1_map_value_referencer.html", "classmomo_1_1internal_1_1_map_value_referencer" ],
+      [ "MapValueReferencer< TMap, TIterator, false >", "classmomo_1_1internal_1_1_map_value_referencer_3_01_t_map_00_01_t_iterator_00_01false_01_4.html", "classmomo_1_1internal_1_1_map_value_referencer_3_01_t_map_00_01_t_iterator_00_01false_01_4" ],
+      [ "MapValueReferencer< TMap, TIterator, true >", "classmomo_1_1internal_1_1_map_value_referencer_3_01_t_map_00_01_t_iterator_00_01true_01_4.html", "classmomo_1_1internal_1_1_map_value_referencer_3_01_t_map_00_01_t_iterator_00_01true_01_4" ],
+      [ "ValueReference", "classmomo_1_1internal_1_1_map_value_referencer_3_01_t_map_00_01_t_iterator_00_01true_01_4_1_1_value_reference.html", "classmomo_1_1internal_1_1_map_value_referencer_3_01_t_map_00_01_t_iterator_00_01true_01_4_1_1_value_reference" ],
       [ "MapExtractedPair", "classmomo_1_1internal_1_1_map_extracted_pair.html", "classmomo_1_1internal_1_1_map_extracted_pair" ],
       [ "MapPairConverter", "classmomo_1_1internal_1_1_map_pair_converter.html", "classmomo_1_1internal_1_1_map_pair_converter" ],
       [ "IsMapArgIteratorStd", "structmomo_1_1internal_1_1_is_map_arg_iterator_std.html", null ],
@@ -62,6 +76,7 @@ var dir_f60e7dbcfd88bfb6ae5efd67bdf84475 =
     ] ],
     [ "MemManager.h", "_mem_manager_8h.html", "_mem_manager_8h" ],
     [ "MemManagerDict.h", "_mem_manager_dict_8h.html", [
+      [ "MemManagerDictBlockDictSettings", "classmomo_1_1internal_1_1_mem_manager_dict_block_dict_settings.html", null ],
       [ "MemManagerDictSettings", "classmomo_1_1_mem_manager_dict_settings.html", "classmomo_1_1_mem_manager_dict_settings" ],
       [ "MemManagerDict", "classmomo_1_1_mem_manager_dict.html", "classmomo_1_1_mem_manager_dict" ]
     ] ],
@@ -88,8 +103,11 @@ var dir_f60e7dbcfd88bfb6ae5efd67bdf84475 =
       [ "HasRelocateNothrow< Relocator, Iterator, decltype(Relocator::RelocateNothrow(std::declval< typename Relocator::MemManager & >(), std::declval< Iterator >(), std::declval< Iterator >(), size_t{}))>", "structmomo_1_1internal_1_1_has_relocate_nothrow_3_01_relocator_00_01_iterator_00_01decltype_07_rdad0528f01dd833ac8024e583920ffb7.html", null ],
       [ "ObjectAlignmenter", "classmomo_1_1internal_1_1_object_alignmenter.html", "classmomo_1_1internal_1_1_object_alignmenter" ],
       [ "ObjectBuffer", "classmomo_1_1internal_1_1_object_buffer.html", "classmomo_1_1internal_1_1_object_buffer" ],
-      [ "ObjectManager", "classmomo_1_1internal_1_1_object_manager.html", "classmomo_1_1internal_1_1_object_manager" ],
-      [ "Creator", "classmomo_1_1internal_1_1_object_manager_1_1_creator.html", "classmomo_1_1internal_1_1_object_manager_1_1_creator" ]
+      [ "ObjectCreator", "classmomo_1_1internal_1_1_object_creator.html", "classmomo_1_1internal_1_1_object_creator" ],
+      [ "ObjectCreateExecutor", "classmomo_1_1internal_1_1_object_create_executor.html", "classmomo_1_1internal_1_1_object_create_executor" ],
+      [ "ObjectDestroyFinalizer", "classmomo_1_1internal_1_1_object_destroy_finalizer.html", "classmomo_1_1internal_1_1_object_destroy_finalizer" ],
+      [ "ObjectAssignFinalizer", "classmomo_1_1internal_1_1_object_assign_finalizer.html", "classmomo_1_1internal_1_1_object_assign_finalizer" ],
+      [ "ObjectManager", "classmomo_1_1internal_1_1_object_manager.html", "classmomo_1_1internal_1_1_object_manager" ]
     ] ],
     [ "RadixSorter.h", "_radix_sorter_8h.html", [
       [ "RadixSorterCodeGetter< Iterator, EnableIf< std::is_integral< typename std::iterator_traits< Iterator >::value_type >::value > >", "structmomo_1_1internal_1_1_radix_sorter_code_getter_3_01_iterator_00_01_enable_if_3_01std_1_1is_25542f20722eda169422afa5733df5a7.html", "structmomo_1_1internal_1_1_radix_sorter_code_getter_3_01_iterator_00_01_enable_if_3_01std_1_1is_25542f20722eda169422afa5733df5a7" ],

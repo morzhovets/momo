@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -100,6 +100,8 @@ $(document).ready(function(){initNavTree('_hash_set_8h.html',''); initResizable(
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_set_buckets.html">momo::internal::HashSetBuckets&lt; TBucket &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmomo_1_1internal_1_1_hash_set_bucket_index_iterator.html">momo::internal::HashSetBucketIndexIterator&lt; BucketIterator &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_set_const_position.html">momo::internal::HashSetConstPosition&lt; TBucket, TSettings &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_hash_set_const_iterator.html">momo::internal::HashSetConstIterator&lt; TBucket, TSettings &gt;</a></td></tr>
@@ -110,9 +112,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set_settings.html">momo::HashSetSettings</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set.html">momo::HashSet&lt; TKey, THashTraits, TMemManager, TItemTraits, TSettings &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_set_core.html">momo::HashSetCore&lt; TItemTraits, THashTraits, TSettings &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_nested_hash_set_settings.html">momo::internal::NestedHashSetSettings</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_nested_hash_set_settings.html">momo::internal::NestedHashSetSettings&lt; tAllowExceptionSuppression &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_set_const_iterator_3_01_b_00_01_s_01_4_01_4.html">std::iterator_traits&lt; momo::internal::HashSetConstIterator&lt; B, S &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,6 +130,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:a6485e75f30e9fa9570442379c24342c8"><td class="memTemplParams" colspan="2">template&lt;typename TKey , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault&gt; </td></tr>
+<tr class="memitem:a6485e75f30e9fa9570442379c24342c8"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a6485e75f30e9fa9570442379c24342c8">momo::HashSet</a> = HashSetCore&lt; HashSetItemTraits&lt; TKey, TMemManager &gt;, THashTraits &gt;</td></tr>
+<tr class="separator:a6485e75f30e9fa9570442379c24342c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f6e70fbb445d9f6618b0514ced4f1b2"><td class="memTemplParams" colspan="2">template&lt;typename TKey &gt; </td></tr>
 <tr class="memitem:a4f6e70fbb445d9f6618b0514ced4f1b2"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a4f6e70fbb445d9f6618b0514ced4f1b2">momo::HashSetOpen</a> = HashSet&lt; TKey, HashTraitsOpen&lt; TKey &gt; &gt;</td></tr>
 <tr class="separator:a4f6e70fbb445d9f6618b0514ced4f1b2"><td class="memSeparator" colspan="2">&#160;</td></tr>

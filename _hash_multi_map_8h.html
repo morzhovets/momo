@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -117,9 +117,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map_settings.html">momo::HashMultiMapSettings</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map.html">momo::HashMultiMap&lt; TKey, TValue, THashTraits, TMemManager, TKeyValueTraits, TSettings &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_multi_map_core.html">momo::HashMultiMapCore&lt; TKeyValueTraits, THashTraits, TSettings &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_nested_hash_multi_map_settings.html">momo::internal::NestedHashMultiMapSettings</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_nested_hash_multi_map_settings.html">momo::internal::NestedHashMultiMapSettings&lt; tAllowExceptionSuppression &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_multi_map_iterator_3_01_k_i_00_01_s_01_4_01_4.html">std::iterator_traits&lt; momo::internal::HashMultiMapIterator&lt; KI, S &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -135,6 +135,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:ab5a4b9a1f92354f0140fc8db7ef02d62"><td class="memTemplParams" colspan="2">template&lt;typename TKey , typename TValue , typename THashTraits  = HashTraits&lt;TKey&gt;, typename TMemManager  = MemManagerDefault&gt; </td></tr>
+<tr class="memitem:ab5a4b9a1f92354f0140fc8db7ef02d62"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#ab5a4b9a1f92354f0140fc8db7ef02d62">momo::HashMultiMap</a> = HashMultiMapCore&lt; HashMultiMapKeyValueTraits&lt; TKey, TValue, TMemManager &gt;, THashTraits &gt;</td></tr>
+<tr class="separator:ab5a4b9a1f92354f0140fc8db7ef02d62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d66468ada00208746120eb92bc9e8e8"><td class="memTemplParams" colspan="2">template&lt;typename TKey , typename TValue &gt; </td></tr>
 <tr class="memitem:a2d66468ada00208746120eb92bc9e8e8"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacemomo.html#a2d66468ada00208746120eb92bc9e8e8">momo::HashMultiMapOpen</a> = HashMultiMap&lt; TKey, TValue, HashTraitsOpen&lt; TKey &gt; &gt;</td></tr>
 <tr class="separator:a2d66468ada00208746120eb92bc9e8e8"><td class="memSeparator" colspan="2">&#160;</td></tr>

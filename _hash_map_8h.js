@@ -7,8 +7,9 @@ var _hash_map_8h =
     [ "HashMapNestedSetSettings", "classmomo_1_1internal_1_1_hash_map_nested_set_settings.html", "classmomo_1_1internal_1_1_hash_map_nested_set_settings" ],
     [ "HashMapKeyValueTraits", "classmomo_1_1_hash_map_key_value_traits.html", null ],
     [ "HashMapSettings", "classmomo_1_1_hash_map_settings.html", null ],
-    [ "HashMap", "classmomo_1_1_hash_map.html", "classmomo_1_1_hash_map" ],
+    [ "HashMapCore", "classmomo_1_1_hash_map_core.html", "classmomo_1_1_hash_map_core" ],
     [ "NestedHashMapSettings", "classmomo_1_1internal_1_1_nested_hash_map_settings.html", null ],
     [ "iterator_traits< momo::internal::HashMapIterator< SI, c > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_map_iterator_3_01_s_i_00_01c_01_4_01_4.html", null ],
+    [ "HashMap", "_hash_map_8h.html#a701d8eb041395242ef8be52db468dff9", null ],
     [ "HashMapOpen", "_hash_map_8h.html#a6eb9786396d09f0fee939ef6957ded3b", null ]
 ];

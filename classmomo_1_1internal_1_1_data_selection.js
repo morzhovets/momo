@@ -10,7 +10,7 @@ var classmomo_1_1internal_1_1_data_selection =
     [ "Iterator", "classmomo_1_1internal_1_1_data_selection.html#a7bd30d1c8c586e7c1d966b9ce7a5dbd1", null ],
     [ "MemManager", "classmomo_1_1internal_1_1_data_selection.html#ac57e7be72331146cb1d0b14b67424e91", null ],
     [ "Raw", "classmomo_1_1internal_1_1_data_selection.html#afee1315b456a4b42fd782e9b543717d8", null ],
-    [ "Raws", "classmomo_1_1internal_1_1_data_selection.html#ab743a81d78f88a6fa98c918e6e5a1efe", null ],
+    [ "Raws", "classmomo_1_1internal_1_1_data_selection.html#a200b34b1ed5e23142863b61eeff0c998", null ],
     [ "RowReference", "classmomo_1_1internal_1_1_data_selection.html#ad504ac01d1d3db4383a0ac72456b5853", null ],
     [ "Settings", "classmomo_1_1internal_1_1_data_selection.html#ab1764b65b288001c1b37e2c50f83c232", null ],
     [ "VersionKeeper", "classmomo_1_1internal_1_1_data_selection.html#aa768bca229e5d1addbcb43351bf586bb", null ],

@@ -6,6 +6,7 @@ var classmomo_1_1internal_1_1_hash_map_iterator =
     [ "Reference", "classmomo_1_1internal_1_1_hash_map_iterator.html#a6863c2a7fb78027a8df2c928eb8a136e", null ],
     [ "HashMapIterator", "classmomo_1_1internal_1_1_hash_map_iterator.html#ac2e5b8445ebee41d9cafe6e436d4acaf", null ],
     [ "HashMapIterator", "classmomo_1_1internal_1_1_hash_map_iterator.html#abcfaa29d9a41a891affe071628017172", null ],
+    [ "operator bool", "classmomo_1_1internal_1_1_hash_map_iterator.html#a756f9eda9787b302f46433f5f495fc78", null ],
     [ "operator ConstIterator", "classmomo_1_1internal_1_1_hash_map_iterator.html#acd9d4904eb33242476ce80d7c6229e67", null ],
     [ "operator++", "classmomo_1_1internal_1_1_hash_map_iterator.html#a97875a7dc46caaffaa8125673e27b61a", null ],
     [ "operator->", "classmomo_1_1internal_1_1_hash_map_iterator.html#ad09a5b7f71b8912bcab46c1852f795fc", null ],

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>momo: momo::internal::MapValueReferencer&lt; TMap, TIterator &gt; Class Template Reference</title>
+<title>momo: momo::internal::MapValueReferencer&lt; TMap, TIterator, tUseSafeReference &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -82,174 +82,10 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_map_value_re
 </div>
 
 <div class="header">
-  <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="classmomo_1_1internal_1_1_map_value_referencer-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">momo::internal::MapValueReferencer&lt; TMap, TIterator &gt; Class Template Reference</div>  </div>
+<div class="title">momo::internal::MapValueReferencer&lt; TMap, TIterator, tUseSafeReference &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="_map_utility_8h_source.html">MapUtility.h</a>&gt;</code></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:aaf89abd59f75bda3a0c7fdd9148d69b1"><td class="memItemLeft" align="right" valign="top">typedef TMap&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#aaf89abd59f75bda3a0c7fdd9148d69b1">Map</a></td></tr>
-<tr class="separator:aaf89abd59f75bda3a0c7fdd9148d69b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a110b27e045b648a65ef8e506e285b031"><td class="memItemLeft" align="right" valign="top">typedef TIterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#a110b27e045b648a65ef8e506e285b031">Iterator</a></td></tr>
-<tr class="separator:a110b27e045b648a65ef8e506e285b031"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae752559f6b65fa490b1df873cf4a251f"><td class="memTemplParams" colspan="2">template&lt;typename KeyReference &gt; </td></tr>
-<tr class="memitem:ae752559f6b65fa490b1df873cf4a251f"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#ae752559f6b65fa490b1df873cf4a251f">ValueReference</a> = Value &amp;</td></tr>
-<tr class="separator:ae752559f6b65fa490b1df873cf4a251f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ae2ad0e6c220915b50a175fd798623494"><td class="memTemplParams" colspan="2">template&lt;typename KeyReference &gt; </td></tr>
-<tr class="memitem:ae2ad0e6c220915b50a175fd798623494"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#ae752559f6b65fa490b1df873cf4a251f">ValueReference</a>&lt; KeyReference &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#ae2ad0e6c220915b50a175fd798623494">GetReference</a> (<a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#aaf89abd59f75bda3a0c7fdd9148d69b1">Map</a> &amp;, <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#a110b27e045b648a65ef8e506e285b031">Iterator</a> iter) noexcept</td></tr>
-<tr class="separator:ae2ad0e6c220915b50a175fd798623494"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe2ca5f6cd6f4cb6f8c677c71a7b141e"><td class="memTemplParams" colspan="2">template&lt;typename KeyReference &gt; </td></tr>
-<tr class="memitem:afe2ca5f6cd6f4cb6f8c677c71a7b141e"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#ae752559f6b65fa490b1df873cf4a251f">ValueReference</a>&lt; KeyReference &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#afe2ca5f6cd6f4cb6f8c677c71a7b141e">GetReference</a> (<a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#aaf89abd59f75bda3a0c7fdd9148d69b1">Map</a> &amp;map, <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#a110b27e045b648a65ef8e506e285b031">Iterator</a> iter, KeyReference keyRef)</td></tr>
-<tr class="separator:afe2ca5f6cd6f4cb6f8c677c71a7b141e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a110b27e045b648a65ef8e506e285b031"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a110b27e045b648a65ef8e506e285b031">&#9670;&nbsp;</a></span>Iterator</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TMap , typename TIterator  = typename TMap::Iterator&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef TIterator <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html">momo::internal::MapValueReferencer</a>&lt; TMap, TIterator &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#a110b27e045b648a65ef8e506e285b031">Iterator</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aaf89abd59f75bda3a0c7fdd9148d69b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf89abd59f75bda3a0c7fdd9148d69b1">&#9670;&nbsp;</a></span>Map</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TMap , typename TIterator  = typename TMap::Iterator&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef TMap <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html">momo::internal::MapValueReferencer</a>&lt; TMap, TIterator &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#aaf89abd59f75bda3a0c7fdd9148d69b1">Map</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae752559f6b65fa490b1df873cf4a251f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae752559f6b65fa490b1df873cf4a251f">&#9670;&nbsp;</a></span>ValueReference</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TMap , typename TIterator  = typename TMap::Iterator&gt; </div>
-<div class="memtemplate">
-template&lt;typename KeyReference &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html">momo::internal::MapValueReferencer</a>&lt; TMap, TIterator &gt;::<a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#ae752559f6b65fa490b1df873cf4a251f">ValueReference</a> =  Value&amp;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae2ad0e6c220915b50a175fd798623494"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2ad0e6c220915b50a175fd798623494">&#9670;&nbsp;</a></span>GetReference() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TMap , typename TIterator  = typename TMap::Iterator&gt; </div>
-<div class="memtemplate">
-template&lt;typename KeyReference &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#ae752559f6b65fa490b1df873cf4a251f">ValueReference</a>&lt;KeyReference&gt; <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html">momo::internal::MapValueReferencer</a>&lt; TMap, TIterator &gt;::GetReference </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#aaf89abd59f75bda3a0c7fdd9148d69b1">Map</a> &amp;&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#a110b27e045b648a65ef8e506e285b031">Iterator</a>&#160;</td>
-          <td class="paramname"><em>iter</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="afe2ca5f6cd6f4cb6f8c677c71a7b141e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe2ca5f6cd6f4cb6f8c677c71a7b141e">&#9670;&nbsp;</a></span>GetReference() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TMap , typename TIterator  = typename TMap::Iterator&gt; </div>
-<div class="memtemplate">
-template&lt;typename KeyReference &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#ae752559f6b65fa490b1df873cf4a251f">ValueReference</a>&lt;KeyReference&gt; <a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html">momo::internal::MapValueReferencer</a>&lt; TMap, TIterator &gt;::GetReference </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#aaf89abd59f75bda3a0c7fdd9148d69b1">Map</a> &amp;&#160;</td>
-          <td class="paramname"><em>map</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classmomo_1_1internal_1_1_map_value_referencer.html#a110b27e045b648a65ef8e506e285b031">Iterator</a>&#160;</td>
-          <td class="paramname"><em>iter</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">KeyReference&#160;</td>
-          <td class="paramname"><em>keyRef</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/momo/<a class="el" href="_map_utility_8h_source.html">MapUtility.h</a></li>
 </ul>

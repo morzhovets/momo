@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -89,6 +89,7 @@ $(document).ready(function(){initNavTree('_user_settings_8h.html',''); initResiz
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;cassert&gt;</code><br />
+<code>#include &lt;cstring&gt;</code><br />
 </div>
 <p><a href="_user_settings_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -134,16 +135,28 @@ Macros</h2></td></tr>
 <tr class="separator:a8a5ffa282c329ed013e070d7552ca845"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc3d49e50add6f931606ec489db2e7b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#adc3d49e50add6f931606ec489db2e7b9">MOMO_INVALID_UINTPTR</a>&#160;&#160;&#160;(<a class="el" href="_user_settings_8h.html#a8a5ffa282c329ed013e070d7552ca845">MOMO_NULL_UINTPTR</a> + 1)</td></tr>
 <tr class="separator:adc3d49e50add6f931606ec489db2e7b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1eb03d00ca9756f286081f6752fb79cc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a1eb03d00ca9756f286081f6752fb79cc">MOMO_DIV_BY_SMALL_SWITCH</a>(CASE)&#160;&#160;&#160;CASE(1) CASE(2) CASE(3) CASE(4)</td></tr>
+<tr class="separator:a1eb03d00ca9756f286081f6752fb79cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05da9c2a8fdacc1b099eee384a684152"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a05da9c2a8fdacc1b099eee384a684152">MOMO_EMPTY_BASES</a></td></tr>
 <tr class="separator:a05da9c2a8fdacc1b099eee384a684152"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21cff6113294cd25e6ca42966fdc465f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a21cff6113294cd25e6ca42966fdc465f">MOMO_ASSERT</a>(expr)&#160;&#160;&#160;assert(expr)</td></tr>
 <tr class="separator:a21cff6113294cd25e6ca42966fdc465f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8bcba5a2dae5b1ce92b79f769aad846"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846">MOMO_CHECK_EXCEPTION</a>(expr)&#160;&#160;&#160;	do { if (!(expr)) throw std::invalid_argument(#expr); } while (false)</td></tr>
+<tr class="memitem:ad5a50a8c41fd4fb8b1cf8dac2e86b551"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#ad5a50a8c41fd4fb8b1cf8dac2e86b551">MOMO_THROW</a>(exception)&#160;&#160;&#160;throw exception</td></tr>
+<tr class="separator:ad5a50a8c41fd4fb8b1cf8dac2e86b551"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ff696dc8a89a829ba304dc473b891be"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a9ff696dc8a89a829ba304dc473b891be">MOMO_CATCH_ALL</a>&#160;&#160;&#160;catch (...) {}</td></tr>
+<tr class="separator:a9ff696dc8a89a829ba304dc473b891be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8bcba5a2dae5b1ce92b79f769aad846"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#af8bcba5a2dae5b1ce92b79f769aad846">MOMO_CHECK_EXCEPTION</a>(expr)&#160;&#160;&#160;	do { if (!(expr)) <a class="el" href="_user_settings_8h.html#ad5a50a8c41fd4fb8b1cf8dac2e86b551">MOMO_THROW</a>(std::invalid_argument(#expr)); } while (false)</td></tr>
 <tr class="separator:af8bcba5a2dae5b1ce92b79f769aad846"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a094f676cd5f422d80f3be631dc2add3f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a094f676cd5f422d80f3be631dc2add3f">MOMO_CAST_POINTER</a>(ResObject,  ptr,  isWithinLifetime,  isSingleObject)&#160;&#160;&#160;	((isWithinLifetime) ? std::launder(reinterpret_cast&lt;ResObject*&gt;(ptr)) : reinterpret_cast&lt;ResObject*&gt;(ptr))</td></tr>
+<tr class="memitem:a00cc43420e9b0d1157b053a71de9cf78"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a00cc43420e9b0d1157b053a71de9cf78">MOMO_COPY_MEMORY</a>(dst,  src,  size)&#160;&#160;&#160;std::memcpy(dst, src, size)</td></tr>
+<tr class="separator:a00cc43420e9b0d1157b053a71de9cf78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a094f676cd5f422d80f3be631dc2add3f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a094f676cd5f422d80f3be631dc2add3f">MOMO_CAST_POINTER</a>(ResObject,  ptr,  isWithinLifetime,  isSingleObject)</td></tr>
 <tr class="separator:a094f676cd5f422d80f3be631dc2add3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a094f676cd5f422d80f3be631dc2add3f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a094f676cd5f422d80f3be631dc2add3f">MOMO_CAST_POINTER</a>(ResObject,  ptr,  isWithinLifetime,  isSingleObject)&#160;&#160;&#160;reinterpret_cast&lt;ResObject*&gt;(ptr)</td></tr>
 <tr class="separator:a094f676cd5f422d80f3be631dc2add3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46ffd3f7a88ddedf78819a8dbd2fffe1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a46ffd3f7a88ddedf78819a8dbd2fffe1">MOMO_CONSTEXPR_VERSION</a>&#160;&#160;&#160;200704L</td></tr>
+<tr class="separator:a46ffd3f7a88ddedf78819a8dbd2fffe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a167b2352a32562bf2344b32a3ac73afc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#a167b2352a32562bf2344b32a3ac73afc">MOMO_CONSTEXPR_IF</a></td></tr>
+<tr class="separator:a167b2352a32562bf2344b32a3ac73afc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac91901db38c236c1614113e4759195ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#ac91901db38c236c1614113e4759195ff">MOMO_NODISCARD</a></td></tr>
 <tr class="separator:ac91901db38c236c1614113e4759195ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae71c71f676413ffa3458f586599188b1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_user_settings_8h.html#ae71c71f676413ffa3458f586599188b1">MOMO_DEPRECATED</a></td></tr>
@@ -229,11 +242,13 @@ Macros</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;	((isWithinLifetime) ? std::launder(reinterpret_cast&lt;ResObject*&gt;(ptr)) : reinterpret_cast&lt;ResObject*&gt;(ptr))</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-
+<b>Value:</b><div class="fragment"><div class="line">    ((isWithinLifetime &amp;&amp; isSingleObject) ? std::launder(<span class="keyword">reinterpret_cast&lt;</span>ResObject*<span class="keyword">&gt;</span>(ptr)) \</div>
+<div class="line">        : <span class="keyword">reinterpret_cast&lt;</span>ResObject*<span class="keyword">&gt;</span>(ptr))</div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a094f676cd5f422d80f3be631dc2add3f"></a>
@@ -276,6 +291,20 @@ Macros</h2></td></tr>
 
 </div>
 </div>
+<a id="a9ff696dc8a89a829ba304dc473b891be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ff696dc8a89a829ba304dc473b891be">&#9670;&nbsp;</a></span>MOMO_CATCH_ALL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_CATCH_ALL&#160;&#160;&#160;catch (...) {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="af8bcba5a2dae5b1ce92b79f769aad846"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af8bcba5a2dae5b1ce92b79f769aad846">&#9670;&nbsp;</a></span>MOMO_CHECK_EXCEPTION</h2>
 
@@ -287,7 +316,7 @@ Macros</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">expr</td><td>)</td>
-          <td>&#160;&#160;&#160;	do { if (!(expr)) throw std::invalid_argument(#expr); } while (false)</td>
+          <td>&#160;&#160;&#160;	do { if (!(expr)) <a class="el" href="_user_settings_8h.html#ad5a50a8c41fd4fb8b1cf8dac2e86b551">MOMO_THROW</a>(std::invalid_argument(#expr)); } while (false)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -302,6 +331,68 @@ Macros</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define MOMO_CHECK_ITERATOR_VERSION&#160;&#160;&#160;true</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a167b2352a32562bf2344b32a3ac73afc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a167b2352a32562bf2344b32a3ac73afc">&#9670;&nbsp;</a></span>MOMO_CONSTEXPR_IF</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_CONSTEXPR_IF</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a46ffd3f7a88ddedf78819a8dbd2fffe1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46ffd3f7a88ddedf78819a8dbd2fffe1">&#9670;&nbsp;</a></span>MOMO_CONSTEXPR_VERSION</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_CONSTEXPR_VERSION&#160;&#160;&#160;200704L</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a00cc43420e9b0d1157b053a71de9cf78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00cc43420e9b0d1157b053a71de9cf78">&#9670;&nbsp;</a></span>MOMO_COPY_MEMORY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_COPY_MEMORY</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">dst, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">src, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">size&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;std::memcpy(dst, src, size)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -428,6 +519,24 @@ Macros</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define MOMO_DEPRECATED</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1eb03d00ca9756f286081f6752fb79cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1eb03d00ca9756f286081f6752fb79cc">&#9670;&nbsp;</a></span>MOMO_DIV_BY_SMALL_SWITCH</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_DIV_BY_SMALL_SWITCH</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">CASE</td><td>)</td>
+          <td>&#160;&#160;&#160;CASE(1) CASE(2) CASE(3) CASE(4)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -598,6 +707,24 @@ Macros</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">#define MOMO_NULL_UINTPTR&#160;&#160;&#160;reinterpret_cast&lt;uintptr_t&gt;(static_cast&lt;void*&gt;(nullptr))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad5a50a8c41fd4fb8b1cf8dac2e86b551"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5a50a8c41fd4fb8b1cf8dac2e86b551">&#9670;&nbsp;</a></span>MOMO_THROW</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MOMO_THROW</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">exception</td><td>)</td>
+          <td>&#160;&#160;&#160;throw exception</td>
         </tr>
       </table>
 </div><div class="memdoc">

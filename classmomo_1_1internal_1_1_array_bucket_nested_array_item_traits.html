@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -86,7 +86,6 @@ $(document).ready(function(){initNavTree('classmomo_1_1internal_1_1_array_bucket
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pro-types">Protected Types</a> &#124;
 <a href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -110,6 +109,12 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a956875fcf938a2ef16ac2051d3114079"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a956875fcf938a2ef16ac2051d3114079">GetAlignment</a> () noexcept</td></tr>
+<tr class="separator:a956875fcf938a2ef16ac2051d3114079"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a276978f3aa8d89776dbfcafb96ea0987"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a276978f3aa8d89776dbfcafb96ea0987">IsTriviallyRelocatable</a> () noexcept</td></tr>
+<tr class="separator:a276978f3aa8d89776dbfcafb96ea0987"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b6c6bdcf9f9c705af7190a1d3271888"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a6b6c6bdcf9f9c705af7190a1d3271888">IsNothrowRelocatable</a> () noexcept</td></tr>
+<tr class="separator:a6b6c6bdcf9f9c705af7190a1d3271888"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcc0126811c5cb1fedd99d5f1b2d3626"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#adcc0126811c5cb1fedd99d5f1b2d3626">Destroy</a> (<a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a71355f9361f98241965eadbea9d40a63">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a0d3bb8dd2eeb07882a5202ee19e6a084">Item</a> *items, size_t count) noexcept</td></tr>
 <tr class="separator:adcc0126811c5cb1fedd99d5f1b2d3626"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91750c1ff8725f40caa25cd8e44ec907"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a91750c1ff8725f40caa25cd8e44ec907">Relocate</a> (<a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a71355f9361f98241965eadbea9d40a63">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a0d3bb8dd2eeb07882a5202ee19e6a084">Item</a> *srcItems, <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a0d3bb8dd2eeb07882a5202ee19e6a084">Item</a> *dstItems, size_t count)</td></tr>
@@ -117,13 +122,6 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a502ff82f9f2fef4d1fe6d1f086d38308"><td class="memTemplParams" colspan="2">template&lt;typename ItemCreator &gt; </td></tr>
 <tr class="memitem:a502ff82f9f2fef4d1fe6d1f086d38308"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a502ff82f9f2fef4d1fe6d1f086d38308">RelocateCreate</a> (<a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a71355f9361f98241965eadbea9d40a63">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a0d3bb8dd2eeb07882a5202ee19e6a084">Item</a> *srcItems, <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a0d3bb8dd2eeb07882a5202ee19e6a084">Item</a> *dstItems, size_t count, ItemCreator &amp;&amp;itemCreator, <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a0d3bb8dd2eeb07882a5202ee19e6a084">Item</a> *newItem)</td></tr>
 <tr class="separator:a502ff82f9f2fef4d1fe6d1f086d38308"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a587a5e310d5d57dfe9123c2016c63933"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a587a5e310d5d57dfe9123c2016c63933">alignment</a> = ArrayBucketItemTraits::alignment</td></tr>
-<tr class="separator:a587a5e310d5d57dfe9123c2016c63933"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28949356c87b72809913e1e7cff7f3ca"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html#a28949356c87b72809913e1e7cff7f3ca">isTriviallyRelocatable</a> = ArrayBucketItemTraits::isTriviallyRelocatable</td></tr>
-<tr class="separator:a28949356c87b72809913e1e7cff7f3ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
@@ -258,6 +256,87 @@ template&lt;typename TArrayBucketItemTraits &gt; </div>
 
 </div>
 </div>
+<a id="a956875fcf938a2ef16ac2051d3114079"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a956875fcf938a2ef16ac2051d3114079">&#9670;&nbsp;</a></span>GetAlignment()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TArrayBucketItemTraits &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr size_t <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html">momo::internal::ArrayBucketNestedArrayItemTraits</a>&lt; TArrayBucketItemTraits &gt;::GetAlignment </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6b6c6bdcf9f9c705af7190a1d3271888"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b6c6bdcf9f9c705af7190a1d3271888">&#9670;&nbsp;</a></span>IsNothrowRelocatable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TArrayBucketItemTraits &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr bool <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html">momo::internal::ArrayBucketNestedArrayItemTraits</a>&lt; TArrayBucketItemTraits &gt;::IsNothrowRelocatable </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a276978f3aa8d89776dbfcafb96ea0987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a276978f3aa8d89776dbfcafb96ea0987">&#9670;&nbsp;</a></span>IsTriviallyRelocatable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TArrayBucketItemTraits &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr bool <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html">momo::internal::ArrayBucketNestedArrayItemTraits</a>&lt; TArrayBucketItemTraits &gt;::<a class="el" href="structmomo_1_1_is_trivially_relocatable.html">IsTriviallyRelocatable</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a91750c1ff8725f40caa25cd8e44ec907"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a91750c1ff8725f40caa25cd8e44ec907">&#9670;&nbsp;</a></span>Relocate()</h2>
 
@@ -366,55 +445,6 @@ template&lt;typename ItemCreator &gt; </div>
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a587a5e310d5d57dfe9123c2016c63933"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a587a5e310d5d57dfe9123c2016c63933">&#9670;&nbsp;</a></span>alignment</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TArrayBucketItemTraits &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html">momo::internal::ArrayBucketNestedArrayItemTraits</a>&lt; TArrayBucketItemTraits &gt;::alignment = ArrayBucketItemTraits::alignment</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a28949356c87b72809913e1e7cff7f3ca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28949356c87b72809913e1e7cff7f3ca">&#9670;&nbsp;</a></span>isTriviallyRelocatable</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TArrayBucketItemTraits &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1internal_1_1_array_bucket_nested_array_item_traits.html">momo::internal::ArrayBucketNestedArrayItemTraits</a>&lt; TArrayBucketItemTraits &gt;::isTriviallyRelocatable = ArrayBucketItemTraits::isTriviallyRelocatable</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

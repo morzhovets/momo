@@ -10,8 +10,9 @@ var _hash_multi_map_8h =
     [ "HashMultiMapNestedMapSettings", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_settings.html", "classmomo_1_1internal_1_1_hash_multi_map_nested_map_settings" ],
     [ "HashMultiMapKeyValueTraits", "classmomo_1_1_hash_multi_map_key_value_traits.html", "classmomo_1_1_hash_multi_map_key_value_traits" ],
     [ "HashMultiMapSettings", "classmomo_1_1_hash_multi_map_settings.html", "classmomo_1_1_hash_multi_map_settings" ],
-    [ "HashMultiMap", "classmomo_1_1_hash_multi_map.html", "classmomo_1_1_hash_multi_map" ],
+    [ "HashMultiMapCore", "classmomo_1_1_hash_multi_map_core.html", "classmomo_1_1_hash_multi_map_core" ],
     [ "NestedHashMultiMapSettings", "classmomo_1_1internal_1_1_nested_hash_multi_map_settings.html", null ],
     [ "iterator_traits< momo::internal::HashMultiMapIterator< KI, S > >", "structstd_1_1iterator__traits_3_01momo_1_1internal_1_1_hash_multi_map_iterator_3_01_k_i_00_01_s_01_4_01_4.html", null ],
+    [ "HashMultiMap", "_hash_multi_map_8h.html#ab5a4b9a1f92354f0140fc8db7ef02d62", null ],
     [ "HashMultiMapOpen", "_hash_multi_map_8h.html#a2d66468ada00208746120eb92bc9e8e8", null ]
 ];

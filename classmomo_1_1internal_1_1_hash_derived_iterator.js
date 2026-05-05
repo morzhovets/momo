@@ -6,6 +6,7 @@ var classmomo_1_1internal_1_1_hash_derived_iterator =
     [ "Reference", "classmomo_1_1internal_1_1_hash_derived_iterator.html#a69352c53e31a76e16a05367431977431", null ],
     [ "HashDerivedIterator", "classmomo_1_1internal_1_1_hash_derived_iterator.html#a05e6dd2b33c30c3d5a8b9ee9466870c4", null ],
     [ "HashDerivedIterator", "classmomo_1_1internal_1_1_hash_derived_iterator.html#a64ee0f675a790fec90ae01ac9d9c47ad", null ],
+    [ "operator bool", "classmomo_1_1internal_1_1_hash_derived_iterator.html#ab488c8accbdfeb7dfc9d6b161dd15668", null ],
     [ "operator ConstIterator", "classmomo_1_1internal_1_1_hash_derived_iterator.html#a62f411b51d10e34e831922d6f2c83cf5", null ],
     [ "operator++", "classmomo_1_1internal_1_1_hash_derived_iterator.html#a50d786b7d7140127593704f404a20b60", null ],
     [ "operator->", "classmomo_1_1internal_1_1_hash_derived_iterator.html#a9cf928b4386a0ec9935e6bb05054f085", null ],

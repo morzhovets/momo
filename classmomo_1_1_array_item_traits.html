@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -85,7 +85,6 @@ $(document).ready(function(){initNavTree('classmomo_1_1_array_item_traits.html',
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classmomo_1_1_array_item_traits-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">momo::ArrayItemTraits&lt; TItem, TMemManager &gt; Class Template Reference</div>  </div>
@@ -100,47 +99,44 @@ Public Types</h2></td></tr>
 <tr class="separator:aa676f569310b0a177dd2b8760fa9565a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a336cd996b3ae3f2040176d414eb6e50d"><td class="memItemLeft" align="right" valign="top">typedef TMemManager&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a336cd996b3ae3f2040176d414eb6e50d">MemManager</a></td></tr>
 <tr class="separator:a336cd996b3ae3f2040176d414eb6e50d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23023ee68285447b0dcf075ae9a64834"><td class="memTemplParams" colspan="2">template&lt;typename... ItemArgs&gt; </td></tr>
-<tr class="memitem:a23023ee68285447b0dcf075ae9a64834"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a23023ee68285447b0dcf075ae9a64834">Creator</a> = typename ItemManager::template <a class="el" href="classmomo_1_1_array_item_traits.html#a23023ee68285447b0dcf075ae9a64834">Creator</a>&lt; ItemArgs... &gt;</td></tr>
-<tr class="separator:a23023ee68285447b0dcf075ae9a64834"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3c9136d533d33a5780c2d99c0f8b178"><td class="memTemplParams" colspan="2">template&lt;typename... ItemArgs&gt; </td></tr>
+<tr class="memitem:aa3c9136d533d33a5780c2d99c0f8b178"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#aa3c9136d533d33a5780c2d99c0f8b178">Creator</a> = <a class="el" href="classmomo_1_1internal_1_1_object_creator.html">internal::ObjectCreator</a>&lt; <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a>, <a class="el" href="classmomo_1_1_array_item_traits.html#a336cd996b3ae3f2040176d414eb6e50d">MemManager</a>, ItemArgs... &gt;</td></tr>
+<tr class="separator:aa3c9136d533d33a5780c2d99c0f8b178"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a3e71e28934adc49fb58d0f4f5e35dbfe"><td class="memItemLeft" align="right" valign="top">static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a3e71e28934adc49fb58d0f4f5e35dbfe">GetAlignment</a> () noexcept</td></tr>
+<tr class="separator:a3e71e28934adc49fb58d0f4f5e35dbfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7742edd72565c243e0eded82e608ccc"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#af7742edd72565c243e0eded82e608ccc">IsNothrowMoveConstructible</a> () noexcept</td></tr>
+<tr class="separator:af7742edd72565c243e0eded82e608ccc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bdef28444ef3edc108d5f97cd3ded5a"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a8bdef28444ef3edc108d5f97cd3ded5a">IsTriviallyRelocatable</a> () noexcept</td></tr>
+<tr class="separator:a8bdef28444ef3edc108d5f97cd3ded5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab20555901cb6b1e5f228bd3cf85cf4ca"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#ab20555901cb6b1e5f228bd3cf85cf4ca">IsNothrowRelocatable</a> () noexcept</td></tr>
+<tr class="separator:ab20555901cb6b1e5f228bd3cf85cf4ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a513c6ff134f9d5a0afc92cf2409c1eb2"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a513c6ff134f9d5a0afc92cf2409c1eb2">Destroy</a> (<a class="el" href="classmomo_1_1_array_item_traits.html#a336cd996b3ae3f2040176d414eb6e50d">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a> *items, size_t count) noexcept</td></tr>
 <tr class="separator:a513c6ff134f9d5a0afc92cf2409c1eb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c73b8e31b2664887538a354d2fe4275"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a2c73b8e31b2664887538a354d2fe4275">Relocate</a> (<a class="el" href="classmomo_1_1_array_item_traits.html#a336cd996b3ae3f2040176d414eb6e50d">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a> *srcItems, <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a> *dstItems, size_t count) noexcept(<a class="el" href="classmomo_1_1_array_item_traits.html#aa75ecd7c2687391a4ea7173b5d80273e">isNothrowRelocatable</a>)</td></tr>
-<tr class="separator:a2c73b8e31b2664887538a354d2fe4275"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94985684dcb49dd4d4bdd6f3cea6e5e5"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a94985684dcb49dd4d4bdd6f3cea6e5e5">Relocate</a> (<a class="el" href="classmomo_1_1_array_item_traits.html#a336cd996b3ae3f2040176d414eb6e50d">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a> *srcItems, <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a> *dstItems, size_t count) noexcept(<a class="el" href="classmomo_1_1_array_item_traits.html#ab20555901cb6b1e5f228bd3cf85cf4ca">IsNothrowRelocatable</a>())</td></tr>
+<tr class="separator:a94985684dcb49dd4d4bdd6f3cea6e5e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a508a663d183d72e5a16653833cd406ae"><td class="memTemplParams" colspan="2">template&lt;typename ItemCreator &gt; </td></tr>
 <tr class="memitem:a508a663d183d72e5a16653833cd406ae"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a508a663d183d72e5a16653833cd406ae">RelocateCreate</a> (<a class="el" href="classmomo_1_1_array_item_traits.html#a336cd996b3ae3f2040176d414eb6e50d">MemManager</a> &amp;memManager, <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a> *srcItems, <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a> *dstItems, size_t count, ItemCreator &amp;&amp;itemCreator, <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a> *newItem)</td></tr>
 <tr class="separator:a508a663d183d72e5a16653833cd406ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29f2135507c4ce592678c9f95d7494c6"><td class="memTemplParams" colspan="2">template&lt;typename ItemArg &gt; </td></tr>
 <tr class="memitem:a29f2135507c4ce592678c9f95d7494c6"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a29f2135507c4ce592678c9f95d7494c6">Assign</a> (<a class="el" href="classmomo_1_1_array_item_traits.html#a336cd996b3ae3f2040176d414eb6e50d">MemManager</a> &amp;, ItemArg &amp;&amp;itemArg, <a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a> &amp;item)</td></tr>
 <tr class="separator:a29f2135507c4ce592678c9f95d7494c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a27210094321e2526836c99b994defb29"><td class="memItemLeft" align="right" valign="top">static const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a27210094321e2526836c99b994defb29">alignment</a> = ItemManager::alignment</td></tr>
-<tr class="separator:a27210094321e2526836c99b994defb29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cfc1ef1fcb5db7488224ed7d26a0404"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a3cfc1ef1fcb5db7488224ed7d26a0404">isNothrowMoveConstructible</a> = ItemManager::isNothrowMoveConstructible</td></tr>
-<tr class="separator:a3cfc1ef1fcb5db7488224ed7d26a0404"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5921ac543a5868f89c5dcefc2068da41"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#a5921ac543a5868f89c5dcefc2068da41">isTriviallyRelocatable</a> = ItemManager::isTriviallyRelocatable</td></tr>
-<tr class="separator:a5921ac543a5868f89c5dcefc2068da41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa75ecd7c2687391a4ea7173b5d80273e"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_array_item_traits.html#aa75ecd7c2687391a4ea7173b5d80273e">isNothrowRelocatable</a> = ItemManager::isNothrowRelocatable</td></tr>
-<tr class="separator:aa75ecd7c2687391a4ea7173b5d80273e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a23023ee68285447b0dcf075ae9a64834"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23023ee68285447b0dcf075ae9a64834">&#9670;&nbsp;</a></span>Creator</h2>
+<a id="aa3c9136d533d33a5780c2d99c0f8b178"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa3c9136d533d33a5780c2d99c0f8b178">&#9670;&nbsp;</a></span>Creator</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename... ItemArgs&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="classmomo_1_1_array_item_traits.html#a23023ee68285447b0dcf075ae9a64834">Creator</a> =  typename ItemManager::template <a class="el" href="classmomo_1_1_array_item_traits.html#a23023ee68285447b0dcf075ae9a64834">Creator</a>&lt;ItemArgs...&gt;</td>
+          <td class="memname">using <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="classmomo_1_1_array_item_traits.html#aa3c9136d533d33a5780c2d99c0f8b178">Creator</a> =  <a class="el" href="classmomo_1_1internal_1_1_object_creator.html">internal::ObjectCreator</a>&lt;<a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a>, <a class="el" href="classmomo_1_1_array_item_traits.html#a336cd996b3ae3f2040176d414eb6e50d">MemManager</a>, ItemArgs...&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -153,7 +149,7 @@ template&lt;typename... ItemArgs&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">typedef TItem <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="classmomo_1_1_array_item_traits.html#aa676f569310b0a177dd2b8760fa9565a">Item</a></td>
@@ -169,7 +165,7 @@ template&lt;typename TItem , typename TMemManager &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">typedef TMemManager <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="classmomo_1_1_array_item_traits.html#a336cd996b3ae3f2040176d414eb6e50d">MemManager</a></td>
@@ -186,7 +182,7 @@ template&lt;typename TItem , typename TMemManager &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename ItemArg &gt; </div>
 <table class="mlabels">
@@ -232,7 +228,7 @@ template&lt;typename ItemArg &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -270,13 +266,121 @@ template&lt;typename TItem , typename TMemManager &gt; </div>
 
 </div>
 </div>
-<a id="a2c73b8e31b2664887538a354d2fe4275"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c73b8e31b2664887538a354d2fe4275">&#9670;&nbsp;</a></span>Relocate()</h2>
+<a id="a3e71e28934adc49fb58d0f4f5e35dbfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e71e28934adc49fb58d0f4f5e35dbfe">&#9670;&nbsp;</a></span>GetAlignment()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr size_t <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::GetAlignment </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af7742edd72565c243e0eded82e608ccc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7742edd72565c243e0eded82e608ccc">&#9670;&nbsp;</a></span>IsNothrowMoveConstructible()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr bool <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="structmomo_1_1_is_nothrow_move_constructible.html">IsNothrowMoveConstructible</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab20555901cb6b1e5f228bd3cf85cf4ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab20555901cb6b1e5f228bd3cf85cf4ca">&#9670;&nbsp;</a></span>IsNothrowRelocatable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr bool <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::IsNothrowRelocatable </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8bdef28444ef3edc108d5f97cd3ded5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8bdef28444ef3edc108d5f97cd3ded5a">&#9670;&nbsp;</a></span>IsTriviallyRelocatable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static constexpr bool <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::<a class="el" href="structmomo_1_1_is_trivially_relocatable.html">IsTriviallyRelocatable</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a94985684dcb49dd4d4bdd6f3cea6e5e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94985684dcb49dd4d4bdd6f3cea6e5e5">&#9670;&nbsp;</a></span>Relocate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -326,7 +430,7 @@ template&lt;typename TItem , typename TMemManager &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
+template&lt;typename TItem , typename TMemManager  = MemManagerDefault&gt; </div>
 <div class="memtemplate">
 template&lt;typename ItemCreator &gt; </div>
 <table class="mlabels">
@@ -378,103 +482,6 @@ template&lt;typename ItemCreator &gt; </div>
   </td>
   <td class="mlabels-right">
 <span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a27210094321e2526836c99b994defb29"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27210094321e2526836c99b994defb29">&#9670;&nbsp;</a></span>alignment</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const size_t <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::alignment = ItemManager::alignment</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3cfc1ef1fcb5db7488224ed7d26a0404"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cfc1ef1fcb5db7488224ed7d26a0404">&#9670;&nbsp;</a></span>isNothrowMoveConstructible</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::isNothrowMoveConstructible = ItemManager::isNothrowMoveConstructible</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa75ecd7c2687391a4ea7173b5d80273e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa75ecd7c2687391a4ea7173b5d80273e">&#9670;&nbsp;</a></span>isNothrowRelocatable</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::isNothrowRelocatable = ItemManager::isNothrowRelocatable</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a5921ac543a5868f89c5dcefc2068da41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5921ac543a5868f89c5dcefc2068da41">&#9670;&nbsp;</a></span>isTriviallyRelocatable</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename TItem , typename TMemManager &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const bool <a class="el" href="classmomo_1_1_array_item_traits.html">momo::ArrayItemTraits</a>&lt; TItem, TMemManager &gt;::isTriviallyRelocatable = ItemManager::isTriviallyRelocatable</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

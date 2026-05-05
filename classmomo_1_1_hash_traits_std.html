@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">momo
-   &#160;<span id="projectnumber">3.11</span>
+   &#160;<span id="projectnumber">3.12</span>
    </div>
   </td>
  </tr>
@@ -140,6 +140,8 @@ Public Member Functions</h2></td></tr>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a8e9c49454dd1740d23611720310291dd"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a8e9c49454dd1740d23611720310291dd">isFastNothrowHashable</a></td></tr>
 <tr class="separator:a8e9c49454dd1740d23611720310291dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ca92078fb92be3ae47150ff427f3795"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmomo_1_1_hash_traits_std.html#a5ca92078fb92be3ae47150ff427f3795">useHintIterators</a> = false</td></tr>
+<tr class="separator:a5ca92078fb92be3ae47150ff427f3795"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a483837b5aa052a95d70c96c240393dd1"></a>
@@ -607,6 +609,30 @@ template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename 
 <div class="line">        &amp;&amp; (std::is_same&lt;Hasher, HashCoder&lt;Key&gt;&gt;::value</div>
 <div class="line">        || std::is_same&lt;Hasher, std::hash&lt;Key&gt;&gt;::value)</div>
 </div><!-- fragment -->
+</div>
+</div>
+<a id="a5ca92078fb92be3ae47150ff427f3795"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ca92078fb92be3ae47150ff427f3795">&#9670;&nbsp;</a></span>useHintIterators</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename TKey , typename THasher  = HashCoder&lt;TKey&gt;, typename TEqualComparer  = std::equal_to&lt;TKey&gt;, typename THashBucket  = HashBucketDefault&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool <a class="el" href="classmomo_1_1_hash_traits_std.html">momo::HashTraitsStd</a>&lt; TKey, THasher, TEqualComparer, THashBucket &gt;::useHintIterators = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
