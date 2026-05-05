@@ -1,6 +1,8 @@
 # The main test runs are done in GitHub Actions.
 # Only some old compilers are tested here.
 
+skip_tags: true
+
 environment:
   matrix:
 
