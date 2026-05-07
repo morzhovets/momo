@@ -19,7 +19,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror -Wno-unused-variable'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '5'
           ubuntu_ver: '24.04'
@@ -28,7 +28,7 @@ jobs:
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror -Wno-unused-variable'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '5'
           ubuntu_ver: '24.04'
@@ -37,7 +37,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++11 -Werror -Wno-unused-variable'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '5'
           ubuntu_ver: '24.04'
@@ -46,7 +46,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++14 -Werror -Wno-unused-variable'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '6'
           ubuntu_ver: '24.04'
@@ -55,7 +55,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '7'
           ubuntu_ver: '24.04'
@@ -209,7 +209,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror -Wno-unused-variable'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '5'
           ubuntu_ver: '24.04-arm'
@@ -218,7 +218,7 @@ jobs:
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror -Wno-unused-variable'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '5'
           ubuntu_ver: '24.04-arm'
@@ -227,7 +227,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++11 -Werror -Wno-unused-variable'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '5'
           ubuntu_ver: '24.04-arm'
@@ -236,7 +236,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++14 -Werror -Wno-unused-variable'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '6'
           ubuntu_ver: '24.04-arm'
@@ -245,7 +245,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
-          cont_ver: '18.04'
+          cont_ver: '20.04'
 
         - gcc_ver: '7'
           ubuntu_ver: '24.04-arm'
@@ -400,14 +400,18 @@ jobs:
         apt-get update
         apt-get install -y cmake
         apt-get install -y ninja-build
-    - name: Checkout
-      if: matrix.cont_ver != '18.04'
-      uses: actions/checkout@v6
-    - name: Checkout 18.04
-      if: matrix.cont_ver == '18.04'
+    - name: Bionic in Focal (x64)
+      if: matrix.cont_ver == '20.04' && matrix.ubuntu_ver == '24.04'
       run: |
-        apt-get install -y git
-        git clone --depth=1 --single-branch --branch ${{ github.ref_name }} https://github.com/${{ github.repository }} .
+        echo "deb https://ports.ubuntu.com/ bionic main universe" | tee -a /etc/apt/sources.list
+        apt-get update
+    - name: Bionic in Focal (ARM64)
+      if: matrix.cont_ver == '20.04' && matrix.ubuntu_ver == '24.04-arm'
+      run: |
+        echo "deb https://archive.ubuntu.com/ubuntu/ bionic main universe" | tee -a /etc/apt/sources.list
+        apt-get update
+    - name: Checkout
+      uses: actions/checkout@v6
     - name: Install GCC
       run: apt-get install -y g++-${{ matrix.gcc_ver }}
     - name: Build
@@ -418,10 +422,10 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_VERBOSE_MAKEFILE=On \
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} \
           -DMOMO_TEST_NO_EXCEPTIONS_RTTI=${{ matrix.no_exceptions_rtti }} \
           -DMOMO_TEST_EXTRA_SETTINGS=${{ matrix.extra_settings }}
-        cmake --build .
+        cmake --build . -v
     - name: Test
       run: test/build/momo_test
