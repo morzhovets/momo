@@ -3,7 +3,7 @@
 #  https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
 #  for details.
 
-cmake_minimum_required(VERSION 3.10...4.2)
+cmake_minimum_required(VERSION 3.16...4.2)
 
 project(momo_test
   LANGUAGES CXX)
@@ -28,16 +28,10 @@ message(STATUS "CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR})
 message(STATUS "CMAKE_HOST_SYSTEM_PROCESSOR: " ${CMAKE_HOST_SYSTEM_PROCESSOR})
 message(STATUS "CMAKE_SYSTEM_NAME: " ${CMAKE_SYSTEM_NAME})
 
-if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
-  file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
-else()
-  file(GLOB MOMO_TEST_SOURCES "sources/*.cpp")
-endif()
+file(GLOB MOMO_TEST_SOURCES CONFIGURE_DEPENDS "sources/*.cpp")
 add_executable(momo_test ${MOMO_TEST_SOURCES})
 
-if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.16)
-  target_precompile_headers(momo_test PRIVATE "sources/pch.h")
-endif()
+target_precompile_headers(momo_test PRIVATE "sources/pch.h")
 
 #target_compile_features(momo_test PRIVATE cxx_std_11)
 
@@ -76,7 +70,6 @@ if(MOMO_TEST_EXTRA_SETTINGS)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-  string(REGEX REPLACE "/W[0-4]" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")   # CMP0092, 3.15+
   target_compile_options(momo_test PRIVATE /W4 /wd4127 /wd4458 /bigobj)
   target_compile_options(momo_test PRIVATE $<$<NOT:$<CONFIG:Debug>>:/wd4702>)
   if(MSVC_VERSION LESS 1910)

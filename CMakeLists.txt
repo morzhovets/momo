@@ -3,10 +3,11 @@
 #  https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
 #  for details.
 
-cmake_minimum_required(VERSION 3.10...4.2)
+cmake_minimum_required(VERSION 3.16...4.2)
 
 project(momo
   VERSION 3.12
+  HOMEPAGE_URL "https://github.com/morzhovets/momo"
   LANGUAGES CXX)
 
 option(MOMO_TEST "Build momo tests" OFF)
