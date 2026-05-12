@@ -173,11 +173,11 @@ public:
 		if (capacity <= 2)
 			newCapacity = 4;
 		else if (capacity <= 64)
-			newCapacity = capacity * 2;
+			newCapacity = 2 * capacity;
 		else if (linear || capacity < 150)
 			newCapacity = capacity + 64;
 		else
-			newCapacity = capacity + (capacity / 50) * 23;	// k^4 < 1 + k + k^2
+			newCapacity = capacity + 23 * (capacity / 50);	// k^4 < 1 + k + k^2
 		if (newCapacity < minNewCapacity)
 			newCapacity = minNewCapacity;
 		return newCapacity;

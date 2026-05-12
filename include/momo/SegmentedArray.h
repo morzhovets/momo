@@ -126,7 +126,7 @@ private:
 
 	static size_t pvSegIndexToLogItemCount(size_t segIndex) noexcept
 	{
-		return internal::UIntMath<>::Log2((segIndex * 2 + 4) / 3);
+		return internal::UIntMath<>::Log2((2 * segIndex + 4) / 3);
 	}
 };
 

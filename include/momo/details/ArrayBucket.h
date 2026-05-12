@@ -296,7 +296,7 @@ namespace internal
 						{
 							ArrayMemPool& arrayMemPool = params.GetArrayMemPool();
 							ArrayMemory memory(arrayMemPool);
-							Array array = Array::CreateCap(maxFastCount * 2,
+							Array array = Array::CreateCap(2 * maxFastCount,
 								MemManagerPtr(arrayMemPool.GetMemManager()));
 							Item* newItems = array.GetItems();
 							ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems,
@@ -337,7 +337,7 @@ namespace internal
 				Array& array = pvGetArray();
 				array.RemoveBack();
 				if (2 < count && count <= array.GetCapacity() / 4)
-					array.TryShrink(count * 2);
+					array.TryShrink(2 * count);
 			}
 		}
 

@@ -74,7 +74,7 @@ namespace internal
 		{
 			typedef decltype(codeGetter(begin)) Code;
 			pvSort<Code>(begin, count, codeGetter, iterSwapper, itemsGrouper,
-				8 * sizeof(Code) - radixSize);
+				sizeof(Code) * 8 - radixSize);
 		}
 
 	private:

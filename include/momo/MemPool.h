@@ -799,7 +799,7 @@ private:
 	{
 		size_t blockIndex = Params::blockCount;
 		blockIndex -= static_cast<size_t>(-pvGetFirstBlockIndex(chunk));	// gcc
-		return chunk + Params::blockAlignment + Params::blockSize * blockIndex;
+		return chunk + Params::blockAlignment + blockIndex * Params::blockSize;
 	}
 
 	bool pvIsChunkBytesNear() const noexcept
@@ -935,7 +935,7 @@ namespace internal
 			{
 				uint32_t nextBlock = (i + 1 < blockCount)
 					? static_cast<uint32_t>(chunkCount * blockCount + i + 1) : nullPtr;
-				pvSetNextBlock(nextBlock, chunk + mBlockSize * i);
+				pvSetNextBlock(nextBlock, chunk + i * mBlockSize);
 			}
 			mBlockHead = static_cast<uint32_t>(chunkCount * blockCount);
 			mChunks.AddBackNogrow(chunk);

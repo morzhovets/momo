@@ -111,7 +111,7 @@ public:
 		Object* srcObjects, Object* dstObjects, size_t count) noexcept
 	{
 		if (count > 0)
-			internal::MemCopyer::CopyBuffer(srcObjects, dstObjects, sizeof(Object) * count);
+			internal::MemCopyer::CopyBuffer(srcObjects, dstObjects, count * sizeof(Object));
 	}
 
 private:
@@ -233,7 +233,7 @@ namespace internal
 		}
 
 	private:
-		MOMO_ALIGNED_STORAGE(sizeof(Object) * count, alignment) mBuffer;
+		MOMO_ALIGNED_STORAGE(count * sizeof(Object), alignment) mBuffer;
 	};
 
 	template<typename TObject, typename TMemManager, typename... ObjectArgs>

@@ -70,7 +70,7 @@ namespace internal
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		static const size_t internalOffset = UIntMath<>::Ceil(sizeof(Node*) * (maxCapacity + 1),
+		static const size_t internalOffset = UIntMath<>::Ceil((maxCapacity + 1) * sizeof(Node*),
 			UIntConst::maxAlignment);
 
 		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
@@ -81,7 +81,7 @@ namespace internal
 		private:
 			static const size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
 			static const size_t internalNodeSize =
-				internalOffset + itemOffset + sizeof(Item) * maxCapacity;
+				internalOffset + itemOffset + maxCapacity * sizeof(Item);
 
 			typedef MemPoolParamsStatic<internalNodeSize, UIntConst::maxAlignment,
 				MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount> InternalMemPoolParams;
@@ -100,7 +100,7 @@ namespace internal
 				for (size_t i = 0; i < leafMemPoolCount; ++i)
 				{
 					size_t capacity = maxCapacity - i * capacityStep;
-					size_t leafNodeSize = itemOffset + sizeof(Item) * capacity;
+					size_t leafNodeSize = itemOffset + capacity * sizeof(Item);
 					mLeafMemPools.AddBackNogrow(LeafMemPool(MemPoolParams(leafNodeSize),
 						MemManagerPtr(memManager)));
 				}
@@ -190,7 +190,7 @@ namespace internal
 		{
 			size_t capacity = maxCapacity;
 			if (IsLeaf())
-				capacity -= capacityStep * size_t{mMemPoolIndex};
+				capacity -= size_t{mMemPoolIndex} * capacityStep;
 			return capacity;
 		}
 
