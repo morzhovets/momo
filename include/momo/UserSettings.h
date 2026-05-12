@@ -62,7 +62,7 @@
 // If your platform does not require data alignment, define it as `1`
 #define MOMO_MAX_ALIGNMENT alignof(std::max_align_t)
 
-#define MOMO_MAX_FAST_FUNCTOR_SIZE (sizeof(void*) * 2)
+#define MOMO_MAX_FAST_FUNCTOR_SIZE (2 * sizeof(void*))
 
 // Memory pool settings
 #define MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT 32

@@ -783,7 +783,7 @@ private:
 			Edge* nextEdge;
 		};
 
-		static const size_t maxEdgeCount = 2 * maxColumnCount;
+		static const size_t maxEdgeCount = maxColumnCount * 2;
 
 	public:
 		explicit Graph() noexcept
@@ -1165,7 +1165,7 @@ private:
 		{
 			if (!graph.HasEdge(v) || addends[v] != 0)
 				continue;
-			addends[v] = size_t{1} << (8 * sizeof(size_t) - 1);
+			addends[v] = size_t{1} << (sizeof(size_t) * 8 - 1);
 			if (!graph.FillAddends(addends.data(), v))
 				return false;
 		}

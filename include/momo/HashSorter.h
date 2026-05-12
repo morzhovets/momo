@@ -459,7 +459,7 @@ private:
 		FastCopyableFunctor<IterThreeComparer> iterThreeComp)
 	{
 		size_t leftIndex = 0;
-		for (size_t i = 0; i < count; i = i * 2 + 2)
+		for (size_t i = 0; i < count; i = 2 * i + 2)
 		{
 			std::strong_ordering cmp = iterThreeComp(SMath::Next(begin, i));
 			if (cmp > 0)
@@ -500,7 +500,7 @@ private:
 	static size_t pvMultShift(HashCode value1, size_t value2) noexcept
 	{
 		static_assert(sizeof(HashCode) >= sizeof(size_t));
-		static const size_t halfSize = 4 * sizeof(HashCode);
+		static const size_t halfSize = sizeof(HashCode) * 4;
 		static const HashCode halfMask = (HashCode{1} << halfSize) - 1;
 		HashCode res = (value1 >> halfSize) * (value2 >> halfSize)
 			+ (((value1 >> halfSize) * (value2 & halfMask)) >> halfSize)

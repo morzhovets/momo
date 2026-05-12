@@ -1223,7 +1223,7 @@ namespace internal
 			{
 				uint32_t nextBlock = (i + 1 < blockCount)
 					? static_cast<uint32_t>(chunkCount * blockCount + i + 1) : nullPtr;
-				pvSetNextBlock(nextBlock, chunk + mBlockSize * i);
+				pvSetNextBlock(nextBlock, chunk + i * mBlockSize);
 			}
 			mBlockHead = static_cast<uint32_t>(chunkCount * blockCount);
 			mChunks.AddBackNogrow(chunk);

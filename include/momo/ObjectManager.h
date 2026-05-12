@@ -131,7 +131,7 @@ public:
 		size_t count) noexcept requires isTriviallyRelocatable
 	{
 		if (count > 0)
-			internal::MemCopyer::CopyBuffer(srcObjects, dstObjects, sizeof(Object) * count);
+			internal::MemCopyer::CopyBuffer(srcObjects, dstObjects, count * sizeof(Object));
 	}
 };
 
@@ -222,7 +222,7 @@ namespace internal
 		}
 
 	private:
-		alignas(alignment) std::byte mBuffer[sizeof(Object) * count];
+		alignas(alignment) std::byte mBuffer[count * sizeof(Object)];
 	};
 
 	template<conceptMemManager TMemManager, conceptObject TObject, typename... ObjectArgs>
