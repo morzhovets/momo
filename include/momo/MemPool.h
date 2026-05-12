@@ -423,8 +423,9 @@ namespace internal
 
 		Byte* pvGetBlocksEndPosition(Byte* chunk) const noexcept
 		{
-			return chunk + Params::GetBlockAlignment() + Params::GetBlockSize()
-				* (Params::GetBlockCount() - static_cast<size_t>(-pvGetFirstBlockIndex(chunk)));
+			return chunk + Params::GetBlockAlignment()
+				+ (Params::GetBlockCount() - static_cast<size_t>(-pvGetFirstBlockIndex(chunk)))
+					* Params::GetBlockSize();
 		}
 
 		bool pvIsChunkBytesNear() const noexcept
