@@ -305,15 +305,11 @@ namespace sample_data5
 			output << (*prow)->dblCol << std::endl;	// 1.5
 		}
 
-#if !(defined(TEST_MSVC) && _MSC_VER >= 1950)	// vs2026: Internal compiler error
 		{
 			auto rows = table.FindByMultiHash(
 				momo::DataEquality(&Struct::strCol, "a"), multiIndex);	// fastest search
 			output << rows.GetCount() << std::endl;	// 2
 		}
-#else
-		(void)multiIndex;
-#endif
 	}
 }
 
