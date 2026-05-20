@@ -185,8 +185,6 @@ namespace internal
 	private:
 		typedef typename Bucket::Item Item;
 
-		typedef internal::VersionKeeper<Settings> VersionKeeper;
-
 	public:
 		typedef const Item& Reference;
 		typedef const Item* Pointer;
@@ -194,6 +192,9 @@ namespace internal
 		typedef HashSetPosition ConstPosition;
 
 		typedef HashSetIterator<Bucket, Settings> Iterator;
+
+	private:
+		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
 	public:
 		explicit HashSetPosition() noexcept
@@ -461,21 +462,12 @@ public:
 	typedef typename ItemTraits::Item Item;
 	typedef typename ItemTraits::MemManager MemManager;
 
+	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
+
 private:
-	typedef internal::SetCrew<HashTraits, MemManager, Settings::checkVersion> Crew;
+	typedef typename HashTraits::template Bucket<internal::HashSetBucketItemTraits<ItemTraits>> Bucket;
 
-	typedef internal::HashSetBucketItemTraits<ItemTraits> BucketItemTraits;
-
-	typedef typename HashTraits::template Bucket<BucketItemTraits> Bucket;
-
-	typedef typename Bucket::Params BucketParams;
-
-	typedef typename Bucket::Iterator BucketIterator;
 	typedef typename Bucket::Bounds BucketBounds;
-
-	typedef internal::HashSetBuckets<Bucket> Buckets;
-
-	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
 
 public:
 	typedef internal::HashSetIterator<Bucket, Settings> Iterator;
@@ -486,35 +478,29 @@ public:
 
 	typedef internal::InsertResult<Position> InsertResult;
 
-	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
-
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
 	static const size_t bucketMaxItemCount = Bucket::maxCount;
 
 private:
+	typedef internal::SetCrew<HashTraits, MemManager, Settings::checkVersion> Crew;
+
+	typedef internal::HashSetBuckets<Bucket> Buckets;
+
+	typedef typename Bucket::Params BucketParams;
+
+	typedef typename Bucket::Iterator BucketIterator;
+
 	static const bool areItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
 		&& ItemTraits::isNothrowRelocatable && Bucket::isNothrowAddableIfNothrowCreatable;
+
+	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
 
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
-
-	struct ConstIteratorProxy : private ConstIterator
-	{
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, IsMovable)
-	};
-
-	struct ConstPositionProxy : private ConstPosition
-	{
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIndex)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashCode)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIterator)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Reset)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Check)
-	};
 
 	template<typename KeyArg>
 	class ItemFindPredicate
@@ -560,6 +546,20 @@ private:
 	{
 		size_t index;
 		BucketIterator iterator;
+	};
+
+	struct ConstIteratorProxy : private ConstIterator
+	{
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, IsMovable)
+	};
+
+	struct ConstPositionProxy : private ConstPosition
+	{
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIndex)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetHashCode)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, GetBucketIterator)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Reset)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstPosition, Check)
 	};
 
 public:

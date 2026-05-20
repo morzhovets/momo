@@ -146,19 +146,11 @@ public:
 
 private:
 	typedef internal::HashMapNestedSetItemTraits<KeyValueTraits> HashSetItemTraits;
-	typedef typename HashSetItemTraits::Item KeyValuePair;
-
 	typedef internal::HashMapNestedSetSettings<Settings> HashSetSettings;
-
 	typedef HashSetCore<HashSetItemTraits, HashTraits, HashSetSettings> HashSet;
 
-	typedef typename HashSet::ConstIterator HashSetConstIterator;
-	typedef typename HashSet::ConstPosition HashSetConstPosition;
-
-	typedef typename HashSet::ExtractedItem HashSetExtractedItem;
-
 public:
-	typedef internal::MapPosition<HashSetConstPosition> Position;
+	typedef internal::MapPosition<typename HashSet::ConstPosition> Position;
 	typedef typename Position::ConstPosition ConstPosition;
 
 	typedef typename Position::Iterator Iterator;
@@ -166,7 +158,7 @@ public:
 
 	typedef internal::InsertResult<Position> InsertResult;
 
-	typedef internal::MapExtractedPair<HashSetExtractedItem,
+	typedef internal::MapExtractedPair<typename HashSet::ExtractedItem,
 		KeyValueTraits::useValuePtr> ExtractedPair;
 
 	typedef internal::HashMapBucketBounds<typename HashSet::ConstBucketBounds> BucketBounds;
@@ -182,6 +174,8 @@ public:
 	using ValueReference = ValueReferencer::template ValueReference<KeyReference>;
 
 private:
+	typedef typename HashSetItemTraits::Item KeyValuePair;
+
 	template<typename... ValueArgs>
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 

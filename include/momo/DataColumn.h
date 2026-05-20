@@ -766,6 +766,15 @@ public:
 	};
 
 private:
+	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
+
+	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManagerPtr> ColumnRecords;
+
+public:
+	typedef typename ColumnRecords::ConstIterator ConstIterator;
+	typedef ConstIterator Iterator;
+
+private:
 	static const size_t logVertexCount = ColumnTraits::logVertexCount;
 	static const size_t maxColumnCount = ColumnTraits::maxColumnCount;
 	static const size_t maxCodeParam = ColumnTraits::maxCodeParam;
@@ -859,10 +868,6 @@ private:
 	typedef HashSetCore<HashSetItemTraits<ColumnCode, MemManager>, ColumnCodeHashTraits,
 		internal::NestedHashSetSettings<Settings::allowExceptionSuppression>> ColumnCodeSet;
 
-	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
-
-	typedef internal::NestedArrayIntCap<0, ColumnRecord, MemManagerPtr> ColumnRecords;
-
 	typedef void (*RawItemsCreator)(MemManager&, const ColumnRecord*, const DataColumnList*,
 		const Raw*, Raw*);
 	typedef void (*RawItemsDestroyer)(MemManager*, const ColumnRecord*, Raw*) noexcept;
@@ -877,10 +882,6 @@ private:
 	typedef internal::NestedArrayIntCap<0, FuncRecord, MemManagerPtr> FuncRecords;
 
 	typedef internal::NestedArrayIntCap<0, uint8_t, MemManagerPtr> MutableOffsets;
-
-public:
-	typedef typename ColumnRecords::ConstIterator ConstIterator;
-	typedef ConstIterator Iterator;
 
 public:
 	DataColumnList()

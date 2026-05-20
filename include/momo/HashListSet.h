@@ -395,14 +395,17 @@ public:
 	typedef typename ItemTraits::Item Item;
 	typedef typename ItemTraits::MemManager MemManager;
 
+	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;	//?
+
 private:
 	typedef SemiListCore<internal::HashListSetNestedSemiListItemTraits<ItemTraits>,
 		internal::HashListSetNestedSemiListSettings<Settings>> List;
-	typedef typename List::MemManager MemManagerPtr;	//?
 
+	typedef internal::HashListSetNestedHashSetItemTraits<ItemTraits,
+		typename List::ConstIterator> HashSetItemTraits;
 	typedef internal::HashListSetNestedHashTraits<Key, HashTraits> NestedHashTraits;
-	typedef HashSetCore<internal::HashListSetNestedHashSetItemTraits<ItemTraits, typename List::ConstIterator>,
-		NestedHashTraits, internal::NestedHashSetSettings<Settings::allowExceptionSuppression>> HashSet;
+	typedef internal::NestedHashSetSettings<Settings::allowExceptionSuppression> HashSetSettings;
+	typedef HashSetCore<HashSetItemTraits, NestedHashTraits, HashSetSettings> HashSet;
 
 public:
 	typedef typename List::ConstIterator Iterator;
@@ -413,13 +416,13 @@ public:
 
 	typedef internal::InsertResult<Iterator> InsertResult;
 
-	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;	//?
-
 	typedef internal::HashListSetBucketBounds<typename HashSet::ConstBucketBounds> ConstBucketBounds;
 
 	static const size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
 
 private:
+	typedef typename List::MemManager MemManagerPtr;	//?
+
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 

@@ -206,6 +206,13 @@ public:
 	static const size_t internalCapacity = Settings::internalCapacity;
 
 private:
+	typedef typename internal::ArrayIteratorSelector<ArrayCore> IteratorSelector;
+
+public:
+	typedef typename IteratorSelector::ConstIterator ConstIterator;
+	typedef typename IteratorSelector::Iterator Iterator;
+
+private:
 	class Data : private MemManager
 	{
 	private:
@@ -468,13 +475,8 @@ private:
 
 	typedef internal::ArrayItemHandler<ItemTraits> ItemHandler;
 	typedef internal::ArrayInserter<ArrayCore> ArrayInserter;
-	typedef typename internal::ArrayIteratorSelector<ArrayCore> IteratorSelector;
 
 	typedef internal::UIntMath<> SMath;
-
-public:
-	typedef typename IteratorSelector::ConstIterator ConstIterator;
-	typedef typename IteratorSelector::Iterator Iterator;
 
 public:
 	ArrayCore() noexcept(noexcept(MemManager()))

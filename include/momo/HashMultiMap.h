@@ -181,22 +181,19 @@ namespace internal
 
 		typedef internal::VersionKeeper<Settings, Settings::checkValueVersion> VersionKeeper;
 
-	private:
-		typedef typename KeyIterator::Reference KeyReference;
-		typedef typename KeyReference::Key Key;
-
 	public:
-		typedef typename KeyReference::Iterator ValueIterator;
+		typedef typename KeyIterator::Reference::Iterator ValueIterator;
+
+		typedef HashMultiMapIterator<typename KeyIterator::ConstIterator, Settings> ConstIterator;
 
 	private:
-		typedef std::iter_reference_t<ValueIterator> ValueReference;
-		typedef std::remove_reference_t<ValueReference> Value;
+		typedef typename KeyIterator::Reference::Key Key;
+
+		typedef std::remove_reference_t<std::iter_reference_t<ValueIterator>> Value;
 
 	public:
 		typedef HashMultiMapReference<Key, Value> Reference;
 		typedef IteratorPointer<Reference> Pointer;
-
-		typedef HashMultiMapIterator<typename KeyIterator::ConstIterator, Settings> ConstIterator;
 
 	public:
 		explicit HashMultiMapIterator() noexcept
@@ -602,15 +599,26 @@ public:
 	typedef typename KeyValueTraits::MemManager MemManager;
 
 private:
-	typedef internal::HashMultiMapNestedMapKeyValueTraits<KeyValueTraits,
-		Settings> HashMapKeyValueTraits;
+	typedef internal::HashMultiMapNestedMapKeyValueTraits<KeyValueTraits, Settings> HashMapKeyValueTraits;
+	typedef internal::HashMultiMapNestedMapSettings<Settings> HashMapSettings;
+	typedef HashMapCore<HashMapKeyValueTraits, HashTraits, HashMapSettings> HashMap;
 
+	typedef typename HashMap::Iterator HashMapIterator;
+
+public:
+	typedef internal::DerivedForwardIterator<HashMapIterator,
+		internal::HashMultiMapKeyReference> KeyIterator;
+	typedef typename KeyIterator::ConstIterator ConstKeyIterator;
+
+	typedef internal::HashMultiMapKeyBounds<KeyIterator> KeyBounds;
+	typedef typename KeyBounds::ConstBounds ConstKeyBounds;
+
+	typedef internal::HashMultiMapIterator<KeyIterator, Settings> Iterator;
+	typedef typename Iterator::ConstIterator ConstIterator;
+
+private:
 	typedef typename HashMapKeyValueTraits::Value ValueArray;
 	typedef typename ValueArray::Params ValueArrayParams;
-
-	typedef internal::HashMultiMapNestedMapSettings<Settings> HashMapSettings;
-
-	typedef HashMapCore<HashMapKeyValueTraits, HashTraits, HashMapSettings> HashMap;
 
 	class ValueCrew
 	{
@@ -692,20 +700,6 @@ private:
 		Data* mData;
 	};
 
-	typedef typename HashMap::Iterator HashMapIterator;
-
-public:
-	typedef internal::DerivedForwardIterator<HashMapIterator,
-		internal::HashMultiMapKeyReference> KeyIterator;
-	typedef typename KeyIterator::ConstIterator ConstKeyIterator;
-
-	typedef internal::HashMultiMapKeyBounds<KeyIterator> KeyBounds;
-	typedef typename KeyBounds::ConstBounds ConstKeyBounds;
-
-	typedef internal::HashMultiMapIterator<KeyIterator, Settings> Iterator;
-	typedef typename Iterator::ConstIterator ConstIterator;
-
-private:
 	template<typename... ValueArgs>
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 

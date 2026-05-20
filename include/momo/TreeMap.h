@@ -211,23 +211,16 @@ public:
 
 private:
 	typedef internal::TreeMapNestedSetItemTraits<KeyValueTraits> TreeSetItemTraits;
-	typedef typename TreeSetItemTraits::Item KeyValuePair;
-
 	typedef internal::TreeMapNestedSetSettings<Settings> TreeSetSettings;
-
 	typedef TreeSetCore<TreeSetItemTraits, TreeTraits, TreeSetSettings> TreeSet;
 
-	typedef typename TreeSet::ConstIterator TreeSetConstIterator;
-
-	typedef typename TreeSet::ExtractedItem TreeSetExtractedItem;
-
 public:
-	typedef internal::MapBidirectionalIterator<TreeSetConstIterator> Iterator;
+	typedef internal::MapBidirectionalIterator<typename TreeSet::ConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
 	typedef internal::InsertResult<Iterator> InsertResult;
 
-	typedef internal::MapExtractedPair<TreeSetExtractedItem,
+	typedef internal::MapExtractedPair<typename TreeSet::ExtractedItem,
 		KeyValueTraits::useValuePtr> ExtractedPair;
 
 private:
@@ -238,6 +231,8 @@ public:
 	using ValueReference = ValueReferencer::template ValueReference<KeyReference>;
 
 private:
+	typedef typename TreeSetItemTraits::Item KeyValuePair;
+
 	template<typename... ValueArgs>
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 

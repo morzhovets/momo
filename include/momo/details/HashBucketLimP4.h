@@ -170,9 +170,6 @@ namespace internal
 		static const size_t itemAlignment = (!useHashCodePartGetter || ItemTraits::alignment > 4)
 			? ItemTraits::alignment : 4;
 
-		static const size_t minMemPoolIndex =
-			(maxCount > 1 && sizeof(Item) <= itemAlignment) ? 2 : 1;
-
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
 			itemAlignment, MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount>;
@@ -180,23 +177,6 @@ namespace internal
 		template<size_t memPoolIndex>
 		using MemPool = momo::MemPool<MemPoolParamsStatic<memPoolIndex>, MemManagerPtr,
 			NestedMemPoolSettings>;
-
-		template<size_t memPoolIndex>
-		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
-
-		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0,
-			MemManagerProxy<MemManager>::ptrUsefulBitCount> PtrState;
-
-		static_assert(PtrState::bitCount % 8 == 0);
-		static const size_t codeCount = 4 +
-			(useHashCodePartGetter ? sizeof(void*) - PtrState::bitCount / 8 : 0);
-
-		static const uint8_t maskEmpty = 128;
-		static const uint8_t emptyCodeProbe = 255;
-
-		static const size_t logBucketCountStep = 8;
-		static const size_t logBucketCountAddend = 6;
-		static const size_t hashCodeShift = sizeof(size_t) * 8 - 7;
 
 	public:
 		class Params
@@ -250,6 +230,27 @@ namespace internal
 		private:
 			MemPools mMemPools;
 		};
+
+	private:
+		static const size_t minMemPoolIndex =
+			(maxCount > 1 && sizeof(Item) <= itemAlignment) ? 2 : 1;
+
+		template<size_t memPoolIndex>
+		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
+
+		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0,
+			MemManagerProxy<MemManager>::ptrUsefulBitCount> PtrState;
+
+		static_assert(PtrState::bitCount % 8 == 0);
+		static const size_t codeCount = 4 +
+			(useHashCodePartGetter ? sizeof(void*) - PtrState::bitCount / 8 : 0);
+
+		static const uint8_t maskEmpty = 128;
+		static const uint8_t emptyCodeProbe = 255;
+
+		static const size_t logBucketCountStep = 8;
+		static const size_t logBucketCountAddend = 6;
+		static const size_t hashCodeShift = sizeof(size_t) * 8 - 7;
 
 	public:
 		explicit BucketLimP4() noexcept

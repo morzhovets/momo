@@ -29,12 +29,12 @@ namespace internal
 		typedef TRaws Raws;
 		typedef TSettings Settings;
 
+	public:
+		typedef DataRawIterator ConstIterator;
+
 	private:
 		typedef typename Raws::Item RawPtr;
 		typedef internal::ArrayIndexIterator<const Raws, const RawPtr, Settings> ArrayIndexIterator;
-
-	public:
-		typedef DataRawIterator ConstIterator;
 
 	public:
 		explicit DataRawIterator() noexcept = default;

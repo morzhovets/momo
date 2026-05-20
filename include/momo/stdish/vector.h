@@ -30,8 +30,6 @@ private:
 	typedef TArray Array;
 	typedef typename Array::MemManager MemManager;
 
-	typedef momo::internal::UIntMath<> SMath;
-
 public:
 	typedef typename Array::Item value_type;
 	typedef typename std::allocator_traits<typename MemManager::ByteAllocator>
@@ -55,6 +53,9 @@ public:
 
 	typedef std::reverse_iterator<iterator> reverse_iterator;
 	typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+
+private:
+	typedef momo::internal::UIntMath<> SMath;
 
 public:
 	vector_adaptor() noexcept(noexcept(Array()))

@@ -124,9 +124,6 @@ namespace internal
 		typedef MemPool<ArrayMemPoolParams, MemManagerPtr,
 			NestedMemPoolSettings> ArrayMemPool;
 
-		typedef BucketMemory<FastMemPool, std::byte*> FastMemory;
-		typedef BucketMemory<ArrayMemPool, std::byte*> ArrayMemory;
-
 	public:
 		class Params
 		{
@@ -183,6 +180,10 @@ namespace internal
 			FastMemPools mFastMemPools;
 			ArrayMemPool mArrayMemPool;
 		};
+
+	private:
+		typedef BucketMemory<FastMemPool, std::byte*> FastMemory;
+		typedef BucketMemory<ArrayMemPool, std::byte*> ArrayMemory;
 
 	public:
 		explicit ArrayBucket() noexcept

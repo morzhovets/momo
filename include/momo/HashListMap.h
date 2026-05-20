@@ -177,19 +177,11 @@ public:
 
 private:
 	typedef internal::HashListMapNestedSetItemTraits<KeyValueTraits> HashListSetItemTraits;
-	typedef typename HashListSetItemTraits::Item KeyValuePair;
-
 	typedef internal::HashListMapNestedSetSettings<Settings> HashListSetSettings;
-
 	typedef HashListSetCore<HashListSetItemTraits, HashTraits, HashListSetSettings> HashListSet;
 
-	typedef typename HashListSet::ConstIterator HashListSetConstIterator;
-	typedef typename HashListSet::ConstPosition HashListSetConstPosition;
-
-	typedef typename HashListSet::ExtractedItem HashListSetExtractedItem;
-
 public:
-	typedef internal::MapPosition<HashListSetConstPosition> Position;
+	typedef internal::MapPosition<typename HashListSet::ConstPosition> Position;
 	typedef typename Position::ConstPosition ConstPosition;
 
 	typedef typename Position::Iterator Iterator;
@@ -197,7 +189,7 @@ public:
 
 	typedef internal::InsertResult<Iterator> InsertResult;
 
-	typedef internal::MapExtractedPair<HashListSetExtractedItem, false> ExtractedPair;
+	typedef internal::MapExtractedPair<typename HashListSet::ExtractedItem, false> ExtractedPair;
 
 	typedef internal::HashMapBucketBounds<typename HashListSet::ConstBucketBounds> BucketBounds;
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
@@ -212,6 +204,8 @@ public:
 	using ValueReference = ValueReferencer::template ValueReference<KeyReference>;
 
 private:
+	typedef typename HashListSetItemTraits::Item KeyValuePair;
+
 	template<typename... ValueArgs>
 	using ValueCreator = typename KeyValueTraits::template ValueCreator<ValueArgs...>;
 

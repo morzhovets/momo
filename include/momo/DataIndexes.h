@@ -300,6 +300,12 @@ namespace internal
 		template<typename... Items>
 		using OffsetItemTuple = std::tuple<std::pair<size_t, const Items&>...>;
 
+		struct Result
+		{
+			Raw* raw;
+			UniqueHashIndex uniqueHashIndex;
+		};
+
 	private:
 		typedef internal::VersionKeeper<Settings> VersionKeeper;
 
@@ -415,16 +421,16 @@ namespace internal
 
 		class UniqueHash
 		{
+		public:
+			typedef DataRawUniqueHashBounds<Raw, Settings> RawBounds;
+
+			typedef UniqueHashIndex Index;
+
 		private:
 			typedef HashSetCore<HashSetItemTraits<Raw*, MemManagerPtr>, HashTraits,
 				NestedHashSetSettings<Settings::allowExceptionSuppression>> HashSet;
 
 			typedef typename HashSet::ConstPosition Position;
-
-		public:
-			typedef DataRawUniqueHashBounds<Raw, Settings> RawBounds;
-
-			typedef UniqueHashIndex Index;
 
 		public:
 			explicit UniqueHash(HashTraits&& hashTraits, Offsets&& sortedOffsets)
@@ -573,16 +579,17 @@ namespace internal
 			typedef typename HashMultiMap::ConstKeyIterator ConstKeyIterator;
 			typedef typename HashMultiMap::KeyIterator KeyIterator;
 
-			static const size_t logInitialSegmentSize = 6;
-
-			typedef momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt,
-				logInitialSegmentSize> SegmentedArraySettings;
-
 		public:
 			typedef DataRawMultiHashBounds<typename ConstKeyIterator::Reference::Iterator,
 				Settings> RawBounds;
 
 			typedef MultiHashIndex Index;
+
+		private:
+			static const size_t logInitialSegmentSize = 6;
+
+			typedef momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt,
+				logInitialSegmentSize> SegmentedArraySettings;
 
 		public:
 			explicit MultiHash(HashTraits&& hashTraits, Offsets&& sortedOffsets)
@@ -808,22 +815,17 @@ namespace internal
 			KeyIterator mKeyIteratorRemove;
 		};
 
+	public:
+		typedef typename UniqueHash::RawBounds UniqueHashRawBounds;
+		typedef typename MultiHash::RawBounds MultiHashRawBounds;
+
+	private:
 		template<typename Hash>
 		using Hashes = ArrayCore<ArrayItemTraits<Hash, MemManagerPtr>,
 			NestedArraySettings<ArraySettings<0, false>>>;
 
 		typedef Hashes<UniqueHash> UniqueHashes;
 		typedef Hashes<MultiHash> MultiHashes;
-
-	public:
-		typedef typename UniqueHash::RawBounds UniqueHashRawBounds;
-		typedef typename MultiHash::RawBounds MultiHashRawBounds;
-
-		struct Result
-		{
-			Raw* raw;
-			UniqueHashIndex uniqueHashIndex;
-		};
 
 	public:
 		explicit DataIndexes(MemManager& memManager) noexcept

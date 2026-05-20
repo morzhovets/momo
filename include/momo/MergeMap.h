@@ -95,20 +95,16 @@ private:
 	typedef internal::MergeMapNestedSetSettings<Settings> MergeSetSettings;
 	typedef MergeSetCore<MergeSetItemTraits, MergeTraits, MergeSetSettings> MergeSet;
 
-	typedef typename MergeSet::ConstIterator MergeSetConstIterator;
-	typedef typename MergeSet::ConstPosition MergeSetConstPosition;
-	typedef typename MergeSet::ExtractedItem MergeSetExtractedItem;
-
 public:
-	typedef internal::MapForwardIterator<MergeSetConstIterator> Iterator;
+	typedef internal::MapForwardIterator<typename MergeSet::ConstIterator> Iterator;
 	typedef typename Iterator::ConstIterator ConstIterator;
 
-	typedef internal::MapPosition<MergeSetConstPosition> Position;
+	typedef internal::MapPosition<typename MergeSet::ConstPosition> Position;
 	typedef typename Position::ConstPosition ConstPosition;
 
 	typedef internal::InsertResult<Position> InsertResult;
 
-	typedef internal::MapExtractedPair<MergeSetExtractedItem,
+	typedef internal::MapExtractedPair<typename MergeSet::ExtractedItem,
 		KeyValueTraits::useValuePtr> ExtractedPair;
 
 private:

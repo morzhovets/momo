@@ -57,11 +57,6 @@ namespace internal
 
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
-		typedef BucketMemory<MemPool, std::byte*> Memory;
-
-		static const uintptr_t ptrNull = UIntConst::nullPtr;
-		static const uintptr_t ptrNullWasFull = UIntConst::invalidPtr;
-
 	public:
 		class Params
 		{
@@ -108,6 +103,12 @@ namespace internal
 		private:
 			MemPools mMemPools;
 		};
+
+	private:
+		typedef BucketMemory<MemPool, std::byte*> Memory;
+
+		static const uintptr_t ptrNull = UIntConst::nullPtr;
+		static const uintptr_t ptrNullWasFull = UIntConst::invalidPtr;
 
 	public:
 		explicit BucketLimP() noexcept
@@ -307,8 +308,6 @@ namespace internal
 
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
-		typedef BucketMemory<MemPool, Item*> Memory;
-
 		static const size_t minItemAlignment = (maxCount <= 1) ? 1 : (maxCount <= 2) ? 2
 			: (maxCount <= 4) ? 4 : (maxCount <= 8) ? 8 : 16;
 		static const size_t itemAlignment = UIntMath<>::Max(ItemTraits::alignment, minItemAlignment);
@@ -316,9 +315,6 @@ namespace internal
 		static const bool skipOddMemPools = (maxCount > 1 && sizeof(Item) <= itemAlignment);	//?
 		static const uintptr_t modMemPoolIndex =
 			uintptr_t{minItemAlignment} / (skipOddMemPools ? 2 : 1);
-
-		static const uintptr_t stateNull = UIntConst::nullPtr;
-		static const uintptr_t stateNullWasFull = UIntConst::invalidPtr;
 
 	public:
 		class Params
@@ -369,6 +365,12 @@ namespace internal
 		private:
 			MemPools mMemPools;
 		};
+
+	private:
+		typedef BucketMemory<MemPool, Item*> Memory;
+
+		static const uintptr_t stateNull = UIntConst::nullPtr;
+		static const uintptr_t stateNullWasFull = UIntConst::invalidPtr;
 
 	public:
 		explicit BucketLimP() noexcept

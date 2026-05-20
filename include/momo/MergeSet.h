@@ -295,19 +295,11 @@ public:
 	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
 
 private:
+	typedef internal::SetCrew<MergeTraits, MemManager, Settings::checkVersion> Crew;
+
 	//typedef typename MergeTraits::BloomFilter BloomFilter;
 
-	template<typename KeyArg>
-	using IsValidKeyArg = MergeTraits::template IsValidKeyArg<KeyArg>;
-
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
-
-	template<typename... ItemArgs>
-	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
-
-	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
-
-	typedef internal::SetCrew<MergeTraits, MemManager, Settings::checkVersion> Crew;
 
 	typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
@@ -318,6 +310,14 @@ private:
 	typedef internal::MergeSetItemPtrCode<Item> ItemPtrCode;
 	typedef internal::NestedArrayIntCap<0, Item*, MemManagerPtr> ItemPtrs;
 	typedef internal::NestedArrayIntCap<0, ItemPtrCode, MemManagerPtr> ItemPtrCodes;
+
+	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
+
+	template<typename... ItemArgs>
+	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
+
+	template<typename KeyArg>
+	using IsValidKeyArg = MergeTraits::template IsValidKeyArg<KeyArg>;
 
 	typedef internal::UIntMath<> SMath;
 	typedef internal::UIntMath<uint8_t> BMath;

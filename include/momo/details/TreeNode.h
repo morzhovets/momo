@@ -46,20 +46,6 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 	private:
-		template<size_t indexCount = isContinuous ? 0 : maxCapacity>
-		struct Counter
-		{
-			uint8_t count;
-			uint8_t indexes[indexCount];
-		};
-
-		template<size_t indexCount>	// gcc
-		requires (indexCount == 0)
-		struct Counter<indexCount>
-		{
-			uint8_t count;
-		};
-
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
 		static const size_t internalOffset = UIntMath<>::Ceil((maxCapacity + 1) * sizeof(Node*),
@@ -129,6 +115,21 @@ namespace internal
 		private:
 			InternalMemPool mInternalMemPool;
 			LeafMemPools mLeafMemPools;
+		};
+
+	private:
+		template<size_t indexCount = isContinuous ? 0 : maxCapacity>
+		struct Counter
+		{
+			uint8_t count;
+			uint8_t indexes[indexCount];
+		};
+
+		template<size_t indexCount>	// gcc
+		requires (indexCount == 0)
+		struct Counter<indexCount>
+		{
+			uint8_t count;
 		};
 
 	public:

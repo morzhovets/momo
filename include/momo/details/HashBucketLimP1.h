@@ -51,8 +51,6 @@ namespace internal
 
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
-		typedef BucketMemory<MemPool, Item*> Memory;
-
 	public:
 		class Params
 		{
@@ -105,6 +103,9 @@ namespace internal
 		private:
 			MemPools mMemPools;
 		};
+
+	private:
+		typedef BucketMemory<MemPool, Item*> Memory;
 
 	public:
 		explicit BucketLimP1() noexcept

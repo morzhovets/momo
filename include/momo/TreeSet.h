@@ -269,21 +269,13 @@ public:
 	typedef typename ItemTraits::Item Item;
 	typedef typename ItemTraits::MemManager MemManager;
 
+	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
+
 private:
-	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
-
-	typedef internal::SetCrew<TreeTraits, MemManager, Settings::checkVersion> Crew;
-
-	typedef internal::TreeSetNodeItemTraits<ItemTraits> NodeItemTraits;
-
-	typedef typename TreeTraits::template Node<NodeItemTraits> Node;
-
-	typedef typename Node::Params NodeParams;
+	typedef typename TreeTraits::template Node<internal::TreeSetNodeItemTraits<ItemTraits>> Node;
 
 	static const size_t nodeMaxCapacity = Node::maxCapacity;
 	static_assert(nodeMaxCapacity > 0);
-
-	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
 
 public:
 	typedef internal::TreeSetIterator<Node, Settings> Iterator;
@@ -291,24 +283,33 @@ public:
 
 	typedef internal::InsertResult<Iterator> InsertResult;
 
-	typedef internal::SetExtractedItem<ItemTraits, Settings> ExtractedItem;
-
 private:
+	typedef internal::SetCrew<TreeTraits, MemManager, Settings::checkVersion> Crew;
+
+	typedef typename Node::Params NodeParams;
+
+	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
+
+	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
+
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = TreeTraits::template IsValidKeyArg<KeyArg>;
 
-	struct ConstIteratorProxy : private ConstIterator
-	{
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetNode)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetItemIndex)
-		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check)
-	};
-
 	class NodeRelocator
 	{
+	public:
+		struct SplitResult
+		{
+			Node* newNode;
+			size_t newItemIndex;
+			size_t splitItemIndex;
+			Node* newNode1;
+			Node* newNode2;
+		};
+
 	private:
 		struct Segment
 		{
@@ -321,16 +322,6 @@ private:
 
 		typedef internal::NestedArrayIntCap<4, Node*, MemManagerPtr> Nodes;
 		typedef internal::NestedArrayIntCap<4, Segment, MemManagerPtr> Segments;
-
-	public:
-		struct SplitResult
-		{
-			Node* newNode;
-			size_t newItemIndex;
-			size_t splitItemIndex;
-			Node* newNode1;
-			Node* newNode2;
-		};
 
 	public:
 		explicit NodeRelocator(NodeParams& nodeParams) noexcept
@@ -524,6 +515,13 @@ private:
 
 	private:
 		const KeyArg& mKey;
+	};
+
+	struct ConstIteratorProxy : private ConstIterator
+	{
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetNode)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, GetItemIndex)
+		MOMO_DECLARE_PROXY_FUNCTION(ConstIterator, Check)
 	};
 
 public:

@@ -53,17 +53,6 @@ namespace internal
 
 		typedef MemPoolUInt32<memPoolBlockCount, MemManagerPtr> MemPool;
 
-		typedef BucketMemory<MemPool, uint32_t, MemPool::nullPtr> Memory;
-
-		static const uint32_t stateNull = (uint32_t{1} << (32 - logMaxCount)) - 1;
-		static const uint32_t stateNullWasFull = stateNull - 1;
-
-		struct Data
-		{
-			uint32_t pointer;
-			size_t count;
-		};
-
 	public:
 		class Params
 		{
@@ -112,6 +101,18 @@ namespace internal
 
 		private:
 			MemPools mMemPools;
+		};
+
+	private:
+		typedef BucketMemory<MemPool, uint32_t, MemPool::nullPtr> Memory;
+
+		static const uint32_t stateNull = (uint32_t{1} << (32 - logMaxCount)) - 1;
+		static const uint32_t stateNullWasFull = stateNull - 1;
+
+		struct Data
+		{
+			uint32_t pointer;
+			size_t count;
 		};
 
 	public:

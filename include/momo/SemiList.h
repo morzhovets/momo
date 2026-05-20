@@ -178,17 +178,17 @@ namespace internal
 		typedef TQItem QItem;
 		typedef TSettings Settings;
 
-	private:
-		typedef typename Settings::template Chunker<std::remove_const_t<QItem>> Chunker;
-		typedef typename Chunker::Chunk Chunk;
-		typedef typename Chunker::Block Block;
-		typedef typename Chunker::State State;	//?
-
 	public:
 		typedef QItem& Reference;
 		typedef QItem* Pointer;
 
 		typedef SemiListIterator<const QItem, Settings> ConstIterator;
+
+	private:
+		typedef typename Settings::template Chunker<std::remove_const_t<QItem>> Chunker;
+		typedef typename Chunker::Chunk Chunk;
+		typedef typename Chunker::Block Block;
+		typedef typename Chunker::State State;	//?
 
 	public:
 		explicit SemiListIterator() noexcept
