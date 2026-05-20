@@ -47,7 +47,7 @@
 # define TEST_LIBCXX_MERGE_MAP
 #endif
 
-#if !(defined(TEST_MSVC) && _MSC_VER >= 1950)	// vs2026: Internal compiler error
+#if defined(TEST_MSVC) && _MSC_VER >= 1950	// vs2026: Internal compiler error
 # undef TEST_SIMPLE_DATA
 #endif
 
