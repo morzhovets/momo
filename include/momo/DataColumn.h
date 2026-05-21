@@ -1251,7 +1251,7 @@ private:
 			size_t srcOffset = offset;
 			const DataColumnList* srcColumnListPtr = static_cast<const DataColumnList*>(srcColumnList);
 			if (srcColumnListPtr == nullptr //std::is_same<DataColumnListPtr, std::nullptr_t>::value	// gcc 11
-				|| srcColumnListPtr->Contains(*columns, &srcOffset))
+				|| srcColumnListPtr->Contains(*static_cast<const ColumnInfo*>(columns), &srcOffset))
 			{
 				srcItem = pvGetItemPtr<Item, true>(static_cast<const Raw*>(srcRaw), srcOffset);
 			}
