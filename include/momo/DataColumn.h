@@ -1238,7 +1238,7 @@ private:
 			else
 			{
 				size_t srcOffset;
-				if (srcColumnList->Contains(*columnRecordPtr, &srcOffset))
+				if (srcColumnList->Contains(*static_cast<const ColumnInfo*>(columnRecordPtr), &srcOffset))
 					srcItem = pvGetItemPtr<Item, true>(srcRaw, srcOffset);
 			}
 		}
