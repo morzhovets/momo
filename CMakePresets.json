@@ -20,10 +20,10 @@
       }
     },
     {
-      "name": "Test-VS_2022-x64",
+      "name": "Test-VS_2026-x64",
       "hidden": true,
       "inherits": "Test",
-      "generator": "Visual Studio 17 2022",
+      "generator": "Visual Studio 18 2026",
       "architecture": {
         "value": "x64",
         "strategy": "set"
@@ -189,7 +189,7 @@
     },
     {
       "name": "Test-MSVC_2015-x64-std14",
-      "inherits": "Test-VS_2022-x64",
+      "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
         "CMAKE_GENERATOR_TOOLSET": "v140",
         "CMAKE_CXX_STANDARD": "14"
@@ -197,7 +197,7 @@
     },
     {
       "name": "Test-MSVC_2017-x64-std17",
-      "inherits": "Test-VS_2022-x64",
+      "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
         "CMAKE_GENERATOR_TOOLSET": "v141",
         "CMAKE_CXX_STANDARD": "17"
@@ -205,7 +205,7 @@
     },
     {
       "name": "Test-MSVC_2019-x64-std20",
-      "inherits": "Test-VS_2022-x64",
+      "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
         "CMAKE_GENERATOR_TOOLSET": "v142",
         "CMAKE_CXX_STANDARD": "20"
@@ -213,17 +213,28 @@
     },
     {
       "name": "Test-MSVC_2022-x64-std23",
-      "inherits": "Test-VS_2022-x64",
+      "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
+        "CMAKE_GENERATOR_TOOLSET": "v143",
         "CMAKE_CXX_STANDARD": "23",
         "CMAKE_VERBOSE_MAKEFILE": "OFF"
       }
     },
     {
-      "name": "Test-MSVC_CLI_2022-x64-std17",
-      "inherits": "Test-VS_2022-x64",
+      "name": "Test-MSVC_2026-x64-std26",
+      "inherits": "Test-VS_2026-x64",
+      "cacheVariables": {
+        "CMAKE_GENERATOR_TOOLSET": "v145",
+        "CMAKE_CXX_STANDARD": "26",
+        "CMAKE_VERBOSE_MAKEFILE": "OFF"
+      }
+    },
+    {
+      "name": "Test-MSVC_CLI_2026-x64-std17",
+      "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
         "MOMO_TEST_MSVC_CLI": "ON",
+        "CMAKE_GENERATOR_TOOLSET": "v145",
         "CMAKE_CXX_STANDARD": "17"
       }
     }
@@ -375,13 +386,23 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "MSVC_CLI_2022-x64-std17-Debug",
-      "configurePreset": "Test-MSVC_CLI_2022-x64-std17",
+      "name": "MSVC_2026-x64-std26-Debug",
+      "configurePreset": "Test-MSVC_2026-x64-std26",
       "configuration": "Debug"
     },
     {
-      "name": "MSVC_CLI_2022-x64-std17-Release",
-      "configurePreset": "Test-MSVC_CLI_2022-x64-std17",
+      "name": "MSVC_2026-x64-std26-Release",
+      "configurePreset": "Test-MSVC_2026-x64-std26",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "MSVC_CLI_2026-x64-std17-Debug",
+      "configurePreset": "Test-MSVC_CLI_2026-x64-std17",
+      "configuration": "Debug"
+    },
+    {
+      "name": "MSVC_CLI_2026-x64-std17-Release",
+      "configurePreset": "Test-MSVC_CLI_2026-x64-std17",
       "configuration": "RelWithDebInfo"
     }
   ]
