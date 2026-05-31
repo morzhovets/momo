@@ -27,4 +27,5 @@ jobs:
       id: loc
       uses: PavanMudigonda/lines-of-code-reporter@v1.6
       with:
+        skip_check_run: true
         directory: ${{ matrix.dir }}
