@@ -25,7 +25,7 @@ jobs:
       uses: actions/checkout@v6
     - name: Calculate LOC
       id: loc
-      uses: PavanMudigonda/lines-of-code-reporter@v1.6
+      uses: PavanMudigonda/lines-of-code-reporter@v1.8
       with:
         skip_check_run: true
         directory: ${{ matrix.dir }}
