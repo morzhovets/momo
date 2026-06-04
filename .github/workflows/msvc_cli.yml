@@ -17,7 +17,7 @@ jobs:
         # Visual Studio 2026
         - win_ver: '2025-vs2026'
           build_type: 'Release'
-          flags: '/std:c++17 /WX'
+          flags: '/std:c++20 /WX'
 
     runs-on: windows-${{ matrix.win_ver }}
 

@@ -230,12 +230,12 @@
       }
     },
     {
-      "name": "Test-MSVC_CLI_2026-x64-std17",
+      "name": "Test-MSVC_CLI_2026-x64-std20",
       "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
         "MOMO_TEST_MSVC_CLI": "ON",
         "CMAKE_GENERATOR_TOOLSET": "v145",
-        "CMAKE_CXX_STANDARD": "17"
+        "CMAKE_CXX_STANDARD": "20"
       }
     }
   ],
@@ -396,13 +396,13 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "MSVC_CLI_2026-x64-std17-Debug",
-      "configurePreset": "Test-MSVC_CLI_2026-x64-std17",
+      "name": "MSVC_CLI_2026-x64-std20-Debug",
+      "configurePreset": "Test-MSVC_CLI_2026-x64-std20",
       "configuration": "Debug"
     },
     {
-      "name": "MSVC_CLI_2026-x64-std17-Release",
-      "configurePreset": "Test-MSVC_CLI_2026-x64-std17",
+      "name": "MSVC_CLI_2026-x64-std20-Release",
+      "configurePreset": "Test-MSVC_CLI_2026-x64-std20",
       "configuration": "RelWithDebInfo"
     }
   ]

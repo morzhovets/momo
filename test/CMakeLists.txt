@@ -84,6 +84,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   endif()
   if(MOMO_TEST_MSVC_CLI)
     set_target_properties(momo_test PROPERTIES COMMON_LANGUAGE_RUNTIME "")
+    set_target_properties(momo_test PROPERTIES CXX_SCAN_FOR_MODULES OFF)
   endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"
