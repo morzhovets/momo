@@ -233,7 +233,8 @@
       "name": "Test-MSVC_CLI_2026-x64-std20",
       "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
-        "MOMO_TEST_MSVC_CLI": "ON",
+        "MOMO_COMMON_LANGUAGE_RUNTIME": "",
+        "CMAKE_DOTNET_TARGET_FRAMEWORK": "",
         "CMAKE_GENERATOR_TOOLSET": "v145",
         "CMAKE_CXX_STANDARD": "20"
       }

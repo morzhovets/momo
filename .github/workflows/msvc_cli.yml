@@ -16,10 +16,21 @@ jobs:
 
         # Visual Studio 2022
         - toolset: '14.4'
+          clr: ''
+          target_framework: ''
           build_type: 'Release'
           test_libcxx20: 'Off'
           flags: '/std:c++20 /WX'
           win_ver: '2025'
+
+        # Visual Studio 2026
+        - toolset: '14.5'
+          clr: 'netcore'
+          target_framework: 'net10.0'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          flags: '/std:c++20'
+          win_ver: '2025-vs2026'
 
     runs-on: windows-${{ matrix.win_ver }}
 
@@ -37,9 +48,8 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -DMOMO_TEST_MSVC_CLI=On `
+        cmake .. -DMOMO_COMMON_LANGUAGE_RUNTIME="${{ matrix.clr }}" `
+          -DCMAKE_DOTNET_TARGET_FRAMEWORK="${{ matrix.target_framework }}" `
           -DMOMO_TEST_LIBCXX20=${{ matrix.test_libcxx20 }} `
           -DCMAKE_VERBOSE_MAKEFILE=On
         cmake --build . --config ${{ matrix.build_type }}
-#    - name: Test
-#      run: test/build/${{ matrix.build_type }}/momo_test.exe
