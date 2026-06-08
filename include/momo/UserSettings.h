@@ -155,7 +155,7 @@
 //#endif
 
 #define MOMO_ALIGNED_STORAGE(size, alignment) alignas(alignment) std::array<unsigned char, size>
-#if defined(_MSC_VER) && (_MSC_VER < 1920)
+#if defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE))
 # undef MOMO_ALIGNED_STORAGE	// C2719
 # define MOMO_ALIGNED_STORAGE(size, alignment) typename std::aligned_storage<size, alignment>::type
 #endif
@@ -234,7 +234,7 @@
 
 #ifdef __cpp_guaranteed_copy_elision
 # define MOMO_HAS_GUARANTEED_COPY_ELISION
-# if defined(_MSC_VER) && !defined(__clang__) && (_MSC_VER < 1930 || defined(_M_CEE))
+# if defined(_MSC_VER) && !defined(__clang__) && (_MSC_VER < 1930)
 #  undef MOMO_HAS_GUARANTEED_COPY_ELISION
 # endif
 #endif
