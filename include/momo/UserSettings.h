@@ -155,8 +155,8 @@
 //#endif
 
 #define MOMO_ALIGNED_STORAGE(size, alignment) alignas(alignment) std::array<unsigned char, size>
-#if defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE))
-# undef MOMO_ALIGNED_STORAGE	// C2719, C2711
+#if defined(_MSC_VER) && (_MSC_VER < 1920)
+# undef MOMO_ALIGNED_STORAGE	// C2719
 # define MOMO_ALIGNED_STORAGE(size, alignment) typename std::aligned_storage<size, alignment>::type
 #endif
 
@@ -204,7 +204,7 @@
 #define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
 	((isWithinLifetime && isSingleObject) ? std::launder(reinterpret_cast<ResObject*>(ptr)) \
 		: reinterpret_cast<ResObject*>(ptr))
-#if !defined(__cpp_lib_launder) || (defined(_MSC_VER) && defined(_M_CEE))
+#if !defined(__cpp_lib_launder)
 # undef MOMO_CAST_POINTER
 # define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) reinterpret_cast<ResObject*>(ptr)
 #endif
@@ -234,7 +234,7 @@
 
 #ifdef __cpp_guaranteed_copy_elision
 # define MOMO_HAS_GUARANTEED_COPY_ELISION
-# if defined(_MSC_VER) && !defined(__clang__) && (_MSC_VER < 1930)
+# if defined(_MSC_VER) && !defined(__clang__) && (_MSC_VER < 1930 || defined(_M_CEE))
 #  undef MOMO_HAS_GUARANTEED_COPY_ELISION
 # endif
 #endif
