@@ -21,7 +21,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
-          cont_ver: '26.04'
 
         - clang_ver: '20'
           ubuntu_ver: '24.04'
@@ -29,7 +28,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
-          cont_ver: '26.04'
 
         - clang_ver: '21'
           ubuntu_ver: '24.04'
@@ -37,31 +35,34 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
-          cont_ver: '26.04'
 
-#        - clang_ver: '21'
-#          ubuntu_ver: '24.04'
-#          build_type: 'Debug'
-#          no_exceptions_rtti: 'Off'
-#          extra_settings: 'Off'
-#          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-#          cont_ver: '26.04'
+        - clang_ver: '22'
+          ubuntu_ver: '26.04'
+          build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
 
-        - clang_ver: '21'
-          ubuntu_ver: '24.04'
+        - clang_ver: '22'
+          ubuntu_ver: '26.04'
+          build_type: 'Debug'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+
+        - clang_ver: '22'
+          ubuntu_ver: '26.04'
           build_type: 'Release'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
-          cont_ver: '26.04'
 
-        - clang_ver: '21'
-          ubuntu_ver: '24.04'
+        - clang_ver: '22'
+          ubuntu_ver: '26.04'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26 -Werror'
-          cont_ver: '26.04'
 
         # ARM64
         - clang_ver: '19'
@@ -70,7 +71,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
-          cont_ver: '26.04'
 
         - clang_ver: '20'
           ubuntu_ver: '24.04-arm'
@@ -78,7 +78,6 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
-          cont_ver: '26.04'
 
         - clang_ver: '21'
           ubuntu_ver: '24.04-arm'
@@ -86,46 +85,45 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
-          cont_ver: '26.04'
 
-#        - clang_ver: '21'
-#          ubuntu_ver: '24.04-arm'
-#          build_type: 'Debug'
-#          no_exceptions_rtti: 'Off'
-#          extra_settings: 'Off'
-#          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
-#          cont_ver: '26.04'
+        - clang_ver: '22'
+          ubuntu_ver: '26.04-arm'
+          build_type: 'Release'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
 
-        - clang_ver: '21'
-          ubuntu_ver: '24.04-arm'
+        - clang_ver: '22'
+          ubuntu_ver: '26.04-arm'
+          build_type: 'Debug'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+
+        - clang_ver: '22'
+          ubuntu_ver: '26.04-arm'
           build_type: 'Release'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
-          cont_ver: '26.04'
 
-        - clang_ver: '21'
-          ubuntu_ver: '24.04-arm'
+        - clang_ver: '22'
+          ubuntu_ver: '26.04-arm'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26 -Werror'
-          cont_ver: '26.04'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
-    container: ubuntu:${{ matrix.cont_ver }}
 
     steps:
-#    - uses: actionhippie/swap-space@v1 # 10G
-    - name: Install tools
-      run: |
-        apt-get update
-        apt-get install -y cmake
-        apt-get install -y ninja-build
+    - uses: actionhippie/swap-space@v1
+      with:
+        size: 10G
     - name: Checkout
       uses: actions/checkout@v6
     - name: Install Clang
-      run: apt-get install -y clang-${{ matrix.clang_ver }}
+      run: sudo apt install clang-${{ matrix.clang_ver }}
     - name: Build
       env:
         CXX: clang++-${{ matrix.clang_ver }}

@@ -105,39 +105,40 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++23preview /WX'
-          win_ver: '11-arm'
+          win_ver: '11-vs2026-arm'
 
-        - toolset: '14.4'
+        # Visual Studio 2026 ARM64
+        - toolset: '14.5'
           arch: 'arm64'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '11-arm'
+          win_ver: '11-vs2026-arm'
 
-        - toolset: '14.4'
+        - toolset: '14.5'
           arch: 'arm64'
           build_type: 'Debug'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '11-arm'
+          win_ver: '11-vs2026-arm'
 
-        - toolset: '14.4'
+        - toolset: '14.5'
           arch: 'arm64'
           build_type: 'Release'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '11-arm'
+          win_ver: '11-vs2026-arm'
 
-        - toolset: '14.4'
+        - toolset: '14.5'
           arch: 'arm64'
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '/std:c++latest /WX'
-          win_ver: '11-arm'
+          win_ver: '11-vs2026-arm'
 
     runs-on: windows-${{ matrix.win_ver }}
 
@@ -145,7 +146,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
     - name: Install Ninja
-      if: matrix.win_ver == '11-arm'
+      if: matrix.win_ver == '11-vs2026-arm'
       run: choco install ninja
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
