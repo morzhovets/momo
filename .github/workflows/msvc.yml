@@ -200,26 +200,8 @@ jobs:
           flags: '/std:c++latest /WX'
           win_ver: '2025-vs2026'
 
-        # Visual Studio 2022 ARM64
-        - toolset: '14.4'
-          arch: 'arm64'
-          build_type: 'Release'
-          test_libcxx20: 'Off'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'Off'
-          flags: '/std:c++14 /WX'
-          win_ver: '11-arm'
-
-        - toolset: '14.4'
-          arch: 'arm64'
-          build_type: 'Release'
-          test_libcxx20: 'Off'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'Off'
-          flags: '/std:c++17 /WX'
-          win_ver: '11-arm'
-
-        - toolset: '14.4'
+        # Visual Studio 2019 ARM64
+        - toolset: '14.2'
           arch: 'arm64'
           build_type: 'Release'
           test_libcxx20: 'On'
@@ -228,6 +210,7 @@ jobs:
           flags: '/std:c++20 /WX'
           win_ver: '11-arm'
 
+        # Visual Studio 2022 ARM64
         - toolset: '14.4'
           arch: 'arm64'
           build_type: 'Release'
@@ -237,50 +220,86 @@ jobs:
           flags: '/std:c++23preview /WX'
           win_ver: '11-arm'
 
-        - toolset: '14.4'
+        # Visual Studio 2026 ARM64
+        - toolset: '14.5'
+          arch: 'arm64'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '/std:c++14 /WX'
+          win_ver: '11-vs2026-arm'
+
+        - toolset: '14.5'
+          arch: 'arm64'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '/std:c++17 /WX'
+          win_ver: '11-vs2026-arm'
+
+        - toolset: '14.5'
+          arch: 'arm64'
+          build_type: 'Release'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '/std:c++20 /WX'
+          win_ver: '11-vs2026-arm'
+
+        - toolset: '14.5'
+          arch: 'arm64'
+          build_type: 'Release'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '/std:c++23preview /WX'
+          win_ver: '11-vs2026-arm'
+
+        - toolset: '14.5'
           arch: 'arm64'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '11-arm'
+          win_ver: '11-vs2026-arm'
 
-        - toolset: '14.4'
+        - toolset: '14.5'
           arch: 'arm64'
           build_type: 'Debug'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '11-arm'
+          win_ver: '11-vs2026-arm'
 
-        - toolset: '14.4'
+        - toolset: '14.5'
           arch: 'arm64'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '11-arm'
+          win_ver: '11-vs2026-arm'
 
-        - toolset: '14.4'
+        - toolset: '14.5'
           arch: 'arm64'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '/std:c++latest /WX'
-          win_ver: '11-arm'
+          win_ver: '11-vs2026-arm'
 
     runs-on: windows-${{ matrix.win_ver }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v6
-    - name: Install Ninja
-      if: matrix.win_ver == '11-arm'
-      run: choco install ninja
+#    - name: Install Ninja
+#      run: choco install ninja
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:

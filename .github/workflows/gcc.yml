@@ -16,7 +16,7 @@ jobs:
 
         # x64
         - gcc_ver: '5'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -25,7 +25,7 @@ jobs:
           cont_ver: '20.04'
 
         - gcc_ver: '5'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'On'
@@ -34,7 +34,7 @@ jobs:
           cont_ver: '20.04'
 
         - gcc_ver: '5'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -43,7 +43,7 @@ jobs:
           cont_ver: '20.04'
 
         - gcc_ver: '5'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -52,7 +52,7 @@ jobs:
           cont_ver: '20.04'
 
         - gcc_ver: '6'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -61,7 +61,7 @@ jobs:
           cont_ver: '20.04'
 
         - gcc_ver: '7'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -70,7 +70,7 @@ jobs:
           cont_ver: '20.04'
 
         - gcc_ver: '8'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -79,7 +79,7 @@ jobs:
           cont_ver: '20.04'
 
         - gcc_ver: '9'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -88,7 +88,7 @@ jobs:
           cont_ver: '24.04'
 
         - gcc_ver: '10'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -97,7 +97,7 @@ jobs:
           cont_ver: '24.04'
 
         - gcc_ver: '11'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -106,7 +106,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '12'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -115,7 +115,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '13'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -124,7 +124,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '14'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -133,7 +133,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '15'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -142,7 +142,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '15'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
@@ -151,7 +151,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '15'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -160,7 +160,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '15'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -169,7 +169,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '15'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -178,7 +178,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '15'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Debug'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
@@ -187,7 +187,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '15'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'On'
@@ -196,7 +196,7 @@ jobs:
           cont_ver: '26.04'
 
         - gcc_ver: '15'
-          ubuntu_ver: '24.04'
+          ubuntu_ver: 'latest'
           build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
