@@ -46,18 +46,20 @@ jobs:
           flags: '-std=c++26'
 
         # x86
-        - arch: 'x86'
-          build_type: 'Release'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'Off'
-          flags: '-std=c++23'
+#        - arch: 'x86'
+#          build_type: 'Release'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'Off'
+#          flags: '-std=c++23'
 
-        - arch: 'x86'
-          build_type: 'Release'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'Off'
-          flags: '-std=c++26'
+        # GNU 16.1.0: libcxx20_tree_map_vp_access_at
+#        - arch: 'x86'
+#          build_type: 'Release'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'Off'
+#          flags: '-std=c++26'
 
+        # Out of memory
 #        - arch: 'x86'
 #          build_type: 'Debug'
 #          no_exceptions_rtti: 'Off'
@@ -70,11 +72,11 @@ jobs:
           extra_settings: 'Off'
           flags: '-std=c++26'
 
-        - arch: 'x86'
-          build_type: 'Release'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'On'
-          flags: '-std=c++26'
+#        - arch: 'x86'
+#          build_type: 'Release'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'On'
+#          flags: '-std=c++26'
 
     runs-on: windows-latest
 
