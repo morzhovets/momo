@@ -756,11 +756,10 @@ public:
 
 	float load_factor() const noexcept
 	{
-		size_t count = size();
 		size_t bucketCount = bucket_count();
-		if (count == 0 && bucketCount == 0)
+		if (bucketCount == 0)
 			return 0.0;
-		return static_cast<float>(count) / static_cast<float>(bucketCount);
+		return static_cast<float>(size()) / static_cast<float>(bucketCount);
 	}
 
 	friend bool operator==(const unordered_map_adaptor& left, const unordered_map_adaptor& right)
