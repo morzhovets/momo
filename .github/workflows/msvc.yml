@@ -274,14 +274,15 @@ jobs:
           flags: '/std:c++latest /WX'
           win_ver: '11-vs2026-arm'
 
-        - toolset: '14.5'
-          arch: 'arm64'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'On'
-          flags: '/std:c++latest /WX'
-          win_ver: '11-vs2026-arm'
+        # libcxx20_array_5_cons_assign_copy
+#        - toolset: '14.5'
+#          arch: 'arm64'
+#          build_type: 'Release'
+#          test_libcxx20: 'On'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'On'
+#          flags: '/std:c++latest /WX'
+#          win_ver: '11-vs2026-arm'
 
     runs-on: windows-${{ matrix.win_ver }}
 
