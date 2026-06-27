@@ -89,7 +89,7 @@ namespace internal
 		Item* GetPtr() const noexcept
 		{
 			uint64_t intPtr = (uint64_t{mPtrState[2]} << 32) | (uint64_t{mPtrState[1]} << 16)
-				| uint64_t{mPtrState[0] & ~uint16_t{maskState}};
+				| static_cast<uint64_t>(mPtrState[0] & ~uint16_t{maskState});
 			return PtrCaster::FromUInt<Item>(static_cast<uintptr_t>(intPtr));
 		}
 

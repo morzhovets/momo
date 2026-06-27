@@ -81,6 +81,8 @@
 
 #ifdef MOMO_TEST_EXTRA_SETTINGS
 
+#define MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT ((sizeof(void*) == 8) ? 48 : sizeof(void*) * 8)
+
 #undef MOMO_DEFAULT_EXTRA_CHECK_MODE
 #define MOMO_DEFAULT_EXTRA_CHECK_MODE nothing
 
