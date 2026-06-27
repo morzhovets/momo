@@ -529,7 +529,7 @@ namespace internal
 	};
 }
 
-template<size_t tMaxCount = sizeof(void*),
+template<size_t tMaxCount = 4,
 	internal::conceptMemPoolParamsBlockSizeAlignment TMemPoolParams = MemPoolParams<>,
 	bool tUsePtrState = true>
 requires internal::conceptBucketLimPMaxCount<tMaxCount>
