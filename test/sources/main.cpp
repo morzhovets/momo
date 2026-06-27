@@ -76,6 +76,12 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT: ";
+#ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
+	std::cout << MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+#endif
+	std::cout << std::endl;
+
 	std::cout << "MOMO_MAX_ALIGNMENT: ";
 #ifdef MOMO_MAX_ALIGNMENT
 	std::cout << MOMO_MAX_ALIGNMENT;
