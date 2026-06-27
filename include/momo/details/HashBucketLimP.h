@@ -558,7 +558,7 @@ namespace internal
 	};
 }
 
-template<size_t tMaxCount = sizeof(void*),
+template<size_t tMaxCount = 4,
 	typename TMemPoolParams = MemPoolParams<>,
 	bool tUsePtrState = true>
 class HashBucketLimP : public internal::HashBucketBase
