@@ -51,9 +51,6 @@ public:
 	typedef TBaseMemManager BaseMemManager;
 	typedef TSettings Settings;
 
-	static const size_t ptrUsefulBitCount =
-		internal::MemManagerProxy<BaseMemManager>::ptrUsefulBitCount;
-
 private:
 	typedef TreeTraits<void*, false, typename Settings::BlockDictTreeNode> BlockDictTreeTraits;
 

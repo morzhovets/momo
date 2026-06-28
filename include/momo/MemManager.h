@@ -85,10 +85,6 @@ namespace internal
 		requires (const MemManager& memManager)
 			{ { memManager.IsEqual(memManager) } noexcept -> std::same_as<bool>; };
 
-	template<typename MemManager>
-	concept conceptMemManagerWithPtrUsefulBitCount = conceptMemManager<MemManager> &&
-		requires { typename std::integral_constant<size_t, MemManager::ptrUsefulBitCount>; };
-
 	template<typename Allocator>
 	concept conceptAllocator =
 		requires (Allocator& alloc, typename Allocator::value_type* ptr, size_t count)
@@ -355,28 +351,9 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-	private:
-		static consteval size_t pvGetPtrUsefulBitCount() noexcept
-		{
-			if constexpr (conceptMemManagerWithPtrUsefulBitCount<MemManager>)
-			{
-				return MemManager::ptrUsefulBitCount;
-			}
-			else
-			{
-#ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
-				return MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-#else
-				return sizeof(void*) * 8;
-#endif
-			}
-		}
-
 	public:
 		static const bool canReallocate = conceptMemManagerWithReallocate<MemManager>;
 		static const bool canReallocateInplace = conceptMemManagerWithReallocateInplace<MemManager>;
-
-		static const size_t ptrUsefulBitCount = pvGetPtrUsefulBitCount();
 
 	public:
 		template<typename ResObject = void>
@@ -385,7 +362,6 @@ namespace internal
 			MOMO_ASSERT(size > 0);
 			void* ptr = memManager.Allocate(size);
 			MOMO_ASSERT(ptr != nullptr);
-			pvCheckBits(ptr);
 			return PtrCaster::FromBytePtr<ResObject>(ptr);
 		}
 
@@ -415,7 +391,6 @@ namespace internal
 				return ptr;
 			void* newPtr = memManager.Reallocate(PtrCaster::ToBytePtr(ptr), size, newSize);
 			MOMO_ASSERT(newPtr != nullptr);
-			pvCheckBits(newPtr);
 			return PtrCaster::FromBytePtr<Object>(newPtr);
 		}
 
@@ -470,13 +445,6 @@ namespace internal
 				}
 			}
 		}
-
-	private:
-		static void pvCheckBits([[maybe_unused]] void* ptr) noexcept
-		{
-			if constexpr (ptrUsefulBitCount < sizeof(void*) * 8)
-				MOMO_ASSERT(PtrCaster::ToUInt(ptr) >> ptrUsefulBitCount == uintptr_t{0});
-		}
 	};
 
 	class MemManagerDummy
@@ -512,9 +480,6 @@ namespace internal
 
 	private:
 		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
-
-	public:
-		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& baseMemManager) noexcept
@@ -577,9 +542,6 @@ namespace internal
 
 	private:
 		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
-
-	public:
-		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& baseMemManager) noexcept

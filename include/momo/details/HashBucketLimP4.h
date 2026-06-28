@@ -239,7 +239,7 @@ namespace internal
 		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
 
 		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0,
-			MemManagerProxy<MemManager>::ptrUsefulBitCount> PtrState;
+			UIntConst::ptrUsefulBitCount> PtrState;
 
 		static_assert(PtrState::bitCount % 8 == 0);
 		static const size_t codeCount = 4 +
