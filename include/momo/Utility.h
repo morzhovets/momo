@@ -470,7 +470,7 @@ namespace internal
 
 #ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
 		static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-		static_assert(ptrUsefulBitCount <= sizeof(void*) * 8);
+		MOMO_STATIC_ASSERT(ptrUsefulBitCount <= sizeof(void*) * 8);
 #else
 		static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
 #endif
