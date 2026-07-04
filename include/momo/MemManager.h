@@ -363,24 +363,6 @@ namespace internal
 		};
 
 		template<typename MemManager,
-			typename = size_t>
-		struct PtrUsefulBitCount
-		{
-#ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
-			static const size_t value = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
-#else
-			static const size_t value = sizeof(void*) * 8;
-#endif
-		};
-
-		template<typename MemManager>
-		struct PtrUsefulBitCount<MemManager,
-			typename std::decay<decltype(MemManager::ptrUsefulBitCount)>::type>
-		{
-			static const size_t value = MemManager::ptrUsefulBitCount;
-		};
-
-		template<typename MemManager,
 			typename = bool>
 		struct HasIsEqual : public std::false_type
 		{
@@ -397,8 +379,6 @@ namespace internal
 		static const bool canReallocate = CanReallocate<MemManager>::value;
 		static const bool canReallocateInplace = CanReallocateInplace<MemManager>::value;
 
-		static const size_t ptrUsefulBitCount = PtrUsefulBitCount<MemManager>::value;
-
 	public:
 		template<typename ResObject = void>
 		static ResObject* Allocate(MemManager& memManager, size_t size)
@@ -406,7 +386,6 @@ namespace internal
 			MOMO_ASSERT(size > 0);
 			void* ptr = memManager.Allocate(size);
 			MOMO_ASSERT(ptr != nullptr);
-			pvCheckBits(ptr);
 			return PtrCaster::FromBytePtr<ResObject>(ptr);
 		}
 
@@ -435,7 +414,6 @@ namespace internal
 				return ptr;
 			void* newPtr = memManager.Reallocate(PtrCaster::ToBytePtr(ptr), size, newSize);
 			MOMO_ASSERT(newPtr != nullptr);
-			pvCheckBits(newPtr);
 			return PtrCaster::FromBytePtr<Object>(newPtr);
 		}
 
@@ -482,20 +460,6 @@ namespace internal
 		}
 
 	private:
-		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift < sizeof(void*) * 8)>
-		pvCheckBits(void* ptr) noexcept
-		{
-			(void)ptr;
-			MOMO_ASSERT(PtrCaster::ToUInt(ptr) >> shift == uintptr_t{0});
-		}
-
-		template<size_t shift = ptrUsefulBitCount>
-		static EnableIf<(shift == sizeof(void*) * 8)>
-		pvCheckBits(void* /*ptr*/) noexcept
-		{
-		}
-
 		static bool pvIsEqual(const MemManager& memManager1, const MemManager& memManager2,
 			std::true_type /*hasIsEqual*/) noexcept
 		{
@@ -564,9 +528,6 @@ namespace internal
 		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
 
 	public:
-		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
-
-	public:
 		explicit MemManagerPtr(BaseMemManager& /*baseMemManager*/) noexcept
 		{
 		}
@@ -626,9 +587,6 @@ namespace internal
 
 	private:
 		typedef MemManagerProxy<BaseMemManager> BaseMemManagerProxy;
-
-	public:
-		static const size_t ptrUsefulBitCount = BaseMemManagerProxy::ptrUsefulBitCount;
 
 	public:
 		explicit MemManagerPtr(BaseMemManager& baseMemManager) noexcept

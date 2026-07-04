@@ -468,6 +468,13 @@ namespace internal
 		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
 		MOMO_STATIC_ASSERT(nullPtr != invalidPtr);
 
+#ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
+		static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+		static_assert(ptrUsefulBitCount <= sizeof(void*) * 8);
+#else
+		static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
+#endif
+
 		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
 		static const size_t maxAllocAlignment = alignof(std::max_align_t);
 		MOMO_STATIC_ASSERT(maxAllocAlignment != 0 && (maxAllocAlignment & (maxAllocAlignment - 1)) == 0);
