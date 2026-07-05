@@ -1387,7 +1387,7 @@ private:
 	size_t pvMakeSelection(const Raws& raws,
 		FastCopyableFunctor<RowFilter> rowFilter, size_t*) const
 	{
-		return static_cast<size_t>(std::count_if(raws.GetBegin(), raws.GetEnd(),
+		return static_cast<size_t>(std::ranges::count_if(raws,
 			[this, rowFilter] (Raw* raw) { return rowFilter(pvMakeConstRowReference(raw)); }));
 	}
 

@@ -666,7 +666,7 @@ private:
 	{
 		size_t length = SMath::Ceil(capacity, 8);
 		uint8_t* segItemFlags = MemManagerProxy::template Allocate<uint8_t>(GetMemManager(), length);
-		std::fill_n(segItemFlags, length, uint8_t{0});
+		std::ranges::fill_n(segItemFlags, length, uint8_t{0});
 		return segItemFlags;
 	}
 

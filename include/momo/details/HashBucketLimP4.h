@@ -416,7 +416,7 @@ namespace internal
 	private:
 		void pvSetEmpty(size_t memPoolIndex) noexcept
 		{
-			std::fill_n(mShortCodes, codeCount, uint8_t{emptyCodeProbe});
+			std::ranges::fill(mShortCodes, uint8_t{emptyCodeProbe});
 			pvSetPtrState(nullptr, memPoolIndex);
 		}
 

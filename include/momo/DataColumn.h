@@ -798,7 +798,7 @@ private:
 		explicit Graph() noexcept
 			: mEdgeNumber(0)
 		{
-			std::fill(mEdges.begin(), mEdges.end(), nullptr);
+			std::ranges::fill(mEdges, nullptr);
 		}
 
 		Graph(const Graph&) = delete;
@@ -900,7 +900,7 @@ public:
 	{
 		if constexpr (Settings::keepRowNumber)
 			mTotalSize += sizeof(typename Settings::RowNumber);
-		std::fill(mAddends.begin(), mAddends.end(), 0);
+		std::ranges::fill(mAddends, 0);
 	}
 
 	template<typename Item, typename... Items>
@@ -1096,7 +1096,7 @@ private:
 		size_t codeParam = mCodeParam;
 		while (true)
 		{
-			std::fill(addends.begin(), addends.end(), 0);
+			std::ranges::fill(addends, 0);
 			offset = mTotalSize;
 			maxAlignment = mAlignment;
 			if (pvFillAddends<Items...>(addends, offset, maxAlignment, codeParam, columnCodes.data()))
@@ -1391,7 +1391,7 @@ public:
 
 	void ResetMutable() noexcept
 	{
-		std::fill(mMutableOffsets.begin(), mMutableOffsets.end(), uint8_t{0});
+		std::ranges::fill(mMutableOffsets, uint8_t{0});
 	}
 
 	bool IsMutable(size_t offset) const noexcept

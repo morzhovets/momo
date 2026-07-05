@@ -183,7 +183,7 @@ namespace internal
 	private:
 		void pvSetEmpty() noexcept
 		{
-			std::fill_n(mCodeData.shortCodes, maxCount, ShortCode{emptyShortCode});
+			std::ranges::fill(mCodeData.shortCodes, ShortCode{emptyShortCode});
 			mState[0] = uint8_t{0};
 			mState[1] = uint8_t{0};
 		}

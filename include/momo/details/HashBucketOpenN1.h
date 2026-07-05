@@ -143,7 +143,7 @@ namespace internal
 	private:
 		void pvSetEmpty() noexcept
 		{
-			std::fill_n(pvGetShortCodes(), maxCount, uint8_t{emptyShortCode});
+			std::ranges::fill_n(pvGetShortCodes(), maxCount, uint8_t{emptyShortCode});
 			pvGetMaxProbeExp() = uint8_t{0};
 		}
 
