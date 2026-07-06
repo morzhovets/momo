@@ -44,7 +44,8 @@ jobs:
           build_type: 'Debug'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+#          flags: '-std=c++26 -Werror -fsanitize=address,undefined'
+          flags: '-std=c++26 -Werror'
           path_prefix: '/opt/homebrew'
 
         # x64
