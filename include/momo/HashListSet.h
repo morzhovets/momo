@@ -751,9 +751,9 @@ public:
 		return internal::ProxyConstructor<ConstBucketBounds>(mHashSet.GetBucketBounds(bucketIndex));
 	}
 
-	size_t GetBucketIndex(const Key& key) const
+	size_t GetStartBucketIndex(const Key& key) const
 	{
-		return mHashSet.GetBucketIndex(key);
+		return mHashSet.GetStartBucketIndex(key);
 	}
 
 	//Position MakePosition(size_t hashCode) const noexcept
@@ -761,6 +761,15 @@ public:
 	//void CheckIterator(ConstIterator iter, bool allowEmpty = true) const
 
 private:
+	template<typename KeyArg>
+	MOMO_FORCEINLINE ConstPosition pvFind(const KeyArg& key) const
+	{
+		size_t hashCode = GetHashTraits().GetHashCode(key);
+		auto hashSetPosition = mHashSet.Find(internal::HashListSetCodeKeyArg(hashCode, key));
+		return internal::ProxyConstructor<ConstPosition>(
+			!!hashSetPosition ? *hashSetPosition : GetEnd(), hashCode);
+	}
+
 	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
 	InsertResult pvInsert(const Key& key, FastMovableFunctor<ItemCreator> itemCreator)
 	{
@@ -782,15 +791,6 @@ private:
 		};
 		return *mHashSet.AddCrt(mHashSet.MakePosition(ConstPositionProxy::GetHashCode(pos)),
 			std::move(hashSetItemCreator));
-	}
-
-	template<typename KeyArg>
-	MOMO_FORCEINLINE ConstPosition pvFind(const KeyArg& key) const
-	{
-		size_t hashCode = GetHashTraits().GetHashCode(key);
-		auto hashSetPosition = mHashSet.Find(internal::HashListSetCodeKeyArg(hashCode, key));
-		return internal::ProxyConstructor<ConstPosition>(
-			!!hashSetPosition ? *hashSetPosition : GetEnd(), hashCode);
 	}
 
 	template<typename Set>

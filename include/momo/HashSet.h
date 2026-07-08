@@ -984,24 +984,11 @@ public:
 		return ConstBucketBounds();
 	}
 
-	size_t GetBucketIndex(const Key& key) const
+	size_t GetStartBucketIndex(const Key& key) const
 	{
 		MOMO_CHECK(mBuckets != nullptr);
-		Position pos = pvFind(key);
-		if (!!pos)
-		{
-			size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
-			BucketIterator bucketIter = ConstPositionProxy::GetBucketIterator(pos);
-			Buckets* buckets = pvFindBuckets(bucketIndex, bucketIter);
-			for (Buckets* bkts = mBuckets; bkts != buckets; bkts = bkts->GetNextBuckets())
-				bucketIndex += bkts->GetCount();
-			return bucketIndex;
-		}
-		else
-		{
-			size_t hashCode = ConstPositionProxy::GetHashCode(pos);
-			return Bucket::GetStartBucketIndex(hashCode, mBuckets->GetCount());	//?
-		}
+		size_t hashCode = GetHashTraits().GetHashCode(key);
+		return Bucket::GetStartBucketIndex(hashCode, mBuckets->GetCount());
 	}
 
 	ConstPosition MakePosition(size_t hashCode) const noexcept
@@ -1240,7 +1227,9 @@ private:
 		BucketIterator bucketIter = ConstPositionProxy::GetBucketIterator(pos);
 		MOMO_CHECK(bucketIter != BucketIterator());
 		size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
-		Buckets* buckets = pvFindBuckets(bucketIndex, bucketIter);
+		Buckets* buckets = mBuckets;
+		if (mBuckets->GetNextBuckets() != nullptr)
+			buckets = pvFindBuckets(bucketIndex, bucketIter);
 		Bucket& bucket = (*buckets)[bucketIndex];
 		bucketIter = bucket.Remove(buckets->GetBucketParams(), bucketIter, std::move(itemReplacer));
 		--mCount;
@@ -1250,11 +1239,9 @@ private:
 		return internal::ProxyConstructor<Iterator>(*buckets, bucketIndex, bucketIter, mCrew.GetVersion());
 	}
 
-	Buckets* pvFindBuckets(size_t bucketIndex, BucketIterator bucketIter) const
+	MOMO_NOINLINE Buckets* pvFindBuckets(size_t bucketIndex, BucketIterator bucketIter) const
 	{
 		MOMO_ASSERT(mBuckets != nullptr);
-		if (mBuckets->GetNextBuckets() == nullptr)
-			return mBuckets;
 		for (Buckets* bkts = mBuckets; bkts != nullptr; bkts = bkts->GetNextBuckets())
 		{
 			if (bucketIndex >= bkts->GetCount())

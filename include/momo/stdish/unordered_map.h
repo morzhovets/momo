@@ -775,7 +775,7 @@ public:
 
 	size_type bucket(const key_type& key) const
 	{
-		return mHashMap.GetBucketIndex(key);
+		return mHashMap.GetStartBucketIndex(key);
 	}
 
 	float load_factor() const noexcept

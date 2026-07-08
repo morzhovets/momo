@@ -650,9 +650,9 @@ public:
 		return internal::ProxyConstructor<BucketBounds>(mHashSet.GetBucketBounds(bucketIndex));
 	}
 
-	size_t GetBucketIndex(const Key& key) const
+	size_t GetStartBucketIndex(const Key& key) const
 	{
-		return mHashSet.GetBucketIndex(key);
+		return mHashSet.GetStartBucketIndex(key);
 	}
 
 	ConstPosition MakePosition(size_t hashCode) const noexcept
