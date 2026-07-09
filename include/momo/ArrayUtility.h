@@ -72,6 +72,12 @@ namespace internal
 				return std::addressof((*mArray)[mIndex]);
 		}
 
+		Reference operator*() const
+		{
+			MOMO_CHECK(mArray != nullptr);
+			return (*mArray)[mIndex];
+		}
+
 		friend bool operator==(ArrayIndexIterator iter1, ArrayIndexIterator iter2) noexcept
 		{
 			return iter1.mArray == iter2.mArray && iter1.mIndex == iter2.mIndex;
