@@ -954,24 +954,11 @@ public:
 		return ConstBucketBounds();
 	}
 
-	size_t GetBucketIndex(const Key& key) const
+	size_t GetStartBucketIndex(const Key& key) const
 	{
 		MOMO_CHECK(mBuckets != nullptr);
-		ConstPosition pos = pvFind(key);
-		if (!!pos)
-		{
-			size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
-			BucketIterator bucketIter = ConstPositionProxy::GetBucketIterator(pos);
-			Buckets* buckets = pvFindBuckets(bucketIndex, bucketIter);
-			for (Buckets* bkts = mBuckets; bkts != buckets; bkts = bkts->GetNextBuckets())
-				bucketIndex += bkts->GetCount();
-			return bucketIndex;
-		}
-		else
-		{
-			size_t hashCode = ConstPositionProxy::GetHashCode(pos);
-			return Bucket::GetStartBucketIndex(hashCode, mBuckets->GetCount());	//?
-		}
+		size_t hashCode = GetHashTraits().GetHashCode(key);
+		return Bucket::GetStartBucketIndex(hashCode, mBuckets->GetCount());
 	}
 
 	ConstPosition MakePosition(size_t hashCode) const noexcept
