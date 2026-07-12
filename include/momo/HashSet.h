@@ -1199,7 +1199,9 @@ private:
 		BucketIterator bucketIter = ConstPositionProxy::GetBucketIterator(pos);
 		MOMO_CHECK(bucketIter != BucketIterator());
 		size_t bucketIndex = ConstPositionProxy::GetBucketIndex(pos);
-		Buckets* buckets = pvFindBuckets(bucketIndex, bucketIter);
+		Buckets* buckets = mBuckets;
+		if (mBuckets->GetNextBuckets() != nullptr)
+			buckets = pvFindBuckets(bucketIndex, bucketIter);
 		Bucket& bucket = (*buckets)[bucketIndex];
 		bucketIter = bucket.Remove(buckets->GetBucketParams(), bucketIter,
 			std::forward<ItemReplacer>(itemReplacer));
@@ -1224,11 +1226,8 @@ private:
 		return pvRemove(iter, itemReplacer);
 	}
 
-	Buckets* pvFindBuckets(size_t bucketIndex, BucketIterator bucketIter) const
+	MOMO_NOINLINE Buckets* pvFindBuckets(size_t bucketIndex, BucketIterator bucketIter) const
 	{
-		MOMO_ASSERT(mBuckets != nullptr);
-		if (mBuckets->GetNextBuckets() == nullptr)
-			return mBuckets;
 		for (Buckets* bkts = mBuckets; bkts != nullptr; bkts = bkts->GetNextBuckets())
 		{
 			if (bucketIndex >= bkts->GetCount())
