@@ -1241,7 +1241,6 @@ private:
 
 	MOMO_NOINLINE Buckets* pvFindBuckets(size_t bucketIndex, BucketIterator bucketIter) const
 	{
-		MOMO_ASSERT(mBuckets != nullptr);
 		for (Buckets* bkts = mBuckets; bkts != nullptr; bkts = bkts->GetNextBuckets())
 		{
 			if (bucketIndex >= bkts->GetCount())
