@@ -55,7 +55,11 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			FastCopyableFunctor<ItemPredicate> itemPred, size_t hashCode)
 		{
-			return pvFind<first>(itemPred, hashCode);
+#ifdef MOMO_PREFETCH
+			if constexpr (first)
+				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
+#endif
+			return pvFind(itemPred, hashCode);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -65,43 +69,47 @@ namespace internal
 		}
 
 	private:
-		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
+		template<conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<ItemPredicate> itemPred,
 			size_t hashCode)
 		{
 			static_assert(std::endian::native == std::endian::little);
-#ifdef MOMO_PREFETCH
-			if constexpr (first)
-				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
-#endif
-			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
 #ifdef MOMO_USE_SSE2
+			static const size_t maskIndexShift = 0;
+#else
+			static const size_t maskIndexShift = 3;
+#endif
+			auto mask = pvFindCode(hashCode);
+			for (; mask != 0; mask &= mask - 1)
+			{
+				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> maskIndexShift;
+				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
+				if (itemPred(std::as_const(*itemPtr))) [[likely]]
+					return itemPtr;
+			}
+			return nullptr;
+		}
+
+#ifdef MOMO_USE_SSE2
+		MOMO_FORCEINLINE uint8_t pvFindCode(size_t hashCode)
+		{
+			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
 			__m128i shortCodes = _mm_set1_epi8(static_cast<char>(shortCode));
 			__m128i thisShortCodes = _mm_set_epi64x(int64_t{0},
 				MemCopyer::FromBuffer<int64_t>(BucketOpenN1::ptGetData()));
 			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortCodes, thisShortCodes));
 			mask &= (1 << maxCount) - 1;
-			for (; mask != 0; mask &= mask - 1)
-			{
-				size_t index = static_cast<size_t>(std::countr_zero(static_cast<uint8_t>(mask)));
-				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (itemPred(std::as_const(*itemPtr))) [[likely]]
-					return itemPtr;
-			}
+			return static_cast<uint8_t>(mask);
+		}
 #else
+		MOMO_FORCEINLINE uint64_t pvFindCode(size_t hashCode)
+		{
+			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
 			uint64_t thisShortCodes = MemCopyer::FromBuffer<uint64_t>(BucketOpenN1::ptGetData());
 			uint64_t xorCodes = (shortCode * 0x0101010101010101ull) ^ thisShortCodes;
-			uint64_t mask = (xorCodes - 0x0101010101010101ull) & ~xorCodes & 0x0080808080808080ull;
-			for (; mask != 0; mask &= mask - 1)
-			{
-				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> 3;
-				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (itemPred(std::as_const(*itemPtr))) [[likely]]
-					return itemPtr;
-			}
-#endif
-			return nullptr;
+			return (xorCodes - 0x0101010101010101ull) & ~xorCodes & 0x0080808080808080ull;
 		}
+#endif
 	};
 }
 
