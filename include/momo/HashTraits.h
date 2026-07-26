@@ -68,7 +68,6 @@ concept conceptHashTraits =
 	requires (const HashTraits& hashTraits, const Key& key)
 	{
 		typename std::bool_constant<HashTraits::template IsValidKeyArg<Key>::value>;
-		typename std::bool_constant<HashTraits::isFastNothrowHashable>;
 		{ hashTraits.CalcCapacity(size_t{}, size_t{}) } -> std::same_as<size_t>;
 		{ hashTraits.GetBucketCountShift(size_t{}, size_t{}) } -> std::same_as<size_t>;
 		{ hashTraits.GetLogStartBucketCount() } -> std::same_as<size_t>;
@@ -87,10 +86,9 @@ public:
 	typedef THashBucket HashBucket;
 	typedef TBaseKeyArg BaseKeyArg;
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<BaseKeyArg>::value;
-
 	template<typename ItemTraits>
-	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
+	using Bucket = typename HashBucket::template Bucket<ItemTraits,
+		!IsFastNothrowHashable<BaseKeyArg>::value>;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = std::conditional_t<std::is_same_v<BaseKeyArg, Key>,
@@ -116,6 +114,7 @@ public:
 
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
+		noexcept(noexcept(HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key))))
 		requires requires { { HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key)) }
 			-> std::convertible_to<size_t>; }
 	{
@@ -146,11 +145,9 @@ public:
 	typedef TEqualComparer EqualComparer;
 	typedef THashBucket HashBucket;
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value &&
-		(std::is_same_v<Hasher, HashCoder<Key>> || std::is_same_v<Hasher, std::hash<Key>>);
-
 	template<typename ItemTraits>
-	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
+	using Bucket = typename HashBucket::template Bucket<ItemTraits,
+		!IsFastNothrowHashable<Key>::value>;	//?
 
 	template<typename KeyArg>
 	using IsValidKeyArg = std::bool_constant<
@@ -207,6 +204,7 @@ public:
 
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
+		noexcept(noexcept(mHasher(key)))
 	{
 		return mHasher(key);
 	}

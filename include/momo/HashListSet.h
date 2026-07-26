@@ -205,8 +205,6 @@ namespace internal
 	public:
 		typedef TKey Key;
 
-		static const bool isFastNothrowHashable = BaseHashTraits::isFastNothrowHashable;
-
 		template<typename ItemTraits>
 		using Bucket = typename BaseHashTraits::template Bucket<ItemTraits>;	//?
 
@@ -253,6 +251,7 @@ namespace internal
 		}
 
 		size_t GetHashCode(const Key& key) const
+			noexcept(noexcept(mBaseHashTraits.GetHashCode(key)))
 		{
 			return mBaseHashTraits.GetHashCode(key);
 		}

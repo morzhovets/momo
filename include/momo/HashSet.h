@@ -491,8 +491,9 @@ private:
 
 	typedef typename Bucket::Iterator BucketIterator;
 
-	static const bool areItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
-		&& ItemTraits::isNothrowRelocatable && Bucket::isNothrowAddableIfNothrowCreatable;
+	static const bool areItemsNothrowRelocatable =
+		ItemTraits::isNothrowRelocatable && Bucket::isNothrowAddableIfNothrowCreatable
+		&& noexcept(std::declval<const HashTraits&>().GetHashCode(std::declval<const Key&>()));
 
 	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
 

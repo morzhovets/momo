@@ -66,9 +66,7 @@ template<typename Key,
 struct HashCoder : private std::hash<Key>
 {
 	Result operator()(const Key& key) const
-#ifndef __GNUC__	//?
-		noexcept(noexcept(std::hash<Key>::operator()(key)))
-#endif
+		noexcept(std::is_nothrow_invocable_v<const std::hash<Key>&, const Key&>)
 	{
 		return static_cast<Result>(std::hash<Key>::operator()(key));
 	}
