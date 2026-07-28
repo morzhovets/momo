@@ -56,8 +56,8 @@ namespace internal
 			FastCopyableFunctor<ItemPredicate> itemPred, size_t hashCode)
 		{
 #ifdef MOMO_PREFETCH
-			if constexpr (first)
-				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
+			if constexpr (first && 8 + 5 * sizeof(Item) >= std::hardware_destructive_interference_size)
+				MOMO_PREFETCH(PtrCaster::ToBytePtr(this) + std::hardware_destructive_interference_size);
 #endif
 			return pvFind(itemPred, hashCode);
 		}
