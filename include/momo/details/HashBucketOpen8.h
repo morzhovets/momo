@@ -42,6 +42,12 @@ namespace internal
 
 		using typename BucketOpenN1::Params;
 
+#ifdef MOMO_USE_SSE2
+		typedef __m128i PreparedCode;
+#else
+		typedef uint64_t PreparedCode;
+#endif
+
 	public:
 		explicit BucketOpen8() noexcept = default;
 
@@ -51,15 +57,25 @@ namespace internal
 
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 
+		static PreparedCode PrepareFind(size_t hashCode) noexcept
+		{
+			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
+#ifdef MOMO_USE_SSE2
+			return _mm_set1_epi8(static_cast<char>(shortCode));
+#else
+			return uint64_t{shortCode} * 0x0101010101010101ull;
+#endif
+		}
+
 		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			FastCopyableFunctor<ItemPredicate> itemPred, size_t hashCode)
+			FastCopyableFunctor<ItemPredicate> itemPred, PreparedCode prepCode)
 		{
 #ifdef MOMO_PREFETCH
 			if constexpr (first && 8 + 5 * sizeof(Item) >= std::hardware_destructive_interference_size)
 				MOMO_PREFETCH(PtrCaster::ToBytePtr(this) + std::hardware_destructive_interference_size);
 #endif
-			return pvFind(itemPred, hashCode);
+			return pvFind(itemPred, prepCode);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
@@ -71,7 +87,7 @@ namespace internal
 	private:
 		template<conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<ItemPredicate> itemPred,
-			size_t hashCode)
+			PreparedCode prepCode)
 		{
 			static_assert(std::endian::native == std::endian::little);
 #ifdef MOMO_USE_SSE2
@@ -79,7 +95,7 @@ namespace internal
 #else
 			static const size_t maskIndexShift = 3;
 #endif
-			auto mask = pvFindCode(hashCode);
+			auto mask = pvFindCode(prepCode);
 			for (; mask != 0; mask &= mask - 1)
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> maskIndexShift;
@@ -91,22 +107,19 @@ namespace internal
 		}
 
 #ifdef MOMO_USE_SSE2
-		MOMO_FORCEINLINE uint8_t pvFindCode(size_t hashCode)
+		MOMO_FORCEINLINE uint8_t pvFindCode(PreparedCode prepCode) noexcept
 		{
-			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
-			__m128i shortCodes = _mm_set1_epi8(static_cast<char>(shortCode));
-			__m128i thisShortCodes = _mm_set_epi64x(int64_t{0},
+			__m128i shortCodes = _mm_set_epi64x(int64_t{0},
 				MemCopyer::FromBuffer<int64_t>(BucketOpenN1::ptGetData()));
-			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortCodes, thisShortCodes));
+			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(prepCode, shortCodes));
 			mask &= (1 << maxCount) - 1;
 			return static_cast<uint8_t>(mask);
 		}
 #else
-		MOMO_FORCEINLINE uint64_t pvFindCode(size_t hashCode)
+		MOMO_FORCEINLINE uint64_t pvFindCode(PreparedCode prepCode) noexcept
 		{
-			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
-			uint64_t thisShortCodes = MemCopyer::FromBuffer<uint64_t>(BucketOpenN1::ptGetData());
-			uint64_t xorCodes = (shortCode * 0x0101010101010101ull) ^ thisShortCodes;
+			uint64_t shortCodes = MemCopyer::FromBuffer<uint64_t>(BucketOpenN1::ptGetData());
+			uint64_t xorCodes = prepCode ^ shortCodes;
 			return (xorCodes - 0x0101010101010101ull) & ~xorCodes & 0x0080808080808080ull;
 		}
 #endif

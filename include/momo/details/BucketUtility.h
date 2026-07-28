@@ -103,19 +103,21 @@ namespace internal
 	class BucketBase
 	{
 	public:
-		template<bool first, conceptMutableThis Bucket,
-			conceptObjectPredicate<typename Bucket::Item> ItemPredicate,
-			typename Iterator = typename Bucket::Iterator>
-		MOMO_FORCEINLINE Iterator Find(this Bucket& bucket, typename Bucket::Params& params,
-			FastCopyableFunctor<ItemPredicate> itemPred, size_t /*hashCode*/)
+		typedef std::nullptr_t PreparedCode;
+
+	public:
+		static PreparedCode PrepareFind(size_t /*hashCode*/) noexcept
 		{
-			typename Bucket::Bounds bounds = bucket.GetBounds(params);
-			for (Iterator iter = bounds.GetBegin(), end = bounds.GetEnd(); iter != end; ++iter)
-			{
-				if (itemPred(std::as_const(*iter)))
-					return iter;
-			}
-			return Iterator();
+			return nullptr;
+		}
+
+		template<bool first, conceptMutableThis Bucket,
+			conceptObjectPredicate<typename Bucket::Item> ItemPredicate>
+		MOMO_FORCEINLINE typename Bucket::Iterator Find(this Bucket& bucket,
+			typename Bucket::Params& params, FastCopyableFunctor<ItemPredicate> itemPred,
+			PreparedCode /*prepCode*/)
+		{
+			return pvFind<std::remove_reference_t<Bucket>>(bucket.GetBounds(params), itemPred);
 		}
 
 		size_t GetMaxProbe(size_t logBucketCount) const noexcept
@@ -145,6 +147,20 @@ namespace internal
 			size_t bucketCount, size_t /*probe*/) noexcept
 		{
 			return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
+		}
+
+	private:
+		template<typename Bucket, conceptObjectPredicate<typename Bucket::Item> ItemPredicate>
+		MOMO_FORCEINLINE static typename Bucket::Iterator pvFind(typename Bucket::Bounds bounds,
+			FastCopyableFunctor<ItemPredicate> itemPred)
+		{
+			typedef typename Bucket::Iterator Iterator;
+			for (Iterator iter = bounds.GetBegin(), end = bounds.GetEnd(); iter != end; ++iter)
+			{
+				if (itemPred(std::as_const(*iter)))
+					return iter;
+			}
+			return Iterator();
 		}
 	};
 

@@ -52,6 +52,9 @@ namespace internal
 			UIntMath<>::Min(ItemTraits::alignment, sizeof(size_t)))>::UInt HashState;
 
 	public:
+		typedef HashState PreparedCode;
+
+	public:
 		explicit BucketOne() noexcept
 			: mHashState(0)
 		{
@@ -68,17 +71,16 @@ namespace internal
 			return IsFull() ? Bounds(pvGetItemPtr(), 1) : Bounds();
 		}
 
+		static PreparedCode PrepareFind(size_t hashCode) noexcept
+		{
+			return pvGetHashState(hashCode);
+		}
+
 		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			FastCopyableFunctor<ItemPredicate> itemPred, size_t hashCode)
+			FastCopyableFunctor<ItemPredicate> itemPred, PreparedCode prepCode)
 		{
-			if (mHashState == pvGetHashState(hashCode))
-			{
-				Item* itemPtr = pvGetItemPtr();
-				if (itemPred(std::as_const(*itemPtr))) [[likely]]
-					return itemPtr;
-			}
-			return nullptr;
+			return pvFind(itemPred, prepCode);
 		}
 
 		bool IsFull() const noexcept
@@ -143,6 +145,19 @@ namespace internal
 			{
 				return (static_cast<HashState>(hashCode) << 1) | 1;
 			}
+		}
+
+		template<conceptObjectPredicate<Item> ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<ItemPredicate> itemPred,
+			PreparedCode prepCode)
+		{
+			if (mHashState == prepCode)
+			{
+				Item* itemPtr = pvGetItemPtr();
+				if (itemPred(std::as_const(*itemPtr))) [[likely]]
+					return itemPtr;
+			}
+			return nullptr;
 		}
 
 		template<bool isWithinLifetime = true>

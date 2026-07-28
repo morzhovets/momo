@@ -50,6 +50,10 @@ namespace internal
 	private:
 		typedef typename UIntSelector<useHashCodePartGetter ? 1 : 2>::UInt ShortCode;
 
+	public:
+		typedef ShortCode PreparedCode;
+
+	private:
 		template<bool hasCodeProbes = useHashCodePartGetter>
 		struct CodeData
 		{
@@ -92,11 +96,16 @@ namespace internal
 			return Bounds(Iterator(mItems.GetPtr() + maxCount), pvGetCount());
 		}
 
+		static PreparedCode PrepareFind(size_t hashCode) noexcept
+		{
+			return pvCalcShortCode(hashCode);
+		}
+
 		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			FastCopyableFunctor<ItemPredicate> itemPred, size_t hashCode)
+			FastCopyableFunctor<ItemPredicate> itemPred, PreparedCode prepCode)
 		{
-			return pvFind(itemPred, hashCode);
+			return pvFind(itemPred, prepCode);
 		}
 
 		bool IsFull() const noexcept
@@ -190,12 +199,11 @@ namespace internal
 
 		template<conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<ItemPredicate> itemPred,
-			size_t hashCode)
+			PreparedCode prepCode)
 		{
-			ShortCode shortCode = pvCalcShortCode(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mCodeData.shortCodes[i] == shortCode)
+				if (mCodeData.shortCodes[i] == prepCode)
 				{
 					Item* items = mItems.GetPtr();
 					if (itemPred(std::as_const(items[i]))) [[likely]]
