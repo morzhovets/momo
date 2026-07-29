@@ -26,9 +26,9 @@ namespace internal
 	concept conceptNodeCapacity = (0 < maxCapacity && maxCapacity < 256);
 
 	template<typename TItemTraits, size_t tMaxCapacity, size_t tCapacityStep,
-		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams, bool tIsContinuous>
+		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams, bool tIsFlatLayout>
 	requires conceptNodeCapacity<tMaxCapacity> &&
-		(!tIsContinuous || TItemTraits::isNothrowShiftable)
+		(!tIsFlatLayout || TItemTraits::isNothrowShiftable)
 	class Node
 	{
 	protected:
@@ -37,7 +37,7 @@ namespace internal
 
 		static const size_t capacityStep = (tCapacityStep > 0) ? tCapacityStep : tMaxCapacity;
 
-		static const bool isContinuous = tIsContinuous;
+		static const bool isFlatLayout = tIsFlatLayout;
 
 	public:
 		static const size_t maxCapacity = tMaxCapacity;
@@ -118,7 +118,7 @@ namespace internal
 		};
 
 	private:
-		template<size_t indexCount = isContinuous ? 0 : maxCapacity>
+		template<size_t indexCount = isFlatLayout ? 0 : maxCapacity>
 		struct Counter
 		{
 			uint8_t count;
@@ -221,7 +221,7 @@ namespace internal
 		{
 			static const size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
 			Item* items = PtrCaster::FromBytePtr<Item>(PtrCaster::ToBytePtr(this) + itemOffset);
-			if constexpr (isContinuous)
+			if constexpr (isFlatLayout)
 				return items + index;
 			else
 				return items + mCounter.indexes[index];
@@ -232,7 +232,7 @@ namespace internal
 			size_t count = GetCount();
 			MOMO_ASSERT(count < GetCapacity());
 			MOMO_ASSERT(index <= count);
-			if constexpr (isContinuous)
+			if constexpr (isFlatLayout)
 			{
 				ItemTraits::ShiftNothrow(params.GetMemManager(),
 					std::reverse_iterator<Item*>(GetItemPtr(count + 1)), count - index);
@@ -258,7 +258,7 @@ namespace internal
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
-			if constexpr (isContinuous)
+			if constexpr (isFlatLayout)
 			{
 				ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
 				std::reverse_iterator<Item*> revIter(GetItemPtr(count));
@@ -289,7 +289,7 @@ namespace internal
 			mMemPoolIndex(static_cast<uint8_t>(memPoolIndex))
 		{
 			mCounter.count = static_cast<uint8_t>(count);
-			if constexpr (!isContinuous)
+			if constexpr (!isFlatLayout)
 			{
 				for (size_t i = 0; i < maxCapacity; ++i)
 					mCounter.indexes[i] = static_cast<uint8_t>(i);
@@ -335,20 +335,20 @@ template<size_t tMaxCapacity = 32,
 	size_t tCapacityStep = (tMaxCapacity >= 16) ? tMaxCapacity / 8 : 2,
 	internal::conceptMemPoolParamsBlockSizeAlignment TMemPoolParams
 		= MemPoolParams<(tMaxCapacity < 64) ? 8 : 1>,
-	bool tIsContinuous = true>
+	bool tIsFlatLayout = true>
 requires internal::conceptNodeCapacity<tMaxCapacity>
 class TreeNode
 {
 public:
 	static const size_t maxCapacity = tMaxCapacity;
 	static const size_t capacityStep = tCapacityStep;
-	static const bool isContinuous = tIsContinuous;
+	static const bool isFlatLayout = tIsFlatLayout;
 
 	typedef TMemPoolParams MemPoolParams;
 
 	template<typename ItemTraits>
 	using Node = internal::Node<ItemTraits, maxCapacity, capacityStep, MemPoolParams,
-		isContinuous && ItemTraits::isNothrowShiftable>;
+		isFlatLayout && ItemTraits::isNothrowShiftable>;
 
 public:
 	static size_t GetSplitItemIndex(size_t itemCount, size_t newItemIndex) noexcept
