@@ -33,7 +33,7 @@ namespace momo
 namespace internal
 {
 	template<typename TItemTraits, size_t tMaxCapacity, size_t tCapacityStep,
-		typename TMemPoolParams, bool tIsContinuous>
+		typename TMemPoolParams, bool tIsFlatLayout>
 	class Node
 	{
 	protected:
@@ -42,8 +42,8 @@ namespace internal
 
 		static const size_t capacityStep = (tCapacityStep > 0) ? tCapacityStep : tMaxCapacity;
 
-		static const bool isContinuous = tIsContinuous;
-		MOMO_STATIC_ASSERT(!isContinuous || ItemTraits::isNothrowShiftable);
+		static const bool isFlatLayout = tIsFlatLayout;
+		MOMO_STATIC_ASSERT(!isFlatLayout || ItemTraits::isNothrowShiftable);
 
 	public:
 		static const size_t maxCapacity = tMaxCapacity;
@@ -53,9 +53,9 @@ namespace internal
 		typedef typename ItemTraits::MemManager MemManager;
 
 	private:
-		typedef BoolConstant<isContinuous> IsContinuous;
+		typedef BoolConstant<isFlatLayout> IsFlatLayout;
 
-		template<size_t capacity = maxCapacity, size_t indexCount = isContinuous ? 0 : capacity>
+		template<size_t capacity = maxCapacity, size_t indexCount = isFlatLayout ? 0 : capacity>
 		struct Counter
 		{
 			uint8_t count;
@@ -235,7 +235,7 @@ namespace internal
 		{
 			static const size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
 			Item* items = PtrCaster::FromBytePtr<Item>(PtrCaster::ToBytePtr(this) + itemOffset);
-			return pvGetItemPtr(items, index, IsContinuous());
+			return pvGetItemPtr(items, index, IsFlatLayout());
 		}
 
 		void AcceptBackItem(Params& params, size_t index) noexcept
@@ -243,7 +243,7 @@ namespace internal
 			size_t count = GetCount();
 			MOMO_ASSERT(count < GetCapacity());
 			MOMO_ASSERT(index <= count);
-			pvAcceptBackItem(params, index, count, IsContinuous());
+			pvAcceptBackItem(params, index, count, IsFlatLayout());
 			if (!IsLeaf())
 			{
 				Node** children = pvGetChildren(this);
@@ -258,7 +258,7 @@ namespace internal
 		{
 			size_t count = GetCount();
 			MOMO_ASSERT(index < count);
-			pvRemove(params, index, count, std::forward<ItemRemover>(itemRemover), IsContinuous());
+			pvRemove(params, index, count, std::forward<ItemRemover>(itemRemover), IsFlatLayout());
 			if (!IsLeaf())
 			{
 				Node** children = pvGetChildren(this);
@@ -273,7 +273,7 @@ namespace internal
 			mMemPoolIndex(static_cast<uint8_t>(memPoolIndex))
 		{
 			mCounter.count = static_cast<uint8_t>(count);
-			pvInitIndexes(IsContinuous());
+			pvInitIndexes(IsFlatLayout());
 		}
 
 		~Node() = default;
@@ -296,35 +296,35 @@ namespace internal
 			return PtrCaster::FromBytePtr<Node*, isWithinLifetime>(pvGetInternalBuffer(node));
 		}
 
-		void pvInitIndexes(std::true_type /*isContinuous*/) noexcept
+		void pvInitIndexes(std::true_type /*isFlatLayout*/) noexcept
 		{
 		}
 
-		void pvInitIndexes(std::false_type /*isContinuous*/) noexcept
+		void pvInitIndexes(std::false_type /*isFlatLayout*/) noexcept
 		{
 			for (size_t i = 0; i < maxCapacity; ++i)
 				mCounter.indexes[i] = static_cast<uint8_t>(i);
 		}
 
-		Item* pvGetItemPtr(Item* items, size_t index, std::true_type /*isContinuous*/) noexcept
+		Item* pvGetItemPtr(Item* items, size_t index, std::true_type /*isFlatLayout*/) noexcept
 		{
 			return items + index;
 		}
 
-		Item* pvGetItemPtr(Item* items, size_t index, std::false_type /*isContinuous*/) noexcept
+		Item* pvGetItemPtr(Item* items, size_t index, std::false_type /*isFlatLayout*/) noexcept
 		{
 			return items + mCounter.indexes[index];
 		}
 
 		void pvAcceptBackItem(Params& params, size_t index, size_t count,
-			std::true_type /*isContinuous*/) noexcept
+			std::true_type /*isFlatLayout*/) noexcept
 		{
 			ItemTraits::ShiftNothrow(params.GetMemManager(),
 				std::reverse_iterator<Item*>(GetItemPtr(count + 1)), count - index);
 		}
 
 		void pvAcceptBackItem(Params& /*params*/, size_t index, size_t count,
-			std::false_type /*isContinuous*/) noexcept
+			std::false_type /*isFlatLayout*/) noexcept
 		{
 			uint8_t realIndex = mCounter.indexes[count];
 			std::copy_backward(mCounter.indexes + index, mCounter.indexes + count,
@@ -334,7 +334,7 @@ namespace internal
 
 		template<typename ItemRemover>
 		void pvRemove(Params& params, size_t index, size_t count, ItemRemover&& itemRemover,
-			std::true_type /*isContinuous*/)
+			std::true_type /*isFlatLayout*/)
 		{
 			ItemTraits::ShiftNothrow(params.GetMemManager(), GetItemPtr(index), count - index - 1);
 			std::reverse_iterator<Item*> revIter(GetItemPtr(count));
@@ -346,7 +346,7 @@ namespace internal
 
 		template<typename ItemRemover>
 		void pvRemove(Params& /*params*/, size_t index, size_t count, ItemRemover&& itemRemover,
-			std::false_type /*isContinuous*/)
+			std::false_type /*isFlatLayout*/)
 		{
 			std::forward<ItemRemover>(itemRemover)(*GetItemPtr(index));
 			uint8_t realIndex = mCounter.indexes[index];
@@ -373,19 +373,19 @@ namespace internal
 template<size_t tMaxCapacity = 32,
 	size_t tCapacityStep = (tMaxCapacity >= 16) ? tMaxCapacity / 8 : 2,
 	typename TMemPoolParams = MemPoolParams<(tMaxCapacity < 64) ? 8 : 1>,
-	bool tIsContinuous = true>
+	bool tIsFlatLayout = true>
 class TreeNode
 {
 public:
 	static const size_t maxCapacity = tMaxCapacity;
 	static const size_t capacityStep = tCapacityStep;
-	static const bool isContinuous = tIsContinuous;
+	static const bool isFlatLayout = tIsFlatLayout;
 
 	typedef TMemPoolParams MemPoolParams;
 
 	template<typename ItemTraits>
 	using Node = internal::Node<ItemTraits, maxCapacity, capacityStep, MemPoolParams,
-		isContinuous && ItemTraits::isNothrowShiftable>;
+		isFlatLayout && ItemTraits::isNothrowShiftable>;
 
 public:
 	static size_t GetSplitItemIndex(size_t itemCount, size_t newItemIndex) noexcept
