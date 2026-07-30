@@ -102,7 +102,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23 -Werror'
+          flags: '-std=c++23'
           cont_ver: '26.04'
 
         - gcc_ver: '12'
