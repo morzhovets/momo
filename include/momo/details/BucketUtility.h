@@ -103,12 +103,16 @@ namespace internal
 	class BucketBase
 	{
 	public:
-		typedef std::nullptr_t PreparedCode;
+		static const bool isNothrowAddableIfNothrowCreatable = false;
+
+		struct PreparedCode
+		{
+		};
 
 	public:
 		static PreparedCode PrepareFind(size_t /*hashCode*/) noexcept
 		{
-			return nullptr;
+			return PreparedCode();
 		}
 
 		template<bool first, conceptMutableThis Bucket,
@@ -148,6 +152,15 @@ namespace internal
 		{
 			return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
 		}
+
+	protected:
+		explicit BucketBase() noexcept = default;
+
+		BucketBase(const BucketBase&) = delete;
+
+		~BucketBase() noexcept = default;
+
+		BucketBase& operator=(const BucketBase&) = delete;
 
 	private:
 		template<typename Bucket, conceptObjectPredicate<typename Bucket::Item> ItemPredicate>
@@ -191,6 +204,19 @@ namespace internal
 				return (bucketCount < (1 << 16)) ? 2 : 1;
 			else
 				return (bucketCount < (1 << 20)) ? 2 : 1;
+		}
+	};
+
+	class HashBucketOpenBase
+	{
+	public:
+		static const size_t logStartBucketCount = 4;	//?
+
+	public:
+		static size_t GetBucketCountShift(size_t /*bucketCount*/,
+			size_t /*bucketMaxItemCount*/) noexcept
+		{
+			return 1;
 		}
 	};
 }

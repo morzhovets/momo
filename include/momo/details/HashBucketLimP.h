@@ -44,8 +44,6 @@ namespace internal
 	public:
 		static const size_t maxCount = tMaxCount;
 
-		static const bool isNothrowAddableIfNothrowCreatable = false;
-
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 
@@ -294,8 +292,6 @@ namespace internal
 
 	public:
 		static const size_t maxCount = tMaxCount;
-
-		static const bool isNothrowAddableIfNothrowCreatable = false;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;

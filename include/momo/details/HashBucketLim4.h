@@ -40,8 +40,6 @@ namespace internal
 	public:
 		static const size_t maxCount = size_t{1} << logMaxCount;
 
-		static const bool isNothrowAddableIfNothrowCreatable = false;
-
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

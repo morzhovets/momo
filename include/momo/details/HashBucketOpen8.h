@@ -78,12 +78,6 @@ namespace internal
 			return pvFind(itemPred, prepCode);
 		}
 
-		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t probe) noexcept
-		{
-			return (bucketIndex + probe) & (bucketCount - 1);	// quadratic probing
-		}
-
 	private:
 		template<conceptObjectPredicate<Item> ItemPredicate>
 		MOMO_FORCEINLINE Iterator pvFind(FastCopyableFunctor<ItemPredicate> itemPred,
@@ -126,7 +120,7 @@ namespace internal
 	};
 }
 
-class HashBucketOpen8 : public internal::HashBucketBase
+class HashBucketOpen8 : public internal::HashBucketOpenBase
 {
 public:
 	template<typename ItemTraits, bool useHashCodePartGetter>
@@ -143,12 +137,6 @@ public:
 			return static_cast<size_t>(maxItemCount / 14.0 * 13.0);	// BucketOpen8
 		else
 			return static_cast<size_t>(maxItemCount / 12.0 * 11.0);	// BucketOpen2N2
-	}
-
-	static size_t GetBucketCountShift(size_t /*bucketCount*/,
-		size_t /*bucketMaxItemCount*/) noexcept
-	{
-		return 1;
 	}
 };
 

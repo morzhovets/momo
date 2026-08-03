@@ -294,7 +294,7 @@ namespace internal
 
 template<size_t tMaxCount = 3>
 requires internal::conceptBucketOpen2N2MaxCount<tMaxCount>
-class HashBucketOpen2N2 : public internal::HashBucketBase
+class HashBucketOpen2N2 : public internal::HashBucketOpenBase
 {
 public:
 	static const size_t maxCount = tMaxCount;
@@ -306,12 +306,6 @@ public:
 	static size_t CalcCapacity(size_t bucketCount, size_t /*bucketMaxItemCount*/) noexcept
 	{
 		return static_cast<size_t>(static_cast<double>(bucketCount * maxCount) / 12.0 * 11.0);
-	}
-
-	static size_t GetBucketCountShift(size_t /*bucketCount*/,
-		size_t /*bucketMaxItemCount*/) noexcept
-	{
-		return 1;
 	}
 };
 

@@ -1099,8 +1099,10 @@ private:
 			return bucketIter;
 		}
 		size_t maxProbe = bucket->GetMaxProbe(buckets.GetLogCount());
-		for (size_t probe = 1; bucket->WasFull() && probe <= maxProbe; ++probe)
+		size_t probe = 0;
+		while (bucket->WasFull() && probe < maxProbe)
 		{
+			++probe;
 			bucketIndex = Bucket::GetNextBucketIndex(bucketIndex, hashCode, bucketCount, probe);
 			bucket = &buckets[bucketIndex];
 			bucketIter = bucket->template Find<false>(bucketParams, itemPred, prepCode);
