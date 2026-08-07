@@ -124,8 +124,8 @@ class HashBucketOpen8 : public internal::HashBucketOpenBase
 {
 public:
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = std::conditional_t<(std::endian::native != std::endian::little
-		|| useHashCodePartGetter || sizeof(typename ItemTraits::Item) > 32),	//?
+	using Bucket = std::conditional_t<
+		(std::endian::native != std::endian::little || useHashCodePartGetter),
 		internal::BucketOpen2N2<ItemTraits, 3, useHashCodePartGetter>,
 		internal::BucketOpen8<ItemTraits>>;
 
