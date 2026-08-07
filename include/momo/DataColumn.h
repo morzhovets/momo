@@ -881,7 +881,7 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, FuncRecord, MemManagerPtr> FuncRecords;
 
-	typedef internal::NestedArrayIntCap<0, uint8_t, MemManagerPtr> MutableOffsets;
+	typedef internal::NestedArrayIntCap<0, internal::BitSet::Word, MemManagerPtr> MutableOffsets;
 
 public:
 	DataColumnList()
@@ -981,7 +981,7 @@ public:
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < mTotalSize);
-		return internal::UIntMath<uint8_t>::GetBit(mMutableOffsets.GetItems(), offset);
+		return internal::BitSet::GetBit(mMutableOffsets.GetItems(), offset);
 	}
 
 	size_t GetTotalSize() const noexcept
@@ -1127,7 +1127,7 @@ private:
 		};
 		mColumnRecords.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
-		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
+		mMutableOffsets.SetCount(internal::BitSet::GetWordCount(offset));
 		for (internal::Finalizer fin(&DataColumnList::template pvRemoveColumnCodes<columnCount>,
 				*this, columnCodes);
 			fin; fin.Detach())
@@ -1192,7 +1192,7 @@ private:
 	{
 		for (ColumnCode columnCode : columnCodes)
 			mColumnCodeSet.Remove(columnCode);	// no throw
-		//mMutableOffsets.SetCount((mTotalSize + 7) / 8);
+		mMutableOffsets.SetCount(internal::BitSet::GetWordCount(mTotalSize));
 	}
 
 	template<typename... Items>
@@ -1210,7 +1210,7 @@ private:
 		size_t offset = pvGetOffset(columnCode);
 		mColumnRecords.AddBackNogrow(ColumnRecord(column, offset));
 		if (columnMutable)
-			internal::UIntMath<uint8_t>::SetBit(mMutableOffsets.GetItems(), offset);
+			internal::BitSet::SetBit(mMutableOffsets.GetItems(), offset);
 	}
 
 	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode columnCode) const noexcept
@@ -1346,7 +1346,8 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, ColumnInfo, MemManager> VisitableColumns;
 
-	typedef std::array<uint8_t, (sizeof(Struct) + 7) / 8> MutableOffsets;
+	typedef std::array<internal::BitSet::Word,
+		internal::BitSet::GetWordCount(sizeof(Struct))> MutableOffsets;
 
 	typedef typename ColumnInfo::Code ColumnCode;
 
@@ -1391,13 +1392,13 @@ public:
 
 	void ResetMutable() noexcept
 	{
-		std::ranges::fill(mMutableOffsets, uint8_t{0});
+		std::ranges::fill(mMutableOffsets, internal::BitSet::Word{});
 	}
 
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
-		return internal::UIntMath<uint8_t>::GetBit(mMutableOffsets.data(), offset);
+		return internal::BitSet::GetBit(mMutableOffsets.data(), offset);
 	}
 
 	size_t GetTotalSize() const noexcept
@@ -1502,7 +1503,7 @@ public:
 private:
 	void pvSetMutable(size_t offset) noexcept
 	{
-		internal::UIntMath<uint8_t>::SetBit(mMutableOffsets.data(), offset);
+		internal::BitSet::SetBit(mMutableOffsets.data(), offset);
 	}
 
 	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode columnCode) const noexcept

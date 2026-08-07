@@ -53,19 +53,19 @@ public:
 		TestTemplMergeTraits<uint16_t, momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilterEmpty, false>(mt);
 		TestTemplMergeTraits<uint16_t, momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilterEmpty, false>(mt);
 
-		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::hash, 1, momo::MergeBloomFilter<0>, false>(mt);
-		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessNothrow, 2, momo::MergeBloomFilter<1>, false>(mt);
-		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessThrow, 1, momo::MergeBloomFilter<2>, false>(mt);
-		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilter<>, false>(mt);
-		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilter<>, false>(mt);
-		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilter<>, false>(mt);
+		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::hash, 1, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessNothrow, 2, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessThrow, 1, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilterEmpty, false>(mt);
+		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilterEmpty, false>(mt);
 
 		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilterEmpty, true>(mt);
 		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilterEmpty, true>(mt);
 		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilterEmpty, true>(mt);
-		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilter<>, true>(mt);
-		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilter<>, true>(mt);
-		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilter<>, true>(mt);
+		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::hash, 3, momo::MergeBloomFilterEmpty, true>(mt);
+		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessNothrow, 3, momo::MergeBloomFilterEmpty, true>(mt);
+		TestTemplMergeTraits<size_t, momo::MergeTraitsFunc::lessThrow, 3, momo::MergeBloomFilterEmpty, true>(mt);
 	}
 
 	template<typename Key, momo::MergeTraitsFunc mergeTraitsFunc, size_t logInitialItemCount,

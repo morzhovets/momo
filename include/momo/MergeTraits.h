@@ -10,7 +10,6 @@
 
   namespace momo:
     concept conceptMergeBloomFilter
-    class MergeBloomFilter
     class MergeBloomFilterEmpty
     enum class MergeTraitsFunc
     concept conceptMergeTraits
@@ -36,7 +35,7 @@ concept conceptMergeBloomFilter =
 	{
 		typename std::bool_constant<MergeBloomFilter::isAlwaysEmpty>;
 	};
-
+/*
 template<size_t tLogMult = 3>
 class MergeBloomFilter
 {
@@ -137,7 +136,7 @@ private:
 private:
 	uint8_t* mData;
 };
-
+*/
 class MergeBloomFilterEmpty
 {
 public:

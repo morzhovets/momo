@@ -263,23 +263,6 @@ namespace internal
 			return std::next(iter, static_cast<ptrdiff_t>(dist));
 		}
 
-		static bool GetBit(const UInt* data, size_t bitIndex)
-		{
-			static const size_t bitSize = sizeof(UInt) * 8;
-			return (data[bitIndex / bitSize] & (UInt{1} << static_cast<UInt>(bitIndex % bitSize))) != 0;
-		}
-
-		static void SetBit(UInt* data, size_t bitIndex, bool bit = true)
-		{
-			static const size_t bitSize = sizeof(UInt) * 8;
-			UInt& value = data[bitIndex / bitSize];
-			UInt mask = UInt{1} << static_cast<UInt>(bitIndex % bitSize);
-			if (bit)
-				value |= mask;
-			else
-				value &= ~mask;
-		}
-
 		template<UInt mod>
 		static DivResult DivByConst(UInt value) noexcept
 		{
@@ -303,6 +286,36 @@ namespace internal
 			result.quotient = value / mod;
 			result.remainder = value % mod;
 			return result;
+		}
+	};
+
+	class BitSet
+	{
+	public:
+		typedef size_t Word;
+
+	private:
+		static const size_t wordBitSize = sizeof(Word) * 8;
+
+	public:
+		static constexpr size_t GetWordCount(size_t bitCount) noexcept
+		{
+			return UIntMath<Word>::Ceil(bitCount, wordBitSize);
+		}
+
+		static bool GetBit(const Word* words, size_t bitIndex) noexcept
+		{
+			return (words[bitIndex / wordBitSize] & (Word{1} << (bitIndex % wordBitSize))) != 0;
+		}
+
+		static void SetBit(Word* words, size_t bitIndex) noexcept
+		{
+			words[bitIndex / wordBitSize] |= Word{1} << (bitIndex % wordBitSize);
+		}
+
+		static void ResetBit(Word* words, size_t bitIndex) noexcept
+		{
+			words[bitIndex / wordBitSize] &= ~(Word{1} << (bitIndex % wordBitSize));
 		}
 	};
 

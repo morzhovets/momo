@@ -236,18 +236,17 @@ namespace internal
 		void DeleteBlocks(Byte* chunk, FastCopyableFunctor<BlockFilter> blockFilter) const
 		{
 			int8_t firstBlockIndex = pvGetFirstBlockIndex(chunk);
-			uint8_t freeBlockBits[16] = {};
+			BitSet::Word freeBlockBits[BitSet::GetWordCount(127)] = {};
 			ChunkBytes bytes = pvGetChunkBytes(pvGetChunkBytesPosition(chunk));
 			int8_t freeBlockIndex = bytes.firstFreeBlockIndex;
 			for (int8_t i = 0; i < bytes.freeBlockCount; ++i)
 			{
-				UIntMath<uint8_t>::SetBit(freeBlockBits,
-					static_cast<size_t>(freeBlockIndex - firstBlockIndex));
+				BitSet::SetBit(freeBlockBits, static_cast<size_t>(freeBlockIndex - firstBlockIndex));
 				freeBlockIndex = pvGetNextFreeBlockIndex(pvGetBlock(chunk, freeBlockIndex));
 			}
 			for (size_t i = 0; i < Params::GetBlockCount(); ++i)
 			{
-				if (UIntMath<uint8_t>::GetBit(freeBlockBits, i))
+				if (BitSet::GetBit(freeBlockBits, i))
 					continue;
 				int8_t blockIndex = firstBlockIndex + static_cast<int8_t>(i);
 				Byte* block = pvGetBlock(chunk, blockIndex);
