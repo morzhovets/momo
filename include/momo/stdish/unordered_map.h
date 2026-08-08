@@ -307,14 +307,14 @@ public:
 
 	float max_load_factor() const noexcept
 	{
-		return mHashMap.GetHashTraits().GetMaxLoadFactor(HashMap::bucketMaxItemCount);
+		return mHashMap.GetHashTraits().GetMaxLoadFactor(max_bucket_size());
 	}
 
 	void max_load_factor(float maxLoadFactor)
 	{
 		if (maxLoadFactor == max_load_factor())
 			return;
-		if (maxLoadFactor <= 0.0 || maxLoadFactor > static_cast<float>(HashMap::bucketMaxItemCount))
+		if (maxLoadFactor <= 0.0 || maxLoadFactor > static_cast<float>(max_bucket_size()))
 			MOMO_THROW(std::out_of_range("invalid load factor"));
 		HashTraits hashTraits(mHashMap.GetHashTraits(), maxLoadFactor);
 		HashMap hashMap(hashTraits, MemManager(get_allocator()));
@@ -362,7 +362,7 @@ public:
 	{
 		bucketCount = momo::internal::UIntMath<>::Max(bucketCount, 2);
 		bucketCount = std::bit_ceil(bucketCount);
-		reserve(mHashMap.GetHashTraits().CalcCapacity(bucketCount, HashMap::bucketMaxItemCount));
+		reserve(mHashMap.GetHashTraits().CalcCapacity(bucketCount, max_bucket_size()));
 	}
 
 	void reserve(size_type count)
@@ -721,6 +721,12 @@ public:
 	void merge(Map&& map)
 	{
 		mHashMap.MergeFrom(map.get_nested_container());
+	}
+
+	// Non-standard method
+	static constexpr size_type max_bucket_size() noexcept
+	{
+		return HashMap::bucketMaxItemCount;
 	}
 
 	size_type max_bucket_count() const noexcept
