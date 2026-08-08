@@ -37,8 +37,6 @@ namespace internal
 	public:
 		static const size_t maxCount = 1;
 
-		static const bool isNothrowAddableIfNothrowCreatable = true;
-
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

@@ -103,8 +103,6 @@ namespace internal
 	class BucketBase
 	{
 	public:
-		static const bool isNothrowAddableIfNothrowCreatable = false;
-
 		struct PreparedCode
 		{
 		};
