@@ -94,7 +94,7 @@ namespace internal
 			return Bounds(Iterator(mItems.GetPtr() + maxCount), pvGetCount());
 		}
 
-		static PreparedCode PrepareFind(size_t hashCode) noexcept
+		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode) noexcept
 		{
 			return pvCalcShortCode(hashCode);
 		}
