@@ -154,6 +154,10 @@
 //# define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
 //#endif
 
+#ifdef __cpp_lib_hardware_interference_size
+# define MOMO_CACHE_LINE_SIZE std::hardware_destructive_interference_size
+#endif
+
 #define MOMO_ALIGNED_STORAGE(size, alignment) alignas(alignment) std::array<unsigned char, size>
 #if defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE))
 # undef MOMO_ALIGNED_STORAGE	// C2719

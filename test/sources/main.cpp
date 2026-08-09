@@ -136,6 +136,18 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "MOMO_PREFETCH: ";
+#ifdef MOMO_PREFETCH
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
+	std::cout << "MOMO_CACHE_LINE_SIZE: ";
+#ifdef MOMO_CACHE_LINE_SIZE
+	std::cout << MOMO_CACHE_LINE_SIZE;
+#endif
+	std::cout << std::endl;
+
 	std::cout << "MOMO_CONSTEXPR_VERSION: " << MOMO_CONSTEXPR_VERSION << std::endl;
 
 	std::cout << "MOMO_HAS_DEDUCTION_GUIDES: ";

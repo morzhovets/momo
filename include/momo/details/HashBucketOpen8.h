@@ -60,9 +60,9 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			const ItemPredicate& itemPred, size_t hashCode)
 		{
-#ifdef MOMO_PREFETCH
-			if MOMO_CONSTEXPR_IF (first)
-				MOMO_PREFETCH(BucketOpenN1::ptGetItemPtr(3));
+#if defined(MOMO_PREFETCH) && defined(MOMO_CACHE_LINE_SIZE)
+			if MOMO_CONSTEXPR_IF (first && 8 + 5 * sizeof(Item) >= MOMO_CACHE_LINE_SIZE)
+				MOMO_PREFETCH(PtrCaster::ToBytePtr(this) + MOMO_CACHE_LINE_SIZE);
 #endif
 			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
 #ifdef MOMO_USE_SSE2
@@ -127,9 +127,8 @@ class HashBucketOpen8 : public internal::HashBucketBase
 {
 public:
 	template<typename ItemTraits, bool useHashCodePartGetter>
-	using Bucket = typename std::conditional<
-		(useHashCodePartGetter || sizeof(typename ItemTraits::Item) > 32),	//?
-		internal::BucketOpen2N2<ItemTraits, 3, useHashCodePartGetter>,
+	using Bucket = typename std::conditional<useHashCodePartGetter,
+		internal::BucketOpen2N2<ItemTraits, 3, true>,
 		internal::BucketOpen8<ItemTraits>>::type;
 
 public:

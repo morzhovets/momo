@@ -93,6 +93,10 @@
 
 #undef MOMO_USE_SSE2
 
+#if defined(TEST_GCC) || defined(TEST_CLANG)
+# define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
+#endif
+
 #undef MOMO_ASSERT
 #define MOMO_ASSERT(expr) void()
 
