@@ -273,17 +273,7 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			const ItemPredicate& itemPred, size_t hashCode)
 		{
-			uint8_t shortCode = pvCalcShortCode(hashCode);
-			for (size_t i = 0; i < maxCount; ++i)
-			{
-				if (mShortCodes[i] == shortCode)
-				{
-					Item* items = mPtrState.GetPtr();
-					if (itemPred(items[i]))
-						return items + i;
-				}
-			}
-			return nullptr;
+			return pvFind(itemPred, hashCode);
 		}
 
 		bool IsFull() const noexcept
@@ -429,6 +419,22 @@ namespace internal
 		{
 			std::fill_n(mShortCodes, codeCount, uint8_t{emptyCodeProbe});
 			pvSetPtrState(nullptr, memPoolIndex);
+		}
+
+		template<typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, size_t hashCode)
+		{
+			uint8_t shortCode = pvCalcShortCode(hashCode);
+			for (size_t i = 0; i < maxCount; ++i)
+			{
+				if (mShortCodes[i] == shortCode)
+				{
+					Item* items = mPtrState.GetPtr();
+					if (itemPred(items[i]))
+						return items + i;
+				}
+			}
+			return nullptr;
 		}
 
 		void pvSetPtrState(Item* items, size_t memPoolIndex) noexcept

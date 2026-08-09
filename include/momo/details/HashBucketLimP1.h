@@ -126,14 +126,7 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			const ItemPredicate& itemPred, size_t /*hashCode*/)
 		{
-			size_t count = pvGetCount();
-			Item* items = pvGetItems();
-			for (size_t i = 0; i < count; ++i)
-			{
-				if (itemPred(items[i]))
-					return items + i;
-			}
-			return nullptr;
+			return pvFind(itemPred);
 		}
 
 		bool IsFull() const noexcept
@@ -254,6 +247,19 @@ namespace internal
 		Item* pvGetItems() const noexcept
 		{
 			return MemCopyer::template FromBuffer<Item*>(mItemPtrBuffer);
+		}
+
+		template<typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred)
+		{
+			size_t count = pvGetCount();
+			Item* items = pvGetItems();
+			for (size_t i = 0; i < count; ++i)
+			{
+				if (itemPred(items[i]))
+					return items + i;
+			}
+			return nullptr;
 		}
 
 	private:

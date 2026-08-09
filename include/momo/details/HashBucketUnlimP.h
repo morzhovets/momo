@@ -93,19 +93,14 @@ namespace internal
 
 		Bounds GetBounds(Params& /*params*/) noexcept
 		{
-			return mArrayBucket.GetBounds();
+			return pvGetBounds();
 		}
 
 		template<bool first, typename ItemPredicate>
-		MOMO_FORCEINLINE Iterator Find(Params& params,
+		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			const ItemPredicate& itemPred, size_t /*hashCode*/)
 		{
-			for (Item& item : GetBounds(params))
-			{
-				if (itemPred(item))
-					return std::addressof(item);
-			}
-			return nullptr;
+			return pvFind(itemPred);
 		}
 
 		bool IsFull() const noexcept
@@ -153,6 +148,23 @@ namespace internal
 		{
 			MOMO_ASSERT(false);
 			return bucketIndex;
+		}
+
+	private:
+		Bounds pvGetBounds() noexcept
+		{
+			return mArrayBucket.GetBounds();
+		}
+
+		template<typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred)
+		{
+			for (Item& item : pvGetBounds())
+			{
+				if (itemPred(item))
+					return std::addressof(item);
+			}
+			return nullptr;
 		}
 
 	private:

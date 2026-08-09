@@ -75,10 +75,7 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			const ItemPredicate& itemPred, size_t hashCode)
 		{
-			if (mHashState != pvGetHashState(hashCode))
-				return nullptr;
-			Item* itemPtr = pvGetItemPtr();
-			return itemPred(*itemPtr) ? itemPtr : nullptr;
+			return pvFind(itemPred, hashCode);
 		}
 
 		bool IsFull() const noexcept
@@ -132,6 +129,15 @@ namespace internal
 		}
 
 	private:
+		template<typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, size_t hashCode)
+		{
+			if (mHashState != pvGetHashState(hashCode))
+				return nullptr;
+			Item* itemPtr = pvGetItemPtr();
+			return itemPred(*itemPtr) ? itemPtr : nullptr;
+		}
+
 		template<size_t stateSize = sizeof(HashState)>
 		static EnableIf<(stateSize < sizeof(size_t)),
 		HashState> pvGetHashState(size_t hashCode) noexcept

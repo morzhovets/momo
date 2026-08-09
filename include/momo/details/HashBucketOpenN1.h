@@ -74,18 +74,7 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			const ItemPredicate& itemPred, size_t hashCode)
 		{
-			uint8_t shortCode = ptCalcShortCode(hashCode);
-			const uint8_t* thisShortCodes = pvGetShortCodes();
-			for (size_t i = 0; i < maxCount; ++i)
-			{
-				if (thisShortCodes[i] == shortCode)
-				{
-					Item* items = mItems.GetPtr();
-					if (itemPred(items[i]))
-						return pvMakeIterator(items + i);
-				}
-			}
-			return Iterator();
+			return pvFind(itemPred, hashCode);
 		}
 
 		bool IsFull() const noexcept
@@ -171,6 +160,29 @@ namespace internal
 		}
 
 	private:
+		void pvSetEmpty() noexcept
+		{
+			std::fill_n(pvGetShortCodes(), maxCount, uint8_t{emptyShortCode});
+			pvGetMaxProbeExp() = uint8_t{0};
+		}
+
+		template<typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, size_t hashCode)
+		{
+			uint8_t shortCode = ptCalcShortCode(hashCode);
+			const uint8_t* thisShortCodes = pvGetShortCodes();
+			for (size_t i = 0; i < maxCount; ++i)
+			{
+				if (thisShortCodes[i] == shortCode)
+				{
+					Item* items = mItems.GetPtr();
+					if (itemPred(items[i]))
+						return pvMakeIterator(items + i);
+				}
+			}
+			return Iterator();
+		}
+
 		uint8_t pvGetState() const noexcept
 		{
 			return mData[reverse ? 0 : maxCount - 1];
@@ -210,12 +222,6 @@ namespace internal
 		{
 			uint8_t state = pvGetState();
 			return (state >= emptyShortCode) ? size_t{state} - size_t{emptyShortCode} : maxCount;
-		}
-
-		void pvSetEmpty() noexcept
-		{
-			std::fill_n(pvGetShortCodes(), maxCount, uint8_t{emptyShortCode});
-			pvGetMaxProbeExp() = uint8_t{0};
 		}
 
 		static size_t pvGetMaxProbe(uint8_t maxProbeExp) noexcept

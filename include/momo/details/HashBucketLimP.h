@@ -130,16 +130,7 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			const ItemPredicate& itemPred, size_t /*hashCode*/)
 		{
-			if (pvIsEmpty())
-				return nullptr;
-			size_t count = pvGetCount();
-			Item* items = pvGetItems();
-			for (size_t i = 0; i < count; ++i)
-			{
-				if (itemPred(items[i]))
-					return items + i;
-			}
-			return nullptr;
+			return pvFind(itemPred);
 		}
 
 		bool IsFull() const noexcept
@@ -239,6 +230,21 @@ namespace internal
 		bool pvIsEmpty() const noexcept
 		{
 			return mPtr == ptrNull || mPtr == ptrNullWasFull;
+		}
+
+		template<typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred)
+		{
+			if (pvIsEmpty())
+				return nullptr;
+			size_t count = pvGetCount();
+			Item* items = pvGetItems();
+			for (size_t i = 0; i < count; ++i)
+			{
+				if (itemPred(items[i]))
+					return items + i;
+			}
+			return nullptr;
 		}
 
 		Byte* pvGetPtr() const noexcept
@@ -410,14 +416,7 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			const ItemPredicate& itemPred, size_t /*hashCode*/)
 		{
-			if (pvIsEmpty())
-				return nullptr;
-			for (Item& item : pvGetBounds())
-			{
-				if (itemPred(item))
-					return std::addressof(item);
-			}
-			return nullptr;
+			return pvFind(itemPred);
 		}
 
 		bool IsFull() const noexcept
@@ -521,6 +520,19 @@ namespace internal
 		bool pvIsEmpty() const noexcept
 		{
 			return mPtrState == stateNull || mPtrState == stateNullWasFull;
+		}
+
+		template<typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred)
+		{
+			if (pvIsEmpty())
+				return nullptr;
+			for (Item& item : pvGetBounds())
+			{
+				if (itemPred(item))
+					return std::addressof(item);
+			}
+			return nullptr;
 		}
 
 		void pvSet(Item* items, size_t memPoolIndex, size_t count) noexcept

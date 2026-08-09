@@ -140,12 +140,7 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& params,
 			const ItemPredicate& itemPred, size_t /*hashCode*/)
 		{
-			for (Item& item : GetBounds(params))
-			{
-				if (itemPred(item))
-					return std::addressof(item);
-			}
-			return nullptr;
+			return pvFind(params, itemPred);
 		}
 
 		bool IsFull() const noexcept
@@ -277,6 +272,17 @@ namespace internal
 			data.pointer = divRes.quotient;
 			data.count = size_t{divRes.remainder} + 1;
 			return data;
+		}
+
+		template<typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(Params& params, const ItemPredicate& itemPred)
+		{
+			for (Item& item : GetBounds(params))
+			{
+				if (itemPred(item))
+					return std::addressof(item);
+			}
+			return nullptr;
 		}
 
 	private:

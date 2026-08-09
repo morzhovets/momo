@@ -64,6 +64,19 @@ namespace internal
 			if MOMO_CONSTEXPR_IF (first && 8 + 5 * sizeof(Item) >= MOMO_CACHE_LINE_SIZE)
 				MOMO_PREFETCH(PtrCaster::ToBytePtr(this) + MOMO_CACHE_LINE_SIZE);
 #endif
+			return pvFind(itemPred, hashCode);
+		}
+
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
+			size_t bucketCount, size_t probe) noexcept
+		{
+			return (bucketIndex + probe) & (bucketCount - 1);	// quadratic probing
+		}
+
+	private:
+		template<typename ItemPredicate>
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, size_t hashCode)
+		{
 			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
 #ifdef MOMO_USE_SSE2
 			__m128i shortCodes = _mm_set1_epi8(static_cast<char>(shortCode));
@@ -93,13 +106,6 @@ namespace internal
 			return nullptr;
 		}
 
-		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t probe) noexcept
-		{
-			return (bucketIndex + probe) & (bucketCount - 1);	// quadratic probing
-		}
-
-	private:
 		static size_t pvCountTrailingZeros15(uint32_t mask) noexcept
 		{
 			MOMO_ASSERT(0 < mask && mask < 128);
