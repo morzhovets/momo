@@ -143,11 +143,10 @@
 #endif
 
 #if defined(__cpp_lib_bitops)
-# define MOMO_CTZ32(value) std::countr_zero(value)
-# define MOMO_CTZ64(value) std::countr_zero(value)
+# define MOMO_CTZ(value) std::countr_zero(value)
 #elif defined(__GNUC__) || defined(__clang__)
-# define MOMO_CTZ32(value) __builtin_ctz(value)
-# define MOMO_CTZ64(value) __builtin_ctzll(value)
+# define MOMO_CTZ(value) \
+	((sizeof(value) <= 4) ? __builtin_ctz(static_cast<uint32_t>(value)) : __builtin_ctzll(value))
 #endif
 
 //#if defined(__GNUC__) || defined(__clang__)

@@ -26,7 +26,7 @@
 namespace momo
 {
 
-#if defined(MOMO_USE_SSE2) || (defined(MOMO_LITTLE_ENDIAN) && defined(MOMO_CTZ64))
+#if defined(MOMO_USE_SSE2) || (defined(MOMO_LITTLE_ENDIAN) && defined(MOMO_CTZ))
 
 namespace internal
 {
@@ -84,7 +84,7 @@ namespace internal
 			uint64_t mask = (xorCodes - 0x0101010101010101ull) & ~xorCodes & 0x0080808080808080ull;
 			for (; mask != 0; mask &= mask - 1)
 			{
-				size_t index = static_cast<size_t>(MOMO_CTZ64(mask)) >> 3;
+				size_t index = static_cast<size_t>(MOMO_CTZ(mask)) >> 3;
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
 				if (itemPred(*itemPtr))
 					return itemPtr;
@@ -103,8 +103,8 @@ namespace internal
 		static size_t pvCountTrailingZeros15(uint32_t mask) noexcept
 		{
 			MOMO_ASSERT(0 < mask && mask < 128);
-#ifdef MOMO_CTZ32
-			return static_cast<size_t>(MOMO_CTZ32(mask));
+#ifdef MOMO_CTZ
+			return static_cast<size_t>(MOMO_CTZ(mask));
 #else
 			static const uint8_t tab[127] =
 			{
@@ -148,11 +148,11 @@ public:
 	}
 };
 
-#else // defined(MOMO_USE_SSE2) || (defined(MOMO_LITTLE_ENDIAN) && defined(MOMO_CTZ64))
+#else // defined(MOMO_USE_SSE2) || (defined(MOMO_LITTLE_ENDIAN) && defined(MOMO_CTZ))
 
 typedef HashBucketOpen2N2<3> HashBucketOpen8;
 
-#endif // defined(MOMO_USE_SSE2) || (defined(MOMO_LITTLE_ENDIAN) && defined(MOMO_CTZ64))
+#endif // defined(MOMO_USE_SSE2) || (defined(MOMO_LITTLE_ENDIAN) && defined(MOMO_CTZ))
 
 } // namespace momo
 

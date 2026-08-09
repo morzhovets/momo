@@ -130,8 +130,8 @@ int main()
 #endif
 	std::cout << std::endl;
 
-	std::cout << "MOMO_CTZ64: ";
-#ifdef MOMO_CTZ64
+	std::cout << "MOMO_CTZ: ";
+#ifdef MOMO_CTZ
 	std::cout << "defined";
 #endif
 	std::cout << std::endl;
