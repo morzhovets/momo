@@ -112,6 +112,12 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "MOMO_PREFETCH: ";
+#ifdef MOMO_PREFETCH
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
+
 	std::cout << "MOMO_CATCH_ALL: ";
 #ifdef MOMO_CATCH_ALL
 	std::cout << "defined";
