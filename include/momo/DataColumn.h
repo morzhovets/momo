@@ -904,7 +904,7 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, FuncRecord, MemManagerPtr> FuncRecords;
 
-	typedef internal::NestedArrayIntCap<0, uint8_t, MemManagerPtr> MutableOffsets;
+	typedef internal::NestedArrayIntCap<0, internal::BitMath::Word, MemManagerPtr> MutableOffsets;
 
 public:
 	typedef typename Columns::ConstIterator ConstIterator;
@@ -1009,7 +1009,7 @@ public:
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < mTotalSize);
-		return internal::UIntMath<uint8_t>::GetBit(mMutableOffsets.GetItems(), offset);
+		return internal::BitMath::GetBit(mMutableOffsets.GetItems(), offset);
 	}
 
 	size_t GetTotalSize() const noexcept
@@ -1143,7 +1143,7 @@ private:
 			{ pvDestroy<void, Items...>(memManager, columns, raw); };
 		mColumns.Reserve(initColumnCount + columnCount);
 		mFuncRecords.Reserve(mFuncRecords.GetCount() + 1);
-		mMutableOffsets.SetCount((offset + 7) / 8, uint8_t{0});
+		mMutableOffsets.SetCount(internal::BitMath::GetWordCount(offset));
 		auto fin = internal::Catcher::Finalize(&DataColumnList::template pvRemoveColumnCodes<columnCount>,
 			*this, columnCodes);
 		mColumnCodeSet.Insert(columnCodes.begin(), columnCodes.end());
@@ -1212,7 +1212,7 @@ private:
 	{
 		for (ColumnCode columnCode : columnCodes)
 			mColumnCodeSet.Remove(columnCode);	// no throw
-		//mMutableOffsets.SetCount((mTotalSize + 7) / 8);
+		mMutableOffsets.SetCount(internal::BitMath::GetWordCount(mTotalSize));
 	}
 
 	template<typename Item, typename... Items>
@@ -1222,7 +1222,7 @@ private:
 		size_t offset = pvGetOffset(*columnCodes);
 		mColumns.AddBackNogrow(ColumnRecord(column, offset));
 		if (*columnMutables)
-			internal::UIntMath<uint8_t>::SetBit(mMutableOffsets.GetItems(), offset);
+			internal::BitMath::SetBit(mMutableOffsets.GetItems(), offset);
 		pvAddColumns(columnCodes + 1, columnMutables + 1, columns...);
 	}
 
@@ -1370,7 +1370,8 @@ private:
 
 	typedef internal::NestedArrayIntCap<0, ColumnInfo, MemManager> Columns;
 
-	typedef std::array<uint8_t, (sizeof(Struct) + 7) / 8> MutableOffsets;
+	typedef std::array<internal::BitMath::Word,
+		internal::BitMath::GetWordCount(sizeof(Struct))> MutableOffsets;
 
 	typedef typename ColumnInfo::Code ColumnCode;
 	MOMO_STATIC_ASSERT(std::is_same<DataColumnCodeOffset, ColumnCode>::value);
@@ -1416,13 +1417,13 @@ public:
 
 	void ResetMutable() noexcept
 	{
-		std::fill(mMutableOffsets.begin(), mMutableOffsets.end(), uint8_t{0});
+		std::fill(mMutableOffsets.begin(), mMutableOffsets.end(), internal::BitMath::Word{});
 	}
 
 	bool IsMutable(size_t offset) const noexcept
 	{
 		MOMO_ASSERT(offset < sizeof(Struct));
-		return internal::UIntMath<uint8_t>::GetBit(mMutableOffsets.data(), offset);
+		return internal::BitMath::GetBit(mMutableOffsets.data(), offset);
 	}
 
 	size_t GetTotalSize() const noexcept
@@ -1521,7 +1522,7 @@ private:
 	template<typename Item, typename... Items>
 	void pvSetMutable(const Column<Item>& column, const Column<Items>&... columns)
 	{
-		internal::UIntMath<uint8_t>::SetBit(mMutableOffsets.data(), GetOffset(column));
+		internal::BitMath::SetBit(mMutableOffsets.data(), GetOffset(column));
 		pvSetMutable(columns...);
 	}
 

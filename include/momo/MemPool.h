@@ -703,18 +703,18 @@ private:
 	void pvDeleteBlocks(Byte* chunk, const BlockFilter& blockFilter)
 	{
 		int8_t firstBlockIndex = pvGetFirstBlockIndex(chunk);
-		uint8_t freeBlockBits[16] = {};
+		internal::BitMath::Word freeBlockBits[internal::BitMath::GetWordCount(127)] = {};
 		ChunkBytes bytes = pvGetChunkBytes(pvGetChunkBytesPosition(chunk));
 		int8_t freeBlockIndex = bytes.firstFreeBlockIndex;
 		for (int8_t i = 0; i < bytes.freeBlockCount; ++i)
 		{
-			internal::UIntMath<uint8_t>::SetBit(freeBlockBits,
+			internal::BitMath::SetBit(freeBlockBits,
 				static_cast<size_t>(freeBlockIndex - firstBlockIndex));
 			freeBlockIndex = pvGetNextFreeBlockIndex(pvGetBlock(chunk, freeBlockIndex));
 		}
 		for (size_t i = 0; i < Params::blockCount; ++i)
 		{
-			if (internal::UIntMath<uint8_t>::GetBit(freeBlockBits, i))
+			if (internal::BitMath::GetBit(freeBlockBits, i))
 				continue;
 			int8_t blockIndex = firstBlockIndex + static_cast<int8_t>(i);
 			Byte* block = pvGetBlock(chunk, blockIndex);
