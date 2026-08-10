@@ -114,11 +114,10 @@
 #define MOMO_DEFAULT_MEM_MANAGER MemManagerC
 #define MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD
 
-// Inlining
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__clang__)
 # define MOMO_FORCEINLINE __forceinline
 # define MOMO_NOINLINE __declspec(noinline)
-#elif defined(__GNUC__) || defined(__clang__)
+#elif (defined(__GNUC__) || defined(__clang__)) && !defined(__NO_INLINE__)
 # define MOMO_FORCEINLINE inline __attribute__((__always_inline__))
 # define MOMO_NOINLINE __attribute__((__noinline__))
 #else
