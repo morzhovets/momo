@@ -34,7 +34,7 @@ namespace internal
 	struct MergeSetSegment
 	{
 		Item* items;
-		BitSet::Word* itemFlags;
+		BitMath::Word* itemFlags;
 		size_t capacity;
 		size_t count;
 		bool isLast;
@@ -184,7 +184,7 @@ namespace internal
 				{
 					Item* segEnd = mSegment->items + mSegment->capacity;
 					while (mItemPtr != segEnd
-						&& BitSet::GetBit(mSegment->itemFlags, UIntMath<>::Dist(mSegment->items, mItemPtr)))
+						&& BitMath::GetBit(mSegment->itemFlags, UIntMath<>::Dist(mSegment->items, mItemPtr)))
 					{
 						++mItemPtr;
 					}
@@ -321,7 +321,7 @@ private:
 
 	typedef internal::UIntMath<> SMath;
 
-	typedef internal::BitSet::Word BitSetWord;
+	typedef internal::BitMath::Word BitSetWord;
 
 	static const size_t hashCodeSize = SMath::Min(sizeof(size_t), sizeof(Item));
 
@@ -665,7 +665,7 @@ private:
 
 	BitSetWord* pvAllocateSegmentFlags(size_t capacity)
 	{
-		size_t wordCount = internal::BitSet::GetWordCount(capacity);
+		size_t wordCount = internal::BitMath::GetWordCount(capacity);
 		BitSetWord* segItemFlags = MemManagerProxy::template Allocate<BitSetWord>(GetMemManager(),
 			wordCount * sizeof(BitSetWord));
 		std::ranges::fill_n(segItemFlags, static_cast<ptrdiff_t>(wordCount), BitSetWord{});
@@ -675,7 +675,7 @@ private:
 	void pvDeallocateSegmentFlags(BitSetWord* segItemFlags, size_t capacity) noexcept
 	{
 		MemManagerProxy::Deallocate(GetMemManager(), segItemFlags,
-			internal::BitSet::GetWordCount(capacity) * sizeof(BitSetWord));
+			internal::BitMath::GetWordCount(capacity) * sizeof(BitSetWord));
 	}
 
 	void pvDeallocateSegment(Segment& segment) noexcept
@@ -701,7 +701,7 @@ private:
 			{
 				for (size_t i = 0; i < segment.capacity; ++i)
 				{
-					if (internal::BitSet::GetBit(segment.itemFlags, i))
+					if (internal::BitMath::GetBit(segment.itemFlags, i))
 						continue;
 					ItemTraits::Destroy(&memManager, segment.items[i]);
 				}
@@ -776,7 +776,7 @@ private:
 					{
 						size_t segItemIndex = SMath::Dist(segItems,
 							internal::PtrCaster::FromBytePtr<Item>(&byteItem));
-						if (internal::BitSet::GetBit(segItemFlags, segItemIndex))
+						if (internal::BitMath::GetBit(segItemFlags, segItemIndex))
 						{
 							size_t hashCode = 0;
 							internal::MemCopyer::CopyBuffer<hashCodeSize>(
@@ -796,7 +796,7 @@ private:
 						{
 							size_t segItemIndex = SMath::Dist(segItems,
 								internal::PtrCaster::FromBytePtr<Item>(&item1));
-							if (internal::BitSet::GetBit(segItemFlags, segItemIndex))
+							if (internal::BitMath::GetBit(segItemFlags, segItemIndex))
 								return false;
 						}
 						return mergeTraits.IsEqual(
@@ -835,7 +835,7 @@ private:
 			{
 				for (size_t i = 0; i < segment0.capacity; ++i)
 				{
-					if (!internal::BitSet::GetBit(segItemFlags, i) && itemPred(segItems[i]))
+					if (!internal::BitMath::GetBit(segItemFlags, i) && itemPred(segItems[i]))
 						return pvMakePosition(segment0, segItems + i);
 				}
 			}
@@ -896,13 +896,13 @@ private:
 			if (MergeTraits::func == MergeTraitsFunc::hash && segItemFlags != nullptr)
 			{
 				segItemIndex = 0;
-				while (!internal::BitSet::GetBit(segItemFlags, segItemIndex))
+				while (!internal::BitMath::GetBit(segItemFlags, segItemIndex))
 					++segItemIndex;
 			}
 			std::move(itemCreator)(segment0.items + segItemIndex);
 			++segment0.count;
 			if (MergeTraits::func == MergeTraitsFunc::hash && segItemFlags != nullptr)
-				internal::BitSet::ResetBit(segItemFlags, segItemIndex);
+				internal::BitMath::ResetBit(segItemFlags, segItemIndex);
 			return segment0.items + segItemIndex;
 		}
 		else
@@ -1074,7 +1074,7 @@ private:
 			}
 			else
 			{
-				while (srcIndex1 < srcCapacity1 && internal::BitSet::GetBit(srcItemFlags1, srcIndex1))
+				while (srcIndex1 < srcCapacity1 && internal::BitMath::GetBit(srcItemFlags1, srcIndex1))
 					++srcIndex1;
 				if (srcIndex1 >= srcCapacity1)
 					break;
@@ -1168,13 +1168,13 @@ private:
 			segment.itemFlags = pvAllocateSegmentFlags(segCapacity);
 			MOMO_ASSERT(segment.count == segCapacity || isLastSeg);
 			for (size_t i = segment.count; i < segCapacity; ++i)
-				internal::BitSet::SetBit(segment.itemFlags, i);
+				internal::BitMath::SetBit(segment.itemFlags, i);
 		}
 		std::move(itemRemover)(*itemPtr);
 		--segment.count;
 		if (useFlags)
 		{
-			internal::BitSet::SetBit(segment.itemFlags, SMath::Dist(segment.items, itemPtr));
+			internal::BitMath::SetBit(segment.itemFlags, SMath::Dist(segment.items, itemPtr));
 			if (!isLastSeg)
 				internal::MemCopyer::CopyBuffer<hashCodeSize>(pvGetHashCodePtr(&hashCode), itemPtr);
 		}

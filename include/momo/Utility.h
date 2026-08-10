@@ -289,7 +289,7 @@ namespace internal
 		}
 	};
 
-	class BitSet
+	class BitMath
 	{
 	public:
 		typedef size_t Word;
