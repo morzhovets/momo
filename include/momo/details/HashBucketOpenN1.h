@@ -44,6 +44,8 @@ namespace internal
 			std::reverse_iterator<Item*>, Item*>::type Iterator;
 		typedef ArrayBounds<Iterator> Bounds;
 
+		typedef uint8_t PreparedCode;
+
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
@@ -70,11 +72,16 @@ namespace internal
 			return Bounds(pvMakeIterator(ptGetItemPtr(0)), pvGetCount());
 		}
 
+		static PreparedCode PrepareFind(size_t hashCode) noexcept
+		{
+			return ptCalcShortCode(hashCode);
+		}
+
 		template<bool first, typename ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			const ItemPredicate& itemPred, size_t hashCode)
+			const ItemPredicate& itemPred, PreparedCode prepCode)
 		{
-			return pvFind(itemPred, hashCode);
+			return pvFind(itemPred, prepCode);
 		}
 
 		bool IsFull() const noexcept
@@ -167,13 +174,12 @@ namespace internal
 		}
 
 		template<typename ItemPredicate>
-		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, size_t hashCode)
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, PreparedCode prepCode)
 		{
-			uint8_t shortCode = ptCalcShortCode(hashCode);
-			const uint8_t* thisShortCodes = pvGetShortCodes();
+			const uint8_t* shortCodes = pvGetShortCodes();
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (thisShortCodes[i] == shortCode)
+				if (shortCodes[i] == prepCode)
 				{
 					Item* items = mItems.GetPtr();
 					if (itemPred(items[i]))

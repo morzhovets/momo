@@ -52,6 +52,9 @@ namespace internal
 			? availableStateSize : minStateSize>::UInt HashState;
 
 	public:
+		typedef HashState PreparedCode;
+
+	public:
 		explicit BucketOne() noexcept
 			: mHashState(0)
 		{
@@ -71,11 +74,16 @@ namespace internal
 			return IsFull() ? Bounds(pvGetItemPtr(), 1) : Bounds();
 		}
 
+		static PreparedCode PrepareFind(size_t hashCode) noexcept
+		{
+			return pvGetHashState(hashCode);
+		}
+
 		template<bool first, typename ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			const ItemPredicate& itemPred, size_t hashCode)
+			const ItemPredicate& itemPred, PreparedCode prepCode)
 		{
-			return pvFind(itemPred, hashCode);
+			return pvFind(itemPred, prepCode);
 		}
 
 		bool IsFull() const noexcept
@@ -130,9 +138,9 @@ namespace internal
 
 	private:
 		template<typename ItemPredicate>
-		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, size_t hashCode)
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, PreparedCode prepCode)
 		{
-			if (mHashState != pvGetHashState(hashCode))
+			if (mHashState != prepCode)
 				return nullptr;
 			Item* itemPtr = pvGetItemPtr();
 			return itemPred(*itemPtr) ? itemPtr : nullptr;

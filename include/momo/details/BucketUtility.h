@@ -124,6 +124,14 @@ namespace internal
 	class BucketBase
 	{
 	public:
+		typedef size_t PreparedCode;
+
+	public:
+		static PreparedCode PrepareFind(size_t hashCode) noexcept
+		{
+			return hashCode;
+		}
+
 		size_t GetMaxProbe(size_t logBucketCount) const noexcept
 		{
 			return (size_t{1} << logBucketCount) - 1;

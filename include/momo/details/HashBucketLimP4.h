@@ -162,6 +162,8 @@ namespace internal
 		typedef Item* Iterator;
 		typedef ArrayBounds<Iterator> Bounds;
 
+		typedef uint8_t PreparedCode;
+
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
@@ -269,11 +271,16 @@ namespace internal
 			return Bounds(mPtrState.GetPtr(), pvGetCount());
 		}
 
+		static PreparedCode PrepareFind(size_t hashCode) noexcept
+		{
+			return pvCalcShortCode(hashCode);
+		}
+
 		template<bool first, typename ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			const ItemPredicate& itemPred, size_t hashCode)
+			const ItemPredicate& itemPred, PreparedCode prepCode)
 		{
-			return pvFind(itemPred, hashCode);
+			return pvFind(itemPred, prepCode);
 		}
 
 		bool IsFull() const noexcept
@@ -422,12 +429,11 @@ namespace internal
 		}
 
 		template<typename ItemPredicate>
-		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, size_t hashCode)
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, PreparedCode prepCode)
 		{
-			uint8_t shortCode = pvCalcShortCode(hashCode);
 			for (size_t i = 0; i < maxCount; ++i)
 			{
-				if (mShortCodes[i] == shortCode)
+				if (mShortCodes[i] == prepCode)
 				{
 					Item* items = mPtrState.GetPtr();
 					if (itemPred(items[i]))
