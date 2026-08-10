@@ -271,7 +271,7 @@ namespace internal
 			return Bounds(mPtrState.GetPtr(), pvGetCount());
 		}
 
-		static PreparedCode PrepareFind(size_t hashCode) noexcept
+		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode) noexcept
 		{
 			return pvCalcShortCode(hashCode);
 		}
