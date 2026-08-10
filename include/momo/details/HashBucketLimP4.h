@@ -418,7 +418,7 @@ namespace internal
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
 			size_t bucketCount, size_t /*probe*/) noexcept
 		{
-			return (bucketIndex + 1) & (bucketCount - 1);
+			return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
 		}
 
 	private:

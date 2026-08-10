@@ -149,6 +149,12 @@ namespace internal
 			return iter;
 		}
 
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
+			size_t bucketCount, size_t probe) noexcept
+		{
+			return (bucketIndex + probe) & (bucketCount - 1);	// quadratic probing
+		}
+
 	protected:
 		const void* ptGetData() const noexcept
 		{
@@ -257,7 +263,7 @@ namespace internal
 
 template<size_t tMaxCount = 3,
 	bool tReverse = true>
-class HashBucketOpenN1 : public internal::HashBucketBase
+class HashBucketOpenN1 : public internal::HashBucketOpenBase
 {
 public:
 	static const size_t maxCount = tMaxCount;
@@ -270,12 +276,6 @@ public:
 	static size_t CalcCapacity(size_t bucketCount, size_t /*bucketMaxItemCount*/) noexcept
 	{
 		return static_cast<size_t>(static_cast<double>(bucketCount * maxCount) / 6.0 * 5.0);
-	}
-
-	static size_t GetBucketCountShift(size_t /*bucketCount*/,
-		size_t /*bucketMaxItemCount*/) noexcept
-	{
-		return 1;
 	}
 };
 
