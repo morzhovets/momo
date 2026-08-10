@@ -38,7 +38,7 @@ public:
 public:
 	static constexpr size_t GetBlockAlignment(size_t blockSize) noexcept
 	{
-		size_t alignment = internal::UIntConst::maxAlignment;
+		size_t alignment = internal::Const::maxAlignment;
 		while (alignment > blockSize && alignment > 1)
 			alignment /= 2;
 		return alignment;
@@ -279,7 +279,7 @@ namespace internal
 		size_t pvGetAlignmentAddend() const noexcept
 		{
 			const size_t blockAlignment = Params::GetBlockAlignment();
-			return blockAlignment - UIntMath<>::Min(UIntConst::maxAllocAlignment,
+			return blockAlignment - UIntMath<>::Min(Const::maxAllocAlignment,
 				size_t{1} << std::countr_zero(blockAlignment));
 		}
 
@@ -695,7 +695,7 @@ private:
 		MOMO_CHECK(blockSize > 0);
 		MOMO_CHECK(blockCount == 1 || blockSize % blockAlignment == 0);
 		MOMO_CHECK(blockCount == 1 || blockSize / blockAlignment >= 2);
-		if (blockSize > internal::UIntConst::maxSize / blockCount)	//?
+		if (blockSize > internal::Const::maxSize / blockCount)	//?
 			MOMO_THROW(std::length_error("Invalid block size"));
 	}
 
@@ -780,7 +780,7 @@ private:
 	size_t pvGetAlignmentAddend() const noexcept
 	{
 		const size_t blockAlignment = Params::GetBlockAlignment();
-		return blockAlignment - internal::UIntMath<>::Min(internal::UIntConst::maxAllocAlignment,
+		return blockAlignment - internal::UIntMath<>::Min(internal::Const::maxAllocAlignment,
 			size_t{1} << std::countr_zero(blockAlignment));
 	}
 
@@ -1120,7 +1120,7 @@ namespace internal
 
 		static const size_t blockCount = tBlockCount;
 
-		static const uint32_t nullPtr = UIntConst::max32;
+		static const uint32_t nullPtr = Const::max32;
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -1135,8 +1135,8 @@ namespace internal
 			mBlockSize(internal::UIntMath<>::Max(blockSize, sizeof(uint32_t))),
 			mAllocCount(0)
 		{
-			MOMO_ASSERT(maxTotalBlockCount < size_t{UIntConst::max32});
-			if (mBlockSize > UIntConst::maxSize / blockCount)
+			MOMO_ASSERT(maxTotalBlockCount < size_t{Const::max32});
+			if (mBlockSize > Const::maxSize / blockCount)
 				MOMO_THROW(std::length_error("Invalid block size"));
 		}
 

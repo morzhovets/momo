@@ -651,7 +651,7 @@ public:
 private:
 	Item* pvAllocateSegmentItems(size_t capacity)
 	{
-		if (capacity > internal::UIntConst::maxSize / sizeof(Item))
+		if (capacity > internal::Const::maxSize / sizeof(Item))
 			MOMO_THROW(std::bad_array_new_length());
 		static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::alignment));
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),

@@ -168,7 +168,7 @@ public:
 private:
 	typedef internal::VersionKeeper<Settings> VersionKeeper;
 
-	static const size_t invalidNumber = internal::UIntConst::maxSize;
+	static const size_t invalidNumber = internal::Const::maxSize;
 
 	template<typename... Items>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Items...>;

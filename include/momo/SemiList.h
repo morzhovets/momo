@@ -40,7 +40,7 @@ namespace internal
 		typedef uint64_t State;
 
 		static constexpr Chunk nullChunk = nullptr;
-		static const Block nullBlock = UIntConst::nullPtr;
+		static const Block nullBlock = Const::nullPtr;
 
 	private:
 		static const size_t itemCount = size_t{1} << logItemCount;
@@ -133,7 +133,7 @@ namespace internal
 		static consteval size_t pvGetChunkHeadSize() noexcept
 		{
 			return UIntMath<>::Ceil(sizeof(State) + 2 * sizeof(Chunk),
-				UIntConst::maxAllocAlignment);
+				Const::maxAllocAlignment);
 		}
 
 		static consteval size_t pvGetChunkSize() noexcept

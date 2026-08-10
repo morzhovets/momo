@@ -319,7 +319,7 @@ namespace internal
 		}
 	};
 
-	struct UIntConst
+	struct Const
 	{
 		static const uintptr_t nullPtr = MOMO_NULL_UINTPTR;
 		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;

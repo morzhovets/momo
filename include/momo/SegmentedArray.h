@@ -475,7 +475,7 @@ private:
 	Item* pvAllocateSegment(size_t segIndex)
 	{
 		size_t segItemCount = Settings::GetSegmentItemCount(segIndex);
-		if (segItemCount > internal::UIntConst::maxSize / sizeof(Item))
+		if (segItemCount > internal::Const::maxSize / sizeof(Item))
 			MOMO_THROW(std::bad_array_new_length());
 		static_assert(internal::ObjectAlignmenter<Item>::Check(ItemTraits::GetAlignment()));
 		return MemManagerProxy::template Allocate<Item>(GetMemManager(),

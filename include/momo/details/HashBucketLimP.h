@@ -105,8 +105,8 @@ namespace internal
 	private:
 		typedef BucketMemory<MemPool, std::byte*> Memory;
 
-		static const uintptr_t ptrNull = UIntConst::nullPtr;
-		static const uintptr_t ptrNullWasFull = UIntConst::invalidPtr;
+		static const uintptr_t ptrNull = Const::nullPtr;
+		static const uintptr_t ptrNullWasFull = Const::invalidPtr;
 
 	public:
 		explicit BucketLimP() noexcept
@@ -365,8 +365,8 @@ namespace internal
 	private:
 		typedef BucketMemory<MemPool, Item*> Memory;
 
-		static const uintptr_t stateNull = UIntConst::nullPtr;
-		static const uintptr_t stateNullWasFull = UIntConst::invalidPtr;
+		static const uintptr_t stateNull = Const::nullPtr;
+		static const uintptr_t stateNullWasFull = Const::invalidPtr;
 
 	public:
 		explicit BucketLimP() noexcept

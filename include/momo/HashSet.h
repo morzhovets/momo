@@ -37,7 +37,7 @@ namespace internal
 		typedef typename Bucket::MemManager MemManager;
 		typedef typename Bucket::Params BucketParams;
 
-		static const size_t maxBucketCount = UIntConst::maxSize / sizeof(Bucket);
+		static const size_t maxBucketCount = Const::maxSize / sizeof(Bucket);
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;

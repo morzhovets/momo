@@ -296,7 +296,7 @@ public:
 private:
 	typedef std::conditional_t<(std::is_trivially_destructible_v<BaseFunctor>
 		&& std::is_trivially_move_constructible_v<BaseFunctor>
-		&& sizeof(BaseFunctor) <= internal::UIntConst::maxFastFunctorSize),
+		&& sizeof(BaseFunctor) <= internal::Const::maxFastFunctorSize),
 		BaseFunctor, BaseFunctor&&> BaseFunctorReference;
 
 public:
@@ -341,7 +341,7 @@ public:
 
 private:
 	typedef std::conditional_t<
-		internal::conceptSmallAndTriviallyCopyable<BaseFunctor, internal::UIntConst::maxFastFunctorSize>,	//?
+		internal::conceptSmallAndTriviallyCopyable<BaseFunctor, internal::Const::maxFastFunctorSize>,	//?
 		BaseFunctor, const BaseFunctor&> BaseFunctorReference;
 
 public:

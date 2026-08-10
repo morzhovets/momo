@@ -593,7 +593,7 @@ public:
 
 	size_type max_bucket_count() const noexcept
 	{
-		return momo::internal::UIntConst::maxSize;
+		return momo::internal::Const::maxSize;
 		//return momo::internal::HashSetBuckets<Bucket>::maxBucketCount;
 	}
 

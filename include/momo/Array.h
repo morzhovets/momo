@@ -384,7 +384,7 @@ private:
 	private:
 		static void pvCheckCapacity(size_t capacity)
 		{
-			if (capacity > internal::UIntConst::maxSize / sizeof(Item))
+			if (capacity > internal::Const::maxSize / sizeof(Item))
 				MOMO_THROW(std::bad_array_new_length());
 		}
 
@@ -743,7 +743,7 @@ public:
 			pvGrow(newCount, ArrayGrowCause::add);
 			Item* items = GetItems();
 			ItemCreator(memManager,
-				std::move((itemIndex == internal::UIntConst::maxSize) ? item : items[itemIndex]))
+				std::move((itemIndex == internal::Const::maxSize) ? item : items[itemIndex]))
 					(items + initCount);
 			mData.SetCount(newCount);
 		}
@@ -1019,7 +1019,7 @@ private:
 		const Item* items = GetItems();
 		std::less<const Item*> less;
 		return (!less(itemPtr, items) && less(itemPtr, items + GetCount()))
-			? SMath::Dist(items, itemPtr) : internal::UIntConst::maxSize;
+			? SMath::Dist(items, itemPtr) : internal::Const::maxSize;
 	}
 
 	template<typename ItemArg>

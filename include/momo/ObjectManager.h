@@ -166,14 +166,14 @@ namespace internal
 	public:
 		typedef TObject Object;
 
-		static const size_t alignment = (alignof(Object) < UIntConst::maxAlignment)
-			? alignof(Object) : UIntConst::maxAlignment;
+		static const size_t alignment = (alignof(Object) < Const::maxAlignment)
+			? alignof(Object) : Const::maxAlignment;
 
 	public:
 		static consteval bool Check(size_t alignment, size_t size = sizeof(Object)) noexcept
 		{
 			return alignment > 0 && size % alignment == 0
-				&& UIntConst::maxAlignment % alignment == 0;
+				&& Const::maxAlignment % alignment == 0;
 		}
 	};
 

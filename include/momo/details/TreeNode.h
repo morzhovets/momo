@@ -49,7 +49,7 @@ namespace internal
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
 		static const size_t internalOffset = UIntMath<>::Ceil((maxCapacity + 1) * sizeof(Node*),
-			UIntConst::maxAlignment);
+			Const::maxAlignment);
 
 		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
 
@@ -61,7 +61,7 @@ namespace internal
 			static const size_t internalNodeSize =
 				internalOffset + itemOffset + maxCapacity * sizeof(Item);
 
-			typedef MemPoolParamsStatic<internalNodeSize, UIntConst::maxAlignment,
+			typedef MemPoolParamsStatic<internalNodeSize, Const::maxAlignment,
 				MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount> InternalMemPoolParams;
 
 		public:
