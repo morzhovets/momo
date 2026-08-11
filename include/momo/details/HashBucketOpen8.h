@@ -45,11 +45,7 @@ namespace internal
 
 		using typename BucketOpenN1::Params;
 
-#ifdef MOMO_USE_SSE2
-		typedef __m128i PreparedCode;
-#else
-		typedef uint64_t PreparedCode;
-#endif
+		typedef size_t PreparedCode;
 
 	public:
 		explicit BucketOpen8() noexcept
@@ -64,33 +60,30 @@ namespace internal
 
 		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode) noexcept
 		{
-			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
-#ifdef MOMO_USE_SSE2
-			return _mm_set1_epi8(static_cast<char>(shortCode));
-#else
-			return uint64_t{shortCode} * 0x0101010101010101ull;
-#endif
+			return hashCode;
 		}
 
 		template<bool first, typename ItemPredicate>
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
-			const ItemPredicate& itemPred, PreparedCode prepCode)
+			const ItemPredicate& itemPred, size_t hashCode)
 		{
 #if defined(MOMO_PREFETCH) && defined(MOMO_CACHE_LINE_SIZE)
 			if MOMO_CONSTEXPR_IF (first && 8 + 5 * sizeof(Item) >= MOMO_CACHE_LINE_SIZE)
 				MOMO_PREFETCH(PtrCaster::ToBytePtr(this) + MOMO_CACHE_LINE_SIZE);
 #endif
-			return pvFind(itemPred, prepCode);
+			return pvFind(itemPred, hashCode);
 		}
 
 	private:
 		template<typename ItemPredicate>
-		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, PreparedCode prepCode)
+		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, size_t hashCode)
 		{
+			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
 #ifdef MOMO_USE_SSE2
-			__m128i shortCodes = _mm_set_epi64x(int64_t{0},
+			__m128i shortCodes = _mm_set1_epi8(static_cast<char>(shortCode));
+			__m128i thisShortCodes = _mm_set_epi64x(int64_t{0},
 				MemCopyer::FromBuffer<int64_t>(BucketOpenN1::ptGetData()));
-			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(prepCode, shortCodes));
+			int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(shortCodes, thisShortCodes));
 			mask &= (1 << maxCount) - 1;
 			for (; mask != 0; mask &= mask - 1)
 			{
@@ -100,8 +93,8 @@ namespace internal
 					return itemPtr;
 			}
 #else
-			uint64_t shortCodes = MemCopyer::FromBuffer<uint64_t>(BucketOpenN1::ptGetData());
-			uint64_t xorCodes = prepCode ^ shortCodes;
+			uint64_t thisShortCodes = MemCopyer::FromBuffer<uint64_t>(BucketOpenN1::ptGetData());
+			uint64_t xorCodes = (shortCode * 0x0101010101010101ull) ^ thisShortCodes;
 			uint64_t mask = (xorCodes - 0x0101010101010101ull) & ~xorCodes & 0x0080808080808080ull;
 			for (; mask != 0; mask &= mask - 1)
 			{
