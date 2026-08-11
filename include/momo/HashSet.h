@@ -1066,7 +1066,7 @@ private:
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t indexCode = hashTraits.GetHashCode(key);
 		BucketIterator bucketIter = BucketIterator();
-		if (mCount != 0) [[likely]]
+		if (mCount != 0) //[[likely]]
 		{
 			Buckets* buckets = mBuckets;
 			while (true)
@@ -1076,7 +1076,7 @@ private:
 				if (bucketIter != BucketIterator() || areItemsNothrowRelocatable)
 					break;
 				buckets = buckets->GetNextBuckets();
-				if (buckets == nullptr) [[likely]]
+				if (buckets == nullptr) //[[likely]]
 					break;
 			}
 		}
