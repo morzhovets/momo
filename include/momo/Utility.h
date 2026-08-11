@@ -461,7 +461,7 @@ namespace internal
 	public:
 		static constexpr size_t GetWordCount(size_t bitCount) noexcept
 		{
-			return UIntMath<Word>::Ceil(bitCount, wordBitSize);
+			return (bitCount + wordBitSize - 1) / wordBitSize;
 		}
 
 		static bool GetBit(const Word* words, size_t bitIndex) noexcept
