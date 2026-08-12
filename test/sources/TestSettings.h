@@ -104,12 +104,6 @@
 
 #endif // MOMO_TEST_EXTRA_SETTINGS
 
-#if defined(TEST_MSVC) && !defined(_DEBUG)
-# if _MSC_VER == 1900 && !defined(_M_X64)
-#  undef TEST_SIMPLE_MEM_POOL
-# endif
-# if defined(MOMO_TEST_EXTRA_SETTINGS) && _MSC_VER < 1920
-#  undef MOMO_ASSERT
-#  define MOMO_ASSERT(expr) assert(expr)
-# endif
+#if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG) && !defined(_M_X64)
+# undef TEST_SIMPLE_MEM_POOL
 #endif
