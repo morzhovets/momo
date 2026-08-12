@@ -35,7 +35,7 @@ namespace internal
 		}
 
 		template<typename ColumnInfo>
-		void operator()(const void* /*item*/, const ColumnInfo& /*columnInfo*/) const	//?
+		[[noreturn]] void operator()(const void* /*item*/, const ColumnInfo& /*columnInfo*/) const	//?
 		{
 			MOMO_THROW(std::logic_error("Visit unknown type"));
 		}
