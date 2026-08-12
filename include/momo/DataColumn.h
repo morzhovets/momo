@@ -64,6 +64,7 @@ namespace internal
 	private:
 		static const uint64_t fnvBasis64 = 14695981039346656037ull;
 		static const uint64_t fnvPrime64 = 1099511628211ull;
+		static const uint64_t mask32 = (uint64_t{1} << 32) - 1;
 
 	public:
 		// Fowler-Noll-Vo hash function (1a)
@@ -87,7 +88,16 @@ namespace internal
 
 		static constexpr uint64_t pvAccumulate(uint64_t hashCode, char c) noexcept
 		{
-			return (hashCode ^ uint64_t{static_cast<unsigned char>(c)}) * fnvPrime64;
+			return pvMult(hashCode ^ uint64_t{static_cast<unsigned char>(c)}, fnvPrime64);
+		}
+
+		static constexpr uint64_t pvMult(uint64_t value1, uint64_t value2) noexcept
+		{
+			// Avoid C4307 (integral constant overflow) for _MSC_VER < 1939
+			return (((value1 & mask32) * (value2 & mask32)) & mask32)
+				+ (((value1 & mask32) * (value2 >> 32)
+					+ (value1 >> 32) * (value2 & mask32)
+					+ (((value1 & mask32) * (value2 & mask32)) >> 32)) << 32);
 		}
 	};
 
