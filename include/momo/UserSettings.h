@@ -250,21 +250,26 @@
 # define MOMO_HAS_CONTAINERS_RANGES
 #endif
 
-#ifdef __has_cpp_attribute
-# if __has_cpp_attribute(nodiscard) \
-	&& !(__cplusplus < 201703L && (defined(__GNUC__) || defined(__clang__)))
-#  define MOMO_NODISCARD [[nodiscard]]
-# endif
-# if __has_cpp_attribute(deprecated) \
-	&& !(__cplusplus < 201402L && (defined(__GNUC__) || defined(__clang__)))	// gcc 5 & 6
-#  define MOMO_DEPRECATED [[deprecated]]
-# endif
+#if !defined(__has_cpp_attribute)
+# define MOMO_HAS_CPP_ATTRIBUTE(attr, cpp) 0
+#elif defined(__GNUC__) || defined(__clang__)	// Avoid warnings in pedantic mode
+# define MOMO_HAS_CPP_ATTRIBUTE(attr, min_cpp) ((__cplusplus >= min_cpp) ? __has_cpp_attribute(attr) : 0)
+#else
+# define MOMO_HAS_CPP_ATTRIBUTE(attr, cpp) __has_cpp_attribute(attr)
 #endif
-#ifndef MOMO_NODISCARD
-# define MOMO_NODISCARD
-#endif
-#ifndef MOMO_DEPRECATED
+
+#if MOMO_HAS_CPP_ATTRIBUTE(deprecated, 201402L)
+# define MOMO_DEPRECATED [[deprecated]]
+#else
 # define MOMO_DEPRECATED
 #endif
+
+#if MOMO_HAS_CPP_ATTRIBUTE(nodiscard, 201703L)
+# define MOMO_NODISCARD [[nodiscard]]
+#else
+# define MOMO_NODISCARD
+#endif
+
+#undef MOMO_HAS_CPP_ATTRIBUTE
 
 #endif // MOMO_INCLUDE_GUARD_USER_SETTINGS
