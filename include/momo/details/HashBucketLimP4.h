@@ -434,7 +434,7 @@ namespace internal
 				if (mShortCodes[i] == prepCode)
 				{
 					Item* items = mPtrState.GetPtr();
-					if (itemPred(std::as_const(items[i]))) //[[likely]]
+					if (itemPred(std::as_const(items[i]))) [[likely]]
 						return items + i;
 				}
 			}

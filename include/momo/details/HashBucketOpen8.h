@@ -94,7 +94,7 @@ namespace internal
 			{
 				size_t index = static_cast<size_t>(std::countr_zero(mask)) >> maskIndexShift;
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (itemPred(std::as_const(*itemPtr))) //[[likely]]
+				if (itemPred(std::as_const(*itemPtr))) [[likely]]
 					return itemPtr;
 			}
 			return nullptr;
