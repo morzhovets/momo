@@ -24,9 +24,15 @@ int main()
 {
 	std::cout << std::endl;
 
+	std::cout << "sizeof(void*): " << sizeof(void*) << std::endl;
+
 	std::cout << "__cplusplus: " << __cplusplus << std::endl;
 
-	std::cout << "sizeof(void*): " << sizeof(void*) << std::endl;
+	std::cout << "TEST_DEBUG: ";
+#ifdef TEST_DEBUG
+	std::cout << "defined";
+#endif
+	std::cout << std::endl;
 
 	std::cout << "_MSC_VER: ";
 #ifdef _MSC_VER
@@ -132,12 +138,6 @@ int main()
 
 	std::cout << "MOMO_TEST_EXTRA_SETTINGS: ";
 #ifdef MOMO_TEST_EXTRA_SETTINGS
-	std::cout << "defined";
-#endif
-	std::cout << std::endl;
-
-	std::cout << "NDEBUG: ";
-#ifdef NDEBUG
 	std::cout << "defined";
 #endif
 	std::cout << std::endl;
