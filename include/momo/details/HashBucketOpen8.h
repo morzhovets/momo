@@ -89,7 +89,7 @@ namespace internal
 			{
 				size_t index = pvCountTrailingZeros15(static_cast<uint32_t>(mask));
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (itemPred(*itemPtr))
+				if MOMO_LIKELY(itemPred(*itemPtr))
 					return itemPtr;
 			}
 #else
@@ -100,7 +100,7 @@ namespace internal
 			{
 				size_t index = static_cast<size_t>(MOMO_CTZ(mask)) >> 3;
 				Item* itemPtr = BucketOpenN1::ptGetItemPtr(index);
-				if (itemPred(*itemPtr))
+				if MOMO_LIKELY(itemPred(*itemPtr))
 					return itemPtr;
 			}
 #endif

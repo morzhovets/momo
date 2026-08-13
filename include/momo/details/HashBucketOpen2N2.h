@@ -234,7 +234,7 @@ namespace internal
 				if (mCodeData.shortCodes[i] == prepCode)
 				{
 					Item* items = mItems.GetPtr();
-					if (itemPred(items[i]))
+					if MOMO_LIKELY(itemPred(items[i]))
 						return Iterator(items + i + 1);
 				}
 			}

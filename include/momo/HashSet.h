@@ -1034,7 +1034,7 @@ private:
 		const HashTraits& hashTraits = GetHashTraits();
 		size_t indexCode = hashTraits.GetHashCode(key);
 		BucketIterator bucketIter = BucketIterator();
-		if (mCount != 0)
+		if MOMO_LIKELY(mCount != 0)
 		{
 			auto itemPred = [&key, &hashTraits] (const Item& item)
 				{ return hashTraits.IsEqual(key, ItemTraits::GetKey(item)); };
@@ -1045,7 +1045,7 @@ private:
 				if (bucketIter != BucketIterator() || areItemsNothrowRelocatable)
 					break;
 				buckets = buckets->GetNextBuckets();
-				if (buckets == nullptr)
+				if MOMO_LIKELY(buckets == nullptr)
 					break;
 			}
 		}

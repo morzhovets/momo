@@ -141,6 +141,12 @@
 # define MOMO_LITTLE_ENDIAN
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+# define MOMO_LIKELY(expr) (__builtin_expect(!!(expr), 1))
+#else
+# define MOMO_LIKELY(expr) (expr)
+#endif
+
 #if defined(__cpp_lib_bitops)
 # define MOMO_CTZ(value) std::countr_zero(value)
 #elif defined(__GNUC__) || defined(__clang__)
@@ -251,11 +257,11 @@
 #endif
 
 #if !defined(__has_cpp_attribute)
-# define MOMO_HAS_CPP_ATTRIBUTE(attr, cpp) 0
+# define MOMO_HAS_CPP_ATTRIBUTE(attr, min_cpp) 0
 #elif defined(__GNUC__) || defined(__clang__)	// Avoid warnings in pedantic mode
 # define MOMO_HAS_CPP_ATTRIBUTE(attr, min_cpp) ((__cplusplus >= min_cpp) ? __has_cpp_attribute(attr) : 0)
 #else
-# define MOMO_HAS_CPP_ATTRIBUTE(attr, cpp) __has_cpp_attribute(attr)
+# define MOMO_HAS_CPP_ATTRIBUTE(attr, min_cpp) __has_cpp_attribute(attr)
 #endif
 
 #if MOMO_HAS_CPP_ATTRIBUTE(deprecated, 201402L)
@@ -268,6 +274,11 @@
 # define MOMO_NODISCARD [[nodiscard]]
 #else
 # define MOMO_NODISCARD
+#endif
+
+#if MOMO_HAS_CPP_ATTRIBUTE(likely, 202002L)
+# undef MOMO_LIKELY
+# define MOMO_LIKELY(expr) (expr) [[likely]]
 #endif
 
 #undef MOMO_HAS_CPP_ATTRIBUTE

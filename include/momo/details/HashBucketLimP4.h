@@ -436,7 +436,7 @@ namespace internal
 				if (mShortCodes[i] == prepCode)
 				{
 					Item* items = mPtrState.GetPtr();
-					if (itemPred(items[i]))
+					if MOMO_LIKELY(itemPred(items[i]))
 						return items + i;
 				}
 			}

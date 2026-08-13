@@ -146,10 +146,13 @@ namespace internal
 		template<typename ItemPredicate>
 		MOMO_FORCEINLINE Iterator pvFind(const ItemPredicate& itemPred, PreparedCode prepCode)
 		{
-			if (mHashState != prepCode)
-				return nullptr;
-			Item* itemPtr = pvGetItemPtr();
-			return itemPred(*itemPtr) ? itemPtr : nullptr;
+			if (mHashState == prepCode)
+			{
+				Item* itemPtr = pvGetItemPtr();
+				if MOMO_LIKELY(itemPred(*itemPtr))
+					return itemPtr;
+			}
+			return nullptr;
 		}
 
 		template<size_t stateSize = sizeof(HashState)>
