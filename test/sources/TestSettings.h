@@ -20,6 +20,10 @@
 # define TEST_MSVC
 #endif
 
+#if defined(TEST_MSVC) ? defined(_DEBUG) : !defined(__OPTIMIZE__)
+# define TEST_DEBUG
+#endif
+
 #if !defined(TEST_DISABLE_ALL)
 
 #if !defined(TEST_DISABLE_SIMPLE)
@@ -74,20 +78,25 @@
 
 #include "../../include/momo/UserSettings.h"
 
-#ifdef MOMO_TEST_NO_EXCEPTIONS_RTTI
-# undef MOMO_DEFAULT_CHECK_MODE
-# define MOMO_DEFAULT_CHECK_MODE exception
-#endif
-
-#ifdef MOMO_TEST_EXTRA_SETTINGS
-
-#define MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT ((sizeof(void*) == 8) ? 48 : sizeof(void*) * 8)
-
-#undef MOMO_DEFAULT_EXTRA_CHECK_MODE
-#define MOMO_DEFAULT_EXTRA_CHECK_MODE nothing
+#if !defined(TEST_DEBUG)
 
 #undef MOMO_CHECK_ITERATOR_VERSION
 #define MOMO_CHECK_ITERATOR_VERSION (checkMode != momo::CheckMode::assertion)
+
+#undef MOMO_ASSERT
+#define MOMO_ASSERT(expr) void()
+
+#endif // TEST_DEBUG
+
+#if defined(MOMO_TEST_EXTRA_SETTINGS)
+
+#define MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT ((sizeof(void*) == 8) ? 48 : sizeof(void*) * 8)
+
+#undef MOMO_DEFAULT_CHECK_MODE
+#define MOMO_DEFAULT_CHECK_MODE exception
+
+#undef MOMO_DEFAULT_EXTRA_CHECK_MODE
+#define MOMO_DEFAULT_EXTRA_CHECK_MODE nothing
 
 #undef MOMO_USE_DEFAULT_MEM_MANAGER_IN_STD
 
@@ -97,13 +106,10 @@
 # define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
 #endif
 
-#undef MOMO_ASSERT
-#define MOMO_ASSERT(expr) void()
-
 #undef MOMO_CATCH_ALL
 
 #endif // MOMO_TEST_EXTRA_SETTINGS
 
-#if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG) && !defined(_M_X64)
+#if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(TEST_DEBUG) && !defined(_M_X64)
 # undef TEST_SIMPLE_MEM_POOL
 #endif
