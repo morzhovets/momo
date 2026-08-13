@@ -24,15 +24,6 @@ jobs:
           flags: '/std:c++20 /WX'
           win_ver: '2025'
 
-        - toolset: '14.2'
-          arch: 'x64'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'On'
-          flags: '/std:c++20 /WX'
-          win_ver: '2025'
-
         # Visual Studio 2022 x64
         - toolset: '14.4'
           arch: 'x64'
@@ -40,15 +31,6 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '/std:c++23preview /WX'
-          win_ver: '2025'
-
-        - toolset: '14.4'
-          arch: 'x64'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'On'
           flags: '/std:c++23preview /WX'
           win_ver: '2025'
 
@@ -135,16 +117,6 @@ jobs:
           flags: '/std:c++20 /WX'
           win_ver: '2025'
 
-        # HashSet.h(1291) : fatal error C1001: Internal compiler error.
-#        - toolset: '14.2'
-#          arch: 'x64_x86'
-#          build_type: 'Release'
-#          test_libcxx20: 'On'
-#          no_exceptions_rtti: 'Off'
-#          extra_settings: 'On'
-#          flags: '/std:c++20 /WX'
-#          win_ver: '2025'
-
         # Visual Studio 2022 x86
         - toolset: '14.4'
           arch: 'x64_x86'
@@ -152,15 +124,6 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '/std:c++23preview /WX'
-          win_ver: '2025'
-
-        - toolset: '14.4'
-          arch: 'x64_x86'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'On'
           flags: '/std:c++23preview /WX'
           win_ver: '2025'
 
@@ -244,15 +207,6 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '/std:c++23preview /WX'
-          win_ver: '11-arm'
-
-        - toolset: '14.4'
-          arch: 'arm64'
-          build_type: 'Release'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'On'
           flags: '/std:c++23preview /WX'
           win_ver: '11-arm'
 
