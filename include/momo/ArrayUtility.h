@@ -414,19 +414,16 @@ namespace internal
 		size_t Remove(this RArray&& array, ItemFilter itemFilter)
 		{
 			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
-			size_t initCount = array.GetCount();
-			size_t newCount = 0;
-			while (newCount < initCount && !itemFilter(std::as_const(array[newCount])))
-				++newCount;
 			auto& memManager = array.GetMemManager();
-			for (size_t i = newCount + 1; i < initCount; ++i)
+			size_t initCount = array.GetCount();
+			size_t remCount = 0;
+			for (size_t i = 0; i < initCount; ++i)
 			{
 				if (itemFilter(std::as_const(array[i])))
-					continue;
-				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
-				++newCount;
+					++remCount;
+				else if (remCount > 0)
+					ItemTraits::Assign(memManager, std::move(array[i]), array[i - remCount]);
 			}
-			size_t remCount = initCount - newCount;
 			array.RemoveBack(remCount);
 			return remCount;
 		}

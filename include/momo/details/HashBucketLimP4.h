@@ -356,17 +356,7 @@ namespace internal
 			MOMO_ASSERT(items != nullptr);
 			size_t count = pvGetCount();
 			size_t memPoolIndex = pvGetMemPoolIndex();
-			if (count == 1)
-			{
-				MOMO_ASSERT(iter == items);
-				std::move(itemReplacer)(*items, *items);
-				pvDeallocate<false>(params, memPoolIndex, items);
-				if (memPoolIndex != maxCount)
-					memPoolIndex = minMemPoolIndex;
-				pvSetEmpty(memPoolIndex);
-				return nullptr;
-			}
-			else
+			if (count > 1)
 			{
 				size_t index = UIntMath<>::Dist(items, iter);
 				MOMO_ASSERT(index < count);
@@ -383,6 +373,16 @@ namespace internal
 				}
 				pvSetPtrState(items, memPoolIndex);
 				return iter;
+			}
+			else
+			{
+				MOMO_ASSERT(count == 1 && iter == items);
+				std::move(itemReplacer)(*items, *items);
+				pvDeallocate<false>(params, memPoolIndex, items);
+				if (memPoolIndex != maxCount)
+					memPoolIndex = minMemPoolIndex;
+				pvSetEmpty(memPoolIndex);
+				return nullptr;
 			}
 		}
 
