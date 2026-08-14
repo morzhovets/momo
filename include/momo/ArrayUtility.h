@@ -292,19 +292,16 @@ namespace internal
 		template<typename ItemFilter>
 		static size_t Remove(Array& array, const ItemFilter& itemFilter)
 		{
-			size_t initCount = array.GetCount();
-			size_t newCount = 0;
-			while (newCount < initCount && !itemFilter(static_cast<const Item&>(array[newCount])))
-				++newCount;
 			MemManager& memManager = array.GetMemManager();
-			for (size_t i = newCount + 1; i < initCount; ++i)
+			size_t initCount = array.GetCount();
+			size_t remCount = 0;
+			for (size_t i = 0; i < initCount; ++i)
 			{
 				if (itemFilter(static_cast<const Item&>(array[i])))
-					continue;
-				ItemTraits::Assign(memManager, std::move(array[i]), array[newCount]);
-				++newCount;
+					++remCount;
+				else if (remCount > 0)
+					ItemTraits::Assign(memManager, std::move(array[i]), array[i - remCount]);
 			}
-			size_t remCount = initCount - newCount;
 			array.RemoveBack(remCount);
 			return remCount;
 		}
