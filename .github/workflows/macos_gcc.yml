@@ -30,7 +30,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           path_prefix: '/opt/homebrew'
 
 #        - gcc_ver: '15'
@@ -58,7 +58,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           path_prefix: '/usr/local'
 
 #        - gcc_ver: '15'

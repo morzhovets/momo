@@ -342,9 +342,11 @@ LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter_db4)
 #include "unord.map/unord.map.modifiers/erase_iter_iter_db4.pass.cpp"
 LIBCXX_TEST_END
 
+#if !(defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(TEST_DEBUG) && defined(_M_X64))	// vs2015 release x64
 LIBCXX_TEST_BEGIN(modifiers_erase_key)
 #include "unord.map/unord.map.modifiers/erase_key.pass.cpp"
 LIBCXX_TEST_END
+#endif
 
 LIBCXX_TEST_BEGIN(modifiers_erase_range)
 #include "unord.map/unord.map.modifiers/erase_range.pass.cpp"

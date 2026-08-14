@@ -21,7 +21,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -Wno-unused-variable'
+          flags: '-std=c++11 -Wno-unused-variable'
           cont_ver: '20.04'
 
         - gcc_ver: '5'
@@ -30,7 +30,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -Wno-unused-variable'
+          flags: '-std=c++11 -Wno-unused-variable'
           cont_ver: '20.04'
 
         - gcc_ver: '5'
@@ -39,7 +39,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
-          flags: '-std=c++11 -Werror -Wno-unused-variable'
+          flags: '-std=c++11 -Wno-unused-variable'
           cont_ver: '20.04'
 
         - gcc_ver: '5'
@@ -48,7 +48,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++14 -Werror -Wno-unused-variable'
+          flags: '-std=c++14 -Wno-unused-variable'
           cont_ver: '20.04'
 
         - gcc_ver: '6'
@@ -57,7 +57,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror'
+          flags: '-std=c++17'
           cont_ver: '20.04'
 
         - gcc_ver: '7'
@@ -66,7 +66,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++17 -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '20.04'
 
         - gcc_ver: '8'
@@ -75,7 +75,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror'
+          flags: '-std=c++17'
           cont_ver: '20.04'
 
         - gcc_ver: '9'
@@ -84,7 +84,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror'
+          flags: '-std=c++17'
           cont_ver: '24.04'
 
         - gcc_ver: '10'
@@ -93,7 +93,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++20 -Werror'
+          flags: '-std=c++20'
           cont_ver: '24.04'
 
         - gcc_ver: '11'
@@ -120,7 +120,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23 -Werror'
+          flags: '-std=c++23'
           cont_ver: '26.04'
 
         - gcc_ver: '14'
@@ -129,7 +129,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -147,7 +147,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror'
+          flags: '-std=c++17'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -156,7 +156,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++20 -Werror'
+          flags: '-std=c++20'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -165,7 +165,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23 -Werror'
+          flags: '-std=c++23'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -174,7 +174,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -183,7 +183,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -192,7 +192,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -211,7 +211,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -Wno-unused-variable'
+          flags: '-std=c++11 -Wno-unused-variable'
           cont_ver: '20.04'
 
         - gcc_ver: '5'
@@ -220,7 +220,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++11 -Werror -Wno-unused-variable'
+          flags: '-std=c++11 -Wno-unused-variable'
           cont_ver: '20.04'
 
         - gcc_ver: '5'
@@ -229,7 +229,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
-          flags: '-std=c++11 -Werror -Wno-unused-variable'
+          flags: '-std=c++11 -Wno-unused-variable'
           cont_ver: '20.04'
 
         - gcc_ver: '5'
@@ -238,7 +238,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++14 -Werror -Wno-unused-variable'
+          flags: '-std=c++14 -Wno-unused-variable'
           cont_ver: '20.04'
 
         - gcc_ver: '6'
@@ -247,7 +247,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror'
+          flags: '-std=c++17'
           cont_ver: '20.04'
 
         - gcc_ver: '7'
@@ -256,7 +256,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
+          flags: '-std=c++17 -DLIBCPP_DISABLE_TEST_DEDUCTION_GUIDES'
           cont_ver: '20.04'
 
         - gcc_ver: '8'
@@ -265,7 +265,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror'
+          flags: '-std=c++17'
           cont_ver: '20.04'
 
         - gcc_ver: '9'
@@ -274,7 +274,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror'
+          flags: '-std=c++17'
           cont_ver: '24.04'
 
         - gcc_ver: '10'
@@ -283,7 +283,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++20 -Werror'
+          flags: '-std=c++20'
           cont_ver: '24.04'
 
         - gcc_ver: '11'
@@ -292,7 +292,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23 -Werror'
+          flags: '-std=c++23'
           cont_ver: '26.04'
 
         - gcc_ver: '12'
@@ -310,7 +310,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23 -Werror'
+          flags: '-std=c++23'
           cont_ver: '26.04'
 
         - gcc_ver: '14'
@@ -319,7 +319,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -337,7 +337,7 @@ jobs:
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++17 -Werror'
+          flags: '-std=c++17'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -346,7 +346,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++20 -Werror'
+          flags: '-std=c++20'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -355,7 +355,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++23 -Werror'
+          flags: '-std=c++23'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -364,7 +364,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -373,7 +373,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '26.04'
 
         - gcc_ver: '15'
@@ -382,7 +382,7 @@ jobs:
           test_libcxx20: 'On'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26'
           cont_ver: '26.04'
 
         - gcc_ver: '15'

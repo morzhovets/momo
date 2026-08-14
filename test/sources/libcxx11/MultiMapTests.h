@@ -148,11 +148,11 @@ LIBCXX_TEST_BEGIN(modifiers_emplace_hint)
 #include "multimap/multimap.modifiers/emplace_hint.pass.cpp"
 LIBCXX_TEST_END
 
-#if !(defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(_DEBUG))	// vs2015 release
+//#if !(defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(TEST_DEBUG))	// vs2015 release
 LIBCXX_TEST_BEGIN(modifiers_erase_iter)
 #include "multimap/multimap.modifiers/erase_iter.pass.cpp"
 LIBCXX_TEST_END
-#endif
+//#endif
 
 LIBCXX_TEST_BEGIN(modifiers_erase_iter_iter)
 #include "multimap/multimap.modifiers/erase_iter_iter.pass.cpp"
