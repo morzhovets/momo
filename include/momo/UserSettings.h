@@ -127,7 +127,8 @@
 
 // Using of SSE2
 #if defined(_MSC_VER) && !defined(__clang__)
-# if (defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2)) && !defined(_M_CEE)
+# if (defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2 && _MSC_VER >= 1930)) \
+	&& !defined(_M_CEE)
 #  define MOMO_USE_SSE2
 # endif
 #else
