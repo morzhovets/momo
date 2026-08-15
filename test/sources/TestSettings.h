@@ -110,6 +110,14 @@
 
 #endif // MOMO_TEST_EXTRA_SETTINGS
 
-#if defined(TEST_MSVC) && _MSC_VER == 1900 && !defined(TEST_DEBUG) && !defined(_M_X64)
-# undef TEST_SIMPLE_MEM_POOL
+#if defined(TEST_MSVC) && !defined(TEST_DEBUG)
+# if _MSC_VER == 1900 && !defined(_M_X64)
+#  undef TEST_SIMPLE_MEM_POOL
+# endif
+# if _MSC_VER == 1900 && defined(_M_X64)
+#  undef TEST_LIBCXX_HASH_MAP	// libcxx11_hash_map_limp_modifiers_erase_key
+# endif
+# if _MSC_VER >= 1950 && defined(_M_ARM64) && _MSVC_LANG >= 202002L
+#  undef TEST_LIBCXX_ARRAY	// libcxx20_array_5_cons_assign_copy
+# endif
 #endif
