@@ -212,7 +212,7 @@
 #define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) \
 	((isWithinLifetime && isSingleObject) ? std::launder(reinterpret_cast<ResObject*>(ptr)) \
 		: reinterpret_cast<ResObject*>(ptr))
-#if !defined(__cpp_lib_launder) || (defined(_MSC_VER) && defined(_M_CEE))
+#if !defined(__cpp_lib_launder) || (defined(_MSC_VER) && (_MSC_VER < 1920 || defined(_M_CEE)))
 # undef MOMO_CAST_POINTER
 # define MOMO_CAST_POINTER(ResObject, ptr, isWithinLifetime, isSingleObject) reinterpret_cast<ResObject*>(ptr)
 #endif
