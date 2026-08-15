@@ -112,12 +112,12 @@
 
 #if defined(TEST_MSVC) && !defined(TEST_DEBUG)
 # if _MSC_VER == 1900 && !defined(_M_X64)
-#  undef TEST_SIMPLE_MEM_POOL
+#  undef TEST_SIMPLE_MEM_POOL	// BitMath
 # endif
 # if _MSC_VER == 1900 && defined(_M_X64)
-#  undef TEST_LIBCXX_HASH_MAP	// libcxx11_hash_map_limp_modifiers_erase_key
+#  undef TEST_LIBCXX_HASH_MAP	// libcxx11_hash_map_limp_modifiers_erase_key (without asserts)
 # endif
 # if _MSC_VER >= 1950 && defined(_M_ARM64) && _MSVC_LANG >= 202002L
-#  undef TEST_LIBCXX_ARRAY	// libcxx20_array_5_cons_assign_copy
+#  undef TEST_LIBCXX_ARRAY	// libcxx20_array_5_cons_assign_copy (without asserts)
 # endif
 #endif
