@@ -41,10 +41,12 @@ private:
 		class HashTraits : public momo::HashTraits<TemplItem, HashBucket>
 		{
 		public:
-			static const bool isFastNothrowHashable = std::is_same<HashBucket, momo::HashBucketOpen8>::value;	//?
+			template<typename ItemTraits>
+			using Bucket = typename HashBucket::template Bucket<ItemTraits,
+				!std::is_same<HashBucket, momo::HashBucketOpen8>::value>;	//?
 
 		public:
-			size_t GetHashCode(const TemplItem& /*key*/) const
+			size_t GetHashCode(const TemplItem& /*key*/) const noexcept
 			{
 				return 42; //std::hash<unsigned char>()(key.GetValue());
 			}

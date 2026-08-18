@@ -70,21 +70,6 @@ namespace internal
 		: public std::true_type
 	{
 	};
-
-	template<typename HashTraits, typename ItemTraits,
-		typename = void>
-	struct HashTraitsBucketSelector
-	{
-		MOMO_DEPRECATED typedef typename HashTraits::HashBucket
-			::template Bucket<ItemTraits, !HashTraits::isFastNothrowHashable> Bucket;
-	};
-
-	template<typename HashTraits, typename ItemTraits>
-	struct HashTraitsBucketSelector<HashTraits, ItemTraits,
-		Void<typename HashTraits::template Bucket<ItemTraits>>>
-	{
-		typedef typename HashTraits::template Bucket<ItemTraits> Bucket;
-	};
 }
 
 template<typename Key>
@@ -97,7 +82,8 @@ template<typename Key,
 struct HashCoder : private std::hash<Key>
 {
 	Result operator()(const Key& key) const
-		//noexcept(noexcept(std::hash<Key>::operator()(key)))	// gcc
+		noexcept(noexcept(std::declval<const std::hash<Key>&>().operator()(key))
+			|| IsFastNothrowHashable<Key>::value)	// c++14
 	{
 		return static_cast<Result>(std::hash<Key>::operator()(key));
 	}
@@ -108,7 +94,7 @@ template<typename Key>
 struct HashCoder<Key, decltype(MOMO_HASH_CODER(std::declval<const Key&>()))>
 {
 	decltype(MOMO_HASH_CODER(std::declval<const Key&>())) operator()(const Key& key) const
-		//noexcept(noexcept(MOMO_HASH_CODER(key)))
+		noexcept(noexcept(MOMO_HASH_CODER(key)) || IsFastNothrowHashable<Key>::value)
 	{
 		return MOMO_HASH_CODER(key);
 	}
@@ -129,10 +115,9 @@ public:
 	typedef THashBucket HashBucket;
 	typedef TBaseKeyArg BaseKeyArg;
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<BaseKeyArg>::value;
-
 	template<typename ItemTraits>
-	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
+	using Bucket = typename HashBucket::template Bucket<ItemTraits,
+		!IsFastNothrowHashable<BaseKeyArg>::value>;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = typename std::conditional<std::is_same<BaseKeyArg, Key>::value,
@@ -160,6 +145,7 @@ public:
 
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
+		noexcept(noexcept(HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key))))
 	{
 		return HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key));
 	}
@@ -200,12 +186,9 @@ public:
 	typedef TEqualComparer EqualComparer;
 	typedef THashBucket HashBucket;
 
-	static const bool isFastNothrowHashable = IsFastNothrowHashable<Key>::value
-		&& (std::is_same<Hasher, HashCoder<Key>>::value
-		|| std::is_same<Hasher, std::hash<Key>>::value);
-
 	template<typename ItemTraits>
-	using Bucket = typename HashBucket::template Bucket<ItemTraits, !isFastNothrowHashable>;
+	using Bucket = typename HashBucket::template Bucket<ItemTraits,
+		!IsFastNothrowHashable<Key>::value>;	//?
 
 	template<typename KeyArg>
 	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<Hasher, EqualComparer>;
@@ -257,6 +240,7 @@ public:
 
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
+		noexcept(noexcept(mHasher(key)))
 	{
 		return mHasher(key);
 	}

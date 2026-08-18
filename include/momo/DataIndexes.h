@@ -366,7 +366,8 @@ namespace internal
 			{
 			};
 
-			static const bool isFastNothrowHashable = false;
+			template<typename ItemTraits>
+			using Bucket = typename DataTraits::HashBucket::template Bucket<ItemTraits, true>;
 
 		public:
 			explicit HashTraits(RawHasher rawHasher, RawEqualComparer rawEqualComp,

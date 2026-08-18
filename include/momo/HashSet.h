@@ -487,7 +487,7 @@ private:
 
 	typedef internal::HashSetBucketItemTraits<ItemTraits> BucketItemTraits;
 
-	typedef typename internal::HashTraitsBucketSelector<HashTraits, BucketItemTraits>::Bucket Bucket;
+	typedef typename HashTraits::template Bucket<ItemTraits> Bucket;
 
 	typedef typename Bucket::Params BucketParams;
 
@@ -520,7 +520,8 @@ private:
 		}
 	};
 
-	static const bool areItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
+	static const bool areItemsNothrowRelocatable
+		= noexcept(std::declval<const HashTraits&>().GetHashCode(std::declval<const Key&>()))
 		&& noexcept(std::declval<Bucket&>().AddCrt(std::declval<BucketParams&>(),
 			FakeItemRelocateCreator(), size_t{}, size_t{}, size_t{}));
 
