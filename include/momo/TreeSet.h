@@ -312,7 +312,7 @@ private:
 
 	typedef internal::TreeSetNodeItemTraits<ItemTraits> NodeItemTraits;
 
-	typedef typename internal::TreeTraitsNodeSelector<TreeTraits, NodeItemTraits>::Node Node;
+	typedef typename TreeTraits::template Node<ItemTraits> Node;
 
 	typedef typename Node::Params NodeParams;
 
