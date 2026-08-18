@@ -82,7 +82,7 @@ template<typename Key,
 struct HashCoder : private std::hash<Key>
 {
 	Result operator()(const Key& key) const
-		noexcept(noexcept(std::declval<const std::hash<Key>&>().operator()(key))
+		noexcept(noexcept(std::declval<const std::hash<Key>&>()(key))
 			|| IsFastNothrowHashable<Key>::value)	// c++14
 	{
 		return static_cast<Result>(std::hash<Key>::operator()(key));
@@ -240,7 +240,7 @@ public:
 
 	template<typename KeyArg>
 	size_t GetHashCode(const KeyArg& key) const
-		noexcept(noexcept(mHasher(key)))
+		noexcept(noexcept(std::declval<const Hasher&>()(key)))	// gcc
 	{
 		return mHasher(key);
 	}
