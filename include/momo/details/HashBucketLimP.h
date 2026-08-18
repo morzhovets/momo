@@ -577,7 +577,7 @@ public:
 
 	typedef TMemPoolParams MemPoolParams;
 
-private:
+public:	// vs2015
 	template<typename ItemTraits>
 	class Bucketer
 	{
