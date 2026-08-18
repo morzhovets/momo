@@ -35,8 +35,6 @@ namespace internal
 		static const size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 4);
 
-		static const bool isNothrowAddableIfNothrowCreatable = true;
-
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

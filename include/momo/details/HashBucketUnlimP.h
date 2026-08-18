@@ -69,8 +69,6 @@ namespace internal
 	public:
 		static const size_t maxCount = UIntConst::maxSize;
 
-		static const bool isNothrowAddableIfNothrowCreatable = false;
-
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
 

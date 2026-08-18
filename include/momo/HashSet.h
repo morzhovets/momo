@@ -512,8 +512,17 @@ public:
 	static const size_t bucketMaxItemCount = Bucket::maxCount;
 
 private:
+	struct FakeItemRelocateCreator
+	{
+		void operator()(Item*) noexcept(ItemTraits::isNothrowRelocatable)
+		{
+			MOMO_ASSERT(false);
+		}
+	};
+
 	static const bool areItemsNothrowRelocatable = HashTraits::isFastNothrowHashable
-		&& ItemTraits::isNothrowRelocatable && Bucket::isNothrowAddableIfNothrowCreatable;
+		&& noexcept(std::declval<Bucket&>().AddCrt(std::declval<BucketParams&>(),
+			FakeItemRelocateCreator(), size_t{}, size_t{}, size_t{}));
 
 	static const bool allowExceptionSuppression
 		= internal::Catcher::AllowExceptionSuppression<Settings>::value;
