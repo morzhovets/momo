@@ -130,6 +130,12 @@
 //# define MOMO_PREFETCH(addr) __builtin_prefetch(addr)
 //#endif
 
+#define MOMO_CACHE_LINE_SIZE std::hardware_destructive_interference_size
+#if defined(__GNUC__) && !defined(__clang__)
+# undef MOMO_CACHE_LINE_SIZE	// -Winterference-size
+# define MOMO_CACHE_LINE_SIZE 64
+#endif
+
 // `nullptr`, converted to the type `uintptr_t`
 #define MOMO_NULL_UINTPTR reinterpret_cast<uintptr_t>(static_cast<void*>(nullptr))
 #if defined(__clang__)

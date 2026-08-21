@@ -71,9 +71,9 @@ namespace internal
 		MOMO_FORCEINLINE Iterator Find(Params& /*params*/,
 			FastCopyableFunctor<ItemPredicate> itemPred, PreparedCode prepCode)
 		{
-#ifdef MOMO_PREFETCH
-			if constexpr (first && 8 + 5 * sizeof(Item) >= std::hardware_destructive_interference_size)
-				MOMO_PREFETCH(PtrCaster::ToBytePtr(this) + std::hardware_destructive_interference_size);
+#if defined(MOMO_PREFETCH) && defined(MOMO_CACHE_LINE_SIZE)
+			if constexpr (first && 8 + 5 * sizeof(Item) >= MOMO_CACHE_LINE_SIZE)
+				MOMO_PREFETCH(PtrCaster::ToBytePtr(this) + MOMO_CACHE_LINE_SIZE);
 #endif
 			return pvFind(itemPred, prepCode);
 		}
