@@ -153,6 +153,12 @@
 
 #define MOMO_ASSERT(expr) assert(expr)
 
+#if defined(__GNUC__) && !defined(__clang__) && defined(__OPTIMIZE__)
+# define MOMO_ASSUME(expr) [[assume(expr)]]
+#else
+# define MOMO_ASSUME(expr) void()
+#endif
+
 #ifdef MOMO_DISABLE_EXCEPTIONS
 # define MOMO_THROW(exception) std::terminate()
 #else

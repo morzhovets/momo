@@ -1087,6 +1087,7 @@ namespace internal
 		~MemManagerPoolLazy() noexcept
 		{
 			MOMO_ASSERT(!mMemPool.has_value());	//?
+			MOMO_ASSUME(!mMemPool.has_value());
 		}
 
 		MemManagerPoolLazy& operator=(MemManagerPoolLazy&) = delete;

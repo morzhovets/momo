@@ -170,6 +170,7 @@ namespace internal
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
+			MOMO_ASSUME(index <= initCount);
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
 			if (count == 0)
 				return;
@@ -201,10 +202,11 @@ namespace internal
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
-			MemManager& memManager = array.GetMemManager();
+			MOMO_ASSUME(index <= initCount);
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
 			if (count == 0)
 				return;
+			MemManager& memManager = array.GetMemManager();
 			if (index + count < initCount)
 			{
 				for (size_t i = initCount - count; i < initCount; ++i)
@@ -414,9 +416,9 @@ namespace internal
 		size_t Remove(this RArray&& array, ItemFilter itemFilter)
 		{
 			typedef typename std::decay_t<RArray>::ItemTraits ItemTraits;
-			auto& memManager = array.GetMemManager();
-			size_t initCount = array.GetCount();
 			size_t remCount = 0;
+			size_t initCount = array.GetCount();
+			auto& memManager = array.GetMemManager();
 			for (size_t i = 0; i < initCount; ++i)
 			{
 				if (itemFilter(std::as_const(array[i])))

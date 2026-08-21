@@ -699,6 +699,7 @@ public:
 	{
 		auto& thisArray = static_cast<internal::ConstLike<ArrayCore, RArray>&>(array);
 		MOMO_CHECK(index < thisArray.GetCount());
+		MOMO_ASSUME(index < thisArray.GetCount());
 		return thisArray.GetItems()[index];
 	}
 
