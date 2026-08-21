@@ -90,15 +90,17 @@ public:
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
-	bool IsLess(const KeyArg1& key1, const KeyArg2& key2) const
+	internal::EnableIf<!std::is_pointer<KeyArg1>::value || !std::is_pointer<KeyArg2>::value,
+	bool> IsLess(const KeyArg1& key1, const KeyArg2& key2) const
 	{
 		return key1 < key2;
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
-	bool IsLess(KeyArg1* key1, KeyArg2* key2) const noexcept
+	internal::EnableIf<std::is_pointer<KeyArg1>::value && std::is_pointer<KeyArg2>::value,
+	bool> IsLess(const KeyArg1& key1, const KeyArg2& key2) const noexcept
 	{
-		return std::less<const void*>()(key1, key2);
+		return std::less<typename std::common_type<KeyArg1, KeyArg2>::type>()(key1, key2);
 	}
 };
 
