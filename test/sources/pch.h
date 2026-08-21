@@ -29,7 +29,6 @@
 #include <array>
 #include <tuple>
 #include <initializer_list>
-#include <optional>
 #include <concepts>
 #include <compare>
 #include <bit>
@@ -61,4 +60,5 @@
 #include <climits>
 #include <cfloat>
 #include <random>
+#include <optional>
 #include <span>
