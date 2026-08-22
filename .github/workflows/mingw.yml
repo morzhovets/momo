@@ -36,8 +36,8 @@ jobs:
         - arch: 'x64'
           build_type: 'Release'
           no_exceptions_rtti: 'On'
-          extra_settings: 'Off -Werror -Wno-error=maybe-uninitialized'
-          flags: '-std=c++26'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror -Wno-error=maybe-uninitialized'
 
         - arch: 'x64'
           build_type: 'Release'

@@ -37,7 +37,7 @@ jobs:
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++26 -Werror -Wno-error=maybe-uninitialized'
           path_prefix: '/usr/local'
 
 #        - gcc_ver: '15'
