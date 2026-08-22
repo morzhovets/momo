@@ -977,6 +977,7 @@ private:
 	void pvAddBackNogrow(FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		size_t count = GetCount();
+		MOMO_ASSUME(count < GetCapacity());
 		std::move(itemCreator)(GetItems() + count);
 		mData.SetCount(count + 1);
 	}

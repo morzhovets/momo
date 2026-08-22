@@ -170,7 +170,6 @@ namespace internal
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
-			MOMO_ASSUME(index <= initCount);
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
 			if (count == 0)
 				return;
@@ -202,7 +201,6 @@ namespace internal
 		{
 			size_t initCount = array.GetCount();
 			MOMO_CHECK(index <= initCount);
-			MOMO_ASSUME(index <= initCount);
 			MOMO_ASSERT(array.GetCapacity() >= initCount + count);
 			if (count == 0)
 				return;
@@ -221,6 +219,7 @@ namespace internal
 			{
 				typedef typename ItemTraits::template Creator<
 					std::iter_reference_t<ArgIterator>> IterCreator;
+				MOMO_ASSUME(index <= initCount);
 				ArgIterator iter = UIntMath<>::Next(begin, initCount - index);
 				for (size_t i = initCount; i < index + count; ++i, (void)++iter)
 					array.AddBackNogrowCrt(IterCreator(memManager, *iter));
