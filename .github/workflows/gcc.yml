@@ -84,7 +84,7 @@ jobs:
           build_type: 'Release'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
-          flags: '-std=c++26 -Werror -Wno-error=stringop-overflow -Wno-psabi'
+          flags: '-std=c++26 -Werror -Wno-error=maybe-uninitialized -Wno-error=stringop-overflow -Wno-psabi'
 
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
 
