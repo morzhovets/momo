@@ -124,9 +124,7 @@ public:
 		std::false_type, std::is_convertible<const KeyArg&, const BaseKeyArg&>>::type;	//?
 
 public:
-	explicit HashTraits() noexcept
-	{
-	}
+	explicit HashTraits() noexcept = default;
 
 	size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) const noexcept
 	{
@@ -165,9 +163,7 @@ class HashTraits<StringKey, HashBucket,
 		typename internal::HashTraitsStringViewSelector<StringKey>::StringView>
 {
 public:
-	explicit HashTraits() noexcept
-	{
-	}
+	explicit HashTraits() noexcept = default;
 };
 #endif
 

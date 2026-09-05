@@ -209,9 +209,7 @@ namespace internal
 		typedef HashMapBucketBounds<HashSetBucketBounds, true> ConstBounds;
 
 	public:
-		explicit HashMapBucketBounds() noexcept
-		{
-		}
+		explicit HashMapBucketBounds() noexcept = default;
 
 		operator ConstBounds() const noexcept
 		{

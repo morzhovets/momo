@@ -80,9 +80,7 @@ public:
 	using IsValidKeyArg = internal::TreeTraitsIsValidKeyArg<Key, KeyArg>;
 
 public:
-	explicit TreeTraits() noexcept
-	{
-	}
+	explicit TreeTraits() noexcept = default;
 
 	size_t GetSplitItemIndex(size_t itemCount, size_t newItemIndex) const noexcept
 	{

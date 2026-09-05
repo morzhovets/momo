@@ -61,9 +61,7 @@ namespace momo
 class MemManagerCpp
 {
 public:
-	explicit MemManagerCpp() noexcept
-	{
-	}
+	explicit MemManagerCpp() noexcept = default;
 
 	MemManagerCpp(MemManagerCpp&&) noexcept = default;
 
@@ -93,9 +91,7 @@ public:
 class MemManagerC
 {
 public:
-	explicit MemManagerC() noexcept
-	{
-	}
+	explicit MemManagerC() noexcept = default;
 
 	MemManagerC(MemManagerC&&) noexcept = default;
 
@@ -132,9 +128,7 @@ public:
 class MemManagerWin
 {
 public:
-	explicit MemManagerWin() noexcept
-	{
-	}
+	explicit MemManagerWin() noexcept = default;
 
 	MemManagerWin(MemManagerWin&&) noexcept = default;
 
@@ -186,9 +180,8 @@ private:
 	typedef std::allocator_traits<ByteAllocator> ByteAllocatorTraits;
 
 public:
-	explicit MemManagerStd() noexcept(std::is_nothrow_default_constructible<ByteAllocator>::value)
-	{
-	}
+	explicit MemManagerStd()
+		noexcept(std::is_nothrow_default_constructible<ByteAllocator>::value) = default;
 
 	explicit MemManagerStd(const Allocator& alloc) noexcept
 		: ByteAllocator(alloc)
@@ -297,17 +290,9 @@ public:
 	{
 	}
 
-	MemManagerStd(MemManagerStd&& memManager) noexcept
-		: ByteAllocator(),
-		MemManagerDefault(std::move(memManager))
-	{
-	}
+	MemManagerStd(MemManagerStd&&) noexcept = default;
 
-	MemManagerStd(const MemManagerStd& memManager)
-		: ByteAllocator(),
-		MemManagerDefault(memManager)
-	{
-	}
+	MemManagerStd(const MemManagerStd&) = default;
 
 	~MemManagerStd() noexcept = default;
 
@@ -489,9 +474,7 @@ namespace internal
 	class MemManagerDummy
 	{
 	public:
-		explicit MemManagerDummy() noexcept
-		{
-		}
+		explicit MemManagerDummy() noexcept = default;
 
 		MemManagerDummy(MemManagerDummy&&) noexcept = default;
 

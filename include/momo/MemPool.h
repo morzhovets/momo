@@ -116,9 +116,7 @@ public:
 	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
 public:
-	explicit MemPoolParamsStatic() noexcept
-	{
-	}
+	explicit MemPoolParamsStatic() noexcept = default;
 };
 
 class MemPoolSettings

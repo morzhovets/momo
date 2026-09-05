@@ -79,9 +79,7 @@ namespace internal
 		typedef typename ArrayBucket::Params Params;
 
 	public:
-		explicit BucketUnlimP() noexcept
-		{
-		}
+		explicit BucketUnlimP() noexcept = default;
 
 		BucketUnlimP(const BucketUnlimP&) = delete;
 

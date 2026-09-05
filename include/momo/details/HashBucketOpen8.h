@@ -52,9 +52,7 @@ namespace internal
 #endif
 
 	public:
-		explicit BucketOpen8() noexcept
-		{
-		}
+		explicit BucketOpen8() noexcept = default;
 
 		BucketOpen8(const BucketOpen8&) = delete;
 

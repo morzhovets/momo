@@ -508,9 +508,7 @@ public:
 	}
 
 protected:
-	constexpr explicit DataColumn() noexcept
-	{
-	}
+	constexpr explicit DataColumn() noexcept = default;
 
 	DataColumn(const DataColumn&) noexcept = default;
 
