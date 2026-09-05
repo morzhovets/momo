@@ -117,7 +117,7 @@ namespace internal
 		{
 		}
 
-		~InsertResult() = default;
+		~InsertResult() noexcept = default;
 
 		InsertResult& operator=(const InsertResult& insRes) noexcept
 		{

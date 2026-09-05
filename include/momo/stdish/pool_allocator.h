@@ -84,7 +84,7 @@ public:
 	{
 	}
 
-	~unsynchronized_pool_allocator() = default;
+	~unsynchronized_pool_allocator() noexcept = default;
 
 	unsynchronized_pool_allocator& operator=(const unsynchronized_pool_allocator& alloc) noexcept
 	{

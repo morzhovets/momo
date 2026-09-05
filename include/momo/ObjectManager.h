@@ -198,11 +198,11 @@ namespace internal
 		MOMO_STATIC_ASSERT(count > 0);
 
 	public:
-		ObjectBuffer() = default;
+		ObjectBuffer() noexcept = default;
 
 		ObjectBuffer(const ObjectBuffer&) = delete;
 
-		~ObjectBuffer() = default;
+		~ObjectBuffer() noexcept = default;
 
 		ObjectBuffer& operator=(const ObjectBuffer&) = delete;
 
@@ -258,7 +258,7 @@ namespace internal
 
 		ObjectCreator(const ObjectCreator&) = delete;
 
-		~ObjectCreator() = default;
+		~ObjectCreator() noexcept = default;
 
 		ObjectCreator& operator=(const ObjectCreator&) = delete;
 

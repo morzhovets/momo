@@ -64,7 +64,7 @@ public:
 	{
 	}
 
-	MemManagerDict(MemManagerDict&&) = default;
+	MemManagerDict(MemManagerDict&&) noexcept = default;
 
 	MemManagerDict(const MemManagerDict& memManager)
 		: MemManagerDict(memManager.GetBaseMemManager())
@@ -76,7 +76,7 @@ public:
 		MOMO_EXTRA_CHECK(mBlockDict.IsEmpty());
 	}
 
-	MemManagerDict& operator=(MemManagerDict&&) = default;
+	MemManagerDict& operator=(MemManagerDict&&) noexcept = default;
 
 	MemManagerDict& operator=(const MemManagerDict&) = delete;
 

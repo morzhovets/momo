@@ -227,7 +227,7 @@ public:
 	{
 	}
 
-	~unordered_multimap_adaptor() = default;
+	~unordered_multimap_adaptor() noexcept = default;
 
 	unordered_multimap_adaptor& operator=(unordered_multimap_adaptor&& right)
 		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<unordered_multimap_adaptor>::value)

@@ -145,7 +145,7 @@ public:
 	{
 	}
 
-	~vector_adaptor() = default;
+	~vector_adaptor() noexcept = default;
 
 	vector_adaptor& operator=(vector_adaptor&& right)
 		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<vector_adaptor>::value)

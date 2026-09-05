@@ -448,7 +448,7 @@ public:
 	{
 	}
 
-	~HashMapCore() = default;
+	~HashMapCore() noexcept = default;
 
 	HashMapCore& operator=(HashMapCore&& hashMap) noexcept
 	{

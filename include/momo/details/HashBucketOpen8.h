@@ -58,7 +58,7 @@ namespace internal
 
 		BucketOpen8(const BucketOpen8&) = delete;
 
-		~BucketOpen8() = default;
+		~BucketOpen8() noexcept = default;
 
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 

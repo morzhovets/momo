@@ -162,7 +162,7 @@ private:
 
 		Data(const Data&) = delete;
 
-		~Data() = default;
+		~Data() noexcept = default;
 
 		Data& operator=(const Data&) = delete;
 

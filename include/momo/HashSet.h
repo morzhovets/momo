@@ -142,7 +142,7 @@ namespace internal
 		{
 		}
 
-		~HashSetBuckets() = default;
+		~HashSetBuckets() noexcept = default;
 
 		void pvDestroy(MemManager& memManager, const size_t& lastBucketIndex) noexcept
 		{

@@ -171,7 +171,7 @@ public:
 	{
 	}
 
-	~set_adaptor() = default;
+	~set_adaptor() noexcept = default;
 
 	set_adaptor& operator=(set_adaptor&& right)
 		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<set_adaptor>::value)

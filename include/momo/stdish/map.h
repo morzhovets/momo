@@ -215,7 +215,7 @@ namespace internal
 		{
 		}
 
-		~map_adaptor_base() = default;
+		~map_adaptor_base() noexcept = default;
 
 		map_adaptor_base& operator=(map_adaptor_base&& right)
 			noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<map_adaptor_base>::value)

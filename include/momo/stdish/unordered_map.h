@@ -240,7 +240,7 @@ public:
 	{
 	}
 
-	~unordered_map_adaptor() = default;
+	~unordered_map_adaptor() noexcept = default;
 
 	unordered_map_adaptor& operator=(unordered_map_adaptor&& right)
 		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<unordered_map_adaptor>::value)

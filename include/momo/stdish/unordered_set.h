@@ -225,7 +225,7 @@ public:
 	{
 	}
 
-	~unordered_set_adaptor() = default;
+	~unordered_set_adaptor() noexcept = default;
 
 	unordered_set_adaptor& operator=(unordered_set_adaptor&& right)
 		noexcept(momo::internal::ContainerAssignerStd::IsNothrowMoveAssignable<unordered_set_adaptor>::value)

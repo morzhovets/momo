@@ -586,7 +586,7 @@ namespace internal
 		}
 
 	private:
-		MapKeyValuePair() = default;
+		explicit MapKeyValuePair() noexcept = default;
 		
 		template<typename PairCreator>
 		explicit MapKeyValuePair(PairCreator&& pairCreator)
@@ -594,7 +594,7 @@ namespace internal
 			std::forward<PairCreator>(pairCreator)(GetKeyPtr(), GetValuePtr());
 		}
 
-		~MapKeyValuePair() = default;
+		~MapKeyValuePair() noexcept = default;
 
 	private:
 		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
@@ -765,11 +765,11 @@ namespace internal
 		public:
 			ValueReference() = delete;
 
-			ValueReference(ValueReference&&) = default;
+			ValueReference(ValueReference&&) noexcept = default;
 
 			ValueReference(const ValueReference&) = delete;
 
-			~ValueReference() = default;
+			~ValueReference() noexcept = default;
 
 			Value& operator=(ValueReference&& valueRef) &&
 			{
@@ -892,7 +892,7 @@ namespace internal
 
 		MapExtractedPair(const MapExtractedPair&) = delete;
 
-		~MapExtractedPair() = default;
+		~MapExtractedPair() noexcept = default;
 
 		MapExtractedPair& operator=(const MapExtractedPair&) = delete;
 

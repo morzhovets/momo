@@ -592,7 +592,7 @@ public:
 		return array;
 	}
 
-	~ArrayCore() = default;
+	~ArrayCore() noexcept = default;
 
 	ArrayCore& operator=(ArrayCore&& array) noexcept
 	{

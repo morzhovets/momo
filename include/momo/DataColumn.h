@@ -248,12 +248,12 @@ public:
 	}
 
 #ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
-	DataEquality(DataEquality&&) = default;
+	DataEquality(DataEquality&&) noexcept = default;
 #endif
 
 	DataEquality(const DataEquality&) = delete;
 
-	~DataEquality() = default;
+	~DataEquality() noexcept = default;
 
 	DataEquality& operator=(const DataEquality&) = delete;
 
@@ -307,12 +307,12 @@ public:
 	}
 
 #ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
-	DataEquality(DataEquality&&) = default;
+	DataEquality(DataEquality&&) noexcept = default;
 #endif
 
 	DataEquality(const DataEquality&) = delete;
 
-	~DataEquality() = default;
+	~DataEquality() noexcept = default;
 
 	DataEquality& operator=(const DataEquality&) = delete;
 
@@ -376,12 +376,12 @@ public:
 	}
 
 #ifndef MOMO_HAS_GUARANTEED_COPY_ELISION
-	DataAssignment(DataAssignment&&) = default;
+	DataAssignment(DataAssignment&&) noexcept = default;
 #endif
 
 	DataAssignment(const DataAssignment&) = delete;
 
-	~DataAssignment() = default;
+	~DataAssignment() noexcept = default;
 
 	DataAssignment& operator=(const DataAssignment&) = delete;
 
@@ -441,7 +441,7 @@ public:
 
 	//DataColumn(const DataColumn&) = delete;
 
-	//~DataColumn() = default;
+	//~DataColumn() noexcept = default;
 
 	//DataColumn& operator=(const DataColumn&) = delete;
 
@@ -512,11 +512,11 @@ protected:
 	{
 	}
 
-	DataColumn(const DataColumn&) = default;
+	DataColumn(const DataColumn&) noexcept = default;
 
-	~DataColumn() = default;
+	~DataColumn() noexcept = default;
 
-	DataColumn& operator=(const DataColumn&) = default;
+	DataColumn& operator=(const DataColumn&) noexcept = default;
 };
 
 template<typename TStruct = DataStructDefault<>,	//?
@@ -832,7 +832,7 @@ private:
 
 		Graph(const Graph&) = delete;
 
-		~Graph() = default;
+		~Graph() noexcept = default;
 
 		Graph& operator=(const Graph&) = delete;
 
@@ -969,7 +969,7 @@ public:
 	{
 	}
 
-	~DataColumnList() = default;
+	~DataColumnList() noexcept = default;
 
 	DataColumnList& operator=(const DataColumnList&) = delete;
 
@@ -1405,7 +1405,7 @@ public:
 	{
 	}
 
-	~DataColumnListStatic() = default;
+	~DataColumnListStatic() noexcept = default;
 
 	DataColumnListStatic& operator=(const DataColumnListStatic&) = delete;
 

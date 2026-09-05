@@ -65,11 +65,11 @@ public:
 	{
 	}
 
-	MemManagerCpp(MemManagerCpp&&) = default;
+	MemManagerCpp(MemManagerCpp&&) noexcept = default;
 
-	MemManagerCpp(const MemManagerCpp&) = default;
+	MemManagerCpp(const MemManagerCpp&) noexcept = default;
 
-	~MemManagerCpp() = default;
+	~MemManagerCpp() noexcept = default;
 
 	MemManagerCpp& operator=(const MemManagerCpp&) = delete;
 
@@ -97,11 +97,11 @@ public:
 	{
 	}
 
-	MemManagerC(MemManagerC&&) = default;
+	MemManagerC(MemManagerC&&) noexcept = default;
 
-	MemManagerC(const MemManagerC&) = default;
+	MemManagerC(const MemManagerC&) noexcept = default;
 
-	~MemManagerC() = default;
+	~MemManagerC() noexcept = default;
 
 	MemManagerC& operator=(const MemManagerC&) = delete;
 
@@ -136,11 +136,11 @@ public:
 	{
 	}
 
-	MemManagerWin(MemManagerWin&&) = default;
+	MemManagerWin(MemManagerWin&&) noexcept = default;
 
-	MemManagerWin(const MemManagerWin&) = default;
+	MemManagerWin(const MemManagerWin&) noexcept = default;
 
-	~MemManagerWin() = default;
+	~MemManagerWin() noexcept = default;
 
 	MemManagerWin& operator=(const MemManagerWin&) = delete;
 
@@ -206,7 +206,7 @@ public:
 	{
 	}
 
-	~MemManagerStd() = default;
+	~MemManagerStd() noexcept = default;
 
 	template<bool enabled = std::is_nothrow_move_assignable<ByteAllocator>::value
 		|| ByteAllocatorTraits::propagate_on_container_move_assignment::value
@@ -309,7 +309,7 @@ public:
 	{
 	}
 
-	~MemManagerStd() = default;
+	~MemManagerStd() noexcept = default;
 
 	MemManagerStd& operator=(const MemManagerStd&) = delete;
 
@@ -493,11 +493,11 @@ namespace internal
 		{
 		}
 
-		MemManagerDummy(MemManagerDummy&&) = default;
+		MemManagerDummy(MemManagerDummy&&) noexcept = default;
 
-		MemManagerDummy(const MemManagerDummy&) = default;
+		MemManagerDummy(const MemManagerDummy&) noexcept = default;
 
-		~MemManagerDummy() = default;
+		~MemManagerDummy() noexcept = default;
 
 		MemManagerDummy& operator=(const MemManagerDummy&) = delete;
 
@@ -542,7 +542,7 @@ namespace internal
 		{
 		}
 
-		~MemManagerPtr() = default;
+		~MemManagerPtr() noexcept = default;
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
@@ -594,13 +594,13 @@ namespace internal
 		{
 		}
 
-		MemManagerPtr(MemManagerPtr&&) = default;
+		MemManagerPtr(MemManagerPtr&&) noexcept = default;
 
-		MemManagerPtr(const MemManagerPtr&) = default;
+		MemManagerPtr(const MemManagerPtr&) noexcept = default;
 
-		~MemManagerPtr() = default;
+		~MemManagerPtr() noexcept = default;
 
-		MemManagerPtr& operator=(MemManagerPtr&&) = default;
+		MemManagerPtr& operator=(MemManagerPtr&&) noexcept = default;
 
 		MemManagerPtr& operator=(const MemManagerPtr&) = delete;
 
