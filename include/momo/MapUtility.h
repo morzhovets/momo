@@ -687,7 +687,7 @@ namespace internal
 
 		MapKeyValuePair(const MapKeyValuePair&) = delete;
 
-		~MapKeyValuePair() = default;
+		~MapKeyValuePair() noexcept = default;
 
 		MapKeyValuePair& operator=(const MapKeyValuePair&) = delete;
 
@@ -738,7 +738,7 @@ namespace internal
 		}
 
 	private:
-		MapKeyValuePair() = default;
+		explicit MapKeyValuePair() noexcept = default;
 
 	private:
 		ObjectBuffer<Key, keyAlignment> mKeyBuffer;
@@ -770,7 +770,7 @@ namespace internal
 
 		MapKeyValuePtrPair(const MapKeyValuePtrPair&) = delete;
 
-		~MapKeyValuePtrPair() = default;
+		~MapKeyValuePtrPair() noexcept = default;
 
 		MapKeyValuePtrPair& operator=(const MapKeyValuePtrPair&) = delete;
 
@@ -835,7 +835,7 @@ namespace internal
 		}
 
 	private:
-		MapKeyValuePtrPair() = default;
+		explicit MapKeyValuePtrPair() noexcept = default;
 
 	private:
 		ObjectBuffer<Key, keyAlignment> mKeyBuffer;

@@ -71,7 +71,7 @@ namespace internal
 	class FinalizerArgs<>
 	{
 	public:
-		FinalizerArgs() = default;
+		FinalizerArgs() noexcept = default;
 
 	protected:
 		template<typename Class>

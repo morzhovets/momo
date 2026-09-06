@@ -224,7 +224,7 @@ private:
 	typedef std::allocator_traits<ByteAllocator> ByteAllocatorTraits;
 
 public:
-	explicit MemManagerStdByte() = default;
+	explicit MemManagerStdByte() noexcept(noexcept(ByteAllocator())) = default;
 
 	template<internal::conceptAllocator Allocator>
 	requires (std::is_same_v<Allocator,
@@ -308,7 +308,7 @@ public:
 	typedef std::allocator<std::byte> ByteAllocator;
 
 public:
-	explicit MemManagerStdByte() = default;
+	explicit MemManagerStdByte() noexcept(noexcept(MemManagerDefault())) = default;
 
 	template<typename Object>
 	explicit MemManagerStdByte(const std::allocator<Object>& /*alloc*/)
