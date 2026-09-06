@@ -161,8 +161,7 @@
 
 #if defined(__GNUC__) && !defined(__clang__) && defined(__OPTIMIZE__)
 // To avoid false positive GCC warnings
-# define MOMO_ASSUME(expr) do { bool cond = !!(expr); [[assume(cond)]]; } while (false)
-//# define MOMO_ASSUME(expr) do { if (!(expr)) std::unreachable(); } while (false)
+# define MOMO_ASSUME(expr) do { if (!(expr)) std::unreachable(); } while (false)
 #else
 # define MOMO_ASSUME(expr) void()
 #endif
