@@ -555,6 +555,7 @@ public:
 	{
 	}
 
+	//ArrayCore(ArrayCore&&) noexcept = default;	// vs
 	ArrayCore(ArrayCore&& array) noexcept
 		: mData(std::move(array.mData))
 	{
