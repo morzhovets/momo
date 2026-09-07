@@ -224,7 +224,8 @@ private:
 	typedef std::allocator_traits<ByteAllocator> ByteAllocatorTraits;
 
 public:
-	explicit MemManagerStdByte() noexcept(noexcept(ByteAllocator())) = default;
+	explicit MemManagerStdByte()
+		noexcept(std::is_nothrow_default_constructible_v<ByteAllocator>) = default;	// vs
 
 	template<internal::conceptAllocator Allocator>
 	requires (std::is_same_v<Allocator,
@@ -337,7 +338,7 @@ public:
 private:
 	static ByteAllocator& pvGetByteAllocator() noexcept
 	{
-		static ByteAllocator byteAllocator;
+		static ByteAllocator byteAllocator;	//?
 		return byteAllocator;
 	}
 };
