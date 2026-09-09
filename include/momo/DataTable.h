@@ -1235,7 +1235,7 @@ private:
 	template<size_t columnCount>
 	void pvCheckImmutable(const std::array<size_t, columnCount>& offsets) const
 	{
-		for ([[maybe_unused]] size_t offset : offsets)
+		for (size_t offset : offsets)
 			MOMO_CHECK(!GetColumnList().IsMutable(offset));
 	}
 

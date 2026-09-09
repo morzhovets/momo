@@ -1267,8 +1267,7 @@ private:
 	}
 
 	template<internal::conceptObjectCreator<Item> ItemCreator>
-	Iterator pvAddFirst([[maybe_unused]] ConstIterator iter,
-		FastMovableFunctor<ItemCreator> itemCreator)
+	Iterator pvAddFirst(ConstIterator iter, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		MOMO_CHECK(iter == ConstIterator());
 		if (mNodeParams == nullptr)

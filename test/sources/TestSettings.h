@@ -87,7 +87,7 @@
 #define MOMO_CHECK_ITERATOR_VERSION (checkMode != momo::CheckMode::assertion)
 
 #undef MOMO_ASSERT
-#define MOMO_ASSERT(expr) void()
+#define MOMO_ASSERT(expr) (void)sizeof(expr)
 
 #endif // TEST_DEBUG
 

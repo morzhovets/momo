@@ -862,7 +862,7 @@ private:
 	}
 
 	template<bool extraCheck, internal::conceptObjectCreator<Item> ItemCreator>
-	Position pvAdd([[maybe_unused]] ConstPosition pos, FastMovableFunctor<ItemCreator> itemCreator)
+	Position pvAdd(ConstPosition pos, FastMovableFunctor<ItemCreator> itemCreator)
 	{
 		MOMO_CHECK(!pos);
 		Item* itemPtr = pvAdd(std::move(itemCreator));

@@ -108,7 +108,7 @@ namespace internal
 		}
 
 		template<conceptObjectReplacer<Item> ItemReplacer>
-		Iterator Remove(Params& /*params*/, [[maybe_unused]] Iterator iter,
+		Iterator Remove(Params& /*params*/, Iterator iter,
 			FastMovableFunctor<ItemReplacer> itemReplacer)
 		{
 			MOMO_ASSERT(IsFull());
@@ -121,7 +121,7 @@ namespace internal
 
 		template<conceptConstFunctor<size_t> HashCodeFullGetter>
 		size_t GetHashCodePart(FastCopyableFunctor<HashCodeFullGetter> hashCodeFullGetter,
-			[[maybe_unused]] Iterator iter, size_t /*bucketIndex*/, size_t /*logBucketCount*/,
+			Iterator iter, size_t /*bucketIndex*/, size_t /*logBucketCount*/,
 			size_t /*newLogBucketCount*/) const
 		{
 			MOMO_ASSERT(iter == mItemBuffer.GetPtr());

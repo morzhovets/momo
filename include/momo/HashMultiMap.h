@@ -405,7 +405,7 @@ namespace internal
 
 		template<conceptMemManagerOrNullPtr<MemManager> SrcMemManagerOrNullPtr,
 			conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
-		static void Relocate([[maybe_unused]] SrcMemManagerOrNullPtr srcMemManager,
+		static void Relocate(SrcMemManagerOrNullPtr srcMemManager,
 			DstMemManagerOrNullPtr dstMemManager, Key& srcKey, Value& srcValue,
 			Key* dstKey, Value* dstValue)
 		{

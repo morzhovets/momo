@@ -157,13 +157,14 @@
 # define MOMO_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #endif
 
-#define MOMO_ASSERT(expr) assert(expr)
+// Do assert and avoid unused variable warnings
+#define MOMO_ASSERT(expr) do { assert(expr); } while (sizeof(expr) == 0)
 
 #if defined(__GNUC__) && !defined(__clang__) && defined(__OPTIMIZE__)
 // To avoid false positive GCC warnings
 # define MOMO_ASSUME(expr) do { if (!(expr)) std::unreachable(); } while (false)
 #else
-# define MOMO_ASSUME(expr) void()
+# define MOMO_ASSUME(expr) (void)sizeof(expr)
 #endif
 
 #ifdef MOMO_DISABLE_EXCEPTIONS
