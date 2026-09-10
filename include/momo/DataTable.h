@@ -95,7 +95,7 @@ public:
 	using Equality = DataEquality<Column<Item>>;
 
 	template<typename... Items>
-	using Equalities = DataEquality<Column<Items>...>;
+	using Equalities = DataEquality<Column<Items>...>;	// vs2017 /permissive
 
 	template<typename Item, typename ItemArg>
 	using Assignment = DataAssignment<Column<Item>, ItemArg>;

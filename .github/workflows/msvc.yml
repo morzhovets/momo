@@ -18,6 +18,15 @@ jobs:
         - toolset: '14.2'
           arch: 'x64'
           build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '/std:c++14 /WX'
+          win_ver: '2025'
+
+        - toolset: '14.2'
+          arch: 'x64'
+          build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
@@ -25,6 +34,15 @@ jobs:
           win_ver: '2025'
 
         # Visual Studio 2022 x64
+        - toolset: '14.4'
+          arch: 'x64'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '/std:c++14 /WX'
+          win_ver: '2025'
+
         - toolset: '14.4'
           arch: 'x64'
           build_type: 'Release'
@@ -111,15 +129,15 @@ jobs:
         - toolset: '14.2'
           arch: 'x64_x86'
           build_type: 'Release'
-          test_libcxx20: 'On'
+          test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
-          flags: '/std:c++20 /WX'
+          flags: '/std:c++14 /WX'
           win_ver: '2025'
 
         - toolset: '14.2'
           arch: 'x64_x86'
-          build_type: 'Debug'
+          build_type: 'Release'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
@@ -127,6 +145,15 @@ jobs:
           win_ver: '2025'
 
         # Visual Studio 2022 x86
+        - toolset: '14.4'
+          arch: 'x64_x86'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '/std:c++14 /WX'
+          win_ver: '2025'
+
         - toolset: '14.4'
           arch: 'x64_x86'
           build_type: 'Release'
@@ -210,6 +237,15 @@ jobs:
           win_ver: '2025-vs2026'
 
         # Visual Studio 2022 ARM64
+        - toolset: '14.4'
+          arch: 'arm64'
+          build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '/std:c++14 /WX'
+          win_ver: '11-arm'
+
         - toolset: '14.4'
           arch: 'arm64'
           build_type: 'Release'
@@ -306,7 +342,7 @@ jobs:
         toolset: ${{ matrix.toolset }}
     - name: Build
       env:
-        CXXFLAGS: ${{ matrix.flags }} /permissive-
+        CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
         mkdir build
