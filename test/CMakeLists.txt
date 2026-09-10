@@ -87,7 +87,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     target_compile_definitions(momo_test PRIVATE _SCL_SECURE_NO_WARNINGS)
   endif()
   if(MSVC_VERSION GREATER_EQUAL 1910)
-    target_compile_options(momo_test PRIVATE /Zc:__cplusplus /permissive-)
+    target_compile_options(momo_test PRIVATE /Zc:__cplusplus)
   endif()
   if(DEFINED MOMO_COMMON_LANGUAGE_RUNTIME)
     set_target_properties(momo_test PROPERTIES

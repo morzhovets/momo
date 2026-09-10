@@ -306,7 +306,7 @@ jobs:
         toolset: ${{ matrix.toolset }}
     - name: Build
       env:
-        CXXFLAGS: ${{ matrix.flags }}
+        CXXFLAGS: ${{ matrix.flags }} /permissive-
       run: |
         cd test
         mkdir build
