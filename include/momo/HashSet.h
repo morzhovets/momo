@@ -1308,7 +1308,6 @@ private:
 					bucketIter, i, buckets.GetLogCount(), mBuckets->GetLogCount());
 				auto itemReplacer = [this, hashCode] (Item& srcItem, Item& dstItem)
 				{
-					(void)srcItem;
 					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
 					MemManager& memManager = GetMemManager();
 					auto itemCreator = [&memManager, &dstItem] (Item* newItem)

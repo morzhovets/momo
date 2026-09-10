@@ -81,7 +81,7 @@ public:
 #ifdef __cpp_sized_deallocation	//?
 		operator delete(ptr, size);
 #else
-		(void)size;
+		MOMO_ASSERT(size > 0);	// avoid unused variable warning
 		operator delete(ptr);
 #endif
 	}

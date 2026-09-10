@@ -188,7 +188,8 @@
 # define MOMO_EMPTY_BASES
 #endif
 
-#define MOMO_ASSERT(expr) assert(expr)
+// Do assert and avoid unused variable warnings
+#define MOMO_ASSERT(expr) do { assert(expr); } while (sizeof(expr) == 0)
 
 #ifdef MOMO_DISABLE_EXCEPTIONS
 # define MOMO_THROW(exception) std::terminate()

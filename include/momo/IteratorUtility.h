@@ -167,7 +167,6 @@ namespace internal
 
 		void Check(const size_t* version, bool allowEmpty = false) const
 		{
-			(void)version;
 			MOMO_ASSERT(version != nullptr);
 			if (allowEmpty && mContainerVersion == nullptr)
 				return;

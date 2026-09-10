@@ -113,7 +113,6 @@ namespace internal
 		template<typename ItemReplacer>
 		Iterator Remove(Params& /*params*/, Iterator iter, ItemReplacer&& itemReplacer)
 		{
-			(void)iter;
 			MOMO_ASSERT(IsFull());
 			Item* itemPtr = pvGetItemPtr();
 			MOMO_ASSERT(iter == itemPtr);
@@ -126,7 +125,6 @@ namespace internal
 		size_t GetHashCodePart(const HashCodeFullGetter& hashCodeFullGetter, Iterator iter,
 			size_t /*bucketIndex*/, size_t /*logBucketCount*/, size_t /*newLogBucketCount*/)
 		{
-			(void)iter;
 			MOMO_ASSERT(iter == pvGetItemPtr());
 			if MOMO_CONSTEXPR_IF (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();

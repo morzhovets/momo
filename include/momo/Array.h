@@ -486,7 +486,6 @@ private:
 		internal::EnableIf<!hasInternalCapacity>
 		pvReset(size_t count, ItemsCreator&& /*itemsCreator*/) noexcept
 		{
-			(void)count;
 			MOMO_ASSERT(count == 0);
 			MOMO_ASSERT(mCapacity > 0);
 			pvDeallocate(mItems, mCapacity);

@@ -1250,7 +1250,6 @@ private:
 	template<typename ItemCreator>
 	ConstIterator pvAddFirst(ConstIterator iter, ItemCreator&& itemCreator)
 	{
-		(void)iter;
 		MOMO_CHECK(iter == ConstIterator());
 		if (mNodeParams == nullptr)
 			mNodeParams = pvCreateNodeParams();

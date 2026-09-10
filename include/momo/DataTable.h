@@ -1297,10 +1297,7 @@ private:
 	void pvCheckImmutable(const std::array<size_t, columnCount>& offsets) const
 	{
 		for (size_t offset : offsets)
-		{
-			(void)offset;
 			MOMO_CHECK(!GetColumnList().IsMutable(offset));
-		}
 	}
 
 	Selection pvSelectEmpty() const
