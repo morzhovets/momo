@@ -537,7 +537,7 @@ public:
 
 	typedef TMemPoolParams MemPoolParams;
 
-public:	// clang
+private:
 	template<typename ItemTraits>
 	static consteval bool CorrectUsePtrState() noexcept
 	{
