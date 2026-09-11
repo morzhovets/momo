@@ -1,6 +1,6 @@
-[![MSVC](https://github.com/morzhovets/momo/actions/workflows/msvc.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/msvc.yml?query=branch%3Amaster)
 [![GCC](https://github.com/morzhovets/momo/actions/workflows/gcc.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/gcc.yml?query=branch%3Amaster)
 [![Clang](https://github.com/morzhovets/momo/actions/workflows/clang.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/clang.yml?query=branch%3Amaster)
+[![MSVC](https://github.com/morzhovets/momo/actions/workflows/msvc.yml/badge.svg?branch=master)](https://github.com/morzhovets/momo/actions/workflows/msvc.yml?query=branch%3Amaster)
 
 This is an experimental branch that requires a compiler with C++23 support.
 [Here](https://github.com/morzhovets/momo/tree/branch_cpp11) is a stable branch requiring only C++11.
@@ -70,8 +70,8 @@ Some examples are [here](https://github.com/morzhovets/momo/blob/master/test/sou
 
 #### Supported compilers
 
-- MS Visual C++ (Visual Studio 2022+, toolset 14.4+) with /std:c++23preview
-
 - GCC (15+) with -std=c++23
 
 - Clang (19+) with -std=c++23
+
+- MS Visual C++ (Visual Studio 2022+, toolset 14.4+) with /std:c++23preview
