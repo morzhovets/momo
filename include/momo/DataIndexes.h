@@ -321,6 +321,11 @@ namespace internal
 			const Item* item;
 		};
 
+		struct UniqueRaw
+		{
+			Raw* raw;
+		};
+
 		typedef size_t (*RawHasher)(Raw*, const size_t*);
 		typedef bool (*RawEqualComparer)(Raw*, Raw*, const size_t*);
 		typedef size_t (*MixedRawHasher)(const MixedRaw<>&, const size_t*);
@@ -331,6 +336,11 @@ namespace internal
 		public:
 			template<typename KeyArg>
 			struct IsValidKeyArg : public std::false_type
+			{
+			};
+
+			template<>
+			struct IsValidKeyArg<UniqueRaw> : public std::true_type
 			{
 			};
 
@@ -373,6 +383,11 @@ namespace internal
 				return mRawHasher(key, mOffsets.GetItems());
 			}
 
+			size_t GetHashCode(UniqueRaw key) const
+			{
+				return GetHashCode(key.raw);
+			}
+
 			template<typename... Items>
 			size_t GetHashCode(const OffsetItemTuple<Items...>& key) const
 			{
@@ -392,6 +407,11 @@ namespace internal
 			bool IsEqual(Raw* key1, Raw* key2) const
 			{
 				return mRawEqualComparer(key1, key2, mOffsets.GetItems());
+			}
+
+			bool IsEqual(UniqueRaw key1, Raw* key2) const
+			{
+				return key1.raw == key2;
 			}
 
 			template<typename... Items>
@@ -534,7 +554,7 @@ namespace internal
 			void PrepareRemove(Raw* raw)
 			{
 				MOMO_ASSERT(!mPositionRemove);
-				mPositionRemove = mHashSet.Find(raw);
+				mPositionRemove = mHashSet.Find(UniqueRaw(raw));
 				MOMO_ASSERT(!!mPositionRemove);
 			}
 
