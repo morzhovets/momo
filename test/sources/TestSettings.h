@@ -111,9 +111,6 @@
 #endif // MOMO_TEST_EXTRA_SETTINGS
 
 #if defined(TEST_MSVC) && !defined(TEST_DEBUG)
-# if _MSC_VER == 1900 && defined(_M_X64)
-#  undef TEST_LIBCXX_HASH_MAP	// libcxx11_hash_map_limp_modifiers_erase_key (-assert)
-# endif
 # if _MSC_VER == 1929 && defined(_M_IX86) && TEST_LIBCXX_VERSION == 20
 #  undef TEST_LIBCXX_HASH_MAP	// HashSet.h(1291) : fatal error C1001: Internal compiler error (-assert)
 # endif

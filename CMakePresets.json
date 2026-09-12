@@ -188,14 +188,6 @@
       }
     },
     {
-      "name": "Test-MSVC_2015-x64-std14",
-      "inherits": "Test-VS_2026-x64",
-      "cacheVariables": {
-        "CMAKE_GENERATOR_TOOLSET": "v140",
-        "CMAKE_CXX_STANDARD": "14"
-      }
-    },
-    {
       "name": "Test-MSVC_2017-x64-std17",
       "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
@@ -345,16 +337,6 @@
       "name": "MSVC_Clang-x86-std23-Release",
       "configurePreset": "Test-MSVC_Clang-x86-std23-Release",
       "inherits": "Ninja"
-    },
-    {
-      "name": "MSVC_2015-x64-std14-Debug",
-      "configurePreset": "Test-MSVC_2015-x64-std14",
-      "configuration": "Debug"
-    },
-    {
-      "name": "MSVC_2015-x64-std14-Release",
-      "configurePreset": "Test-MSVC_2015-x64-std14",
-      "configuration": "RelWithDebInfo"
     },
     {
       "name": "MSVC_2017-x64-std17-Debug",

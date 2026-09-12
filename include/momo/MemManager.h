@@ -290,18 +290,9 @@ public:
 	{
 	}
 
-	//MemManagerStd(MemManagerStd&&) noexcept = default;	// vs2015
-	MemManagerStd(MemManagerStd&& memManager) noexcept
-		: ByteAllocator(),
-		MemManagerDefault(std::move(memManager))
-	{
-	}
+	MemManagerStd(MemManagerStd&&) noexcept = default;
 
-	MemManagerStd(const MemManagerStd& memManager)
-		: ByteAllocator(),
-		MemManagerDefault(memManager)
-	{
-	}
+	MemManagerStd(const MemManagerStd&) = default;
 
 	~MemManagerStd() noexcept = default;
 

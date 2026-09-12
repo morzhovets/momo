@@ -772,14 +772,12 @@ namespace internal
 
 			Value& operator=(ValueReference&& valueRef) &&
 			{
-				//return std::move(*this).template operator=<Value&>(std::move(valueRef));	// vs2015: C2951
-				return std::move(*this) = std::move(valueRef).operator Value&();
+				return std::move(*this).template operator=<Value&>(std::move(valueRef));
 			}
 
 			Value& operator=(const ValueReference& valueRef) &&
 			{
-				//return std::move(*this).template operator=<const Value&>(valueRef);	// vs2015: C2951
-				return std::move(*this) = valueRef.operator const Value&();
+				return std::move(*this).template operator=<const Value&>(valueRef);
 			}
 
 			template<typename ValueArg>

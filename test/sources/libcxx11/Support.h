@@ -20,7 +20,7 @@
 # include <optional>
 #endif
 
-#if !defined(TEST_MSVC) && !defined(__cpp_lib_transparent_operators)
+#if !defined(__cpp_lib_transparent_operators) && !defined(TEST_MSVC)	// vs2017
 # define LIBCPP_HAS_NO_TRANSPARENT_OPERATORS
 #endif
 
