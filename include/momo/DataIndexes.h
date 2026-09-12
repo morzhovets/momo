@@ -335,7 +335,12 @@ namespace internal
 		{
 		public:
 			template<typename KeyArg>
-			struct IsValidKeyArg : public std::is_same<KeyArg, UniqueRaw>	// gcc
+			struct IsValidKeyArg : public std::false_type
+			{
+			};
+
+			template<std::same_as<UniqueRaw> KeyArg>	// gcc
+			struct IsValidKeyArg<KeyArg> : public std::true_type
 			{
 			};
 
@@ -384,7 +389,7 @@ namespace internal
 			}
 
 			template<typename... Items>
-			size_t GetHashCode(const OffsetItemTuple<Items...>& key) const
+			static size_t GetHashCode(const OffsetItemTuple<Items...>& key)
 			{
 				size_t hashCode = 0;
 				auto tupleHasher = [&hashCode] (const auto&... pairs)
@@ -404,13 +409,13 @@ namespace internal
 				return mRawEqualComparer(key1, key2, mOffsets.GetItems());
 			}
 
-			bool IsEqual(UniqueRaw key1, Raw* key2) const
+			static bool IsEqual(UniqueRaw key1, Raw* key2) noexcept
 			{
 				return key1.raw == key2;
 			}
 
 			template<typename... Items>
-			bool IsEqual(const OffsetItemTuple<Items...>& key1, Raw* key2) const
+			static bool IsEqual(const OffsetItemTuple<Items...>& key1, Raw* key2)
 			{
 				auto tupleEqualComp = [key2] (const auto&... pairs)
 				{
