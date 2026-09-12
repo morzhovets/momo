@@ -335,12 +335,7 @@ namespace internal
 		{
 		public:
 			template<typename KeyArg>
-			struct IsValidKeyArg : public std::false_type
-			{
-			};
-
-			template<>
-			struct IsValidKeyArg<UniqueRaw> : public std::true_type
+			struct IsValidKeyArg : public std::is_same<KeyArg, UniqueRaw>	// gcc
 			{
 			};
 
