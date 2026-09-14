@@ -90,20 +90,40 @@ namespace internal
 	using TieThreeComparer = decltype([] (const Key& key1, const Key& key2)
 		{ return std::tie(key1) <=> std::tie(key2); });
 
+	class HashMixer
+	{
+	public:
+		static size_t MixHashCode(size_t hashCode) noexcept
+		{
+			if constexpr (sizeof(size_t) == 4)
+			{
+				uint64_t hashCode64 = uint64_t{hashCode} * 0xE817FB2Dull;
+				return static_cast<size_t>(hashCode64) ^ static_cast<size_t>(hashCode64 >> 32);
+			}
+			else
+			{
+				static_assert(sizeof(size_t) == 8);
+				// MurmurHash3
+				hashCode ^= hashCode >> 33;
+				hashCode *= 0xFF51AFD7ED558CCDull;
+				hashCode ^= hashCode >> 33;
+				hashCode *= 0xC4CEB9FE1A85EC53ull;
+				hashCode ^= hashCode >> 33;
+				return hashCode;
+			}
+		}
+	};
+
 	class StrHasher
 	{
-	private:
-		static const uint64_t fnvBasis64 = 14695981039346656037ull;
-		static const uint64_t fnvPrime64 = 1099511628211ull;
-
 	public:
-		// Fowler-Noll-Vo hash function (1a)
 		static consteval uint64_t GetHashCode64(const char* str) noexcept
 		{
-			uint64_t res = fnvBasis64;
+			// Fowler-Noll-Vo hash function (1a)
+			uint64_t hashCode64 = 0xCBF29CE484222325ull;
 			for (const char* p = str; *p != '\0'; ++p)
-				res = (res ^ uint64_t{static_cast<unsigned char>(*p)}) * fnvPrime64;
-			return res;
+				hashCode64 = (hashCode64 ^ uint64_t{static_cast<unsigned char>(*p)}) * 0x100000001B3ull;
+			return hashCode64;
 		}
 	};
 }
