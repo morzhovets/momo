@@ -93,7 +93,7 @@ namespace internal
 	class HashMixer
 	{
 	public:
-		static size_t MixHashCode(size_t hashCode) noexcept
+		MOMO_FORCEINLINE static size_t MixHashCode(size_t hashCode) noexcept
 		{
 			if constexpr (sizeof(size_t) == 4)
 			{
@@ -102,14 +102,14 @@ namespace internal
 			}
 			else
 			{
-				static_assert(sizeof(size_t) == 8);
 				// MurmurHash3
-				hashCode ^= hashCode >> 33;
-				hashCode *= 0xFF51AFD7ED558CCDull;
-				hashCode ^= hashCode >> 33;
-				hashCode *= 0xC4CEB9FE1A85EC53ull;
-				hashCode ^= hashCode >> 33;
-				return hashCode;
+				uint64_t hashCode64 = hashCode;
+				hashCode64 ^= hashCode64 >> 33;
+				hashCode64 *= 0xFF51AFD7ED558CCDull;
+				hashCode64 ^= hashCode64 >> 33;
+				//hashCode64 *= 0xC4CEB9FE1A85EC53ull;
+				//hashCode64 ^= hashCode64 >> 33;
+				return static_cast<size_t>(hashCode64);
 			}
 		}
 	};
