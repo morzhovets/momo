@@ -502,46 +502,47 @@ namespace internal
 			}
 		}
 
-		static void ReplaceRelocate(MemManager& memManager, Key& srcKey, Value& srcValue,
-			Key& midKey, Value& midValue, Key* dstKey, Value* dstValue)
+		template<conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void ReplaceRelocate(MemManager& srcMemManager, DstMemManagerOrNullPtr dstMemManager,
+			Key& srcKey, Value& srcValue, Key& midKey, Value& midValue, Key* dstKey, Value* dstValue)
 		{
 			MOMO_ASSERT(std::addressof(srcKey) != std::addressof(midKey));
 			MOMO_ASSERT(std::addressof(srcValue) != std::addressof(midValue));
-			typedef typename KeyManager::template DestroyFinalizer<std::nullptr_t> KeyDestroyFinalizer;
-			typedef typename ValueManager::template DestroyFinalizer<std::nullptr_t> ValueDestroyFinalizer;
+			typedef typename KeyManager::template DestroyFinalizer<DstMemManagerOrNullPtr> KeyDestroyFinalizer;
+			typedef typename ValueManager::template DestroyFinalizer<DstMemManagerOrNullPtr> ValueDestroyFinalizer;
 			if constexpr (isKeyNothrowRelocatable)
 			{
-				ValueManager::ReplaceRelocate(memManager, srcValue, midValue, dstValue);
-				KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
+				ValueManager::ReplaceRelocate(srcMemManager, dstMemManager, srcValue, midValue, dstValue);
+				KeyManager::ReplaceRelocate(srcMemManager, dstMemManager, srcKey, midKey, dstKey);
 			}
 			else if constexpr (isValueNothrowRelocatable)
 			{
-				KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
-				ValueManager::ReplaceRelocate(memManager, srcValue, midValue, dstValue);
+				KeyManager::ReplaceRelocate(srcMemManager, dstMemManager, srcKey, midKey, dstKey);
+				ValueManager::ReplaceRelocate(srcMemManager, dstMemManager, srcValue, midValue, dstValue);
 			}
 			else if constexpr (KeyManager::isNothrowAnywayAssignable)
 			{
-				KeyManager::Copy(nullptr, midKey, dstKey);
-				KeyDestroyFinalizer dstKeyFin(nullptr, dstKey);
-				ValueManager::ReplaceRelocate(memManager, srcValue, midValue, dstValue);
+				KeyManager::Copy(dstMemManager, midKey, dstKey);
+				KeyDestroyFinalizer dstKeyFin(dstMemManager, dstKey);
+				ValueManager::ReplaceRelocate(srcMemManager, dstMemManager, srcValue, midValue, dstValue);
 				dstKeyFin.ResetPtr();
-				KeyManager::Replace(memManager, srcKey, midKey);
+				KeyManager::Replace(srcMemManager, srcKey, midKey);
 			}
 			else if constexpr (ValueManager::isNothrowAnywayAssignable)
 			{
-				ValueManager::Copy(nullptr, midValue, dstValue);
-				ValueDestroyFinalizer dstValueFin(nullptr, dstValue);
-				KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
+				ValueManager::Copy(dstMemManager, midValue, dstValue);
+				ValueDestroyFinalizer dstValueFin(dstMemManager, dstValue);
+				KeyManager::ReplaceRelocate(srcMemManager, dstMemManager, srcKey, midKey, dstKey);
 				dstValueFin.ResetPtr();
-				ValueManager::Replace(memManager, srcValue, midValue);
+				ValueManager::Replace(srcMemManager, srcValue, midValue);
 			}
 			else
 			{
-				KeyManager::Copy(nullptr, midKey, dstKey);
-				KeyDestroyFinalizer dstKeyFin(nullptr, dstKey);
-				ValueManager::Copy(nullptr, midValue, dstValue);
-				ValueDestroyFinalizer dstValueFin(nullptr, dstValue);
-				pvReplaceUnsafe(memManager, srcKey, srcValue, midKey, midValue);
+				KeyManager::Copy(dstMemManager, midKey, dstKey);
+				KeyDestroyFinalizer dstKeyFin(dstMemManager, dstKey);
+				ValueManager::Copy(dstMemManager, midValue, dstValue);
+				ValueDestroyFinalizer dstValueFin(dstMemManager, dstValue);
+				pvReplaceUnsafe(srcMemManager, srcKey, srcValue, midKey, midValue);
 				dstValueFin.ResetPtr();
 				dstKeyFin.ResetPtr();
 			}
@@ -650,10 +651,11 @@ namespace internal
 			KeyManager::Replace(memManager, srcKey, dstKey);
 		}
 
-		static void ReplaceRelocateKeys(MemManager& memManager, Key& srcKey,
-			Key& midKey, Key* dstKey)
+		template<conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void ReplaceRelocateKeys(MemManager& srcMemManager, DstMemManagerOrNullPtr dstMemManager,
+			Key& srcKey, Key& midKey, Key* dstKey)
 		{
-			KeyManager::ReplaceRelocate(memManager, srcKey, midKey, dstKey);
+			KeyManager::ReplaceRelocate(srcMemManager, dstMemManager, srcKey, midKey, dstKey);
 		}
 
 		template<conceptIncIterator<Key> SrcKeyIterator, conceptIncIterator<Key> DstKeyIterator,
@@ -919,12 +921,13 @@ namespace internal
 				dstItem.GetKey(), dstItem.GetValue());
 		}
 
-		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem,
-			Item* dstItem)
+		template<conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void ReplaceRelocate(MemManager& srcMemManager, DstMemManagerOrNullPtr dstMemManager,
+			Item& srcItem, Item& midItem, Item* dstItem)
 		{
 			Item::Create(dstItem);
-			KeyValueTraits::ReplaceRelocate(memManager, srcItem.GetKey(), srcItem.GetValue(),
-				midItem.GetKey(), midItem.GetValue(),
+			KeyValueTraits::ReplaceRelocate(srcMemManager, dstMemManager,
+				srcItem.GetKey(), srcItem.GetValue(), midItem.GetKey(), midItem.GetValue(),
 				dstItem->GetKeyPtr(), dstItem->GetValuePtr());
 		}
 
@@ -1048,13 +1051,44 @@ namespace internal
 			dstValuePtr = srcItem.GetValuePtr();
 		}
 
-		static void ReplaceRelocate(MemManager& memManager, Item& srcItem, Item& midItem, Item* dstItem)
+		template<conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void ReplaceRelocate(MemManager& srcMemManager, DstMemManagerOrNullPtr dstMemManager,
+			Item& srcItem, Item& midItem, Item* dstItem)
 		{
-			Item::Create(dstItem);
-			KeyValueTraits::ReplaceRelocateKeys(memManager, srcItem.GetKey(),
-				midItem.GetKey(), dstItem->GetKeyPtr());
-			dstItem->GetValuePtr() = midItem.GetValuePtr();
-			midItem.GetValuePtr() = srcItem.GetValuePtr();
+			MOMO_ASSERT(&srcMemManager != dstMemManager);
+			if constexpr (std::is_null_pointer_v<DstMemManagerOrNullPtr>)
+			{
+				Item::Create(dstItem);
+				KeyValueTraits::ReplaceRelocateKeys(srcMemManager, dstMemManager,
+					srcItem.GetKey(), midItem.GetKey(), dstItem->GetKeyPtr());
+				dstItem->GetValuePtr() = midItem.GetValuePtr();
+				midItem.GetValuePtr() = srcItem.GetValuePtr();
+			}
+			else if constexpr (KeyValueTraits::isKeyNothrowRelocatable)
+			{
+				Item::template CreateRelocate<KeyValueTraits>(dstItem,
+					&srcMemManager, *dstMemManager, midItem.GetKey(), *midItem.GetValuePtr());
+				KeyValueTraits::RelocateKey(&srcMemManager, &srcMemManager,
+					srcItem.GetKey(), midItem.GetKeyPtr());
+				midItem.GetValuePtr() = srcItem.GetValuePtr();
+			}
+			else
+			{
+				auto itemCreator = [&srcMemManager, dstMemManager, &srcItem, &midItem]
+					(Key* newKey, Value* newValue)
+				{
+					typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
+					ValueCreator(*dstMemManager, midItem.GetValue())(newValue);
+					Finalizer fin(&KeyValueTraits::template DestroyValue<DstMemManagerOrNullPtr>,
+						dstMemManager, *newValue);
+					KeyValueTraits::ReplaceRelocateKeys(srcMemManager, dstMemManager,
+						srcItem.GetKey(), midItem.GetKey(), newKey);
+					fin.Detach();
+					KeyValueTraits::DestroyValue(&srcMemManager, midItem.GetValue());
+					midItem.GetValuePtr() = srcItem.GetValuePtr();
+				};
+				std::construct_at(dstItem, *dstMemManager, FastMovableFunctor(std::move(itemCreator)));
+			}
 		}
 
 		template<conceptIncIterator<Item> SrcIterator, conceptIncIterator<Item> DstIterator,

@@ -80,10 +80,11 @@ namespace internal
 			ItemManager::Replace(memManager, srcItem, dstItem);
 		}
 
-		static void ReplaceRelocate(MemManager& srcMemManager, Item& srcItem, Item& midItem,
-			Item* dstItem)
+		template<conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void ReplaceRelocate(MemManager& srcMemManager, DstMemManagerOrNullPtr dstMemManager,
+			Item& srcItem, Item& midItem, Item* dstItem)
 		{
-			ItemManager::ReplaceRelocate(srcMemManager, srcItem, midItem, dstItem);
+			ItemManager::ReplaceRelocate(srcMemManager, dstMemManager, srcItem, midItem, dstItem);
 		}
 
 		template<typename KeyArg>

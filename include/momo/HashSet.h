@@ -894,7 +894,7 @@ public:
 				if (std::addressof(srcItem) == std::addressof(dstItem))
 					ItemTraits::Relocate(&memManager, nullptr, dstItem, newItem);
 				else
-					ItemTraits::ReplaceRelocate(memManager, srcItem, dstItem, newItem);
+					ItemTraits::ReplaceRelocate(memManager, nullptr, srcItem, dstItem, newItem);
 			};
 			resIter = pvRemove(iter, FastMovableFunctor(std::move(itemReplacer)));
 		};
@@ -1338,8 +1338,10 @@ private:
 				auto itemReplacer = [&memManager, &dstMemManager, newItem]
 					(Item& srcItem, Item& dstItem)
 				{
-					MOMO_ASSERT(std::addressof(srcItem) == std::addressof(dstItem));
-					ItemTraits::Relocate(&memManager, &dstMemManager, dstItem, newItem);
+					if (std::addressof(srcItem) == std::addressof(dstItem))
+						ItemTraits::Relocate(&memManager, &dstMemManager, dstItem, newItem);
+					else
+						ItemTraits::ReplaceRelocate(memManager, &dstMemManager, srcItem, dstItem, newItem);
 				};
 				iter = pvRemove(iter, FastMovableFunctor(std::move(itemReplacer)));
 			};

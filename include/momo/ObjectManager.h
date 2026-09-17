@@ -557,11 +557,11 @@ namespace internal
 			if constexpr (isNothrowMoveConstructible)
 			{
 				std::move(exec)();
-				Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
+				pvMove(&memManager, std::move(srcObject), dstObject);
 			}
 			else
 			{
-				Creator<Object&&>(memManager, std::move(srcObject))(dstObject);
+				pvMove(&memManager, std::move(srcObject), dstObject);
 				DestroyFinalizer<> dstFin(&memManager, dstObject);
 				std::move(exec)();	//?
 				dstFin.ResetPtr();
@@ -643,28 +643,29 @@ namespace internal
 			Destroy(&memManager, srcObject);
 		}
 
-		static void ReplaceRelocate(MemManager& memManager, Object& srcObject, Object& midObject,
-			Object* dstObject) noexcept(isNothrowRelocatable)
-			requires isNothrowRelocatable ||
-				(isNothrowAnywayAssignable && isNothrowDestructible && std::is_move_constructible_v<Object>) ||
-				(isAnywayAssignable && isNothrowDestructible && std::is_copy_constructible_v<Object>)
+		template<internal::conceptMemManagerOrNullPtr<MemManager> DstMemManagerOrNullPtr>
+		static void ReplaceRelocate(MemManager& srcMemManager, DstMemManagerOrNullPtr dstMemManager,
+			Object& srcObject, Object& midObject, Object* dstObject) noexcept(isNothrowRelocatable)
+			//requires isNothrowRelocatable ||
+			//	(isNothrowAnywayAssignable && isNothrowDestructible && std::is_move_constructible_v<Object>) ||
+			//	(isAnywayAssignable && isNothrowDestructible && std::is_copy_constructible_v<Object>)
 		{
 			MOMO_ASSERT(std::addressof(srcObject) != std::addressof(midObject));
 			if constexpr (isNothrowRelocatable)
 			{
-				Relocate(&memManager, nullptr, midObject, dstObject);
-				Relocate(memManager, srcObject, std::addressof(midObject));
+				Relocate(&srcMemManager, dstMemManager, midObject, dstObject);
+				Relocate(srcMemManager, srcObject, std::addressof(midObject));
 			}
 			else if constexpr (isNothrowAnywayAssignable)
 			{
-				std::construct_at(dstObject, std::move(midObject));
-				Replace(memManager, srcObject, midObject);
+				pvMove(dstMemManager, std::move(midObject), dstObject);
+				Replace(srcMemManager, srcObject, midObject);
 			}
 			else
 			{
-				Copy(nullptr, midObject, dstObject);
-				DestroyFinalizer<std::nullptr_t> dstFin(nullptr, dstObject);
-				Replace(memManager, srcObject, midObject);
+				Copy(dstMemManager, midObject, dstObject);
+				DestroyFinalizer<DstMemManagerOrNullPtr> dstFin(dstMemManager, dstObject);
+				Replace(srcMemManager, srcObject, midObject);
 				dstFin.ResetPtr();
 			}
 		}
@@ -751,6 +752,19 @@ namespace internal
 		}
 
 	private:
+		static void pvMove(MemManager* memManager, Object&& srcObject, Object* dstObject)
+			noexcept(isNothrowMoveConstructible)
+		{
+			MOMO_ASSERT(memManager != nullptr);
+			Creator<Object&&>(*memManager, std::move(srcObject))(dstObject);
+		}
+
+		static void pvMove(std::nullptr_t /*memManager*/, Object&& srcObject, Object* dstObject)
+			noexcept(std::is_nothrow_move_constructible_v<Object>)
+		{
+			std::construct_at(dstObject, std::move(srcObject));
+		}
+
 		template<conceptIncIterator<Object> Iterator>
 		static void pvDestroyExtra(MemManager& memManager, Iterator begin,
 			const size_t& lastIndex) noexcept

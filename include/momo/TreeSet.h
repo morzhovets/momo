@@ -1375,13 +1375,11 @@ private:
 	template<internal::conceptMemManagerOrNullPtr<MemManager> ExtMemManagerOrNullPtr>
 	Iterator pvExtract(ConstIterator iter, Item* extItem, ExtMemManagerOrNullPtr extMemManager)
 	{
-		auto itemRemover = [this, extItem, extMemManager] (Item& item)
-			{ ItemTraits::Relocate(&GetMemManager(), extMemManager, item, extItem); };
-		auto itemReplacer = [this, extItem] (Item& srcItem, Item& dstItem)
-		{
-			MOMO_ASSERT(std::is_null_pointer_v<ExtMemManagerOrNullPtr>);
-			ItemTraits::ReplaceRelocate(GetMemManager(), srcItem, dstItem, extItem);
-		};
+		MemManager& memManager = GetMemManager();
+		auto itemRemover = [&memManager, extMemManager, extItem] (Item& item)
+			{ ItemTraits::Relocate(&memManager, extMemManager, item, extItem); };
+		auto itemReplacer = [&memManager, extMemManager, extItem] (Item& srcItem, Item& dstItem)
+			{ ItemTraits::ReplaceRelocate(memManager, extMemManager, srcItem, dstItem, extItem); };
 		return pvRemove(iter, FastMovableFunctor(std::move(itemRemover)),
 			FastMovableFunctor(std::move(itemReplacer)));
 	}
