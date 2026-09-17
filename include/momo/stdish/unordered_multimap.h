@@ -501,11 +501,6 @@ public:
 
 	iterator erase(const_iterator first, const_iterator last)
 	{
-		if (first == begin() && last == end())
-		{
-			clear();
-			return end();
-		}
 		if (first == last)
 		{
 			return momo::internal::ProxyConstructor<iterator>(
@@ -517,12 +512,19 @@ public:
 				return erase(first);
 			typename HashMultiMap::ConstKeyIterator keyIter =
 				ConstIteratorProxy::GetBaseIterator(first).GetKeyIterator();
-			if (last == momo::internal::ProxyConstructor<const_iterator>(
+			if (first == momo::internal::ProxyConstructor<const_iterator>(
+				mHashMultiMap.MakeIterator(keyIter, 0))
+				&& last == momo::internal::ProxyConstructor<const_iterator>(
 				mHashMultiMap.MakeIterator(keyIter, keyIter->GetCount())))
 			{
 				return momo::internal::ProxyConstructor<iterator>(
 					mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
 			}
+		}
+		if (first == begin() && last == end())
+		{
+			clear();
+			return end();
 		}
 		MOMO_THROW(std::invalid_argument("invalid unordered_multimap erase arguments"));
 	}

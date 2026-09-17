@@ -577,18 +577,18 @@ public:
 		}
 		else
 		{
-			if (first == begin() && last == end())
-			{
-				clear();
-				return end();
-			}
 			if (first == last)
 			{
 				return momo::internal::ProxyConstructor<iterator>(
 					mHashMap.MakeMutableIterator(ConstIteratorProxy::GetBaseIterator(first)));
 			}
-			if (first != end() && std::next(first) == last)
+			if (first != end() && std::next(first) == last)	//?
 				return erase(first);
+			if (first == begin() && last == end())
+			{
+				clear();
+				return end();
+			}
 			MOMO_THROW(std::invalid_argument("invalid unordered_map erase arguments"));
 		}
 	}

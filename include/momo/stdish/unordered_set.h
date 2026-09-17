@@ -525,15 +525,15 @@ public:
 		}
 		else
 		{
+			if (first == last)
+				return first;
+			if (first != end() && std::next(first) == last)	//?
+				return erase(first);
 			if (first == begin() && last == end())
 			{
 				clear();
 				return end();
 			}
-			if (first == last)
-				return first;
-			if (first != end() && std::next(first) == last)
-				return erase(first);
 			MOMO_THROW(std::invalid_argument("invalid unordered_set erase arguments"));
 		}
 	}
