@@ -76,4 +76,14 @@ namespace libcxx_from_range_assoc {}
 namespace libcxx_from_range_unord {}
 #endif
 
+struct LibcppIntHash
+{
+	typedef std::true_type is_avalanching;
+
+	size_t operator()(int key) const noexcept
+	{
+		return static_cast<size_t>(key);
+	}
+};
+
 #define TEST_LIBCPP_ASSERT_FAILURE(expr, mess) try { (void)(expr); assert(false); } catch (...) {}

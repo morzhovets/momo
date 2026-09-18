@@ -26,7 +26,7 @@
 int main(int, char**)
 {
     {
-        typedef std::unordered_set<int> C;
+        typedef std::unordered_set<int, LibcppIntHash> C;
         typedef int P;
         typedef C::local_iterator I;
         P a[] =
@@ -70,7 +70,7 @@ int main(int, char**)
         assert(*i == 4);
     }
     {
-        typedef std::unordered_set<int> C;
+        typedef std::unordered_set<int, LibcppIntHash> C;
         typedef int P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -114,7 +114,7 @@ int main(int, char**)
         assert(*i == 4);
     }
     {
-        typedef std::unordered_set<int> C;
+        typedef std::unordered_set<int, LibcppIntHash> C;
         typedef int P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -158,7 +158,7 @@ int main(int, char**)
         assert(*i == 4);
     }
     {
-        typedef std::unordered_set<int> C;
+        typedef std::unordered_set<int, LibcppIntHash> C;
         typedef int P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -203,7 +203,7 @@ int main(int, char**)
     }
 #if TEST_STD_VER >= 11
     {
-        typedef std::unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, LibcppIntHash,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         typedef C::local_iterator I;
@@ -248,7 +248,7 @@ int main(int, char**)
         assert(*i == 4);
     }
     {
-        typedef std::unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, LibcppIntHash,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         typedef C::const_local_iterator I;
@@ -293,7 +293,7 @@ int main(int, char**)
         assert(*i == 4);
     }
     {
-        typedef std::unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, LibcppIntHash,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         typedef C::const_local_iterator I;
@@ -338,7 +338,7 @@ int main(int, char**)
         assert(*i == 4);
     }
     {
-        typedef std::unordered_set<int, std::hash<int>,
+        typedef std::unordered_set<int, LibcppIntHash,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         typedef C::const_local_iterator I;
