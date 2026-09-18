@@ -36,7 +36,7 @@ int main(int, char**)
         std::size_t bc = c.bucket_count();
         assert(bc >= 5);
         for (std::size_t i = 0; i < 13; ++i)
-            assert(c.bucket(i) == i % bc);
+            assert(c.bucket(static_cast<int>(i)) == i % bc);
     }
 #if TEST_STD_VER >= 11
     {
@@ -56,7 +56,7 @@ int main(int, char**)
         std::size_t bc = c.bucket_count();
         assert(bc >= 5);
         for (std::size_t i = 0; i < 13; ++i)
-            assert(c.bucket(i) == i % bc);
+            assert(c.bucket(static_cast<int>(i)) == i % bc);
     }
 #endif
 
