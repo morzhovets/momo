@@ -47,6 +47,10 @@ namespace internal
 	concept conceptCopyableHasher = conceptHasher<Hasher, Key> &&
 		std::copy_constructible<Hasher>;
 
+	template<typename Hasher>
+	concept conceptAvalanching = std::is_base_of_v<std::true_type, typename Hasher::is_avalanching> ||
+		std::is_void_v<typename Hasher::is_avalanching>;
+
 	template<typename Predicate>
 	concept conceptTransparent = requires { typename Predicate::is_transparent; };
 }
@@ -93,7 +97,7 @@ namespace internal
 	class HashMixer
 	{
 	public:
-		MOMO_FORCEINLINE static size_t MixHashCode(size_t hashCode) noexcept
+		static size_t MixHashCode(size_t hashCode) noexcept
 		{
 			if constexpr (sizeof(size_t) == 4)
 			{
@@ -111,6 +115,16 @@ namespace internal
 				//hashCode64 ^= hashCode64 >> 33;
 				return static_cast<size_t>(hashCode64);
 			}
+		}
+
+		template<typename Hasher, typename Key>
+		static size_t GetMixedHashCode(const Hasher& hasher, const Key& key)
+			noexcept(noexcept(hasher(key)))
+		{
+			size_t hashCode = hasher(key);
+			if constexpr (!conceptAvalanching<Hasher>)
+				hashCode = MixHashCode(hashCode);
+			return hashCode;
 		}
 	};
 
