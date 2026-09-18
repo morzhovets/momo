@@ -1055,7 +1055,6 @@ namespace internal
 		static void ReplaceRelocate(MemManager& srcMemManager, DstMemManagerOrNullPtr dstMemManager,
 			Item& srcItem, Item& midItem, Item* dstItem)
 		{
-			MOMO_ASSERT(&srcMemManager != dstMemManager);
 			if constexpr (std::is_null_pointer_v<DstMemManagerOrNullPtr>)
 			{
 				Item::Create(dstItem);
@@ -1064,30 +1063,35 @@ namespace internal
 				dstItem->GetValuePtr() = midItem.GetValuePtr();
 				midItem.GetValuePtr() = srcItem.GetValuePtr();
 			}
-			else if constexpr (KeyValueTraits::isKeyNothrowRelocatable)
-			{
-				Item::template CreateRelocate<KeyValueTraits>(dstItem,
-					&srcMemManager, *dstMemManager, midItem.GetKey(), *midItem.GetValuePtr());
-				KeyValueTraits::RelocateKey(&srcMemManager, &srcMemManager,
-					srcItem.GetKey(), midItem.GetKeyPtr());
-				midItem.GetValuePtr() = srcItem.GetValuePtr();
-			}
 			else
 			{
-				auto itemCreator = [&srcMemManager, dstMemManager, &srcItem, &midItem]
-					(Key* newKey, Value* newValue)
+				MOMO_ASSERT(&srcMemManager != dstMemManager);
+				if constexpr (KeyValueTraits::isKeyNothrowRelocatable)
 				{
-					typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
-					ValueCreator(*dstMemManager, midItem.GetValue())(newValue);
-					Finalizer fin(&KeyValueTraits::template DestroyValue<DstMemManagerOrNullPtr>,
-						dstMemManager, *newValue);
-					KeyValueTraits::ReplaceRelocateKeys(srcMemManager, dstMemManager,
-						srcItem.GetKey(), midItem.GetKey(), newKey);
-					fin.Detach();
-					KeyValueTraits::DestroyValue(&srcMemManager, midItem.GetValue());
+					Item::template CreateRelocate<KeyValueTraits>(dstItem,
+						&srcMemManager, *dstMemManager, midItem.GetKey(), *midItem.GetValuePtr());
+					KeyValueTraits::RelocateKey(&srcMemManager, &srcMemManager,
+						srcItem.GetKey(), midItem.GetKeyPtr());
 					midItem.GetValuePtr() = srcItem.GetValuePtr();
-				};
-				std::construct_at(dstItem, *dstMemManager, FastMovableFunctor(std::move(itemCreator)));
+				}
+				else
+				{
+					auto itemCreator = [&srcMemManager, dstMemManager, &srcItem, &midItem]
+						(Key* newKey, Value* newValue)
+					{
+						typedef typename KeyValueTraits::template ValueCreator<const Value&> ValueCreator;
+						ValueCreator(*dstMemManager, midItem.GetValue())(newValue);
+						Finalizer fin(&KeyValueTraits::template DestroyValue<DstMemManagerOrNullPtr>,
+							dstMemManager, *newValue);
+						KeyValueTraits::ReplaceRelocateKeys(srcMemManager, dstMemManager,
+							srcItem.GetKey(), midItem.GetKey(), newKey);
+						fin.Detach();
+						KeyValueTraits::DestroyValue(&srcMemManager, midItem.GetValue());
+						midItem.GetValuePtr() = srcItem.GetValuePtr();
+					};
+					std::construct_at(dstItem, *dstMemManager,
+						FastMovableFunctor(std::move(itemCreator)));
+				}
 			}
 		}
 
