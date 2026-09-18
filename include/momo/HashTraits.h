@@ -113,7 +113,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	size_t GetHashCode(const KeyArg& key) const
+	MOMO_FORCEINLINE size_t GetHashCode(const KeyArg& key) const
 		noexcept(noexcept(HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key))))
 		requires requires { { HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key)) }
 			-> std::convertible_to<size_t>; }
@@ -203,7 +203,7 @@ public:
 	}
 
 	template<typename KeyArg>
-	size_t GetHashCode(const KeyArg& key) const
+	MOMO_FORCEINLINE size_t GetHashCode(const KeyArg& key) const
 		noexcept(noexcept(mHasher(key)))
 	{
 		return internal::HashMixer::MixHashCode(mHasher(key));
