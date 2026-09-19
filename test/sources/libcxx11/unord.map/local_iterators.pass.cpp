@@ -33,7 +33,7 @@
 void main()
 {
     {
-        typedef unordered_map<int, std::string> C;
+        typedef unordered_map<int, std::string, LibcppIntHash> C;
         typedef std::pair<int, std::string> P;
         typedef C::local_iterator I;
         P a[] =
@@ -81,7 +81,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string> C;
+        typedef unordered_map<int, std::string, LibcppIntHash> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -129,7 +129,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string> C;
+        typedef unordered_map<int, std::string, LibcppIntHash> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -177,7 +177,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string> C;
+        typedef unordered_map<int, std::string, LibcppIntHash> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -227,7 +227,7 @@ void main()
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef unordered_map<int, std::string, LibcppIntHash, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         typedef C::local_iterator I;
@@ -276,7 +276,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef unordered_map<int, std::string, LibcppIntHash, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
@@ -325,7 +325,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef unordered_map<int, std::string, LibcppIntHash, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;
@@ -374,7 +374,7 @@ void main()
         assert(i->second == "four");
     }
     {
-        typedef unordered_map<int, std::string, std::hash<int>, std::equal_to<int>,
+        typedef unordered_map<int, std::string, LibcppIntHash, std::equal_to<int>,
                             min_allocator<std::pair<const int, std::string>>> C;
         typedef std::pair<int, std::string> P;
         typedef C::const_local_iterator I;

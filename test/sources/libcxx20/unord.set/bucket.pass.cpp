@@ -21,7 +21,7 @@
 int main(int, char**)
 {
     {
-        typedef std::unordered_set<int> C;
+        typedef std::unordered_set<int, LibcppIntHash> C;
         typedef int P;
         P a[] =
         {
@@ -36,11 +36,11 @@ int main(int, char**)
         std::size_t bc = c.bucket_count();
         assert(bc >= 5);
         for (std::size_t i = 0; i < 13; ++i)
-            LIBCPP_ASSERT(c.bucket(i) == i % bc);
+            assert(c.bucket(static_cast<int>(i)) == i % bc);
     }
 #if TEST_STD_VER >= 11
     {
-        typedef std::unordered_set<int, std::hash<int>, std::equal_to<int>, min_allocator<int>> C;
+        typedef std::unordered_set<int, LibcppIntHash, std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         P a[] =
         {
@@ -55,7 +55,7 @@ int main(int, char**)
         std::size_t bc = c.bucket_count();
         assert(bc >= 5);
         for (std::size_t i = 0; i < 13; ++i)
-            LIBCPP_ASSERT(c.bucket(i) == i % bc);
+            assert(c.bucket(static_cast<int>(i)) == i % bc);
     }
 #endif
 

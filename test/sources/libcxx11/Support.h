@@ -63,6 +63,8 @@ namespace libcxx_from_range_unord {}
 
 struct LibcppIntHash
 {
+	typedef std::true_type is_avalanching;
+
 	size_t operator()(int key) const noexcept
 	{
 		return static_cast<size_t>(key);

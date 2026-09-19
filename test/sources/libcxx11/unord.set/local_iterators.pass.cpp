@@ -32,7 +32,7 @@
 void main()
 {
     {
-        typedef unordered_set<int> C;
+        typedef unordered_set<int, LibcppIntHash> C;
         typedef int P;
         typedef C::local_iterator I;
         P a[] =
@@ -76,7 +76,7 @@ void main()
         assert(*i == 4);
     }
     {
-        typedef unordered_set<int> C;
+        typedef unordered_set<int, LibcppIntHash> C;
         typedef int P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -120,7 +120,7 @@ void main()
         assert(*i == 4);
     }
     {
-        typedef unordered_set<int> C;
+        typedef unordered_set<int, LibcppIntHash> C;
         typedef int P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -164,7 +164,7 @@ void main()
         assert(*i == 4);
     }
     {
-        typedef unordered_set<int> C;
+        typedef unordered_set<int, LibcppIntHash> C;
         typedef int P;
         typedef C::const_local_iterator I;
         P a[] =
@@ -210,7 +210,7 @@ void main()
 //#if __cplusplus >= 201103L
 #ifdef LIBCPP_TEST_MIN_ALLOCATOR
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef unordered_set<int, LibcppIntHash,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         typedef C::local_iterator I;
@@ -255,7 +255,7 @@ void main()
         assert(*i == 4);
     }
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef unordered_set<int, LibcppIntHash,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         typedef C::const_local_iterator I;
@@ -300,7 +300,7 @@ void main()
         assert(*i == 4);
     }
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef unordered_set<int, LibcppIntHash,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         typedef C::const_local_iterator I;
@@ -345,7 +345,7 @@ void main()
         assert(*i == 4);
     }
     {
-        typedef unordered_set<int, std::hash<int>,
+        typedef unordered_set<int, LibcppIntHash,
                                       std::equal_to<int>, min_allocator<int>> C;
         typedef int P;
         typedef C::const_local_iterator I;
