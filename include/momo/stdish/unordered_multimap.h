@@ -510,12 +510,11 @@ public:
 		{
 			if (std::next(first) == last)
 				return erase(first);
-			typename HashMultiMap::ConstKeyIterator keyIter =
-				ConstIteratorProxy::GetBaseIterator(first).GetKeyIterator();
-			if (first == momo::internal::ProxyConstructor<const_iterator>(
-				mHashMultiMap.MakeIterator(keyIter, 0))
-				&& last == momo::internal::ProxyConstructor<const_iterator>(
-				mHashMultiMap.MakeIterator(keyIter, keyIter->GetCount())))
+			typename HashMultiMap::ConstIterator iter = ConstIteratorProxy::GetBaseIterator(first);
+			typename HashMultiMap::ConstKeyIterator keyIter = iter.GetKeyIterator();
+			if (iter == mHashMultiMap.MakeIterator(keyIter)
+				&& ConstIteratorProxy::GetBaseIterator(last)
+					== mHashMultiMap.MakeIterator(keyIter, keyIter->GetCount()))
 			{
 				return momo::internal::ProxyConstructor<iterator>(
 					mHashMultiMap.MakeIterator(mHashMultiMap.RemoveKey(keyIter)));
