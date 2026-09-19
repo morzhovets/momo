@@ -14,26 +14,13 @@
 
 #ifdef TEST_SIMPLE_DATA
 
-#include "../../include/momo/DataTable.h"
+#include "DataTester.h"
+
 #include "../../include/momo/MemManagerDict.h"
 
 #include <string>
 #include <iostream>
 #include <sstream>
-
-#if defined(TEST_GCC) && __GNUC__ < 6	// std::hash<enum>
-namespace momo
-{
-	template<>
-	struct HashCoder<DataColumnCodeOffset, size_t>
-	{
-		size_t operator()(const DataColumnCodeOffset& key) const noexcept
-		{
-			return HashCoder<size_t>()(static_cast<size_t>(key));
-		}
-	};
-}
-#endif
 
 namespace
 {
