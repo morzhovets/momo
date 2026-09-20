@@ -19,6 +19,10 @@
 
 #include "FunctionUtility.h"
 
+#ifdef __SSE4_2__
+# include <nmmintrin.h>
+#endif
+
 namespace momo
 {
 
@@ -106,13 +110,17 @@ namespace internal
 			}
 			else
 			{
-				// MurmurHash3
 				uint64_t hashCode64 = hashCode;
+#ifdef __SSE4_2__
+				hashCode64 ^= _mm_crc32_u64(0, hashCode64);
+#else
+				// MurmurHash3
 				hashCode64 ^= hashCode64 >> 33;
 				hashCode64 *= 0xFF51AFD7ED558CCDull;
 				hashCode64 ^= hashCode64 >> 33;
-				//hashCode64 *= 0xC4CEB9FE1A85EC53ull;
-				//hashCode64 ^= hashCode64 >> 33;
+				hashCode64 *= 0xC4CEB9FE1A85EC53ull;
+				hashCode64 ^= hashCode64 >> 33;
+#endif
 				return static_cast<size_t>(hashCode64);
 			}
 		}
