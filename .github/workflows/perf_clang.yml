@@ -14,20 +14,29 @@ jobs:
       matrix:
         include:
 
+        # x64
         - type: 'unordered_map_open'
+          ubuntu_ver: '26.04'
+          clang_ver: '22'
+
+        # ARM64
+        - type: 'unordered_map_open'
+          ubuntu_ver: '26.04-arm'
           clang_ver: '22'
 
         - type: 'unordered_map'
+          ubuntu_ver: '26.04-arm'
           clang_ver: '22'
 
         - type: 'map'
+          ubuntu_ver: '26.04-arm'
           clang_ver: '22'
 
         - type: 'data_table_static'
+          ubuntu_ver: '26.04-arm'
           clang_ver: '22'
 
-    # ARM64
-    runs-on: ubuntu-26.04-arm
+    runs-on: ubuntu-${{ matrix.ubuntu_ver }}
 
     steps:
     - name: Checkout hash-table-shootout
