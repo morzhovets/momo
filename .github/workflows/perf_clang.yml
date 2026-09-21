@@ -14,10 +14,10 @@ jobs:
       matrix:
         include:
 
-        - type: 'unordered_map'
+        - type: 'unordered_map_open'
           clang_ver: '22'
 
-        - type: 'unordered_map_open'
+        - type: 'unordered_map'
           clang_ver: '22'
 
         - type: 'map'

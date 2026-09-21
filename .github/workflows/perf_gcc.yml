@@ -14,10 +14,16 @@ jobs:
       matrix:
         include:
 
-        - type: 'unordered_map'
-          gcc_ver: '15'
+        - type: 'unordered_map_open'
+          gcc_ver: '14'
 
         - type: 'unordered_map_open'
+          gcc_ver: '15'
+
+        - type: 'unordered_map'
+          gcc_ver: '14'
+
+        - type: 'unordered_map'
           gcc_ver: '15'
 
         - type: 'map'
