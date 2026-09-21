@@ -113,7 +113,6 @@ namespace internal
 				hashCode64 ^= hashCode64 >> 33;
 				//hashCode64 *= 0xC4CEB9FE1A85EC53ull;
 				//hashCode64 ^= hashCode64 >> 33;
-#endif
 				return static_cast<size_t>(hashCode64);
 			}
 		}
