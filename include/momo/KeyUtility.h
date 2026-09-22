@@ -109,7 +109,7 @@ namespace internal
 				uint64_t hashCode64 = hashCode;
 				//hashCode64 ^= hashCode64 >> 33;
 				hashCode64 *= 0xFF51AFD7ED558CCDull;
-				//hashCode64 ^= hashCode64 >> 33;
+				hashCode64 ^= hashCode64 >> 33;
 				//hashCode64 *= 0xC4CEB9FE1A85EC53ull;
 				//hashCode64 ^= hashCode64 >> 33;
 				return static_cast<size_t>(hashCode64);
