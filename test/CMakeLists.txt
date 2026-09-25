@@ -89,11 +89,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"
     OR CMAKE_CXX_COMPILER_ID MATCHES "Intel")
-  include(CheckCXXCompilerFlag)
-  check_cxx_compiler_flag("-msse2" HAS_SSE2_FLAG)
-  if(HAS_SSE2_FLAG)
-    target_compile_options(momo_test PRIVATE -msse2)
-  endif()
   if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
     target_compile_options(momo_test PRIVATE /W4)
   else()
