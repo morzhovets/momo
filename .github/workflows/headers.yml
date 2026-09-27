@@ -1,0 +1,43 @@
+name: Verify headers
+
+on:
+  push:
+    branches:
+      - '**'
+
+permissions:
+  contents: read
+
+jobs:
+  momo-headers:
+    strategy:
+      matrix:
+        include:
+
+        - compiler: 'g++'
+          flags: '-std=c++11 -Werror'
+
+        - compiler: 'g++'
+          flags: '-std=c++26 -Werror'
+
+        - compiler: 'clang++'
+          flags: '-std=c++11 -Werror'
+
+        - compiler: 'clang++'
+          flags: '-std=c++26 -Werror'
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Build
+      env:
+        CXX: ${{ matrix.compiler }}
+        CXXFLAGS: ${{ matrix.flags }}
+      run: |
+        cd test
+        mkdir build
+        cd build
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
+        cmake --build . --target momo_headers_verify_interface_header_sets -v
