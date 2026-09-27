@@ -3,7 +3,7 @@
 #  https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
 #  for details.
 
-cmake_minimum_required(VERSION 3.16...4.2)
+cmake_minimum_required(VERSION 3.16...4.4)
 
 project(momo_test
   LANGUAGES CXX)
@@ -41,8 +41,6 @@ else()
 endif()
 
 target_precompile_headers(momo_test PRIVATE "sources/pch.h")
-
-#target_compile_features(momo_test PRIVATE cxx_std_11)
 
 if(CMAKE_BUILD_TYPE)
   string(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" BUILD_TYPE_FLAGS)
@@ -133,4 +131,14 @@ if(MOMO_TEST_PRINT_BIN_SIZES)
       COMMAND sh -c "stat -f '%z %N' '$<TARGET_FILE:momo_test>'"
       VERBATIM)
   endif()
+endif()
+
+# cmake --build . --target momo_headers_verify_interface_header_sets -v
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
+  add_library(momo_headers INTERFACE)
+  file(GLOB_RECURSE MOMO_HEADERS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h")
+  target_sources(momo_headers INTERFACE FILE_SET HEADERS
+    BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../include"
+    FILES ${MOMO_HEADERS})
+  set_target_properties(momo_headers PROPERTIES VERIFY_INTERFACE_HEADER_SETS TRUE)
 endif()

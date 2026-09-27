@@ -3,7 +3,7 @@
 #  https://github.com/morzhovets/momo/blob/branch_cpp11/LICENSE
 #  for details.
 
-cmake_minimum_required(VERSION 3.16...4.2)
+cmake_minimum_required(VERSION 3.16...4.4)
 
 project(momo
   VERSION 3.12
