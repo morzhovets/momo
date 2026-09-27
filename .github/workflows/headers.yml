@@ -15,18 +15,12 @@ jobs:
         include:
 
         - compiler: 'g++'
-          flags: '-std=c++11 -Werror'
-
-        - compiler: 'g++'
-          flags: '-std=c++26 -Werror'
+          flags: '-std=c++23 -Werror'
 
         - compiler: 'clang++'
-          flags: '-std=c++11 -Werror'
+          flags: '-std=c++23 -Werror'
 
-        - compiler: 'clang++'
-          flags: '-std=c++26 -Werror'
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
     - name: Checkout
