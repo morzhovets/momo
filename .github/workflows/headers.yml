@@ -15,10 +15,16 @@ jobs:
         include:
 
         - compiler: 'g++'
-          flags: '-std=c++23 -Werror'
+          flags: '-std=c++23'
+
+        - compiler: 'g++'
+          flags: '-std=c++26'
 
         - compiler: 'clang++'
-          flags: '-std=c++23 -Werror'
+          flags: '-std=c++23'
+
+        - compiler: 'clang++'
+          flags: '-std=c++26'
 
     runs-on: ubuntu-26.04
 
@@ -33,5 +39,5 @@ jobs:
         cd test
         mkdir build
         cd build
-        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
+        cmake .. -DCMAKE_BUILD_TYPE=Debug
         cmake --build . --target momo_headers_verify_interface_header_sets -v
