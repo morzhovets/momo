@@ -412,10 +412,10 @@ namespace internal
 			}
 		}
 
-		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t /*probe*/) noexcept
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t hashCode,
+			size_t logBucketCount, size_t probe) noexcept
 		{
-			return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
+			return ptGetNextBucketIndexLinear(bucketIndex, hashCode, logBucketCount, probe);
 		}
 
 	private:

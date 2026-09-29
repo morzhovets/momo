@@ -181,10 +181,10 @@ namespace internal
 			}
 		}
 
-		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t probe) noexcept
+		static size_t GetNextBucketIndex(size_t bucketIndex, size_t hashCode,
+			size_t logBucketCount, size_t probe) noexcept
 		{
-			return (bucketIndex + probe) & (bucketCount - 1);	// quadratic probing
+			return ptGetNextBucketIndexQuadratic(bucketIndex, hashCode, logBucketCount, probe);
 		}
 
 	private:

@@ -133,7 +133,7 @@ namespace internal
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t /*bucketCount*/, size_t /*probe*/) noexcept
+			size_t /*logBucketCount*/, size_t /*probe*/) noexcept
 		{
 			MOMO_ASSERT(false);
 			return bucketIndex;
