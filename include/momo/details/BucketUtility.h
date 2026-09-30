@@ -148,15 +148,16 @@ namespace internal
 			return hashCodeFullGetter();
 		}
 
-		static size_t GetStartBucketIndex(size_t hashCode, size_t bucketCount) noexcept
+		static size_t GetStartBucketIndexLg(size_t hashCode, size_t logBucketCount) noexcept
 		{
-			return hashCode & (bucketCount - 1);
+			MOMO_ASSERT(logBucketCount < sizeof(size_t) * 8);
+			return hashCode & ((size_t{1} << logBucketCount) - 1);
 		}
 
-		static size_t GetNextBucketIndex(size_t bucketIndex, size_t /*hashCode*/,
-			size_t bucketCount, size_t /*probe*/) noexcept
+		static size_t GetNextBucketIndexLg(size_t bucketIndex, size_t hashCode,
+			size_t logBucketCount, size_t probe) noexcept
 		{
-			return (bucketIndex + 1) & (bucketCount - 1);	// linear probing
+			return ptGetNextBucketIndexLinear(bucketIndex, hashCode, logBucketCount, probe);
 		}
 
 	protected:
@@ -167,6 +168,20 @@ namespace internal
 		~BucketBase() noexcept = default;
 
 		BucketBase& operator=(const BucketBase&) = delete;
+
+		static size_t ptGetNextBucketIndexLinear(size_t bucketIndex, size_t /*hashCode*/,
+			size_t logBucketCount, size_t /*probe*/) noexcept
+		{
+			MOMO_ASSERT(logBucketCount < sizeof(size_t) * 8);
+			return (bucketIndex + 1) & ((size_t{1} << logBucketCount) - 1);
+		}
+
+		static size_t ptGetNextBucketIndexQuadratic(size_t bucketIndex, size_t /*hashCode*/,
+			size_t logBucketCount, size_t probe) noexcept
+		{
+			MOMO_ASSERT(logBucketCount < sizeof(size_t) * 8);
+			return (bucketIndex + probe) & ((size_t{1} << logBucketCount) - 1);
+		}
 	};
 
 	class HashBucketBase

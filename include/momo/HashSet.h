@@ -968,7 +968,7 @@ public:
 	{
 		MOMO_CHECK(mBuckets != nullptr);
 		size_t hashCode = GetHashTraits().GetHashCode(key);
-		return Bucket::GetStartBucketIndex(hashCode, mBuckets->GetCount());
+		return Bucket::GetStartBucketIndexLg(hashCode, mBuckets->GetLogCount());
 	}
 
 	ConstPosition MakePosition(size_t hashCode) const noexcept
@@ -1069,8 +1069,8 @@ private:
 		size_t hashCode = indexCode;
 		typename Bucket::PreparedCode prepCode = Bucket::PrepareFind(hashCode);
 		BucketParams& bucketParams = buckets.GetBucketParams();
-		size_t bucketCount = buckets.GetCount();
-		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
+		size_t logBucketCount = buckets.GetLogCount();
+		size_t bucketIndex = Bucket::GetStartBucketIndexLg(hashCode, logBucketCount);
 		Bucket* bucket = &buckets[bucketIndex];
 		BucketIterator bucketIter = bucket->template Find<true>(bucketParams, itemPred, prepCode);
 		if (bucketIter != BucketIterator())
@@ -1078,12 +1078,12 @@ private:
 			indexCode = bucketIndex;
 			return bucketIter;
 		}
-		size_t maxProbe = bucket->GetMaxProbe(buckets.GetLogCount());
+		size_t maxProbe = bucket->GetMaxProbe(logBucketCount);
 		size_t probe = 0;
 		while (bucket->WasFull() && probe < maxProbe)
 		{
 			++probe;
-			bucketIndex = Bucket::GetNextBucketIndex(bucketIndex, hashCode, bucketCount, probe);
+			bucketIndex = Bucket::GetNextBucketIndexLg(bucketIndex, hashCode, logBucketCount, probe);
 			bucket = &buckets[bucketIndex];
 			bucketIter = bucket->template Find<false>(bucketParams, itemPred, prepCode);
 			if (bucketIter != BucketIterator())
@@ -1184,21 +1184,21 @@ private:
 	template<typename ItemCreator>
 	BucketIndexIterator pvAddInternal(Buckets& buckets, size_t hashCode, ItemCreator&& itemCreator)
 	{
-		size_t bucketCount = buckets.GetCount();
-		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, bucketCount);
+		size_t logBucketCount = buckets.GetLogCount();
+		size_t bucketIndex = Bucket::GetStartBucketIndexLg(hashCode, logBucketCount);
 		Bucket& startBucket = buckets[bucketIndex];
 		Bucket* bucket = &startBucket;
 		size_t probe = 0;
 		while (bucket->IsFull())
 		{
 			++probe;
-			if (probe >= bucketCount)
+			if (probe >= size_t{1} << logBucketCount)
 				MOMO_THROW(std::runtime_error("Hash table is full"));
-			bucketIndex = Bucket::GetNextBucketIndex(bucketIndex, hashCode, bucketCount, probe);
+			bucketIndex = Bucket::GetNextBucketIndexLg(bucketIndex, hashCode, logBucketCount, probe);
 			bucket = &buckets[bucketIndex];
 		}
 		BucketIterator bucketIter = bucket->AddCrt(buckets.GetBucketParams(),
-			std::forward<ItemCreator>(itemCreator), hashCode, buckets.GetLogCount(), probe);
+			std::forward<ItemCreator>(itemCreator), hashCode, logBucketCount, probe);
 		startBucket.UpdateMaxProbe(probe);
 		return { bucketIndex, bucketIter };
 	}
