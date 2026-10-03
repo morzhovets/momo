@@ -29,7 +29,7 @@ private:
 		: public momo::MergeTraits<Key, tMergeTraitsFunc, tLogInitialItemCount, TMergeBloomFilter>
 	{
 	public:
-		static const size_t logInitialItemCount = tLogInitialItemCount;
+		constexpr static size_t logInitialItemCount = tLogInitialItemCount;
 
 	public:
 		size_t GetSegmentItemCount(size_t segIndex) const noexcept
@@ -80,7 +80,7 @@ public:
 			std::cout << MergeBloomFilter::logMult;
 		std::cout << ">" << (useValuePtr ? " (+useValuePtr)" : "") << ": " << std::flush;
 
-		static const size_t count = 1 << 10;
+		constexpr size_t count = 1 << 10;
 		static Key array[count];
 		for (size_t i = 0; i < count; ++i)
 			array[i] = Key(i);

@@ -38,9 +38,9 @@ namespace momo
 		typedef CopyInsertable<Dummy> Object;
 		typedef TMemManager MemManager;
 
-		static const bool isTriviallyRelocatable = false;
-		static const bool isRelocatable = true;
-		static const bool isNothrowRelocatable = true;
+		constexpr static bool isTriviallyRelocatable = false;
+		constexpr static bool isRelocatable = true;
+		constexpr static bool isNothrowRelocatable = true;
 
 	public:
 		static void Relocate(MemManager* /*srcMemManager*/, MemManager* /*dstMemManager*/,

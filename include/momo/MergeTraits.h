@@ -40,9 +40,9 @@ template<size_t tLogMult = 3>
 class MergeBloomFilter
 {
 public:
-	static const size_t logMult = tLogMult;
+	constexpr static size_t logMult = tLogMult;
 
-	static const bool isAlwaysEmpty = false;
+	constexpr static bool isAlwaysEmpty = false;
 
 public:
 	explicit MergeBloomFilter() noexcept
@@ -140,7 +140,7 @@ private:
 class MergeBloomFilterEmpty
 {
 public:
-	static const bool isAlwaysEmpty = true;
+	constexpr static bool isAlwaysEmpty = true;
 
 public:
 	explicit MergeBloomFilterEmpty() noexcept = default;
@@ -195,8 +195,8 @@ public:
 	typedef TKey Key;
 	typedef TBloomFilter BloomFilter;
 
-	static const MergeTraitsFunc func = tFunc;
-	static const size_t logInitialItemCount = tLogInitialItemCount;
+	constexpr static MergeTraitsFunc func = tFunc;
+	constexpr static size_t logInitialItemCount = tLogInitialItemCount;
 
 	template<typename KeyArg>
 	using IsValidKeyArg = std::false_type;	//?

@@ -52,7 +52,7 @@ namespace libcxx_merge_array_0
 class LibcxxMergeArraySettings : public momo::MergeArraySettings<0>
 {
 public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+	constexpr static momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 
 namespace std

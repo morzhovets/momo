@@ -80,10 +80,10 @@ template<size_t tLogInitialItemCount = 5>
 class MergeArraySettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static bool allowExceptionSuppression = true;
 
-	static const size_t logInitialItemCount = tLogInitialItemCount;
+	constexpr static size_t logInitialItemCount = tLogInitialItemCount;
 
 	typedef ArraySettings<0, false> SegmentsSettings;
 };
@@ -119,8 +119,8 @@ private:
 
 	typedef ArrayCore<ArrayItemTraits<Item*, MemManager>, SegmentsSettings> Segments;
 
-	static const size_t logInitialItemCount = Settings::logInitialItemCount;
-	static const size_t initialItemCount = size_t{1} << logInitialItemCount;
+	constexpr static size_t logInitialItemCount = Settings::logInitialItemCount;
+	constexpr static size_t initialItemCount = size_t{1} << logInitialItemCount;
 
 public:
 	MergeArrayCore() noexcept(noexcept(MemManager()))

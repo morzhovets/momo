@@ -304,9 +304,9 @@ namespace internal
 		typedef typename HashMultiMapKeyValueTraits::Value Item;
 		typedef typename HashMultiMapKeyValueTraits::MemManager MemManager;
 
-		static const size_t alignment = HashMultiMapKeyValueTraits::valueAlignment;
+		constexpr static size_t alignment = HashMultiMapKeyValueTraits::valueAlignment;
 
-		static const bool isTriviallyRelocatable =
+		constexpr static bool isTriviallyRelocatable =
 			HashMultiMapKeyValueTraits::isValueTriviallyRelocatable;
 
 	public:
@@ -347,19 +347,19 @@ namespace internal
 			NestedArraySettings<typename HashMultiMapSettings::ValueArraySettings,
 				HashMultiMapSettings::allowExceptionSuppression>> Value;
 
-		static const bool useValuePtr = false;
-		static const bool useSafeValueReference = false;
+		constexpr static bool useValuePtr = false;
+		constexpr static bool useSafeValueReference = false;
 
 	private:
 		typedef ObjectManager<Value, MemManager> ValueManager;
 
 	public:
-		static const size_t keyAlignment = HashMultiMapKeyValueTraits::keyAlignment;
-		static const size_t valueAlignment = ValueManager::alignment;
+		constexpr static size_t keyAlignment = HashMultiMapKeyValueTraits::keyAlignment;
+		constexpr static size_t valueAlignment = ValueManager::alignment;
 
-		static const bool isKeyNothrowRelocatable =
+		constexpr static bool isKeyNothrowRelocatable =
 			HashMultiMapKeyValueTraits::isKeyNothrowRelocatable;
-		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
+		constexpr static bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
 		template<typename ValueArg>
 		requires std::is_same_v<ValueArg, Value>
@@ -451,10 +451,10 @@ namespace internal
 		typedef THashMultiMapSettings HashMultiMapSettings;
 
 	public:
-		static const CheckMode checkMode = HashMultiMapSettings::checkMode;
-		static const ExtraCheckMode extraCheckMode = HashMultiMapSettings::extraCheckMode;
-		static const bool checkVersion = HashMultiMapSettings::checkKeyVersion;
-		static const bool allowExceptionSuppression = HashMultiMapSettings::allowExceptionSuppression;
+		constexpr static CheckMode checkMode = HashMultiMapSettings::checkMode;
+		constexpr static ExtraCheckMode extraCheckMode = HashMultiMapSettings::extraCheckMode;
+		constexpr static bool checkVersion = HashMultiMapSettings::checkKeyVersion;
+		constexpr static bool allowExceptionSuppression = HashMultiMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -487,12 +487,12 @@ private:
 	typedef internal::ObjectManager<Value, MemManager> ValueManager;
 
 public:
-	static const size_t keyAlignment = KeyManager::alignment;
-	static const size_t valueAlignment = ValueManager::alignment;
+	constexpr static size_t keyAlignment = KeyManager::alignment;
+	constexpr static size_t valueAlignment = ValueManager::alignment;
 
-	static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
+	constexpr static bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
 
-	static const bool isValueTriviallyRelocatable = ValueManager::isTriviallyRelocatable;
+	constexpr static bool isValueTriviallyRelocatable = ValueManager::isTriviallyRelocatable;
 
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
@@ -559,13 +559,13 @@ public:
 class HashMultiMapSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool allowExceptionSuppression = true;
 
-	static const size_t valueArrayMaxFastCount = 7;
+	constexpr static size_t valueArrayMaxFastCount = 7;
 	typedef MemPoolParams<> ValueArrayMemPoolParams;
 	typedef ArraySettings<> ValueArraySettings;
 };
@@ -1262,11 +1262,11 @@ namespace internal
 	class NestedHashMultiMapSettings : public HashMultiMapSettings
 	{
 	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkKeyVersion = false;
-		static const bool checkValueVersion = false;
-		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
+		constexpr static CheckMode checkMode = CheckMode::assertion;
+		constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		constexpr static bool checkKeyVersion = false;
+		constexpr static bool checkValueVersion = false;
+		constexpr static bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 }
 

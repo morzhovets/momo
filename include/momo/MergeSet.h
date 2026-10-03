@@ -254,10 +254,10 @@ public:
 class MergeSetSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -311,7 +311,7 @@ private:
 	typedef internal::NestedArrayIntCap<0, Item*, MemManagerPtr> ItemPtrs;
 	typedef internal::NestedArrayIntCap<0, ItemPtrCode, MemManagerPtr> ItemPtrCodes;
 
-	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
+	constexpr static bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
 
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;
@@ -323,7 +323,7 @@ private:
 
 	typedef internal::BitMath::Word BitSetWord;
 
-	static const size_t hashCodeSize = SMath::Min(sizeof(size_t), sizeof(Item));
+	constexpr static size_t hashCodeSize = SMath::Min(sizeof(size_t), sizeof(Item));
 
 	struct ConstIteratorProxy : private ConstIterator
 	{

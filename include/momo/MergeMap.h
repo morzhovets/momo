@@ -39,10 +39,10 @@ namespace internal
 		typedef TMergeMapSettings MergeMapSettings;
 
 	public:
-		static const CheckMode checkMode = MergeMapSettings::checkMode;
-		static const ExtraCheckMode extraCheckMode = MergeMapSettings::extraCheckMode;
-		static const bool checkVersion = MergeMapSettings::checkVersion;
-		static const bool allowExceptionSuppression = MergeMapSettings::allowExceptionSuppression;
+		constexpr static CheckMode checkMode = MergeMapSettings::checkMode;
+		constexpr static ExtraCheckMode extraCheckMode = MergeMapSettings::extraCheckMode;
+		constexpr static bool checkVersion = MergeMapSettings::checkVersion;
+		constexpr static bool allowExceptionSuppression = MergeMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -56,10 +56,10 @@ class MergeMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, 
 class MergeMapSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool allowExceptionSuppression = true;
 };
 
 /*!

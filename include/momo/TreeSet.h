@@ -188,9 +188,9 @@ namespace internal
 		typedef typename TreeSetItemTraits::Item Item;
 		typedef typename TreeSetItemTraits::MemManager MemManager;
 
-		static const bool isNothrowShiftable = TreeSetItemTraits::isNothrowShiftable;
+		constexpr static bool isNothrowShiftable = TreeSetItemTraits::isNothrowShiftable;
 
-		static const size_t alignment = TreeSetItemTraits::alignment;
+		constexpr static size_t alignment = TreeSetItemTraits::alignment;
 
 	public:
 		template<conceptIncIterator<Item> Iterator>
@@ -216,7 +216,7 @@ private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	static const bool isNothrowShiftable = ItemManager::isNothrowShiftable;
+	constexpr static bool isNothrowShiftable = ItemManager::isNothrowShiftable;
 
 public:
 	template<internal::conceptIncIterator<Item> SrcIterator,
@@ -239,10 +239,10 @@ public:
 class TreeSetSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -274,7 +274,7 @@ public:
 private:
 	typedef typename TreeTraits::template Node<internal::TreeSetNodeItemTraits<ItemTraits>> Node;
 
-	static const size_t nodeMaxCapacity = Node::maxCapacity;
+	constexpr static size_t nodeMaxCapacity = Node::maxCapacity;
 	static_assert(nodeMaxCapacity > 0);
 
 public:
@@ -290,7 +290,7 @@ private:
 
 	typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
 
-	static const bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
+	constexpr static bool allowExceptionSuppression = internal::Catcher::allowExceptionSuppression<Settings>;
 
 	template<typename... ItemArgs>
 	using Creator = typename ItemTraits::template Creator<ItemArgs...>;

@@ -34,7 +34,7 @@ namespace internal
 		typedef internal::BucketOpenN1<TItemTraits, 7, false> BucketOpenN1;
 
 	public:
-		static const size_t maxCount = 7;
+		constexpr static size_t maxCount = 7;
 
 		using typename BucketOpenN1::Item;
 
@@ -85,9 +85,9 @@ namespace internal
 		{
 			static_assert(std::endian::native == std::endian::little);
 #ifdef MOMO_USE_SSE2
-			static const size_t maskIndexShift = 0;
+			constexpr size_t maskIndexShift = 0;
 #else
-			static const size_t maskIndexShift = 3;
+			constexpr size_t maskIndexShift = 3;
 #endif
 			auto mask = pvFindCode(prepCode);
 			for (; mask != 0; mask &= mask - 1)

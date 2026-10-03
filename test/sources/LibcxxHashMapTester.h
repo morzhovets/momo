@@ -40,7 +40,7 @@ private:
 
 public:
 #ifdef LIBCXX_TEST_HINT_ITERATORS
-	static const bool useHintIterators = true;
+	constexpr static bool useHintIterators = true;
 #endif
 
 public:
@@ -57,7 +57,7 @@ class LibcxxHashMapKeyValueTraits
 {
 public:
 #ifdef LIBCXX_TEST_SAFE_MAP_BRACKETS
-	static const bool useSafeValueReference = true;
+	constexpr static bool useSafeValueReference = true;
 #endif
 };
 
@@ -65,8 +65,8 @@ class LibcxxHashMapSettings : public momo::HashMapSettings
 {
 public:
 #ifdef LIBCXX_TEST_FAILURE
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static momo::CheckMode checkMode = momo::CheckMode::exception;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
 #endif
 };
 

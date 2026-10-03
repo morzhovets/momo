@@ -40,7 +40,7 @@ public:
 
 	typedef HashBucketOpenDefault HashBucket;
 
-	static const size_t selectEqualityMaxCount = 6;
+	constexpr static size_t selectEqualityMaxCount = 6;
 
 public:
 	template<typename Item>
@@ -168,7 +168,7 @@ public:
 private:
 	typedef internal::VersionKeeper<Settings> VersionKeeper;
 
-	static const size_t invalidNumber = internal::Const::maxSize;
+	constexpr static size_t invalidNumber = internal::Const::maxSize;
 
 	template<typename... Items>
 	using OffsetItemTuple = typename Indexes::template OffsetItemTuple<Items...>;

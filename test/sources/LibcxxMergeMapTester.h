@@ -36,14 +36,14 @@ private:
 public:
 	using typename HashTraitsStd::Key;
 
-	static const bool useHintIterators = false;
+	constexpr static bool useHintIterators = false;
 
 	typedef momo::MergeBloomFilterEmpty BloomFilter;
 
 #ifdef LIBCXX_TEST_MERGE_HASH
-	static const momo::MergeTraitsFunc func = momo::MergeTraitsFunc::hash;
+	constexpr static momo::MergeTraitsFunc func = momo::MergeTraitsFunc::hash;
 #else
-	static const momo::MergeTraitsFunc func = momo::MergeTraitsFunc::lessThrow;
+	constexpr static momo::MergeTraitsFunc func = momo::MergeTraitsFunc::lessThrow;
 #endif
 
 public:
@@ -69,8 +69,8 @@ public:
 class LibcxxMergeMapSettings : public momo::MergeMapSettings
 {
 public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static momo::CheckMode checkMode = momo::CheckMode::exception;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
 
 template<typename MergeMap>
@@ -83,7 +83,7 @@ public:
 		const typename momo::internal::MergeMapNestedSetItemTraits<
 			typename MergeMap::KeyValueTraits>::Item*>> BucketBounds;
 
-	static const size_t bucketMaxItemCount = SIZE_MAX;
+	constexpr static size_t bucketMaxItemCount = SIZE_MAX;
 
 public:
 	using MergeMap::MergeMap;

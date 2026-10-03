@@ -246,11 +246,11 @@ namespace internal
 	public:
 		template<typename Settings>
 #if defined(MOMO_DISABLE_EXCEPTIONS)
-		static const bool allowExceptionSuppression = true;
+		constexpr static bool allowExceptionSuppression = true;
 #elif defined(MOMO_CATCH_ALL)
-		static const bool allowExceptionSuppression = Settings::allowExceptionSuppression;
+		constexpr static bool allowExceptionSuppression = Settings::allowExceptionSuppression;
 #else
-		static const bool allowExceptionSuppression = false;
+		constexpr static bool allowExceptionSuppression = false;
 #endif
 
 	public:

@@ -36,7 +36,7 @@ namespace internal
 	public:
 		typedef TSettings Settings;
 
-		static const bool checkVersion = true;
+		constexpr static bool checkVersion = true;
 
 	public:
 		explicit VersionKeeper() noexcept
@@ -75,7 +75,7 @@ namespace internal
 	public:
 		typedef TSettings Settings;
 
-		static const bool checkVersion = false;
+		constexpr static bool checkVersion = false;
 
 	public:
 		explicit VersionKeeper() noexcept = default;

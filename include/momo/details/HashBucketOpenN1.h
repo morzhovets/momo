@@ -32,10 +32,10 @@ namespace internal
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const bool reverse = tReverse;
+		constexpr static bool reverse = tReverse;
 
 	public:
-		static const size_t maxCount = tMaxCount;
+		constexpr static size_t maxCount = tMaxCount;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
@@ -48,8 +48,8 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const uint8_t emptyShortCode = 248;
-		static const uint8_t infProbeExp = 255;
+		constexpr static uint8_t emptyShortCode = 248;
+		constexpr static uint8_t infProbeExp = 255;
 
 	public:
 		explicit BucketOpenN1() noexcept
@@ -276,8 +276,8 @@ requires internal::conceptBucketOpenN1MaxCount<tMaxCount>
 class HashBucketOpenN1 : public internal::HashBucketOpenBase
 {
 public:
-	static const size_t maxCount = tMaxCount;
-	static const bool reverse = tReverse;
+	constexpr static size_t maxCount = tMaxCount;
+	constexpr static bool reverse = tReverse;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOpenN1<ItemTraits, maxCount, reverse>;

@@ -30,8 +30,8 @@ namespace internal
 	class SegmentedArraySettingsBase
 	{
 	public:
-		static const CheckMode checkMode = CheckMode::bydefault;
-		static const bool allowExceptionSuppression = true;
+		constexpr static CheckMode checkMode = CheckMode::bydefault;
+		constexpr static bool allowExceptionSuppression = true;
 
 		typedef ArraySettings<> SegmentsSettings;
 	};
@@ -87,8 +87,8 @@ class SegmentedArraySettings<SegmentedArrayItemCountFunc::sqrt, tLogInitialItemC
 	: public internal::SegmentedArraySettingsBase
 {
 public:
-	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::sqrt;
-	static const size_t logInitialItemCount = tLogInitialItemCount;
+	constexpr static SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::sqrt;
+	constexpr static size_t logInitialItemCount = tLogInitialItemCount;
 
 public:
 	static void GetSegmentItemIndexes(size_t index, size_t& segIndex, size_t& segItemIndex) noexcept
@@ -137,8 +137,8 @@ class SegmentedArraySettings<SegmentedArrayItemCountFunc::cnst, tLogInitialItemC
 	: public internal::SegmentedArraySettingsBase
 {
 public:
-	static const SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::cnst;
-	static const size_t logInitialItemCount = tLogInitialItemCount;
+	constexpr static SegmentedArrayItemCountFunc itemCountFunc = SegmentedArrayItemCountFunc::cnst;
+	constexpr static size_t logInitialItemCount = tLogInitialItemCount;
 
 public:
 	static void GetSegmentItemIndexes(size_t index, size_t& segIndex, size_t& segItemIndex) noexcept

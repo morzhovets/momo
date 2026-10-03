@@ -234,7 +234,7 @@ public:
 		}
 
 		Array ar;
-		static const size_t count = 20000;
+		constexpr size_t count = 20000;
 
 		std::fill_n(std::back_inserter(ar), 1, Item(0));
 		std::generate_n(std::back_inserter(ar), count - 1,

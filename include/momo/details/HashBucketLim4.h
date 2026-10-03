@@ -34,11 +34,11 @@ namespace internal
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const size_t logMaxCount = tLogMaxCount;
-		static const size_t memPoolBlockCount = tMemPoolBlockCount;
+		constexpr static size_t logMaxCount = tLogMaxCount;
+		constexpr static size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	public:
-		static const size_t maxCount = size_t{1} << logMaxCount;
+		constexpr static size_t maxCount = size_t{1} << logMaxCount;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
@@ -104,8 +104,8 @@ namespace internal
 	private:
 		typedef BucketMemory<MemPool, uint32_t, MemPool::nullPtr> Memory;
 
-		static const uint32_t stateNull = (uint32_t{1} << (32 - logMaxCount)) - 1;
-		static const uint32_t stateNullWasFull = stateNull - 1;
+		constexpr static uint32_t stateNull = (uint32_t{1} << (32 - logMaxCount)) - 1;
+		constexpr static uint32_t stateNullWasFull = stateNull - 1;
 
 		struct Data
 		{
@@ -278,8 +278,8 @@ requires internal::conceptBucketLim4LogMaxCount<tLogMaxCount> &&
 class HashBucketLim4 : public internal::HashBucketBase
 {
 public:
-	static const size_t logMaxCount = tLogMaxCount;
-	static const size_t memPoolBlockCount = tMemPoolBlockCount;
+	constexpr static size_t logMaxCount = tLogMaxCount;
+	constexpr static size_t memPoolBlockCount = tMemPoolBlockCount;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketLim4<ItemTraits, logMaxCount, memPoolBlockCount>;

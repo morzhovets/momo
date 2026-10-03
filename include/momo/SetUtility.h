@@ -47,9 +47,9 @@ namespace internal
 		typedef ObjectManager<Item, MemManager> ItemManager;
 
 	public:
-		static const size_t alignment = ItemManager::alignment;
+		constexpr static size_t alignment = ItemManager::alignment;
 
-		static const bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
+		constexpr static bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
 
 		template<typename... ItemArgs>
 		using Creator = typename ItemManager::template Creator<ItemArgs...>;
@@ -102,7 +102,7 @@ namespace internal
 		typedef TContainerTraits ContainerTraits;
 		typedef TMemManager MemManager;
 
-		static const bool keepVersion = tKeepVersion;
+		constexpr static bool keepVersion = tKeepVersion;
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -207,7 +207,7 @@ namespace internal
 		typedef TContainerTraits ContainerTraits;
 		typedef TMemManager MemManager;
 
-		static const bool keepVersion = tKeepVersion;
+		constexpr static bool keepVersion = tKeepVersion;
 
 	public:
 		explicit SetCrew(const ContainerTraits& containerTraits, MemManager&& memManager)

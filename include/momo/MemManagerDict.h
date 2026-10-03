@@ -27,18 +27,18 @@ namespace internal
 	class MemManagerDictBlockDictSettings //: public TreeMapSettings
 	{
 	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkVersion = false;
-		static const bool allowExceptionSuppression = false;
+		constexpr static CheckMode checkMode = CheckMode::assertion;
+		constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		constexpr static bool checkVersion = false;
+		constexpr static bool allowExceptionSuppression = false;
 	};
 }
 
 class MemManagerDictSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 
 	typedef TreeNodeDefault BlockDictTreeNode;
 };

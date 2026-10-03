@@ -75,7 +75,7 @@ class LibcxxSegmentedArraySettings
 	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::cnst, 0>
 {
 public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+	constexpr static momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 
 namespace std
@@ -106,7 +106,7 @@ class LibcxxSegmentedArraySettings
 	: public momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt, 0>
 {
 public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+	constexpr static momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 
 namespace std

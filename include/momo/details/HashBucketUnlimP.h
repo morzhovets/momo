@@ -32,9 +32,9 @@ namespace internal
 		typedef typename BucketUnlimPItemTraits::Item Item;
 		typedef typename BucketUnlimPItemTraits::MemManager MemManager;
 
-		static const size_t alignment = BucketUnlimPItemTraits::alignment;
+		constexpr static size_t alignment = BucketUnlimPItemTraits::alignment;
 
-		static const bool isTriviallyRelocatable = false;
+		constexpr static bool isTriviallyRelocatable = false;
 
 	public:
 		static void Destroy(MemManager& /*memManager*/, Item* /*items*/, size_t /*count*/) noexcept
@@ -60,14 +60,14 @@ namespace internal
 		typedef TMemPoolParams MemPoolParams;
 		typedef TArraySettings ArraySettings;
 
-		static const size_t maxFastCount = tMaxFastCount;
+		constexpr static size_t maxFastCount = tMaxFastCount;
 
 	private:
 		typedef internal::ArrayBucket<BucketUnlimPArrayBucketItemTraits<ItemTraits>,
 			maxFastCount, MemPoolParams, NestedArraySettings<ArraySettings, false>> ArrayBucket;	//?
 
 	public:
-		static const size_t maxCount = Const::maxSize;
+		constexpr static size_t maxCount = Const::maxSize;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
@@ -151,7 +151,7 @@ requires internal::conceptArrayBucketMaxFastCount<tMaxFastCount>
 class HashBucketUnlimP : public internal::HashBucketBase
 {
 public:
-	static const size_t maxFastCount = tMaxFastCount;
+	constexpr static size_t maxFastCount = tMaxFastCount;
 
 	typedef TMemPoolParams MemPoolParams;
 	typedef TArraySettings ArraySettings;

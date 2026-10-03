@@ -294,7 +294,7 @@ namespace internal
 		typedef size_t Word;
 
 	private:
-		static const size_t wordBitSize = sizeof(Word) * 8;
+		constexpr static size_t wordBitSize = sizeof(Word) * 8;
 
 	public:
 		static constexpr size_t GetWordCount(size_t bitCount) noexcept
@@ -320,28 +320,28 @@ namespace internal
 
 	struct Const
 	{
-		static const uintptr_t nullPtr = MOMO_NULL_UINTPTR;
-		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
+		constexpr static uintptr_t nullPtr = MOMO_NULL_UINTPTR;
+		constexpr static uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
 		static_assert(nullPtr != invalidPtr);
 
 #ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
-		static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+		constexpr static size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 		static_assert(ptrUsefulBitCount <= sizeof(void*) * 8);
 #else
-		static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
+		constexpr static size_t ptrUsefulBitCount = sizeof(void*) * 8;
 #endif
 
-		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
-		static const size_t maxAllocAlignment = alignof(std::max_align_t);
+		constexpr static size_t maxAlignment = MOMO_MAX_ALIGNMENT;
+		constexpr static size_t maxAllocAlignment = alignof(std::max_align_t);
 		static_assert(std::has_single_bit(maxAllocAlignment));
 		static_assert(maxAllocAlignment % maxAlignment == 0);
 
-		static const size_t maxFastFunctorSize = MOMO_MAX_FAST_FUNCTOR_SIZE;
+		constexpr static size_t maxFastFunctorSize = MOMO_MAX_FAST_FUNCTOR_SIZE;
 		//static_assert(maxFastFunctorSize >= sizeof(void*));
 
-		static const size_t maxSize = SIZE_MAX;
+		constexpr static size_t maxSize = SIZE_MAX;
 
-		static const uint32_t max32 = UINT32_MAX;
+		constexpr static uint32_t max32 = UINT32_MAX;
 	};
 
 	template<template<typename...> typename ClassTempl>	// vs
@@ -421,7 +421,7 @@ namespace internal
 	public:
 		template<typename Container,
 			typename AllocatorTraits = std::allocator_traits<typename Container::allocator_type>>
-		static const bool isNothrowMoveAssignable = AllocatorTraits::is_always_equal::value
+		constexpr static bool isNothrowMoveAssignable = AllocatorTraits::is_always_equal::value
 			|| AllocatorTraits::propagate_on_container_move_assignment::value;
 
 	public:

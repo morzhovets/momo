@@ -32,10 +32,10 @@ namespace internal
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const size_t minStateSize = tMinStateSize;
+		constexpr static size_t minStateSize = tMinStateSize;
 
 	public:
-		static const size_t maxCount = 1;
+		constexpr static size_t maxCount = 1;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
@@ -142,7 +142,7 @@ namespace internal
 		{
 			if constexpr (sizeof(HashState) < sizeof(size_t))
 			{
-				static const size_t hashCodeShift = (sizeof(size_t) - sizeof(HashState)) * 8;
+				constexpr size_t hashCodeShift = (sizeof(size_t) - sizeof(HashState)) * 8;
 				return static_cast<HashState>(hashCode >> hashCodeShift) | 1;
 			}
 			else
@@ -181,7 +181,7 @@ requires internal::conceptBucketOneMinStateSize<tMinStateSize>
 class HashBucketOne : public internal::HashBucketBase	// HashBucketOpenBase?
 {
 public:
-	static const size_t minStateSize = tMinStateSize;
+	constexpr static size_t minStateSize = tMinStateSize;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOne<ItemTraits, minStateSize>;

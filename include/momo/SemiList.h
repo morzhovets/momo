@@ -33,18 +33,18 @@ namespace internal
 	public:
 		typedef TItem Item;
 
-		static const size_t logItemCount = 3;	//?
+		constexpr static size_t logItemCount = 3;	//?
 
 		typedef std::byte* Chunk;
 		typedef uintptr_t Block;
 		typedef uint64_t State;
 
-		static constexpr Chunk nullChunk = nullptr;
-		static const Block nullBlock = Const::nullPtr;
+		constexpr static Chunk nullChunk = nullptr;
+		constexpr static Block nullBlock = Const::nullPtr;
 
 	private:
-		static const size_t itemCount = size_t{1} << logItemCount;
-		static const uintptr_t maskIndex = uintptr_t{itemCount - 1};
+		constexpr static size_t itemCount = size_t{1} << logItemCount;
+		constexpr static uintptr_t maskIndex = uintptr_t{itemCount - 1};
 
 	public:
 		template<conceptMemManager MemManager>
@@ -318,8 +318,8 @@ public:
 class SemiListSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	//static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	//constexpr static bool allowExceptionSuppression = true;
 
 	template<typename Item>
 	using Chunker = internal::ListChunker<Item>;
@@ -347,7 +347,7 @@ private:
 	typedef typename Chunker::Block Block;
 	typedef typename Chunker::State State;	//?
 
-	static const size_t chunkItemCount = size_t{1} << Chunker::logItemCount;
+	constexpr static size_t chunkItemCount = size_t{1} << Chunker::logItemCount;
 
 	struct ConstIteratorProxy : private ConstIterator
 	{

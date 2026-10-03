@@ -42,7 +42,7 @@ class LibcxxTreeMapKeyValueTraits
 {
 public:
 #ifdef LIBCXX_TEST_SAFE_MAP_BRACKETS
-	static const bool useSafeValueReference = true;
+	constexpr static bool useSafeValueReference = true;
 #endif
 };
 

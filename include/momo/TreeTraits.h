@@ -59,8 +59,8 @@ public:
 	typedef TKey Key;
 	typedef TTreeNode TreeNode;
 
-	static const bool multiKey = tMultiKey;
-	static const bool useLinearSearch = tUseLinearSearch;
+	constexpr static bool multiKey = tMultiKey;
+	constexpr static bool useLinearSearch = tUseLinearSearch;
 
 	template<typename ItemTraits>
 	using Node = typename TreeNode::template Node<ItemTraits>;
@@ -95,9 +95,9 @@ public:
 	typedef TLessComparer LessComparer;
 	typedef TTreeNode TreeNode;
 
-	static const bool multiKey = tMultiKey;
+	constexpr static bool multiKey = tMultiKey;
 
-	static const bool useLinearSearch = IsFastComparable<Key>::value
+	constexpr static bool useLinearSearch = IsFastComparable<Key>::value
 		&& (std::is_same_v<LessComparer, std::less<Key>> || std::is_same_v<LessComparer, std::less<>>);
 
 	template<typename ItemTraits>
@@ -107,7 +107,7 @@ public:
 	using IsValidKeyArg = std::bool_constant<internal::conceptTransparent<LessComparer>>;
 
 private:
-	static const bool staticIsLess = std::is_empty_v<LessComparer> &&
+	constexpr static bool staticIsLess = std::is_empty_v<LessComparer> &&
 		std::is_trivially_default_constructible_v<LessComparer>;
 
 public:

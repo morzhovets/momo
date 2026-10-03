@@ -74,7 +74,7 @@ public:
 	typedef TObject Object;
 	typedef TMemManager MemManager;
 
-	static const bool isNothrowDestructible = std::is_nothrow_destructible_v<Object>;
+	constexpr static bool isNothrowDestructible = std::is_nothrow_destructible_v<Object>;
 
 public:
 	template<internal::conceptMemManagerOrNullPtr<MemManager> MemManagerOrNullPtr>
@@ -93,12 +93,12 @@ public:
 	typedef TMemManager MemManager;
 
 public:
-	static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
+	constexpr static bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
-	static const bool isRelocatable = isTriviallyRelocatable
+	constexpr static bool isRelocatable = isTriviallyRelocatable
 		|| (std::is_move_constructible_v<Object> && std::is_nothrow_destructible_v<Object>);
 
-	static const bool isNothrowRelocatable = isRelocatable
+	constexpr static bool isNothrowRelocatable = isRelocatable
 		&& (isTriviallyRelocatable || std::is_nothrow_move_constructible_v<Object>
 			|| (MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object)));
 
@@ -166,7 +166,7 @@ namespace internal
 	public:
 		typedef TObject Object;
 
-		static const size_t alignment = (alignof(Object) < Const::maxAlignment)
+		constexpr static size_t alignment = (alignof(Object) < Const::maxAlignment)
 			? alignof(Object) : Const::maxAlignment;
 
 	public:
@@ -185,8 +185,8 @@ namespace internal
 	public:
 		typedef TObject Object;
 
-		static const size_t alignment = tAlignment;
-		static const size_t count = tCount;
+		constexpr static size_t alignment = tAlignment;
+		constexpr static size_t count = tCount;
 
 	public:
 		explicit ObjectBuffer() noexcept = default;
@@ -506,34 +506,34 @@ namespace internal
 		template<conceptMemManagerOrNullPtr<TMemManager> MemManagerOrNullPtr = MemManager*>
 		using DestroyFinalizer = ObjectDestroyFinalizer<Object, MemManager, MemManagerOrNullPtr>;
 
-		static const bool isTriviallyRelocatable = Relocator::isTriviallyRelocatable;
+		constexpr static bool isTriviallyRelocatable = Relocator::isTriviallyRelocatable;
 
-		static const bool isNothrowRelocatable = Relocator::isNothrowRelocatable;
+		constexpr static bool isNothrowRelocatable = Relocator::isNothrowRelocatable;
 
-		static const bool isNothrowMoveConstructible =
+		constexpr static bool isNothrowMoveConstructible =
 			IsNothrowMoveConstructible<Object, MemManager>::value;
 
-		static const bool isNothrowSwappable = std::is_nothrow_swappable_v<Object>;
+		constexpr static bool isNothrowSwappable = std::is_nothrow_swappable_v<Object>;
 
-		static const bool isNothrowAnywayAssignable =
+		constexpr static bool isNothrowAnywayAssignable =
 			std::is_nothrow_move_assignable_v<Object> || isNothrowSwappable || isNothrowRelocatable;
 
-		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
+		constexpr static bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
-		static const size_t alignment = ObjectAlignmenter<Object>::alignment;
+		constexpr static size_t alignment = ObjectAlignmenter<Object>::alignment;
 
 	private:
-		static const bool isNothrowDestructible = Destroyer::isNothrowDestructible;
+		constexpr static bool isNothrowDestructible = Destroyer::isNothrowDestructible;
 
-		static const bool isRelocatable = Relocator::isRelocatable;
+		constexpr static bool isRelocatable = Relocator::isRelocatable;
 
-		static const bool isMoveConstructible = std::is_move_constructible_v<Object>
+		constexpr static bool isMoveConstructible = std::is_move_constructible_v<Object>
 			|| HasCustomConstructor<MemManager, Object, Object&&>::value;
 
-		static const bool isCopyConstructible = std::is_copy_constructible_v<Object>
+		constexpr static bool isCopyConstructible = std::is_copy_constructible_v<Object>
 			|| HasCustomConstructor<MemManager, Object, const Object&>::value;
 
-		static const bool isAnywayAssignable = std::is_move_assignable_v<Object>
+		constexpr static bool isAnywayAssignable = std::is_move_assignable_v<Object>
 			|| isNothrowSwappable || isNothrowRelocatable;
 
 	public:

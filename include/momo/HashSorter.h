@@ -500,8 +500,8 @@ private:
 	static size_t pvMultShift(HashCode value1, size_t value2) noexcept
 	{
 		static_assert(sizeof(HashCode) >= sizeof(size_t));
-		static const size_t halfSize = sizeof(HashCode) * 4;
-		static const HashCode halfMask = (HashCode{1} << halfSize) - 1;
+		constexpr size_t halfSize = sizeof(HashCode) * 4;
+		constexpr HashCode halfMask = (HashCode{1} << halfSize) - 1;
 		HashCode res = (value1 >> halfSize) * (value2 >> halfSize)
 			+ (((value1 >> halfSize) * (value2 & halfMask)) >> halfSize)
 			+ (((value2 >> halfSize) * (value1 & halfMask)) >> halfSize);

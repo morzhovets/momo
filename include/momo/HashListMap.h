@@ -41,7 +41,7 @@ namespace internal
 			KeyValueTraits::keyAlignment, KeyValueTraits::valueAlignment> Item;
 		static_assert(std::is_trivially_destructible_v<Item>);
 
-		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
+		constexpr static size_t alignment = ObjectAlignmenter<Item>::alignment;
 
 		template<typename ItemArg>
 		requires std::is_same_v<ItemArg, const Item&>
@@ -87,9 +87,9 @@ namespace internal
 		typedef THashListMapSettings HashListMapSettings;
 
 	public:
-		static const CheckMode checkMode = HashListMapSettings::checkMode;
-		static const ExtraCheckMode extraCheckMode = HashListMapSettings::extraCheckMode;
-		static const bool allowExceptionSuppression = HashListMapSettings::allowExceptionSuppression;
+		constexpr static CheckMode checkMode = HashListMapSettings::checkMode;
+		constexpr static ExtraCheckMode extraCheckMode = HashListMapSettings::extraCheckMode;
+		constexpr static bool allowExceptionSuppression = HashListMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -107,8 +107,8 @@ private:
 	typedef internal::ObjectManager<Value, MemManager> ValueManager;
 
 public:
-	static const size_t keyAlignment = KeyManager::alignment;
-	static const size_t valueAlignment = ValueManager::alignment;
+	constexpr static size_t keyAlignment = KeyManager::alignment;
+	constexpr static size_t valueAlignment = ValueManager::alignment;
 
 	template<typename... ValueArgs>
 	using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
@@ -152,9 +152,9 @@ public:
 class HashListMapSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool allowExceptionSuppression = true;
 };
 
 template<typename TKeyValueTraits,
@@ -194,7 +194,7 @@ public:
 	typedef internal::HashMapBucketBounds<typename HashListSet::ConstBucketBounds> BucketBounds;
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
-	static const size_t bucketMaxItemCount = HashListSet::bucketMaxItemCount;
+	constexpr static size_t bucketMaxItemCount = HashListSet::bucketMaxItemCount;
 
 private:
 	typedef internal::MapValueReferencer<HashListMapCore, Position, false> ValueReferencer;

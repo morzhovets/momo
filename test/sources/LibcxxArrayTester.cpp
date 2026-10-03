@@ -50,7 +50,7 @@ namespace libcxx_array_0
 class LibcxxArraySettings : public momo::ArraySettings<0, false>
 {
 public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
+	constexpr static momo::CheckMode checkMode = momo::CheckMode::exception;
 };
 
 namespace std

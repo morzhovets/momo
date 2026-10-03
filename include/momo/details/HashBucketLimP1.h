@@ -36,7 +36,7 @@ namespace internal
 		typedef TMemPoolParams MemPoolParams;
 
 	public:
-		static const size_t maxCount = tMaxCount;
+		constexpr static size_t maxCount = tMaxCount;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
@@ -53,13 +53,13 @@ namespace internal
 		class Params
 		{
 		public:
-			static const bool skipFirstMemPool =
+			constexpr static bool skipFirstMemPool =
 				(maxCount > 1 && ItemTraits::alignment == sizeof(Item));	//?
 
 		private:
 			typedef NestedArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
 
-			static const size_t minMemPoolIndex = skipFirstMemPool ? 2 : 1;
+			constexpr static size_t minMemPoolIndex = skipFirstMemPool ? 2 : 1;
 
 		public:
 			explicit Params(MemManager& memManager)
@@ -254,7 +254,7 @@ requires internal::conceptBucketLimP1MaxCount<tMaxCount>
 class HashBucketLimP1 : public internal::HashBucketBase
 {
 public:
-	static const size_t maxCount = tMaxCount;
+	constexpr static size_t maxCount = tMaxCount;
 
 	typedef TMemPoolParams MemPoolParams;
 

@@ -39,10 +39,10 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const bool usePtrState = false;
+		constexpr static bool usePtrState = false;
 
 	public:
-		static const size_t maxCount = tMaxCount;
+		constexpr static size_t maxCount = tMaxCount;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
@@ -105,8 +105,8 @@ namespace internal
 	private:
 		typedef BucketMemory<MemPool, std::byte*> Memory;
 
-		static const uintptr_t ptrNull = Const::nullPtr;
-		static const uintptr_t ptrNullWasFull = Const::invalidPtr;
+		constexpr static uintptr_t ptrNull = Const::nullPtr;
+		constexpr static uintptr_t ptrNullWasFull = Const::invalidPtr;
 
 	public:
 		explicit BucketLimP() noexcept
@@ -288,10 +288,10 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const bool usePtrState = true;
+		constexpr static bool usePtrState = true;
 
 	public:
-		static const size_t maxCount = tMaxCount;
+		constexpr static size_t maxCount = tMaxCount;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
@@ -304,12 +304,12 @@ namespace internal
 
 		typedef momo::MemPool<MemPoolParams, MemManagerPtr, NestedMemPoolSettings> MemPool;
 
-		static const size_t minItemAlignment = (maxCount <= 1) ? 1 : (maxCount <= 2) ? 2
+		constexpr static size_t minItemAlignment = (maxCount <= 1) ? 1 : (maxCount <= 2) ? 2
 			: (maxCount <= 4) ? 4 : (maxCount <= 8) ? 8 : 16;
-		static const size_t itemAlignment = UIntMath<>::Max(ItemTraits::alignment, minItemAlignment);
+		constexpr static size_t itemAlignment = UIntMath<>::Max(ItemTraits::alignment, minItemAlignment);
 
-		static const bool skipOddMemPools = (maxCount > 1 && sizeof(Item) <= itemAlignment);	//?
-		static const uintptr_t modMemPoolIndex =
+		constexpr static bool skipOddMemPools = (maxCount > 1 && sizeof(Item) <= itemAlignment);	//?
+		constexpr static uintptr_t modMemPoolIndex =
 			uintptr_t{minItemAlignment} / (skipOddMemPools ? 2 : 1);
 
 	public:
@@ -365,8 +365,8 @@ namespace internal
 	private:
 		typedef BucketMemory<MemPool, Item*> Memory;
 
-		static const uintptr_t stateNull = Const::nullPtr;
-		static const uintptr_t stateNullWasFull = Const::invalidPtr;
+		constexpr static uintptr_t stateNull = Const::nullPtr;
+		constexpr static uintptr_t stateNullWasFull = Const::invalidPtr;
 
 	public:
 		explicit BucketLimP() noexcept
@@ -532,8 +532,8 @@ requires internal::conceptBucketLimPMaxCount<tMaxCount>
 class HashBucketLimP : public internal::HashBucketBase
 {
 public:
-	static const size_t maxCount = tMaxCount;
-	static const bool usePtrState = tUsePtrState;
+	constexpr static size_t maxCount = tMaxCount;
+	constexpr static bool usePtrState = tUsePtrState;
 
 	typedef TMemPoolParams MemPoolParams;
 

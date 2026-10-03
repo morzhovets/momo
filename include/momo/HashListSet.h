@@ -334,8 +334,8 @@ namespace internal
 		typedef THashListSetSettings HashListSetSettings;
 
 	public:
-		static const CheckMode checkMode = HashListSetSettings::checkMode;
-		//static const bool allowExceptionSuppression = HashListSetSettings::allowExceptionSuppression;
+		constexpr static CheckMode checkMode = HashListSetSettings::checkMode;
+		//constexpr static bool allowExceptionSuppression = HashListSetSettings::allowExceptionSuppression;
 	};
 }
 
@@ -352,7 +352,7 @@ private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	static const size_t alignment = ItemManager::alignment;	//?
+	constexpr static size_t alignment = ItemManager::alignment;	//?
 
 	template<typename... ItemArgs>
 	using Creator = typename ItemManager::template Creator<ItemArgs...>;
@@ -373,9 +373,9 @@ public:
 class HashListSetSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool allowExceptionSuppression = true;
 };
 
 template<typename TItemTraits,
@@ -417,7 +417,7 @@ public:
 
 	typedef internal::HashListSetBucketBounds<typename HashSet::ConstBucketBounds> ConstBucketBounds;
 
-	static const size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
+	constexpr static size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
 
 private:
 	typedef typename List::MemManager MemManagerPtr;	//?

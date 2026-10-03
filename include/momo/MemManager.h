@@ -253,7 +253,7 @@ public:
 	{
 		ByteAllocator& thisAlloc = GetByteAllocator();
 		ByteAllocator& alloc = memManager.GetByteAllocator();
-		static const bool isNothrowMoveAssignable = std::is_nothrow_move_assignable_v<ByteAllocator>
+		constexpr bool isNothrowMoveAssignable = std::is_nothrow_move_assignable_v<ByteAllocator>
 			|| ByteAllocatorTraits::propagate_on_container_move_assignment::value;
 		if constexpr (isNothrowMoveAssignable)
 			thisAlloc = std::move(alloc);
@@ -353,8 +353,8 @@ namespace internal
 		typedef TMemManager MemManager;
 
 	public:
-		static const bool canReallocate = conceptMemManagerWithReallocate<MemManager>;
-		static const bool canReallocateInplace = conceptMemManagerWithReallocateInplace<MemManager>;
+		constexpr static bool canReallocate = conceptMemManagerWithReallocate<MemManager>;
+		constexpr static bool canReallocateInplace = conceptMemManagerWithReallocateInplace<MemManager>;
 
 	public:
 		template<typename ResObject = void>

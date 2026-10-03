@@ -47,7 +47,7 @@ private:
 	class DataTraits1 : public momo::DataTraits
 	{
 	public:
-		static const size_t selectEqualityMaxCount = 1;
+		constexpr static size_t selectEqualityMaxCount = 1;
 	};
 
 public:
@@ -138,8 +138,8 @@ public:
 		typedef typename Table::ConstIterator ConstIterator;
 		typedef typename Table::ColumnList::ColumnInfo ColumnInfo;
 
-		static const size_t count = 1024;
-		static const size_t count2 = 12;
+		constexpr size_t count = 1024;
+		constexpr size_t count2 = 12;
 
 		const Table& ctable = table;
 

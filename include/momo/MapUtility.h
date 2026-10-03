@@ -56,7 +56,7 @@ namespace internal
 		typedef TSetReference SetReference;
 		typedef std::decay_t<SetReference> KeyValuePair;
 
-		static const bool isConst = tIsConst;
+		constexpr static bool isConst = tIsConst;
 
 	public:
 		typedef typename KeyValuePair::Key Key;
@@ -143,7 +143,7 @@ namespace internal
 	protected:
 		typedef TSetIterator SetIterator;
 
-		static const bool isConst = tIsConst;
+		constexpr static bool isConst = tIsConst;
 
 	public:
 		typedef MapReference<typename SetIterator::Reference, isConst> Reference;
@@ -211,7 +211,7 @@ namespace internal
 	protected:
 		typedef TSetIterator SetIterator;
 
-		static const bool isConst = tIsConst;
+		constexpr static bool isConst = tIsConst;
 
 	public:
 		typedef MapReference<std::iter_reference_t<SetIterator>, isConst> Reference;
@@ -277,7 +277,7 @@ namespace internal
 		typedef TSetPosition SetPosition;
 		typedef typename SetPosition::Iterator SetIterator;
 
-		static const bool isConst = tIsConst;
+		constexpr static bool isConst = tIsConst;
 
 	public:
 		typedef std::conditional_t<std::bidirectional_iterator<SetIterator>,
@@ -374,12 +374,12 @@ namespace internal
 		typedef ObjectManager<Key, MemManager> KeyManager;
 		typedef ObjectManager<Value, MemManager> ValueManager;
 
-		static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
-		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
+		constexpr static bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
+		constexpr static bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
 	public:
-		static const size_t keyAlignment = KeyManager::alignment;
-		static const size_t valueAlignment = ValueManager::alignment;
+		constexpr static size_t keyAlignment = KeyManager::alignment;
+		constexpr static size_t valueAlignment = ValueManager::alignment;
 
 		template<typename... ValueArgs>
 		using ValueCreator = typename ValueManager::template Creator<ValueArgs...>;
@@ -471,12 +471,12 @@ namespace internal
 		using typename MapKeyValueTraitsBase::Value;
 		using typename MapKeyValueTraitsBase::MemManager;
 
-		static const bool useValuePtr = false;
+		constexpr static bool useValuePtr = false;
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
-		static const bool useSafeValueReference = true;
+		constexpr static bool useSafeValueReference = true;
 #else
-		static const bool useSafeValueReference = false;
+		constexpr static bool useSafeValueReference = false;
 #endif
 
 		using MapKeyValueTraitsBase::isKeyNothrowRelocatable;
@@ -629,8 +629,8 @@ namespace internal
 		using typename MapKeyValueTraitsBase::Value;
 		using typename MapKeyValueTraitsBase::MemManager;
 
-		static const bool useValuePtr = true;
-		static const bool useSafeValueReference = false;
+		constexpr static bool useValuePtr = true;
+		constexpr static bool useSafeValueReference = false;
 
 		using MapKeyValueTraitsBase::isKeyNothrowRelocatable;
 
@@ -676,8 +676,8 @@ namespace internal
 		typedef TValue Value;
 
 	protected:
-		static const size_t keyAlignment = tKeyAlignment;
-		static const size_t valueAlignment = tValueAlignment;
+		constexpr static size_t keyAlignment = tKeyAlignment;
+		constexpr static size_t valueAlignment = tValueAlignment;
 
 	public:
 		template<typename MemManager, conceptMapPairCreator<Key, Value> PairCreator>
@@ -755,7 +755,7 @@ namespace internal
 		typedef TValue Value;
 
 	protected:
-		static const size_t keyAlignment = tKeyAlignment;
+		constexpr static size_t keyAlignment = tKeyAlignment;
 
 	public:
 		template<typename MemManager, conceptMapPairCreator<Key, Value> PairCreator>
@@ -863,9 +863,9 @@ namespace internal
 			KeyValueTraits::keyAlignment, KeyValueTraits::valueAlignment> Item;
 		static_assert(std::is_trivially_destructible_v<Item>);
 
-		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
+		constexpr static size_t alignment = ObjectAlignmenter<Item>::alignment;
 
-		static const bool isNothrowRelocatable =
+		constexpr static bool isNothrowRelocatable =
 			KeyValueTraits::isKeyNothrowRelocatable && KeyValueTraits::isValueNothrowRelocatable;
 
 		template<typename ItemArg>
@@ -975,9 +975,9 @@ namespace internal
 		typedef MapKeyValuePtrPair<Key, Value, KeyValueTraits::keyAlignment> Item;
 		static_assert(std::is_trivially_destructible_v<Item>);
 
-		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
+		constexpr static size_t alignment = ObjectAlignmenter<Item>::alignment;
 
-		static const bool isNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
+		constexpr static bool isNothrowRelocatable = KeyValueTraits::isKeyNothrowRelocatable;
 
 		template<typename ItemArg>
 		requires std::is_same_v<ItemArg, const Item&>
@@ -1133,7 +1133,7 @@ namespace internal
 		typedef TSetExtractedItem SetExtractedItem;
 		typedef typename SetExtractedItem::Item KeyValuePair;
 
-		static const bool useValuePtr = false;
+		constexpr static bool useValuePtr = false;
 
 	public:
 		typedef typename KeyValuePair::Key Key;
@@ -1222,7 +1222,7 @@ namespace internal
 		typedef TSetExtractedItem SetExtractedItem;
 		typedef typename SetExtractedItem::Item KeyValuePair;
 
-		static const bool useValuePtr = true;
+		constexpr static bool useValuePtr = true;
 
 		typedef typename SetExtractedItem::ItemTraits::MemManager::MemPool ValueMemPool;
 
@@ -1343,7 +1343,7 @@ namespace internal
 		typedef TMap Map;
 		typedef TPosition Position;
 
-		static const bool useSafeReference = false;
+		constexpr static bool useSafeReference = false;
 
 	private:
 		typedef typename Map::Value Value;
@@ -1377,7 +1377,7 @@ namespace internal
 		typedef TMap Map;
 		typedef TPosition Position;
 
-		static const bool useSafeReference = true;
+		constexpr static bool useSafeReference = true;
 
 	private:
 		typedef typename Map::Value Value;
@@ -1500,7 +1500,7 @@ namespace internal
 	class MapArgReferencer
 	{
 	public:
-		static const bool allowKeyValue = tAllowKeyValue;
+		constexpr static bool allowKeyValue = tAllowKeyValue;
 
 	public:
 		template<typename ArgIterator,

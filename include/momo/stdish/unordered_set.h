@@ -71,7 +71,7 @@ private:
 	template<typename KeyArg>
 	using IsValidKeyArg = HashTraits::template IsValidKeyArg<KeyArg>;
 
-	static const bool useHintIterators = HashTraits::useHintIterators
+	constexpr static bool useHintIterators = HashTraits::useHintIterators
 		&& std::is_convertible_v<typename HashSet::ConstIterator, typename HashSet::ConstPosition>;
 
 	struct NodeTypeProxy : private node_type
