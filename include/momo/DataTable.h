@@ -166,7 +166,7 @@ public:
 private:
 	typedef internal::VersionKeeper<Settings> VersionKeeper;
 
-	static const size_t invalidNumber = internal::UIntConst::maxSize;
+	static const size_t invalidNumber = internal::Const::maxSize;
 
 	typedef MemPool<typename DataTraits::RawMemPoolParams, MemManagerPtr,
 		internal::NestedMemPoolSettings> RawMemPool;

@@ -52,8 +52,8 @@ namespace internal
 
 		typedef BucketMemory<MemPool, Byte*> Memory;
 
-		static const uintptr_t ptrNull = UIntConst::nullPtr;
-		static const uintptr_t ptrNullWasFull = UIntConst::invalidPtr;
+		static const uintptr_t ptrNull = Const::nullPtr;
+		static const uintptr_t ptrNullWasFull = Const::invalidPtr;
 
 	public:
 		class Params
@@ -333,8 +333,8 @@ namespace internal
 		static const uintptr_t modMemPoolIndex =
 			uintptr_t{minItemAlignment} / (skipOddMemPools ? 2 : 1);
 
-		static const uintptr_t stateNull = UIntConst::nullPtr;
-		static const uintptr_t stateNullWasFull = UIntConst::invalidPtr;
+		static const uintptr_t stateNull = Const::nullPtr;
+		static const uintptr_t stateNullWasFull = Const::invalidPtr;
 
 	public:
 		class Params

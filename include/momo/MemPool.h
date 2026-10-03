@@ -34,7 +34,7 @@ public:
 
 public:
 	static constexpr size_t GetBlockAlignment(size_t blockSize,
-		size_t maxAlignment = internal::UIntConst::maxAlignment) noexcept
+		size_t maxAlignment = internal::Const::maxAlignment) noexcept
 	{
 		return (maxAlignment > blockSize && maxAlignment > 1)
 			? GetBlockAlignment(blockSize, maxAlignment / 2) : maxAlignment;
@@ -412,7 +412,7 @@ private:
 		MOMO_CHECK(Params::blockSize > 0);
 		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize % Params::blockAlignment == 0);
 		MOMO_CHECK(Params::blockCount == 1 || Params::blockSize / Params::blockAlignment >= 2);
-		if (Params::blockSize > internal::UIntConst::maxSize / Params::blockCount)	//?
+		if (Params::blockSize > internal::Const::maxSize / Params::blockCount)	//?
 			MOMO_THROW(std::length_error("Invalid block size"));
 	}
 
@@ -495,7 +495,7 @@ private:
 
 	size_t pvGetAlignmentAddend() const noexcept
 	{
-		return Params::blockAlignment - internal::UIntMath<>::Min(internal::UIntConst::maxAllocAlignment,
+		return Params::blockAlignment - internal::UIntMath<>::Min(internal::Const::maxAllocAlignment,
 			Params::blockAlignment & (~Params::blockAlignment + 1));
 	}
 
@@ -830,7 +830,7 @@ namespace internal
 		static const size_t blockCount = tBlockCount;
 		MOMO_STATIC_ASSERT(blockCount > 0);
 
-		static const uint32_t nullPtr = UIntConst::max32;
+		static const uint32_t nullPtr = Const::max32;
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -845,8 +845,8 @@ namespace internal
 			mBlockSize(UIntMath<>::Max(blockSize, sizeof(uint32_t))),
 			mAllocCount(0)
 		{
-			MOMO_ASSERT(maxTotalBlockCount < size_t{UIntConst::max32});
-			if (mBlockSize > UIntConst::maxSize / blockCount)
+			MOMO_ASSERT(maxTotalBlockCount < size_t{Const::max32});
+			if (mBlockSize > Const::maxSize / blockCount)
 				MOMO_THROW(std::length_error("Invalid block size"));
 		}
 

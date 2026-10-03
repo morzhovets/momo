@@ -67,7 +67,7 @@ namespace internal
 			maxFastCount, MemPoolParams, NestedArraySettings<ArraySettings, false>> ArrayBucket;	//?
 
 	public:
-		static const size_t maxCount = UIntConst::maxSize;
+		static const size_t maxCount = Const::maxSize;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;

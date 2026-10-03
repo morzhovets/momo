@@ -37,7 +37,7 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 32;
 
-		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
+		MOMO_STATIC_ASSERT((static_cast<uint8_t>(Const::nullPtr) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
@@ -73,7 +73,7 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 48;
 
-		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
+		MOMO_STATIC_ASSERT((static_cast<uint8_t>(Const::nullPtr) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
@@ -112,7 +112,7 @@ namespace internal
 		static const uint8_t maskState = tMaskState;
 		static const size_t bitCount = 64;
 
-		MOMO_STATIC_ASSERT((static_cast<uint8_t>(UIntConst::nullPtr) & maskState) == uint8_t{0});
+		MOMO_STATIC_ASSERT((static_cast<uint8_t>(Const::nullPtr) & maskState) == uint8_t{0});
 
 	public:
 		void Set(Item* ptr, uint8_t state) noexcept
@@ -183,7 +183,7 @@ namespace internal
 		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
 
 		typedef BucketLimP4PtrState<Item, useHashCodePartGetter ? 3 : 0,
-			UIntConst::ptrUsefulBitCount> PtrState;
+			Const::ptrUsefulBitCount> PtrState;
 
 		MOMO_STATIC_ASSERT(PtrState::bitCount % 8 == 0);
 		static const size_t codeCount = 4 +
