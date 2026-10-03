@@ -35,7 +35,7 @@ namespace internal
 	protected:
 		typedef THashSetIterator HashSetIterator;
 
-		static const bool isConst = tIsConst;
+		constexpr static bool isConst = tIsConst;
 
 	public:
 		typedef MapReference<typename std::iterator_traits<HashSetIterator>::reference,
@@ -100,7 +100,7 @@ namespace internal
 	protected:
 		typedef THashSetPosition HashSetPosition;
 
-		static const bool isConst = tIsConst;
+		constexpr static bool isConst = tIsConst;
 
 	public:
 		typedef HashMapIterator<typename HashSetPosition::Iterator, isConst> Iterator;
@@ -201,7 +201,7 @@ namespace internal
 	protected:
 		typedef THashSetBucketBounds HashSetBucketBounds;
 
-		static const bool isConst = tIsConst;
+		constexpr static bool isConst = tIsConst;
 
 	public:
 		typedef HashMapIterator<typename HashSetBucketBounds::Iterator, isConst> Iterator;
@@ -289,10 +289,10 @@ namespace internal
 		typedef THashMapSettings HashMapSettings;
 
 	public:
-		static const CheckMode checkMode = HashMapSettings::checkMode;
-		static const ExtraCheckMode extraCheckMode = HashMapSettings::extraCheckMode;
-		static const bool checkVersion = HashMapSettings::checkVersion;
-		static const bool allowExceptionSuppression = HashMapSettings::allowExceptionSuppression;
+		constexpr static CheckMode checkMode = HashMapSettings::checkMode;
+		constexpr static ExtraCheckMode extraCheckMode = HashMapSettings::extraCheckMode;
+		constexpr static bool checkVersion = HashMapSettings::checkVersion;
+		constexpr static bool allowExceptionSuppression = HashMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -305,10 +305,10 @@ class HashMapKeyValueTraits : public internal::MapKeyValueTraits<TKey, TValue, T
 class HashMapSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -365,7 +365,7 @@ public:
 	typedef internal::HashMapBucketBounds<typename HashSet::ConstBucketBounds> BucketBounds;
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
-	static const size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
+	constexpr static size_t bucketMaxItemCount = HashSet::bucketMaxItemCount;
 
 private:
 	typedef internal::MapValueReferencer<HashMapCore, Position> ValueReferencer;
@@ -862,10 +862,10 @@ namespace internal
 	class NestedHashMapSettings : public HashMapSettings
 	{
 	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkVersion = false;
-		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
+		constexpr static CheckMode checkMode = CheckMode::assertion;
+		constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		constexpr static bool checkVersion = false;
+		constexpr static bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 }
 

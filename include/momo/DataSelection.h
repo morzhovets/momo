@@ -756,7 +756,7 @@ namespace internal
 		template<typename... Items>
 		void pvSort(const Column<Items>&... columns)
 		{
-			static const size_t columnCount = sizeof...(columns);
+			constexpr size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
 			auto rawLessComp = [&offsets] (Raw* raw1, Raw* raw2)
 				{ return pvIsLess<void, Items...>(raw1, raw2, offsets.data()); };
@@ -792,7 +792,7 @@ namespace internal
 		template<typename... Items>
 		void pvGroup(const Column<Items>&... columns)
 		{
-			static const size_t columnCount = sizeof...(columns);
+			constexpr size_t columnCount = sizeof...(columns);
 			std::array<size_t, columnCount> offsets = {{ mColumnList->GetOffset(columns)... }};
 			auto rawHasher = [&offsets] (Raw* raw)
 				{ return pvGetHashCode<void, Items...>(raw, offsets.data()); };
@@ -851,8 +851,8 @@ namespace internal
 		template<bool includeEqual, typename... Items>
 		size_t pvBinarySearch(const Equality<Items>&... equals) const
 		{
-			static const int bound = includeEqual ? -1 : 0;
-			static const size_t columnCount = sizeof...(equals);
+			constexpr int bound = includeEqual ? -1 : 0;
+			constexpr size_t columnCount = sizeof...(equals);
 			std::array<size_t, columnCount> offsets =
 				{{ mColumnList->GetOffset(equals.GetColumn())... }};
 			auto rawPred = [&offsets, &equals...] (Raw*, Raw* raw)

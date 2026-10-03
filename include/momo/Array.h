@@ -155,12 +155,12 @@ template<size_t tInternalCapacity = 0,
 class ArraySettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static bool allowExceptionSuppression = true;
 
-	static const size_t internalCapacity = tInternalCapacity;
-	static const bool growOnReserve = tGrowOnReserve;
-	static const bool usePtrIterator = tUsePtrIterator;
+	constexpr static size_t internalCapacity = tInternalCapacity;
+	constexpr static bool growOnReserve = tGrowOnReserve;
+	constexpr static bool usePtrIterator = tUsePtrIterator;
 
 public:
 	static size_t GrowCapacity(size_t capacity, size_t minNewCapacity,
@@ -201,7 +201,7 @@ public:
 	typedef typename ItemTraits::Item Item;
 	typedef typename ItemTraits::MemManager MemManager;
 
-	static const size_t internalCapacity = Settings::internalCapacity;
+	constexpr static size_t internalCapacity = Settings::internalCapacity;
 
 private:
 	class Data : private MemManager
@@ -311,8 +311,8 @@ private:
 				return false;
 			if (capacityLin <= internalCapacity || capacityExp <= internalCapacity)
 				return false;
-			static const bool canReallocateInplace = MemManagerProxy::canReallocateInplace;
-			static const bool canReallocate = MemManagerProxy::canReallocate
+			constexpr bool canReallocateInplace = MemManagerProxy::canReallocateInplace;
+			constexpr bool canReallocate = MemManagerProxy::canReallocate
 				&& ItemTraits::IsTriviallyRelocatable();
 			if (!canReallocate || capacityLin < capacityExp)
 			{
@@ -1163,8 +1163,8 @@ namespace internal
 		typedef TBaseArraySettings BaseArraySettings;
 
 	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
+		constexpr static CheckMode checkMode = CheckMode::assertion;
+		constexpr static bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 
 	template<size_t tInternalCapacity, typename TItem, typename TMemManager>

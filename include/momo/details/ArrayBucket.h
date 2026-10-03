@@ -99,7 +99,7 @@ namespace internal
 		typedef TMemPoolParams MemPoolParams;
 		typedef TArraySettings ArraySettings;
 
-		static const size_t maxFastCount = tMaxFastCount;
+		constexpr static size_t maxFastCount = tMaxFastCount;
 		MOMO_STATIC_ASSERT(0 < maxFastCount && maxFastCount < 16);
 
 	public:
@@ -114,7 +114,7 @@ namespace internal
 
 		typedef ArrayCore<ArrayBucketNestedArrayItemTraits<ItemTraits>, ArraySettings> Array;
 
-		static const size_t arrayAlignment = ObjectAlignmenter<Array>::alignment;
+		constexpr static size_t arrayAlignment = ObjectAlignmenter<Array>::alignment;
 		typedef MemPoolParamsStatic<sizeof(Array) + arrayAlignment, arrayAlignment,
 			MemPoolParams::blockCount, MemPoolParams::cachedFreeBlockCount> ArrayMemPoolParams;
 

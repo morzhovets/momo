@@ -409,7 +409,7 @@ namespace internal
 		static EnableIf<size == 4,
 		UInt> pvLog2(UInt value) noexcept
 		{
-			static const UInt tab32[32] =
+			static constexpr UInt tab32[32] =
 			{
 				 0,  9,  1, 10, 13, 21,  2, 29,
 				11, 14, 16, 18, 22, 25,  3, 30,
@@ -428,7 +428,7 @@ namespace internal
 		static EnableIf<size == 8,
 		UInt> pvLog2(UInt value) noexcept
 		{
-			static const UInt tab64[64] =
+			static constexpr UInt tab64[64] =
 			{
 				63,  0, 58,  1, 59, 47, 53,  2,
 				60, 39, 48, 27, 54, 33, 42,  3,
@@ -456,7 +456,7 @@ namespace internal
 		typedef size_t Word;
 
 	private:
-		static const size_t wordBitSize = sizeof(Word) * 8;
+		constexpr static size_t wordBitSize = sizeof(Word) * 8;
 
 	public:
 		static constexpr size_t GetWordCount(size_t bitCount) noexcept
@@ -477,25 +477,25 @@ namespace internal
 
 	struct Const
 	{
-		static const uintptr_t nullPtr = MOMO_NULL_UINTPTR;
-		static const uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
+		constexpr static uintptr_t nullPtr = MOMO_NULL_UINTPTR;
+		constexpr static uintptr_t invalidPtr = MOMO_INVALID_UINTPTR;
 		MOMO_STATIC_ASSERT(nullPtr != invalidPtr);
 
 #ifdef MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT
-		static const size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
+		constexpr static size_t ptrUsefulBitCount = MOMO_MEM_MANAGER_PTR_USEFUL_BIT_COUNT;
 		MOMO_STATIC_ASSERT(ptrUsefulBitCount <= sizeof(void*) * 8);
 #else
-		static const size_t ptrUsefulBitCount = sizeof(void*) * 8;
+		constexpr static size_t ptrUsefulBitCount = sizeof(void*) * 8;
 #endif
 
-		static const size_t maxAlignment = MOMO_MAX_ALIGNMENT;
-		static const size_t maxAllocAlignment = alignof(std::max_align_t);
+		constexpr static size_t maxAlignment = MOMO_MAX_ALIGNMENT;
+		constexpr static size_t maxAllocAlignment = alignof(std::max_align_t);
 		MOMO_STATIC_ASSERT(maxAllocAlignment != 0 && (maxAllocAlignment & (maxAllocAlignment - 1)) == 0);
 		MOMO_STATIC_ASSERT(maxAllocAlignment % maxAlignment == 0);
 
-		static const size_t maxSize = SIZE_MAX;
+		constexpr static size_t maxSize = SIZE_MAX;
 
-		static const uint32_t max32 = UINT32_MAX;
+		constexpr static uint32_t max32 = UINT32_MAX;
 	};
 
 	class ContainerAssigner

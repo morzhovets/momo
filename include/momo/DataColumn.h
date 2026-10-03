@@ -62,9 +62,9 @@ namespace internal
 	class StrHasher
 	{
 	private:
-		static const uint64_t fnvBasis64 = 14695981039346656037ull;
-		static const uint64_t fnvPrime64 = 1099511628211ull;
-		static const uint64_t mask32 = (uint64_t{1} << 32) - 1;
+		constexpr static uint64_t fnvBasis64 = 14695981039346656037ull;
+		constexpr static uint64_t fnvPrime64 = 1099511628211ull;
+		constexpr static uint64_t mask32 = (uint64_t{1} << 32) - 1;
 
 	public:
 		// Fowler-Noll-Vo hash function (1a)
@@ -646,12 +646,12 @@ template<bool tKeepRowNumber = false>
 class DataSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool allowExceptionSuppression = true;
 
-	static const bool keepRowNumber = tKeepRowNumber;
+	constexpr static bool keepRowNumber = tKeepRowNumber;
 
 	typedef ArraySettings<> TableRawsSettings;
 	typedef ArraySettings<4, true, true> SelectionRawsSettings;
@@ -664,11 +664,11 @@ class DataColumnTraits
 public:
 	typedef TStruct Struct;
 
-	static const size_t logVertexCount = tLogVertexCount;
+	constexpr static size_t logVertexCount = tLogVertexCount;
 	MOMO_STATIC_ASSERT(4 <= logVertexCount && logVertexCount < 16);
 
-	static const size_t maxColumnCount = size_t{1} << (logVertexCount - 1);
-	static const size_t maxCodeParam = 255;
+	constexpr static size_t maxColumnCount = size_t{1} << (logVertexCount - 1);
+	constexpr static size_t maxCodeParam = 255;
 
 	typedef DataColumnInfo<Struct> ColumnInfo;
 
@@ -686,7 +686,7 @@ public:
 	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(
 		ColumnCode columnCode, size_t codeParam) noexcept
 	{
-		static const size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
+		constexpr size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
 		size_t shortCode = static_cast<size_t>(columnCode);
 		if MOMO_CONSTEXPR_IF (sizeof(ColumnCode) > 4)
 			shortCode += static_cast<size_t>(static_cast<uint64_t>(columnCode) >> 32);
@@ -802,11 +802,11 @@ public:
 	};
 
 private:
-	static const size_t logVertexCount = ColumnTraits::logVertexCount;
-	static const size_t maxColumnCount = ColumnTraits::maxColumnCount;
-	static const size_t maxCodeParam = ColumnTraits::maxCodeParam;
+	constexpr static size_t logVertexCount = ColumnTraits::logVertexCount;
+	constexpr static size_t maxColumnCount = ColumnTraits::maxColumnCount;
+	constexpr static size_t maxCodeParam = ColumnTraits::maxCodeParam;
 
-	static const size_t vertexCount = size_t{1} << logVertexCount;
+	constexpr static size_t vertexCount = size_t{1} << logVertexCount;
 
 	// http://cmph.sourceforge.net/papers/chm92.pdf
 	class Graph
@@ -819,7 +819,7 @@ private:
 			Edge* nextEdge;
 		};
 
-		static const size_t maxEdgeCount = maxColumnCount * 2;
+		constexpr static size_t maxEdgeCount = maxColumnCount * 2;
 
 	public:
 		explicit Graph() noexcept
@@ -1001,7 +1001,7 @@ public:
 	template<typename Item, typename... Items>
 	void Add(const QualifiedColumn<Item>& column, const QualifiedColumn<Items>&... columns)
 	{
-		static const size_t columnCount = 1 + sizeof...(columns);
+		constexpr size_t columnCount = 1 + sizeof...(columns);
 		std::array<bool, columnCount> columnMutables = {{ ColumnTraits::IsMutable(column),
 			ColumnTraits::IsMutable(columns)... }};
 		pvAdd(columnMutables.data(), GetBaseColumn(column), GetBaseColumn(columns)...);
@@ -1115,7 +1115,7 @@ private:
 	template<typename... Items>
 	void pvAdd(const bool* columnMutables, const Column<Items>&... columns)
 	{
-		static const size_t columnCount = sizeof...(columns);
+		constexpr size_t columnCount = sizeof...(columns);
 		size_t initColumnCount = GetCount();
 		if (columnCount + initColumnCount > maxColumnCount)
 			MOMO_THROW(std::logic_error("Too many columns"));
@@ -1198,8 +1198,8 @@ private:
 	static void pvAddEdges(Graph& graph, size_t& offset, size_t& maxAlignment, size_t codeParam,
 		const ColumnCode* columnCodes)
 	{
-		static const size_t size = ItemTraits::template GetSize<Item>();
-		static const size_t alignment = ItemTraits::template GetAlignment<Item>();
+		constexpr size_t size = ItemTraits::template GetSize<Item>();
+		constexpr size_t alignment = ItemTraits::template GetAlignment<Item>();
 		MOMO_STATIC_ASSERT(internal::ObjectAlignmenter<Item>::Check(alignment, size));
 		offset = internal::UIntMath<>::Ceil(offset, alignment);
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(*columnCodes, codeParam);
@@ -1508,7 +1508,7 @@ public:
 	template<typename Item, typename... Items>
 	void PrepareForVisitors(const Column<Item>& column, const Column<Items>&... columns)	//?
 	{
-		static const size_t columnCount = 1 + sizeof...(columns);
+		constexpr size_t columnCount = 1 + sizeof...(columns);
 		mColumns.Reserve(columnCount);
 		mColumns.Clear(false);
 		pvAddColumns(column, columns...);

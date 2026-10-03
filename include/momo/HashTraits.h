@@ -190,9 +190,9 @@ public:
 	using IsValidKeyArg = internal::HashTraitsStdIsValidKeyArg<Hasher, EqualComparer>;
 
 #ifdef MOMO_USE_UNORDERED_HINT_ITERATORS
-	static const bool useHintIterators = true;
+	constexpr static bool useHintIterators = true;
 #else
-	static const bool useHintIterators = false;
+	constexpr static bool useHintIterators = false;
 #endif
 
 public:
@@ -261,7 +261,7 @@ public:
 	{
 		if (mMaxLoadFactor > 0.0)
 			return mMaxLoadFactor;
-		static const size_t testBucketCount = 1 << 16;
+		constexpr size_t testBucketCount = 1 << 16;
 		size_t testCapacity = HashBucket::CalcCapacity(testBucketCount, bucketMaxItemCount);
 		MOMO_ASSERT(testCapacity > 0);
 		return static_cast<float>(testCapacity) / static_cast<float>(testBucketCount);

@@ -37,7 +37,7 @@ namespace internal
 		typedef internal::BucketOpenN1<TItemTraits, 7, false> BucketOpenN1;
 
 	public:
-		static const size_t maxCount = 7;
+		constexpr static size_t maxCount = 7;
 
 		using typename BucketOpenN1::Item;
 
@@ -118,7 +118,7 @@ namespace internal
 #ifdef MOMO_CTZ
 			return static_cast<size_t>(MOMO_CTZ(mask));
 #else
-			static const uint8_t tab[127] =
+			static constexpr uint8_t tab[127] =
 			{
 				   0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
 				4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,

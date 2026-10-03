@@ -30,7 +30,7 @@ private:
 	class HashMultiMapSettings : public momo::HashMultiMapSettings
 	{
 	public:
-		static const size_t valueArrayMaxFastCount = tValueArrayMaxFastCount;
+		constexpr static size_t valueArrayMaxFastCount = tValueArrayMaxFastCount;
 	};
 
 	template<size_t size, size_t alignment>
@@ -233,7 +233,7 @@ public:
 	{
 		std::cout << bucketName << ": TemplItem<" << size << ", " << alignment << ">: " << std::flush;
 
-		static const size_t count = 256;
+		constexpr size_t count = 256;
 		static unsigned char array[count];
 		for (size_t i = 0; i < count; ++i)
 			array[i] = static_cast<unsigned char>(i);

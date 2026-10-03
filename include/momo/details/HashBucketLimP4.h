@@ -34,8 +34,8 @@ namespace internal
 	public:
 		typedef TItem Item;
 
-		static const uint8_t maskState = tMaskState;
-		static const size_t bitCount = 32;
+		constexpr static uint8_t maskState = tMaskState;
+		constexpr static size_t bitCount = 32;
 
 		MOMO_STATIC_ASSERT((static_cast<uint8_t>(Const::nullPtr) & maskState) == uint8_t{0});
 
@@ -70,8 +70,8 @@ namespace internal
 	public:
 		typedef TItem Item;
 
-		static const uint8_t maskState = tMaskState;
-		static const size_t bitCount = 48;
+		constexpr static uint8_t maskState = tMaskState;
+		constexpr static size_t bitCount = 48;
 
 		MOMO_STATIC_ASSERT((static_cast<uint8_t>(Const::nullPtr) & maskState) == uint8_t{0});
 
@@ -109,8 +109,8 @@ namespace internal
 	public:
 		typedef TItem Item;
 
-		static const uint8_t maskState = tMaskState;
-		static const size_t bitCount = 64;
+		constexpr static uint8_t maskState = tMaskState;
+		constexpr static size_t bitCount = 64;
 
 		MOMO_STATIC_ASSERT((static_cast<uint8_t>(Const::nullPtr) & maskState) == uint8_t{0});
 
@@ -148,10 +148,10 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const bool useHashCodePartGetter = tUseHashCodePartGetter;
+		constexpr static bool useHashCodePartGetter = tUseHashCodePartGetter;
 
 	public:
-		static const size_t maxCount = tMaxCount;
+		constexpr static size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
 
 		typedef typename ItemTraits::Item Item;
@@ -165,10 +165,10 @@ namespace internal
 	private:
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		static const size_t itemAlignment = (!useHashCodePartGetter || ItemTraits::alignment > 4)
+		constexpr static size_t itemAlignment = (!useHashCodePartGetter || ItemTraits::alignment > 4)
 			? ItemTraits::alignment : 4;
 
-		static const size_t minMemPoolIndex =
+		constexpr static size_t minMemPoolIndex =
 			(maxCount > 1 && sizeof(Item) <= itemAlignment) ? 2 : 1;
 
 		template<size_t memPoolIndex>
@@ -186,15 +186,15 @@ namespace internal
 			Const::ptrUsefulBitCount> PtrState;
 
 		MOMO_STATIC_ASSERT(PtrState::bitCount % 8 == 0);
-		static const size_t codeCount = 4 +
+		constexpr static size_t codeCount = 4 +
 			(useHashCodePartGetter ? sizeof(void*) - PtrState::bitCount / 8 : 0);
 
-		static const uint8_t maskEmpty = 128;
-		static const uint8_t emptyCodeProbe = 255;
+		constexpr static uint8_t maskEmpty = 128;
+		constexpr static uint8_t emptyCodeProbe = 255;
 
-		static const size_t logBucketCountStep = 8;
-		static const size_t logBucketCountAddend = 6;
-		static const size_t hashCodeShift = sizeof(size_t) * 8 - 7;
+		constexpr static size_t logBucketCountStep = 8;
+		constexpr static size_t logBucketCountAddend = 6;
+		constexpr static size_t hashCodeShift = sizeof(size_t) * 8 - 7;
 
 	public:
 		class Params
@@ -503,7 +503,7 @@ namespace internal
 		template<size_t memPoolIndex, typename ItemCreator>
 		Item* pvAdd(Params& params, ItemCreator&& itemCreator, size_t hashCode, Item* items)
 		{
-			static const size_t newMemPoolIndex = memPoolIndex + 1;
+			constexpr size_t newMemPoolIndex = memPoolIndex + 1;
 			size_t count = memPoolIndex;
 			Memory<newMemPoolIndex> memory(params.template GetMemPool<newMemPoolIndex>());
 			Item* newItems = memory.Get();
@@ -556,7 +556,7 @@ template<size_t tMaxCount = 4,
 class HashBucketLimP4 : public internal::HashBucketBase
 {
 public:
-	static const size_t maxCount = tMaxCount;
+	constexpr static size_t maxCount = tMaxCount;
 
 	typedef TMemPoolParams MemPoolParams;
 

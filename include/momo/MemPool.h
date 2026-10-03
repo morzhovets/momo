@@ -29,8 +29,8 @@ namespace momo
 class MemPoolConst
 {
 public:
-	static const size_t defaultBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT;
-	static const size_t defaultCachedFreeBlockCount = MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT;
+	constexpr static size_t defaultBlockCount = MOMO_DEFAULT_MEM_POOL_BLOCK_COUNT;
+	constexpr static size_t defaultCachedFreeBlockCount = MOMO_DEFAULT_MEM_POOL_CACHED_FREE_BLOCK_COUNT;
 
 public:
 	static constexpr size_t GetBlockAlignment(size_t blockSize,
@@ -64,10 +64,10 @@ template<size_t tBlockCount = MemPoolConst::defaultBlockCount,
 class MemPoolParams
 {
 public:
-	static const size_t blockCount = tBlockCount;
+	constexpr static size_t blockCount = tBlockCount;
 	MOMO_STATIC_ASSERT(MemPoolConst::CheckBlockCount(blockCount));
 
-	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
+	constexpr static size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
 public:
 	explicit MemPoolParams(size_t blockSize) noexcept
@@ -104,16 +104,16 @@ template<size_t tBlockSize,
 class MemPoolParamsStatic
 {
 public:
-	static const size_t blockCount = tBlockCount;
+	constexpr static size_t blockCount = tBlockCount;
 	MOMO_STATIC_ASSERT(MemPoolConst::CheckBlockCount(blockCount));
 
-	static const size_t blockAlignment = tBlockAlignment;
+	constexpr static size_t blockAlignment = tBlockAlignment;
 	MOMO_STATIC_ASSERT(MemPoolConst::CheckBlockAlignment(blockAlignment));
 
-	static const size_t blockSize = MemPoolConst::CorrectBlockSize(tBlockSize,
+	constexpr static size_t blockSize = MemPoolConst::CorrectBlockSize(tBlockSize,
 		blockAlignment, blockCount);
 
-	static const size_t cachedFreeBlockCount = tCachedFreeBlockCount;
+	constexpr static size_t cachedFreeBlockCount = tCachedFreeBlockCount;
 
 public:
 	explicit MemPoolParamsStatic() noexcept = default;
@@ -122,8 +122,8 @@ public:
 class MemPoolSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
 };
 
 template<typename TParams = MemPoolParams<>,
@@ -817,8 +817,8 @@ namespace internal
 	class NestedMemPoolSettings : public MemPoolSettings
 	{
 	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		constexpr static CheckMode checkMode = CheckMode::assertion;
+		constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
 	};
 
 	template<size_t tBlockCount, typename TMemManager>
@@ -827,10 +827,10 @@ namespace internal
 	public:
 		typedef TMemManager MemManager;
 
-		static const size_t blockCount = tBlockCount;
+		constexpr static size_t blockCount = tBlockCount;
 		MOMO_STATIC_ASSERT(blockCount > 0);
 
-		static const uint32_t nullPtr = Const::max32;
+		constexpr static uint32_t nullPtr = Const::max32;
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;

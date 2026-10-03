@@ -31,7 +31,7 @@ namespace internal
 		typedef TMemPoolParams MemPoolParams;
 
 	public:
-		static const size_t maxCount = tMaxCount;
+		constexpr static size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
 		typedef typename ItemTraits::Item Item;
@@ -51,13 +51,13 @@ namespace internal
 		class Params
 		{
 		public:
-			static const bool skipFirstMemPool =
+			constexpr static bool skipFirstMemPool =
 				(maxCount > 1 && ItemTraits::alignment == sizeof(Item));	//?
 
 		private:
 			typedef NestedArrayIntCap<maxCount, MemPool, MemManagerDummy> MemPools;
 
-			static const size_t minMemPoolIndex = skipFirstMemPool ? 2 : 1;
+			constexpr static size_t minMemPoolIndex = skipFirstMemPool ? 2 : 1;
 
 		public:
 			explicit Params(MemManager& memManager)
@@ -271,7 +271,7 @@ template<size_t tMaxCount = 4,
 class HashBucketLimP1 : public internal::HashBucketBase
 {
 public:
-	static const size_t maxCount = tMaxCount;
+	constexpr static size_t maxCount = tMaxCount;
 
 	typedef TMemPoolParams MemPoolParams;
 

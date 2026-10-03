@@ -70,8 +70,8 @@ public:
 	typedef TKey Key;
 	typedef TTreeNode TreeNode;
 
-	static const bool multiKey = tMultiKey;
-	static const bool useLinearSearch = tUseLinearSearch;
+	constexpr static bool multiKey = tMultiKey;
+	constexpr static bool useLinearSearch = tUseLinearSearch;
 
 	template<typename ItemTraits>
 	using Node = typename TreeNode::template Node<ItemTraits>;
@@ -113,9 +113,9 @@ public:
 	typedef TLessComparer LessComparer;
 	typedef TTreeNode TreeNode;
 
-	static const bool multiKey = tMultiKey;
+	constexpr static bool multiKey = tMultiKey;
 
-	static const bool useLinearSearch =
+	constexpr static bool useLinearSearch =
 		std::is_same<LessComparer, std::less<Key>>::value && IsFastComparable<Key>::value;
 
 	template<typename ItemTraits>

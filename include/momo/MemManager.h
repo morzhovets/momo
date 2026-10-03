@@ -207,7 +207,7 @@ public:
 		|| ByteAllocatorTraits::propagate_on_container_swap::value>
 	internal::EnableIf<enabled, MemManagerStd&> operator=(MemManagerStd&& memManager) noexcept
 	{
-		static const bool isNothrowMoveAssignable =
+		constexpr bool isNothrowMoveAssignable =
 			std::is_nothrow_move_assignable<ByteAllocator>::value
 			|| ByteAllocatorTraits::propagate_on_container_move_assignment::value;
 		pvAssign(memManager.GetByteAllocator(), GetByteAllocator(),
@@ -361,8 +361,8 @@ namespace internal
 		};
 
 	public:
-		static const bool canReallocate = CanReallocate<MemManager>::value;
-		static const bool canReallocateInplace = CanReallocateInplace<MemManager>::value;
+		constexpr static bool canReallocate = CanReallocate<MemManager>::value;
+		constexpr static bool canReallocateInplace = CanReallocateInplace<MemManager>::value;
 
 	public:
 		template<typename ResObject = void>

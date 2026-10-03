@@ -74,8 +74,8 @@ public:
 	template<size_t blockSize, size_t blockAlignment, size_t blockCount>
 	static void TestTemplMemPool3(std::mt19937& mt)
 	{
-		static const size_t blockSize3 = blockSize % 3;
-		static const size_t cachedFreeBlockCount = (blockSize3 < 2) ? blockSize3
+		constexpr size_t blockSize3 = blockSize % 3;
+		constexpr size_t cachedFreeBlockCount = (blockSize3 < 2) ? blockSize3
 			: momo::MemPoolConst::defaultCachedFreeBlockCount;
 		TestTemplMemPool4<blockSize, blockAlignment, blockCount, cachedFreeBlockCount>(mt);
 	}
@@ -106,8 +106,8 @@ public:
 		momo::MemPool<MemPoolParams, momo::MemManagerDict<>> memPool(params);
 		size_t blockSize = memPool.GetBlockSize();
 
-		static const size_t blockCount = 1024;
-		static const size_t testCount = 8;
+		constexpr size_t blockCount = 1024;
+		constexpr size_t testCount = 8;
 		momo::Array<void*> blocks = momo::Array<void*>::CreateCap(blockCount);
 
 		for (size_t k = 0; k < testCount; ++k)

@@ -29,7 +29,7 @@ namespace internal
 		typedef TSetReference SetReference;
 		typedef typename std::decay<SetReference>::type KeyValuePair;
 
-		static const bool isConst = tIsConst;
+		constexpr static bool isConst = tIsConst;
 
 	public:
 		typedef typename KeyValuePair::Key Key;
@@ -229,16 +229,16 @@ namespace internal
 		typedef ObjectManager<Value, MemManager> ValueManager;
 
 	public:
-		static const size_t keyAlignment = KeyManager::alignment;
-		static const size_t valueAlignment = ValueManager::alignment;
+		constexpr static size_t keyAlignment = KeyManager::alignment;
+		constexpr static size_t valueAlignment = ValueManager::alignment;
 
-		static const bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
-		static const bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
+		constexpr static bool isKeyNothrowRelocatable = KeyManager::isNothrowRelocatable;
+		constexpr static bool isValueNothrowRelocatable = ValueManager::isNothrowRelocatable;
 
 #ifdef MOMO_USE_SAFE_MAP_BRACKETS
-		static const bool useSafeValueReference = true;
+		constexpr static bool useSafeValueReference = true;
 #else
-		static const bool useSafeValueReference = false;
+		constexpr static bool useSafeValueReference = false;
 #endif
 
 		template<typename... ValueArgs>
@@ -520,8 +520,8 @@ namespace internal
 		typedef TValue Value;
 
 	protected:
-		static const size_t keyAlignment = tKeyAlignment;
-		static const size_t valueAlignment = tValueAlignment;
+		constexpr static size_t keyAlignment = tKeyAlignment;
+		constexpr static size_t valueAlignment = tValueAlignment;
 
 		//MOMO_STATIC_ASSERT(ObjectAlignmenter<Key>::Check(keyAlignment));
 		//MOMO_STATIC_ASSERT(ObjectAlignmenter<Value>::Check(valueAlignment));
@@ -614,9 +614,9 @@ namespace internal
 		typedef MapKeyValuePair<Key, Value,
 			KeyValueTraits::keyAlignment, KeyValueTraits::valueAlignment> Item;
 
-		static const size_t alignment = ObjectAlignmenter<Item>::alignment;
+		constexpr static size_t alignment = ObjectAlignmenter<Item>::alignment;
 
-		static const bool isNothrowRelocatable =
+		constexpr static bool isNothrowRelocatable =
 			KeyValueTraits::isKeyNothrowRelocatable && KeyValueTraits::isValueNothrowRelocatable;
 
 		template<typename ItemArg>
@@ -706,7 +706,7 @@ namespace internal
 		typedef TMap Map;
 		typedef TIterator Iterator;
 
-		static const bool useSafeReference = false;
+		constexpr static bool useSafeReference = false;
 
 	private:
 		typedef typename Map::Value Value;
@@ -740,7 +740,7 @@ namespace internal
 		typedef TMap Map;
 		typedef TIterator Iterator;
 
-		static const bool useSafeReference = true;
+		constexpr static bool useSafeReference = true;
 
 	private:
 		typedef typename Map::Value Value;

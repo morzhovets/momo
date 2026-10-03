@@ -227,9 +227,9 @@ namespace internal
 		typedef typename TreeSetItemTraits::Item Item;
 		typedef typename TreeSetItemTraits::MemManager MemManager;
 
-		static const bool isNothrowShiftable = TreeSetItemTraits::isNothrowShiftable;
+		constexpr static bool isNothrowShiftable = TreeSetItemTraits::isNothrowShiftable;
 
-		static const size_t alignment = TreeSetItemTraits::alignment;
+		constexpr static size_t alignment = TreeSetItemTraits::alignment;
 
 	public:
 		template<typename Iterator>
@@ -255,7 +255,7 @@ private:
 	typedef internal::ObjectManager<Item, MemManager> ItemManager;
 
 public:
-	static const bool isNothrowShiftable = ItemManager::isNothrowShiftable;
+	constexpr static bool isNothrowShiftable = ItemManager::isNothrowShiftable;
 
 public:
 	template<typename Iterator, typename ItemCreator>
@@ -276,10 +276,10 @@ public:
 class TreeSetSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -316,7 +316,7 @@ private:
 
 	typedef typename Node::Params NodeParams;
 
-	static const size_t nodeMaxCapacity = Node::maxCapacity;
+	constexpr static size_t nodeMaxCapacity = Node::maxCapacity;
 	MOMO_STATIC_ASSERT(nodeMaxCapacity > 0);
 
 public:

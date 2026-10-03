@@ -40,7 +40,7 @@ private:
 
 public:
 #ifdef LIBCXX_TEST_HINT_ITERATORS
-	static const bool useHintIterators = true;
+	constexpr static bool useHintIterators = true;
 #endif
 
 public:
@@ -50,8 +50,8 @@ public:
 class LibcxxHashSetSettings : public momo::HashSetSettings
 {
 public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static momo::CheckMode checkMode = momo::CheckMode::exception;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
 
 #endif // LIBCXX_TEST_CLASS

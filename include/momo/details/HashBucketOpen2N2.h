@@ -29,10 +29,10 @@ namespace internal
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const bool useHashCodePartGetter = tUseHashCodePartGetter;
+		constexpr static bool useHashCodePartGetter = tUseHashCodePartGetter;
 
 	public:
-		static const size_t maxCount = tMaxCount;
+		constexpr static size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 4);
 
 		typedef typename ItemTraits::Item Item;
@@ -67,12 +67,12 @@ namespace internal
 			};
 		};
 
-		static const size_t hashCodeShift = sizeof(size_t) * 8 - sizeof(ShortCode) * 8 + 1;
-		static const ShortCode emptyShortCode = ShortCode{1} << (sizeof(ShortCode) * 8 - 1);
-		static const uint8_t emptyCodeProbe = 255;
+		constexpr static size_t hashCodeShift = sizeof(size_t) * 8 - sizeof(ShortCode) * 8 + 1;
+		constexpr static ShortCode emptyShortCode = ShortCode{1} << (sizeof(ShortCode) * 8 - 1);
+		constexpr static uint8_t emptyCodeProbe = 255;
 
-		static const size_t logBucketCountStep = 8;
-		static const size_t logBucketCountAddend = 6;
+		constexpr static size_t logBucketCountStep = 8;
+		constexpr static size_t logBucketCountAddend = 6;
 
 	public:
 		explicit BucketOpen2N2() noexcept
@@ -279,7 +279,7 @@ template<size_t tMaxCount = 3>
 class HashBucketOpen2N2 : public internal::HashBucketOpenBase
 {
 public:
-	static const size_t maxCount = tMaxCount;
+	constexpr static size_t maxCount = tMaxCount;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOpen2N2<ItemTraits, maxCount, useHashCodePartGetter>;

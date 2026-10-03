@@ -37,7 +37,7 @@ namespace internal
 		typedef typename Bucket::MemManager MemManager;
 		typedef typename Bucket::Params BucketParams;
 
-		static const size_t maxBucketCount = Const::maxSize / sizeof(Bucket);
+		constexpr static size_t maxBucketCount = Const::maxSize / sizeof(Bucket);
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -413,7 +413,7 @@ namespace internal
 		typedef typename HashSetItemTraits::Item Item;
 		typedef typename HashSetItemTraits::MemManager MemManager;
 
-		static const size_t alignment = HashSetItemTraits::alignment;
+		constexpr static size_t alignment = HashSetItemTraits::alignment;
 
 	public:
 		template<typename ItemCreator>
@@ -453,10 +453,10 @@ public:
 class HashSetSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool allowExceptionSuppression = true;
 };
 
 /*!
@@ -509,7 +509,7 @@ public:
 
 	typedef typename BucketBounds::ConstBounds ConstBucketBounds;
 
-	static const size_t bucketMaxItemCount = Bucket::maxCount;
+	constexpr static size_t bucketMaxItemCount = Bucket::maxCount;
 
 private:
 	struct FakeItemRelocateCreator
@@ -1353,10 +1353,10 @@ namespace internal
 	class NestedHashSetSettings : public HashSetSettings
 	{
 	public:
-		static const CheckMode checkMode = CheckMode::assertion;
-		static const ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
-		static const bool checkVersion = false;
-		static const bool allowExceptionSuppression = tAllowExceptionSuppression;
+		constexpr static CheckMode checkMode = CheckMode::assertion;
+		constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::nothing;
+		constexpr static bool checkVersion = false;
+		constexpr static bool allowExceptionSuppression = tAllowExceptionSuppression;
 	};
 }
 

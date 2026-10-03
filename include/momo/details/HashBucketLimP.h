@@ -33,10 +33,10 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const bool usePtrState = false;
+		constexpr static bool usePtrState = false;
 
 	public:
-		static const size_t maxCount = tMaxCount;
+		constexpr static size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
 		typedef typename ItemTraits::Item Item;
@@ -52,8 +52,8 @@ namespace internal
 
 		typedef BucketMemory<MemPool, Byte*> Memory;
 
-		static const uintptr_t ptrNull = Const::nullPtr;
-		static const uintptr_t ptrNullWasFull = Const::invalidPtr;
+		constexpr static uintptr_t ptrNull = Const::nullPtr;
+		constexpr static uintptr_t ptrNullWasFull = Const::invalidPtr;
 
 	public:
 		class Params
@@ -305,10 +305,10 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const bool usePtrState = true;
+		constexpr static bool usePtrState = true;
 
 	public:
-		static const size_t maxCount = tMaxCount;
+		constexpr static size_t maxCount = tMaxCount;
 		MOMO_STATIC_ASSERT(0 < maxCount && maxCount < 16);
 
 		typedef typename ItemTraits::Item Item;
@@ -324,17 +324,17 @@ namespace internal
 
 		typedef BucketMemory<MemPool, Item*> Memory;
 
-		static const size_t minItemAlignment = (maxCount <= 1) ? 1 : (maxCount <= 2) ? 2
+		constexpr static size_t minItemAlignment = (maxCount <= 1) ? 1 : (maxCount <= 2) ? 2
 			: (maxCount <= 4) ? 4 : (maxCount <= 8) ? 8 : 16;
-		static const size_t itemAlignment = (ItemTraits::alignment < minItemAlignment)
+		constexpr static size_t itemAlignment = (ItemTraits::alignment < minItemAlignment)
 			? minItemAlignment : ItemTraits::alignment;
 
-		static const bool skipOddMemPools = (maxCount > 1 && sizeof(Item) <= itemAlignment);	//?
-		static const uintptr_t modMemPoolIndex =
+		constexpr static bool skipOddMemPools = (maxCount > 1 && sizeof(Item) <= itemAlignment);	//?
+		constexpr static uintptr_t modMemPoolIndex =
 			uintptr_t{minItemAlignment} / (skipOddMemPools ? 2 : 1);
 
-		static const uintptr_t stateNull = Const::nullPtr;
-		static const uintptr_t stateNullWasFull = Const::invalidPtr;
+		constexpr static uintptr_t stateNull = Const::nullPtr;
+		constexpr static uintptr_t stateNullWasFull = Const::invalidPtr;
 
 	public:
 		class Params
@@ -572,8 +572,8 @@ template<size_t tMaxCount = 4,
 class HashBucketLimP : public internal::HashBucketBase
 {
 public:
-	static const size_t maxCount = tMaxCount;
-	static const bool usePtrState = tUsePtrState;
+	constexpr static size_t maxCount = tMaxCount;
+	constexpr static bool usePtrState = tUsePtrState;
 
 	typedef TMemPoolParams MemPoolParams;
 
@@ -582,10 +582,10 @@ private:
 	class Bucketer
 	{
 	private:
-		static const size_t size = sizeof(typename ItemTraits::Item);
-		static const size_t alignment = ItemTraits::alignment;
+		constexpr static size_t size = sizeof(typename ItemTraits::Item);
+		constexpr static size_t alignment = ItemTraits::alignment;
 
-		static const bool usePtrState = HashBucketLimP::usePtrState && ((maxCount <= 1)
+		constexpr static bool usePtrState = HashBucketLimP::usePtrState && ((maxCount <= 1)
 			|| (maxCount <= 2 && size % 2 == 0 && (size > 2 || alignment == 2))
 			|| (maxCount <= 4 && size % 4 == 0 && (size > 4 || alignment == 4))
 			|| (maxCount <= 8 && size % 8 == 0 && (size > 8 || alignment == 8))

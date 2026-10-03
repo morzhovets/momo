@@ -40,13 +40,13 @@ namespace internal
 		typedef TItemTraits ItemTraits;
 		typedef TMemPoolParams MemPoolParams;
 
-		static const size_t capacityStep = (tCapacityStep > 0) ? tCapacityStep : tMaxCapacity;
+		constexpr static size_t capacityStep = (tCapacityStep > 0) ? tCapacityStep : tMaxCapacity;
 
-		static const bool isFlatLayout = tIsFlatLayout;
+		constexpr static bool isFlatLayout = tIsFlatLayout;
 		MOMO_STATIC_ASSERT(!isFlatLayout || ItemTraits::isNothrowShiftable);
 
 	public:
-		static const size_t maxCapacity = tMaxCapacity;
+		constexpr static size_t maxCapacity = tMaxCapacity;
 		MOMO_STATIC_ASSERT(0 < maxCapacity && maxCapacity < 256);
 
 		typedef typename ItemTraits::Item Item;
@@ -70,17 +70,17 @@ namespace internal
 
 		typedef internal::MemManagerPtr<MemManager> MemManagerPtr;
 
-		static const size_t internalOffset = UIntMath<>::Ceil((maxCapacity + 1) * sizeof(Node*),
+		constexpr static size_t internalOffset = UIntMath<>::Ceil((maxCapacity + 1) * sizeof(Node*),
 			Const::maxAlignment);
 
-		static const size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
+		constexpr static size_t leafMemPoolCount = maxCapacity / (2 * capacityStep) + 1;
 
 	public:
 		class Params
 		{
 		private:
-			static const size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
-			static const size_t internalNodeSize =
+			constexpr static size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
+			constexpr static size_t internalNodeSize =
 				internalOffset + itemOffset + maxCapacity * sizeof(Item);
 
 			typedef MemPoolParamsStatic<internalNodeSize, Const::maxAlignment,
@@ -233,7 +233,7 @@ namespace internal
 
 		Item* GetItemPtr(size_t index) noexcept
 		{
-			static const size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
+			constexpr size_t itemOffset = UIntMath<>::Ceil(sizeof(Node), ItemTraits::alignment);
 			Item* items = PtrCaster::FromBytePtr<Item>(PtrCaster::ToBytePtr(this) + itemOffset);
 			return pvGetItemPtr(items, index, IsFlatLayout());
 		}
@@ -377,9 +377,9 @@ template<size_t tMaxCapacity = 32,
 class TreeNode
 {
 public:
-	static const size_t maxCapacity = tMaxCapacity;
-	static const size_t capacityStep = tCapacityStep;
-	static const bool isFlatLayout = tIsFlatLayout;
+	constexpr static size_t maxCapacity = tMaxCapacity;
+	constexpr static size_t capacityStep = tCapacityStep;
+	constexpr static bool isFlatLayout = tIsFlatLayout;
 
 	typedef TMemPoolParams MemPoolParams;
 

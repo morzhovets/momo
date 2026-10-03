@@ -638,7 +638,7 @@ namespace internal
 			typedef typename HashMultiMap::ConstKeyIterator ConstKeyIterator;
 			typedef typename HashMultiMap::KeyIterator KeyIterator;
 
-			static const size_t logInitialSegmentSize = 6;
+			constexpr static size_t logInitialSegmentSize = 6;
 
 			typedef momo::SegmentedArraySettings<momo::SegmentedArrayItemCountFunc::sqrt,
 				logInitialSegmentSize> SegmentedArraySettings;

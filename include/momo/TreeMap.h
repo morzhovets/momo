@@ -35,7 +35,7 @@ namespace internal
 	protected:
 		typedef TTreeSetIterator TreeSetIterator;
 
-		static const bool isConst = tIsConst;
+		constexpr static bool isConst = tIsConst;
 
 	public:
 		typedef MapReference<typename TreeSetIterator::Reference, isConst> Reference;
@@ -109,7 +109,7 @@ namespace internal
 		using typename MapNestedSetItemTraits::Item;
 		using typename MapNestedSetItemTraits::MemManager;
 
-		static const bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
+		constexpr static bool isNothrowShiftable = KeyValueTraits::isKeyNothrowShiftable
 			&& KeyValueTraits::isValueNothrowShiftable;
 
 	public:
@@ -154,10 +154,10 @@ namespace internal
 		typedef TTreeMapSettings TreeMapSettings;
 
 	public:
-		static const CheckMode checkMode = TreeMapSettings::checkMode;
-		static const ExtraCheckMode extraCheckMode = TreeMapSettings::extraCheckMode;
-		static const bool checkVersion = TreeMapSettings::checkVersion;
-		static const bool allowExceptionSuppression = TreeMapSettings::allowExceptionSuppression;
+		constexpr static CheckMode checkMode = TreeMapSettings::checkMode;
+		constexpr static ExtraCheckMode extraCheckMode = TreeMapSettings::extraCheckMode;
+		constexpr static bool checkVersion = TreeMapSettings::checkVersion;
+		constexpr static bool allowExceptionSuppression = TreeMapSettings::allowExceptionSuppression;
 	};
 }
 
@@ -178,8 +178,8 @@ private:
 	typedef internal::ObjectManager<Value, MemManager> ValueManager;
 
 public:
-	static const bool isKeyNothrowShiftable = KeyManager::isNothrowShiftable;
-	static const bool isValueNothrowShiftable = ValueManager::isNothrowShiftable;
+	constexpr static bool isKeyNothrowShiftable = KeyManager::isNothrowShiftable;
+	constexpr static bool isValueNothrowShiftable = ValueManager::isNothrowShiftable;
 
 public:
 	template<typename KeyIterator>
@@ -200,10 +200,10 @@ public:
 class TreeMapSettings
 {
 public:
-	static const CheckMode checkMode = CheckMode::bydefault;
-	static const ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
-	static const bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool allowExceptionSuppression = true;
+	constexpr static CheckMode checkMode = CheckMode::bydefault;
+	constexpr static ExtraCheckMode extraCheckMode = ExtraCheckMode::bydefault;
+	constexpr static bool checkVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool allowExceptionSuppression = true;
 };
 
 /*!

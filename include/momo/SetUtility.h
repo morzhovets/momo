@@ -32,9 +32,9 @@ namespace internal
 		typedef ObjectManager<Item, MemManager> ItemManager;
 
 	public:
-		static const size_t alignment = ItemManager::alignment;
+		constexpr static size_t alignment = ItemManager::alignment;
 
-		static const bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
+		constexpr static bool isNothrowRelocatable = ItemManager::isNothrowRelocatable;
 
 		template<typename... ItemArgs>
 		using Creator = typename ItemManager::template Creator<ItemArgs...>;
@@ -87,7 +87,7 @@ namespace internal
 		typedef TContainerTraits ContainerTraits;
 		typedef TMemManager MemManager;
 
-		static const bool keepVersion = tKeepVersion;
+		constexpr static bool keepVersion = tKeepVersion;
 
 	private:
 		typedef internal::MemManagerProxy<MemManager> MemManagerProxy;
@@ -194,7 +194,7 @@ namespace internal
 		MOMO_STATIC_ASSERT(std::is_nothrow_move_assignable<ContainerTraits>::value);
 		MOMO_STATIC_ASSERT(std::is_nothrow_move_constructible<MemManager>::value);
 
-		static const bool keepVersion = tKeepVersion;
+		constexpr static bool keepVersion = tKeepVersion;
 		MOMO_STATIC_ASSERT(!keepVersion);
 
 	public:

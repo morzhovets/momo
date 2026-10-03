@@ -36,7 +36,7 @@ class LibcxxTreeMapKeyValueTraits
 	: public momo::TreeMapKeyValueTraits<TKey, TMapped, momo::MemManagerStd<TAllocator>>
 {
 public:
-	static const bool useSafeValueReference = true;
+	constexpr static bool useSafeValueReference = true;
 };
 
 LIBCXX_NAMESPACE_STD_BEGIN

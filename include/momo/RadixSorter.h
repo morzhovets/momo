@@ -50,12 +50,12 @@ namespace internal
 	class RadixSorter
 	{
 	public:
-		static const size_t radixSize = tRadixSize;
+		constexpr static size_t radixSize = tRadixSize;
 		MOMO_STATIC_ASSERT(0 < radixSize && radixSize <= 16);
 
 	private:
-		static const size_t radixCount = size_t{1} << radixSize;
-		static const size_t selectionSortMaxCount = size_t{1} << (radixSize / 2 + 1);
+		constexpr static size_t radixCount = size_t{1} << radixSize;
+		constexpr static size_t selectionSortMaxCount = size_t{1} << (radixSize / 2 + 1);
 
 	public:
 		template<typename Iterator,

@@ -83,9 +83,9 @@ public:
 	typedef TObject Object;
 	typedef TMemManager MemManager;
 
-	static const bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
+	constexpr static bool isTriviallyRelocatable = IsTriviallyRelocatable<Object>::value;
 
-	static const bool isNothrowRelocatable = isTriviallyRelocatable
+	constexpr static bool isNothrowRelocatable = isTriviallyRelocatable
 		|| std::is_nothrow_move_constructible<Object>::value
 		|| (std::is_move_constructible<Object>::value
 			&& (MOMO_IS_NOTHROW_RELOCATABLE_APPENDIX(Object)));
@@ -172,7 +172,7 @@ namespace internal
 	public:
 		typedef TObject Object;
 
-		static const size_t alignment = (alignof(Object) < Const::maxAlignment)
+		constexpr static size_t alignment = (alignof(Object) < Const::maxAlignment)
 			? alignof(Object) : Const::maxAlignment;
 
 	public:
@@ -190,10 +190,10 @@ namespace internal
 	public:
 		typedef TObject Object;
 
-		static const size_t alignment = tAlignment;
+		constexpr static size_t alignment = tAlignment;
 		MOMO_STATIC_ASSERT(ObjectAlignmenter<Object>::Check(alignment));
 
-		static const size_t count = tCount;
+		constexpr static size_t count = tCount;
 		MOMO_STATIC_ASSERT(count > 0);
 
 	public:
@@ -402,21 +402,21 @@ namespace internal
 		typedef ObjectRelocator<Object, MemManager> Relocator;
 		typedef ObjectDestroyFinalizer<Object, MemManager> DestroyFinalizer;
 
-		static const bool isTriviallyRelocatable = Relocator::isTriviallyRelocatable;
+		constexpr static bool isTriviallyRelocatable = Relocator::isTriviallyRelocatable;
 
-		static const bool isNothrowRelocatable = Relocator::isNothrowRelocatable;
+		constexpr static bool isNothrowRelocatable = Relocator::isNothrowRelocatable;
 
-		static const bool isNothrowMoveConstructible =
+		constexpr static bool isNothrowMoveConstructible =
 			IsNothrowMoveConstructible<Object, MemManager>::value;
 
-		static const bool isNothrowSwappable = IsNothrowSwappable<Object>::GetValue();
+		constexpr static bool isNothrowSwappable = IsNothrowSwappable<Object>::GetValue();
 
-		static const bool isNothrowAnywayAssignable = std::is_nothrow_move_assignable<Object>::value
+		constexpr static bool isNothrowAnywayAssignable = std::is_nothrow_move_assignable<Object>::value
 			|| isNothrowSwappable || isNothrowRelocatable;
 
-		static const bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
+		constexpr static bool isNothrowShiftable = isNothrowRelocatable || isNothrowSwappable;
 
-		static const size_t alignment = ObjectAlignmenter<Object>::alignment;
+		constexpr static size_t alignment = ObjectAlignmenter<Object>::alignment;
 
 	public:
 		static void Move(MemManager& memManager, Object&& srcObject, Object* dstObject)

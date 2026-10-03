@@ -46,7 +46,7 @@ public:
 	template<typename Hasher>
 	static void TestHashSort(std::mt19937& mt, bool prehashed, const Hasher& hasher)
 	{
-		static const size_t count = 128;
+		constexpr size_t count = 128;
 		momo::Array<std::pair<std::string, size_t>> data;
 		for (size_t i = 0; i < count; ++i)
 			data.AddBack({std::to_string(mt()), mt() % 32 + 1 });

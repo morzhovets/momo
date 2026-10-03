@@ -39,7 +39,7 @@ namespace internal
 		typedef TMemPool MemPool;
 		typedef TPointer Pointer;
 
-		static constexpr Pointer nullPtr = tNullPtr;
+		constexpr static Pointer nullPtr = tNullPtr;
 
 	public:
 		explicit BucketMemory(MemPool& memPool)
@@ -187,7 +187,7 @@ namespace internal
 	class HashBucketBase
 	{
 	public:
-		static const size_t logStartBucketCount = 4;
+		constexpr static size_t logStartBucketCount = 4;
 
 	public:
 		static size_t CalcCapacity(size_t bucketCount, size_t bucketMaxItemCount) noexcept
@@ -217,7 +217,7 @@ namespace internal
 	class HashBucketOpenBase
 	{
 	public:
-		static const size_t logStartBucketCount = 4;	//?
+		constexpr static size_t logStartBucketCount = 4;	//?
 
 	public:
 		static size_t GetBucketCountShift(size_t /*bucketCount*/,

@@ -29,11 +29,11 @@ namespace internal
 	protected:
 		typedef TItemTraits ItemTraits;
 
-		static const size_t minStateSize = tMinStateSize;
+		constexpr static size_t minStateSize = tMinStateSize;
 		MOMO_STATIC_ASSERT(0 < minStateSize && minStateSize <= sizeof(size_t));
 
 	public:
-		static const size_t maxCount = 1;
+		constexpr static size_t maxCount = 1;
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
@@ -44,7 +44,7 @@ namespace internal
 		typedef BucketParamsOpen<MemManager> Params;
 
 	private:
-		static const size_t availableStateSize = (ItemTraits::alignment <= sizeof(size_t))
+		constexpr static size_t availableStateSize = (ItemTraits::alignment <= sizeof(size_t))
 			? ItemTraits::alignment : sizeof(size_t);
 		typedef typename UIntSelector<(minStateSize < availableStateSize)
 			? availableStateSize : minStateSize>::UInt HashState;
@@ -155,7 +155,7 @@ namespace internal
 		static EnableIf<(stateSize < sizeof(size_t)),
 		HashState> pvGetHashState(size_t hashCode) noexcept
 		{
-			static const size_t hashCodeShift = (sizeof(size_t) - stateSize) * 8;
+			constexpr size_t hashCodeShift = (sizeof(size_t) - stateSize) * 8;
 			return static_cast<HashState>(hashCode >> hashCodeShift) | 1;
 		}
 
@@ -182,7 +182,7 @@ template<size_t tMinStateSize = 1>
 class HashBucketOne : public internal::HashBucketBase	// HashBucketOpenBase?
 {
 public:
-	static const size_t minStateSize = tMinStateSize;
+	constexpr static size_t minStateSize = tMinStateSize;
 
 	template<typename ItemTraits, bool useHashCodePartGetter>
 	using Bucket = internal::BucketOne<ItemTraits, minStateSize>;

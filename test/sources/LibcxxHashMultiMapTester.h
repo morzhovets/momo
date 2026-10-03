@@ -38,9 +38,9 @@ using namespace libcxx_from_range_unord;
 class LibcxxHashMultiMapSettings : public momo::HashMultiMapSettings
 {
 public:
-	static const momo::CheckMode checkMode = momo::CheckMode::exception;
-	static const bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;
-	static const bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static momo::CheckMode checkMode = momo::CheckMode::exception;
+	constexpr static bool checkKeyVersion = MOMO_CHECK_ITERATOR_VERSION;
+	constexpr static bool checkValueVersion = MOMO_CHECK_ITERATOR_VERSION;
 };
 
 #endif // LIBCXX_TEST_CLASS
