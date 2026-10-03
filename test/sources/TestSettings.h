@@ -114,3 +114,7 @@
 #undef MOMO_CATCH_ALL
 
 #endif // MOMO_TEST_EXTRA_SETTINGS
+
+#if defined(TEST_MSVC) && _MSC_VER == 1951	// vs2026: Internal compiler error
+# undef TEST_SIMPLE_DATA
+#endif
