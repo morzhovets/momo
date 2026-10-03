@@ -851,12 +851,11 @@ namespace internal
 		template<bool includeEqual, typename... Items>
 		size_t pvBinarySearch(const Equality<Items>&... equals) const
 		{
-			constexpr int bound = includeEqual ? -1 : 0;
 			constexpr size_t columnCount = sizeof...(equals);
 			std::array<size_t, columnCount> offsets =
 				{{ mColumnList->GetOffset(equals.GetColumn())... }};
 			auto rawPred = [&offsets, &equals...] (Raw*, Raw* raw)
-				{ return pvCompare<void>(raw, offsets.data(), equals...) > bound; };
+				{ return pvCompare<void>(raw, offsets.data(), equals...) > (includeEqual ? -1 : 0); };
 			return UIntMath<>::Dist(mRaws.GetBegin(),
 				std::upper_bound(mRaws.GetBegin(), mRaws.GetEnd(), nullptr, rawPred));
 		}

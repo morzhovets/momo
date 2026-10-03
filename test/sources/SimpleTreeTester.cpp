@@ -264,7 +264,7 @@ public:
 		typedef momo::TreeNode<maxCapacity, capacityStep,
 			momo::MemPoolParams<memPoolBlockCount>> TreeNode;
 
-		constexpr static size_t count = 256;
+		constexpr size_t count = 256;
 		static uint8_t array[count];
 		for (size_t i = 0; i < count; ++i)
 			array[i] = static_cast<uint8_t>(i);
