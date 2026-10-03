@@ -11,7 +11,15 @@ environment:
       BUILD_TYPE: Release
       NO_EXCEPTIONS_RTTI: Off
       EXTRA_SETTINGS: Off
-      FLAGS: "/std:c++14 /WX"
+      FLAGS: "/std:c++14 /WX /DTEST_DISABLE_LIBCXX"
+      VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"
+
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      ARCH: x64
+      BUILD_TYPE: Release
+      NO_EXCEPTIONS_RTTI: Off
+      EXTRA_SETTINGS: Off
+      FLAGS: "/std:c++14 /WX /DTEST_DISABLE_SIMPLE"
       VCVARS_BAT: "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Auxiliary/Build/vcvarsall.bat"
 
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
