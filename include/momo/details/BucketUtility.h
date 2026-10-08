@@ -124,7 +124,7 @@ namespace internal
 
 		size_t GetMaxProbe(size_t logBucketCount) const noexcept
 		{
-			return (size_t{1} << logBucketCount) - 1;
+			return pvGetBucketCount1(logBucketCount);
 		}
 
 		void UpdateMaxProbe(size_t /*probe*/) noexcept
@@ -142,8 +142,7 @@ namespace internal
 
 		static size_t GetStartBucketIndex(size_t hashCode, size_t logBucketCount) noexcept
 		{
-			MOMO_ASSERT(logBucketCount < sizeof(size_t) * 8);
-			return hashCode & ((size_t{1} << logBucketCount) - 1);
+			return hashCode & pvGetBucketCount1(logBucketCount);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t hashCode,
@@ -164,15 +163,13 @@ namespace internal
 		static size_t ptGetNextBucketIndexLinear(size_t bucketIndex, size_t /*hashCode*/,
 			size_t logBucketCount, size_t /*probe*/) noexcept
 		{
-			MOMO_ASSERT(logBucketCount < sizeof(size_t) * 8);
-			return (bucketIndex + 1) & ((size_t{1} << logBucketCount) - 1);
+			return (bucketIndex + 1) & pvGetBucketCount1(logBucketCount);
 		}
 
 		static size_t ptGetNextBucketIndexQuadratic(size_t bucketIndex, size_t /*hashCode*/,
 			size_t logBucketCount, size_t probe) noexcept
 		{
-			MOMO_ASSERT(logBucketCount < sizeof(size_t) * 8);
-			return (bucketIndex + probe) & ((size_t{1} << logBucketCount) - 1);
+			return (bucketIndex + probe) & pvGetBucketCount1(logBucketCount);
 		}
 
 	private:
@@ -187,6 +184,12 @@ namespace internal
 					return iter;
 			}
 			return Iterator();
+		}
+
+		static size_t pvGetBucketCount1(size_t logBucketCount) noexcept
+		{
+			MOMO_ASSERT(logBucketCount < sizeof(size_t) * 8);
+			return (size_t{1} << logBucketCount) - 1;
 		}
 	};
 
