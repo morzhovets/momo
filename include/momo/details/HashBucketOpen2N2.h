@@ -171,7 +171,8 @@ namespace internal
 				size_t probe2 = ((probe + 1) / 2) * (probe | 1);
 				return size_t{mCodeData.shortCodes[index]}
 					| ((bucketIndex - probe2) << (sizeof(size_t) * 8 - logBucketCount))
-					| (codeProbe >> probeShift << (sizeof(size_t) * 8 - 8 + probeShift) >> logBucketCount);
+					| (size_t{codeProbe} >> probeShift
+						<< (sizeof(size_t) * 8 - 8 + probeShift) >> logBucketCount);
 			}
 			else
 			{
