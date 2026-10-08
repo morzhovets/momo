@@ -38,7 +38,7 @@ int main(int, char**)
             P(1, "four"),
             P(2, "four"),
         };
-        C c(a, a + sizeof(a)/sizeof(a[0]));
+        C c(a, a + sizeof(a)/sizeof(a[0]), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         C::size_type b = c.bucket(0);
         I i = c.begin(b);
@@ -86,7 +86,7 @@ int main(int, char**)
             P(1, "four"),
             P(2, "four"),
         };
-        const C c(a, a + sizeof(a)/sizeof(a[0]));
+        const C c(a, a + sizeof(a)/sizeof(a[0]), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         C::size_type b = c.bucket(0);
         I i = c.begin(b);
@@ -134,7 +134,7 @@ int main(int, char**)
             P(1, "four"),
             P(2, "four"),
         };
-        C c(a, a + sizeof(a)/sizeof(a[0]));
+        C c(a, a + sizeof(a)/sizeof(a[0]), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         C::size_type b = c.bucket(0);
         I i = c.cbegin(b);
@@ -182,7 +182,7 @@ int main(int, char**)
             P(1, "four"),
             P(2, "four"),
         };
-        const C c(a, a + sizeof(a)/sizeof(a[0]));
+        const C c(a, a + sizeof(a)/sizeof(a[0]), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         C::size_type b = c.bucket(0);
         I i = c.cbegin(b);
@@ -232,7 +232,7 @@ int main(int, char**)
             P(1, "four"),
             P(2, "four"),
         };
-        C c(a, a + sizeof(a)/sizeof(a[0]));
+        C c(a, a + sizeof(a)/sizeof(a[0]), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         C::size_type b = c.bucket(0);
         I i = c.begin(b);
@@ -281,7 +281,7 @@ int main(int, char**)
             P(1, "four"),
             P(2, "four"),
         };
-        const C c(a, a + sizeof(a)/sizeof(a[0]));
+        const C c(a, a + sizeof(a)/sizeof(a[0]), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         C::size_type b = c.bucket(0);
         I i = c.begin(b);
@@ -330,7 +330,7 @@ int main(int, char**)
             P(1, "four"),
             P(2, "four"),
         };
-        C c(a, a + sizeof(a)/sizeof(a[0]));
+        C c(a, a + sizeof(a)/sizeof(a[0]), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         C::size_type b = c.bucket(0);
         I i = c.cbegin(b);
@@ -379,7 +379,7 @@ int main(int, char**)
             P(1, "four"),
             P(2, "four"),
         };
-        const C c(a, a + sizeof(a)/sizeof(a[0]));
+        const C c(a, a + sizeof(a)/sizeof(a[0]), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         C::size_type b = c.bucket(0);
         I i = c.cbegin(b);

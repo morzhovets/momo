@@ -250,7 +250,6 @@ namespace internal
 
 		constexpr static size_t logBucketCountStep = 8;
 		constexpr static size_t logBucketCountAddend = 6;
-		constexpr static size_t hashCodeShift = sizeof(size_t) * 8 - 7;
 
 	public:
 		explicit BucketLimP4() noexcept
@@ -401,10 +400,9 @@ namespace internal
 					return hashCodeFullGetter();
 				size_t probeShift = pvGetProbeShift(logBucketCount);
 				size_t probe = codeProbe & ((size_t{1} << probeShift) - 1);
-				size_t bucketCount = size_t{1} << logBucketCount;
-				return ((bucketIndex + bucketCount - probe) & (bucketCount - 1))
-					| (((codeProbe - size_t{maskEmpty}) >> probeShift) << logBucketCount)
-					| (size_t{mShortCodes[index]} << hashCodeShift);
+				return size_t{mShortCodes[index]}
+					| ((bucketIndex - probe) << (sizeof(size_t) * 8 - logBucketCount))
+					| (codeProbe >> probeShift << (sizeof(size_t) * 8 - 7 + probeShift) >> logBucketCount);
 			}
 			else
 			{
@@ -464,13 +462,15 @@ namespace internal
 
 		size_t pvGetCount() const noexcept
 		{
-			return (mShortCodes[1] >= maskEmpty) ? ((mShortCodes[0] < maskEmpty) ? size_t{1} : size_t{0})
-				: size_t{2} + ((mShortCodes[2] < maskEmpty) ? 1 : 0) + ((mShortCodes[3] < maskEmpty) ? 1 : 0);
+			return (mShortCodes[1] >= maskEmpty)
+				? ((mShortCodes[0] < maskEmpty) ? size_t{1} : size_t{0})
+				: size_t{2} + ((mShortCodes[2] < maskEmpty) ? 1 : 0)
+					+ ((mShortCodes[3] < maskEmpty) ? 1 : 0);
 		}
 
 		static uint8_t pvCalcShortCode(size_t hashCode) noexcept
 		{
-			return static_cast<uint8_t>(hashCode >> hashCodeShift);
+			return static_cast<uint8_t>(hashCode & size_t{maskEmpty - 1});
 		}
 
 		static size_t pvGetProbeShift(size_t logBucketCount) noexcept
@@ -481,12 +481,13 @@ namespace internal
 		void pvSetCodeProbe(size_t index, size_t hashCode, size_t logBucketCount,
 			size_t probe) noexcept
 		{
-			if (!useHashCodePartGetter || codeCount - 1 - index <= index)
+			size_t codeProbeIndex = codeCount - 1 - index;
+			if (!useHashCodePartGetter || codeProbeIndex <= index)
 				return;
 			size_t probeShift = pvGetProbeShift(logBucketCount);
-			mShortCodes[codeCount - 1 - index] = (probe < size_t{1} << probeShift)
-				? maskEmpty | static_cast<uint8_t>((hashCode >> logBucketCount) << probeShift)
-				| static_cast<uint8_t>(probe) : emptyCodeProbe;
+			mShortCodes[codeProbeIndex] = (probe >= size_t{1} << probeShift) ? emptyCodeProbe
+				: static_cast<uint8_t>(maskEmpty | probe
+					| (hashCode << logBucketCount >> (sizeof(size_t) * 8 - 7 + probeShift) << probeShift));
 		}
 
 		template<size_t memPoolIndex, conceptObjectCreator<Item> ItemCreator>

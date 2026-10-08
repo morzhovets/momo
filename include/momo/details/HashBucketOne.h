@@ -83,7 +83,7 @@ namespace internal
 
 		bool IsFull() const noexcept
 		{
-			return (mHashState & 1) == HashState{1};
+			return !!(mHashState & HashState{1});
 		}
 
 		bool WasFull() const noexcept
@@ -128,7 +128,7 @@ namespace internal
 			if constexpr (sizeof(HashState) < sizeof(size_t))
 				return hashCodeFullGetter();
 			else
-				return static_cast<size_t>(mHashState >> 1);
+				return static_cast<size_t>(mHashState);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t hashCode,
@@ -140,15 +140,7 @@ namespace internal
 	private:
 		static HashState pvGetHashState(size_t hashCode) noexcept
 		{
-			if constexpr (sizeof(HashState) < sizeof(size_t))
-			{
-				constexpr size_t hashCodeShift = (sizeof(size_t) - sizeof(HashState)) * 8;
-				return static_cast<HashState>(hashCode >> hashCodeShift) | 1;
-			}
-			else
-			{
-				return (static_cast<HashState>(hashCode) << 1) | 1;
-			}
+			return static_cast<HashState>(hashCode | size_t{1});
 		}
 
 		template<conceptObjectPredicate<Item> ItemPredicate>

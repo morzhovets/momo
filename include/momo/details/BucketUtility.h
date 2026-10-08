@@ -142,7 +142,7 @@ namespace internal
 
 		static size_t GetStartBucketIndex(size_t hashCode, size_t logBucketCount) noexcept
 		{
-			return hashCode & pvGetBucketCount1(logBucketCount);
+			return hashCode >> (sizeof(size_t) * 8 - logBucketCount);
 		}
 
 		static size_t GetNextBucketIndex(size_t bucketIndex, size_t hashCode,

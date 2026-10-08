@@ -80,9 +80,12 @@ struct LibcppIntHash
 {
 	typedef std::true_type is_avalanching;
 
+	constexpr static size_t logBucketCount = 3;
+	constexpr static size_t bucketCount = size_t{1} << logBucketCount;
+
 	size_t operator()(int key) const noexcept
 	{
-		return static_cast<size_t>(key);
+		return static_cast<size_t>(key) << (sizeof(size_t) * 8 - logBucketCount);
 	}
 };
 

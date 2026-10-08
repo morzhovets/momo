@@ -32,7 +32,7 @@ int main(int, char**)
             P(1),
             P(2)
         };
-        const C c(std::begin(a), std::end(a));
+        const C c(std::begin(a), std::end(a), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         assert(c.bucket_size(0) == 0);
         assert(c.bucket_size(1) == 1);
@@ -53,7 +53,7 @@ int main(int, char**)
             P(1),
             P(2)
         };
-        const C c(std::begin(a), std::end(a));
+        const C c(std::begin(a), std::end(a), LibcppIntHash::bucketCount);
         assert(c.bucket_count() >= 5);
         assert(c.bucket_size(0) == 0);
         assert(c.bucket_size(1) == 1);
