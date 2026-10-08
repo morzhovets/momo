@@ -147,8 +147,12 @@ namespace internal
 
 		static uint8_t ptCalcShortCode(size_t hashCode) noexcept
 		{
-			uint32_t hashCode24 = static_cast<uint32_t>(hashCode >> (sizeof(size_t) * 8 - 24));
-			return static_cast<uint8_t>((hashCode24 * uint32_t{emptyShortCode}) >> 24);
+			constexpr size_t emptyShift = std::countr_zero(emptyShortCode);
+			constexpr size_t usedBitCount = 9;
+			size_t shortCode = hashCode >> (sizeof(size_t) * 8 - usedBitCount);
+			shortCode *= size_t{emptyShortCode} >> emptyShift;
+			shortCode >>= usedBitCount - emptyShift;
+			return static_cast<uint8_t>(shortCode);
 		}
 
 	private:
