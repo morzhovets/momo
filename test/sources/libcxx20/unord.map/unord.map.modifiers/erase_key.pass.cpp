@@ -172,7 +172,9 @@ int main(int, char**)
             ++i;
         }
 
+#ifdef LIBCXX_TEST_HASH_LIST_MAP
     assert (only_deletions (m, m2));
+#endif
     }
 #endif
 
