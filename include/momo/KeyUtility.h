@@ -121,8 +121,8 @@ namespace internal
 			noexcept(noexcept(hasher(key)))
 		{
 			size_t hashCode = hasher(key);
-			//if constexpr (!conceptAvalanching<Hasher>)
-			//	hashCode = MixHashCode(hashCode);
+			if constexpr (!conceptAvalanching<Hasher>)
+				hashCode = MixHashCode(hashCode);
 			return hashCode;
 		}
 	};
