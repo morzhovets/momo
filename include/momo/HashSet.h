@@ -1088,9 +1088,9 @@ private:
 		FastCopyableFunctor<ItemPredicate> itemPred)
 	{
 		size_t hashCode = indexCode;
-		typename Bucket::PreparedCode prepCode = Bucket::PrepareFind(hashCode);
-		BucketParams& bucketParams = buckets.GetBucketParams();
 		size_t logBucketCount = buckets.GetLogCount();
+		typename Bucket::PreparedCode prepCode = Bucket::PrepareFind(hashCode, logBucketCount);
+		BucketParams& bucketParams = buckets.GetBucketParams();
 		size_t bucketIndex = Bucket::GetStartBucketIndex(hashCode, logBucketCount);
 		Bucket* bucket = &buckets[bucketIndex];
 		BucketIterator bucketIter = bucket->template Find<true>(bucketParams, itemPred, prepCode);

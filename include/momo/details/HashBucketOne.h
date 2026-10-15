@@ -69,7 +69,8 @@ namespace internal
 			return IsFull() ? Bounds(pvGetItemPtr(), 1) : Bounds();
 		}
 
-		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode) noexcept
+		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode,
+			size_t /*logBucketCount*/) noexcept
 		{
 			return pvGetHashState(hashCode);
 		}

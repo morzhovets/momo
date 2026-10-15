@@ -68,7 +68,8 @@ namespace internal
 			return Bounds(pvMakeIterator(ptGetItemPtr(0)), pvGetCount());
 		}
 
-		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode) noexcept
+		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode,
+			size_t /*logBucketCount*/) noexcept
 		{
 			return ptCalcShortCode(hashCode);
 		}
