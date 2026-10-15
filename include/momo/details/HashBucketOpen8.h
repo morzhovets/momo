@@ -58,9 +58,9 @@ namespace internal
 		BucketOpen8& operator=(const BucketOpen8&) = delete;
 
 		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode,
-			size_t /*logBucketCount*/) noexcept
+			size_t logBucketCount) noexcept
 		{
-			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode);
+			uint8_t shortCode = BucketOpenN1::ptCalcShortCode(hashCode, logBucketCount);
 #ifdef MOMO_USE_SSE2
 			return _mm_set1_epi8(static_cast<char>(shortCode));
 #else

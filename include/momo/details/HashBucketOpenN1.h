@@ -69,9 +69,9 @@ namespace internal
 		}
 
 		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode,
-			size_t /*logBucketCount*/) noexcept
+			size_t logBucketCount) noexcept
 		{
-			return ptCalcShortCode(hashCode);
+			return ptCalcShortCode(hashCode, logBucketCount);
 		}
 
 		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
@@ -116,10 +116,10 @@ namespace internal
 
 		template<conceptObjectCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& /*params*/, FastMovableFunctor<ItemCreator> itemCreator,
-			size_t hashCode, size_t /*logBucketCount*/, size_t /*probe*/)
+			size_t hashCode, size_t logBucketCount, size_t /*probe*/)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
-			return pvAdd(std::move(itemCreator), hashCode);
+			return pvAdd(std::move(itemCreator), hashCode, logBucketCount);
 		}
 
 		template<conceptObjectReplacer<Item> ItemReplacer>
@@ -146,14 +146,12 @@ namespace internal
 			return mItems.GetPtr() + (reverse ? maxCount - 1 - index : index);
 		}
 
-		static uint8_t ptCalcShortCode(size_t hashCode) noexcept
+		static uint8_t ptCalcShortCode(size_t hashCode, size_t logBucketCount) noexcept
 		{
 			constexpr size_t emptyShift = std::countr_zero(emptyShortCode);
-			constexpr size_t usedBitCount = 9;
-			size_t shortCode = hashCode & ((size_t{1} << usedBitCount) - 1);
-			shortCode *= size_t{emptyShortCode} >> emptyShift;
-			shortCode >>= usedBitCount - emptyShift;
-			return static_cast<uint8_t>(shortCode);
+			size_t code = hashCode << logBucketCount >> (8 - emptyShift);
+			code *= size_t{emptyShortCode} >> emptyShift;
+			return static_cast<uint8_t>(code >> (sizeof(size_t) * 8 - 8));
 		}
 
 	private:
@@ -181,13 +179,14 @@ namespace internal
 		}
 
 		template<conceptObjectCreator<Item> ItemCreator>
-		Iterator pvAdd(FastMovableFunctor<ItemCreator> itemCreator, size_t hashCode)
+		Iterator pvAdd(FastMovableFunctor<ItemCreator> itemCreator,
+			size_t hashCode, size_t logBucketCount)
 		{
 			size_t count = pvGetCount();
 			MOMO_ASSERT(count < maxCount);
 			Item* newItem = ptGetItemPtr(count);
 			std::move(itemCreator)(newItem);
-			pvGetShortCode(count) = ptCalcShortCode(hashCode);
+			pvGetShortCode(count) = ptCalcShortCode(hashCode, logBucketCount);
 			if (count + 1 < maxCount)
 				++pvGetState();
 			return pvMakeIterator(newItem);
