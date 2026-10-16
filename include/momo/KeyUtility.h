@@ -107,9 +107,7 @@ namespace internal
 			else
 			{
 				uint64_t hashCode64 = hashCode;
-				hashCode64 ^= hashCode64 >> 23;
-				hashCode64 *= 0x2127599BF4325C37ull;
-				//hashCode64 ^= hashCode64 >> 47;
+				hashCode64 *= 0x9E3779B97F4A7C15ull;
 				return static_cast<size_t>(hashCode64);
 			}
 		}
