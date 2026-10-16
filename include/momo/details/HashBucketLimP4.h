@@ -269,9 +269,9 @@ namespace internal
 		}
 
 		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode,
-			size_t /*logBucketCount*/) noexcept
+			size_t logBucketCount) noexcept
 		{
-			return pvCalcShortCode(hashCode);
+			return pvCalcShortCode(hashCode, logBucketCount);
 		}
 
 		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
@@ -310,9 +310,9 @@ namespace internal
 				MOMO_ASSERT(memPoolIndex == minMemPoolIndex || memPoolIndex == maxCount);
 				pvSetCodeProbe(0, hashCode, logBucketCount, probe);
 				if (memPoolIndex == minMemPoolIndex)
-					return pvAdd0<minMemPoolIndex>(params, std::move(itemCreator), hashCode);
+					return pvAdd0<minMemPoolIndex>(params, std::move(itemCreator), hashCode, logBucketCount);
 				else
-					return pvAdd0<maxCount>(params, std::move(itemCreator), hashCode);
+					return pvAdd0<maxCount>(params, std::move(itemCreator), hashCode, logBucketCount);
 			}
 			else
 			{
@@ -326,23 +326,23 @@ namespace internal
 					case 1:
 						pvSetCodeProbe(1, hashCode, logBucketCount, probe);
 						return pvAdd<1>(params, std::move(itemCreator),
-							hashCode, items);
+							hashCode, logBucketCount, items);
 					case 2:
 						pvSetCodeProbe(2, hashCode, logBucketCount, probe);
 						return pvAdd<2>(params, std::move(itemCreator),
-							hashCode, items);
+							hashCode, logBucketCount, items);
 					default:
 						MOMO_ASSERT(memPoolIndex == 3);
 						pvSetCodeProbe(3, hashCode, logBucketCount, probe);
 						return pvAdd<3>(params, std::move(itemCreator),
-							hashCode, items);
+							hashCode, logBucketCount, items);
 					}
 				}
 				else
 				{
 					pvSetCodeProbe(count, hashCode, logBucketCount, probe);
 					std::move(itemCreator)(items + count);
-					mShortCodes[count] = pvCalcShortCode(hashCode);
+					mShortCodes[count] = pvCalcShortCode(hashCode, logBucketCount);
 					pvSetPtrState(items, memPoolIndex);
 					return items + count;
 				}
@@ -399,11 +399,14 @@ namespace internal
 					!= (newLogBucketCount + logBucketCountAddend) / logBucketCountStep);
 				if (useFullGetter)
 					return hashCodeFullGetter();
-				size_t probeShift = pvGetProbeShift(logBucketCount);
-				size_t probe = codeProbe & ((size_t{1} << probeShift) - 1);
-				return size_t{mShortCodes[index]}
-					| ((bucketIndex - probe) << (sizeof(size_t) * 8 - logBucketCount))
-					| (codeProbe >> probeShift << (sizeof(size_t) * 8 - 7 + probeShift) >> logBucketCount);
+				size_t probeBitCount = pvGetProbeBitCount(logBucketCount);
+				size_t probe = codeProbe & ((size_t{1} << probeBitCount) - 1);
+				size_t hashCodePart = codeProbe >> probeBitCount << (sizeof(size_t) * 8 - 7 + probeBitCount);
+				hashCodePart >>= 7;
+				hashCodePart |= size_t{mShortCodes[index]} << (sizeof(size_t) * 8 - 7);
+				hashCodePart >>= logBucketCount;
+				hashCodePart |= (bucketIndex - probe) << (sizeof(size_t) * 8 - logBucketCount);
+				return hashCodePart;
 			}
 			else
 			{
@@ -469,12 +472,12 @@ namespace internal
 					+ ((mShortCodes[3] < maskEmpty) ? 1 : 0);
 		}
 
-		static uint8_t pvCalcShortCode(size_t hashCode) noexcept
+		static uint8_t pvCalcShortCode(size_t hashCode, size_t logBucketCount) noexcept
 		{
-			return static_cast<uint8_t>(hashCode & size_t{maskEmpty - 1});
+			return static_cast<uint8_t>(hashCode << logBucketCount >> (sizeof(size_t) * 8 - 7));
 		}
 
-		static size_t pvGetProbeShift(size_t logBucketCount) noexcept
+		static size_t pvGetProbeBitCount(size_t logBucketCount) noexcept
 		{
 			return (logBucketCount + logBucketCountAddend) % logBucketCountStep;
 		}
@@ -485,26 +488,31 @@ namespace internal
 			size_t codeProbeIndex = codeCount - 1 - index;
 			if (!useHashCodePartGetter || codeProbeIndex <= index)
 				return;
-			size_t probeShift = pvGetProbeShift(logBucketCount);
-			mShortCodes[codeProbeIndex] = (probe >= size_t{1} << probeShift) ? emptyCodeProbe
-				: static_cast<uint8_t>(maskEmpty | probe
-					| (hashCode << logBucketCount >> (sizeof(size_t) * 8 - 7 + probeShift) << probeShift));
+			size_t probeBitCount = pvGetProbeBitCount(logBucketCount);
+			mShortCodes[codeProbeIndex] = emptyCodeProbe;
+			if (probe < size_t{1} << probeBitCount)
+			{
+				mShortCodes[codeProbeIndex] = static_cast<uint8_t>(size_t{maskEmpty} | probe |
+					(hashCode << logBucketCount << 7
+						>> (sizeof(size_t) * 8 - 7 + probeBitCount) << probeBitCount));
+			}
 		}
 
 		template<size_t memPoolIndex, conceptObjectCreator<Item> ItemCreator>
-		Item* pvAdd0(Params& params, FastMovableFunctor<ItemCreator> itemCreator, size_t hashCode)
+		Item* pvAdd0(Params& params, FastMovableFunctor<ItemCreator> itemCreator,
+			size_t hashCode, size_t logBucketCount)
 		{
 			Memory<memPoolIndex> memory(params.template GetMemPool<memPoolIndex>());
 			Item* items = memory.Get();
 			std::move(itemCreator)(items);
-			mShortCodes[0] = pvCalcShortCode(hashCode);
+			mShortCodes[0] = pvCalcShortCode(hashCode, logBucketCount);
 			pvSetPtrState(memory.Extract(), memPoolIndex);
 			return items;
 		}
 
 		template<size_t memPoolIndex, conceptObjectCreator<Item> ItemCreator>
 		Item* pvAdd(Params& params, FastMovableFunctor<ItemCreator> itemCreator,
-			size_t hashCode, Item* items)
+			size_t hashCode, size_t logBucketCount, Item* items)
 		{
 			constexpr size_t newMemPoolIndex = memPoolIndex + 1;
 			size_t count = memPoolIndex;
@@ -513,7 +521,7 @@ namespace internal
 			ItemTraits::RelocateCreate(params.GetMemManager(), items, newItems, count,
 				std::move(itemCreator), newItems + count);
 			params.template GetMemPool<memPoolIndex>().Deallocate(items);
-			mShortCodes[count] = pvCalcShortCode(hashCode);
+			mShortCodes[count] = pvCalcShortCode(hashCode, logBucketCount);
 			pvSetPtrState(memory.Extract(), newMemPoolIndex);
 			return newItems + count;
 		}
