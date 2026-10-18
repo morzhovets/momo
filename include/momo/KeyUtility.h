@@ -99,17 +99,17 @@ namespace internal
 	public:
 		static size_t MixHashCode(size_t hashCode) noexcept
 		{
+			uint64_t hashCode64 = hashCode;
 			if constexpr (sizeof(size_t) == 4)
 			{
-				uint64_t hashCode64 = uint64_t{hashCode} * 0xE817FB2Dull;
-				return static_cast<size_t>(hashCode64) ^ static_cast<size_t>(hashCode64 >> 32);
+				hashCode64 *= 0x9E3779B9u;	// golden ratio
+				hashCode64 ^= hashCode64 >> 32;
 			}
 			else
 			{
-				uint64_t hashCode64 = hashCode;
-				hashCode64 *= 0x9E3779B97F4A7C15ull;
-				return static_cast<size_t>(hashCode64);
+				hashCode64 *= 0x9E3779B97F4A7C15ull;	// golden ratio
 			}
+			return static_cast<size_t>(hashCode64);
 		}
 
 		template<typename Hasher, typename Key>
