@@ -70,9 +70,9 @@ namespace internal
 		}
 
 		MOMO_FORCEINLINE static PreparedCode PrepareFind(size_t hashCode,
-			size_t /*logBucketCount*/) noexcept
+			size_t logBucketCount) noexcept
 		{
-			return pvGetHashState(hashCode);
+			return pvGetHashState(hashCode, logBucketCount);
 		}
 
 		template<bool first, conceptObjectPredicate<Item> ItemPredicate>
@@ -99,12 +99,12 @@ namespace internal
 
 		template<conceptObjectCreator<Item> ItemCreator>
 		Iterator AddCrt(Params& /*params*/, FastMovableFunctor<ItemCreator> itemCreator,
-			size_t hashCode, size_t /*logBucketCount*/, size_t /*probe*/)
+			size_t hashCode, size_t logBucketCount, size_t /*probe*/)
 			noexcept(std::is_nothrow_invocable_v<ItemCreator&&, Item*>)
 		{
 			MOMO_ASSERT(!IsFull());
 			std::move(itemCreator)(pvGetItemPtr<false>());
-			mHashState = pvGetHashState(hashCode);
+			mHashState = pvGetHashState(hashCode, logBucketCount);
 			return pvGetItemPtr();
 		}
 
@@ -139,9 +139,12 @@ namespace internal
 		}
 
 	private:
-		static HashState pvGetHashState(size_t hashCode) noexcept
+		static HashState pvGetHashState(size_t hashCode, size_t logBucketCount) noexcept
 		{
-			return static_cast<HashState>(hashCode | size_t{1});
+			size_t code = hashCode;
+			if constexpr (sizeof(HashState) < sizeof(size_t))
+				code = code << logBucketCount >> ((sizeof(size_t) - sizeof(HashState)) * 8);
+			return static_cast<HashState>(code | 1);
 		}
 
 		template<conceptObjectPredicate<Item> ItemPredicate>

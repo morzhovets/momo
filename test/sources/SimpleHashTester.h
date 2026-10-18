@@ -48,7 +48,7 @@ private:
 		public:
 			size_t GetHashCode(const TemplItem& /*key*/) const noexcept
 			{
-				return 42; //std::hash<unsigned char>()(key.GetValue());
+				return SIZE_MAX; //std::hash<unsigned char>()(key.GetValue());
 			}
 
 			bool IsEqual(const TemplItem& key1, const TemplItem& key2) const
