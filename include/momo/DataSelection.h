@@ -784,7 +784,7 @@ namespace internal
 		static void pvAccumulateHashCode(size_t& hashCode, Raw* raw, size_t offset)
 		{
 			const Item& item = ColumnList::template GetByOffset<const Item>(raw, offset);
-			DataTraits::AccumulateHashCode(hashCode, item, offset);
+			hashCode += DataTraits::GetHashCode(item, offset);
 		}
 
 		template<typename Item>

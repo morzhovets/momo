@@ -44,9 +44,24 @@ public:
 
 public:
 	template<typename Item>
-	static void AccumulateHashCode(size_t& hashCode, const Item& item, size_t /*offset*/)
+	static size_t GetHashCode(const Item& item, size_t offset)
 	{
-		hashCode += HashCoder<Item>()(item);
+		// Constant from https://jonkagstrom.com/mx3/mx3_rev2.html
+		uint64_t mult64 = uint64_t{offset + 1} * 2 * 0x0E9846AF9B1A615Dull;
+		mult64 ^= mult64 >> 32;
+		mult64 |= 1;
+		uint64_t hashCode64 = HashCoder<Item>()(item);
+		if constexpr (sizeof(size_t) == 4)
+		{
+			hashCode64 *= static_cast<size_t>(mult64);
+			hashCode64 ^= hashCode64 >> 32;
+		}
+		else
+		{
+			hashCode64 ^= hashCode64 >> 33;
+			hashCode64 *= mult64;
+		}
+		return static_cast<size_t>(hashCode64);
 	}
 
 	template<typename Item>

@@ -393,7 +393,7 @@ namespace internal
 			{
 				size_t hashCode = 0;
 				auto tupleHasher = [&hashCode] (const auto&... pairs)
-					{ (DataTraits::AccumulateHashCode(hashCode, pairs.second, pairs.first), ...); };
+					{ (AccumulateHashCode(hashCode, pairs.second, pairs.first), ...); };
 				std::apply(tupleHasher, key);
 				return hashCode;
 			}
@@ -430,6 +430,12 @@ namespace internal
 			{
 				return mMixedRawEqualComparer({ key1.raw, key1.offset, key1.item }, key2,
 					mOffsets.GetItems());
+			}
+
+			template<typename Item>
+			static void AccumulateHashCode(size_t& hashCode, const Item& item, size_t offset)
+			{
+				hashCode += DataTraits::GetHashCode(item, offset);
 			}
 
 		private:
@@ -1289,7 +1295,7 @@ namespace internal
 		static void pvAccumulateHashCode(size_t& hashCode, Raw* key, size_t offset)
 		{
 			const Item& item = ColumnList::template GetByOffset<const Item>(key, offset);
-			DataTraits::AccumulateHashCode(hashCode, item, offset);
+			HashTraits::AccumulateHashCode(hashCode, item, offset);
 		}
 
 		template<typename Item>
@@ -1298,7 +1304,7 @@ namespace internal
 			const Item& item = (offset != key.offset)
 				? ColumnList::template GetByOffset<const Item>(key.raw, offset)
 				: *static_cast<const Item*>(key.item);
-			DataTraits::AccumulateHashCode(hashCode, item, offset);
+			HashTraits::AccumulateHashCode(hashCode, item, offset);
 		}
 
 		template<typename Item>
