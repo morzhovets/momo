@@ -212,7 +212,8 @@ public:
 	size_t GetHashCode(const Key& key) const
 		requires requires { { HashCoder<Key>()(key) } -> std::convertible_to<size_t>; }
 	{
-		return internal::HashMixer::GetMixedHashCode(HashCoder<Key>(), key);
+		size_t hashCode = HashCoder<Key>()(key);
+		return internal::HashMixer::MixFast(hashCode);	//?
 	}
 
 	bool IsLess(const Key& key1, const Key& key2) const noexcept(func == MergeTraitsFunc::lessNothrow)

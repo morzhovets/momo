@@ -97,7 +97,7 @@ namespace internal
 	class HashMixer
 	{
 	public:
-		static size_t MixHashCode(size_t hashCode) noexcept
+		static size_t MixFast(size_t hashCode) noexcept
 		{
 			uint64_t hashCode64 = hashCode;
 			if constexpr (sizeof(size_t) == 4)
@@ -110,16 +110,6 @@ namespace internal
 				hashCode64 *= 0x9E3779B97F4A7C15ull;	// golden ratio
 			}
 			return static_cast<size_t>(hashCode64);
-		}
-
-		template<typename Hasher, typename Key>
-		static size_t GetMixedHashCode(const Hasher& hasher, const Key& key)
-			noexcept(noexcept(hasher(key)))
-		{
-			size_t hashCode = hasher(key);
-			if constexpr (!conceptAvalanching<Hasher>)
-				hashCode = MixHashCode(hashCode);
-			return hashCode;
 		}
 	};
 

@@ -118,8 +118,8 @@ public:
 		requires requires { { HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key)) }
 			-> std::convertible_to<size_t>; }
 	{
-		return internal::HashMixer::GetMixedHashCode(
-			HashCoder<BaseKeyArg>(), static_cast<const BaseKeyArg&>(key));
+		size_t hashCode = HashCoder<BaseKeyArg>()(static_cast<const BaseKeyArg&>(key));
+		return HashBucket::MixHashCode(hashCode);
 	}
 
 	template<typename KeyArg1, typename KeyArg2>
@@ -207,7 +207,10 @@ public:
 	size_t GetHashCode(const KeyArg& key) const
 		noexcept(noexcept(mHasher(key)))
 	{
-		return internal::HashMixer::GetMixedHashCode(mHasher, key);
+		size_t hashCode = mHasher(key);
+		if constexpr (!internal::conceptAvalanching<Hasher>)
+			hashCode = HashBucket::MixHashCode(hashCode);
+		return hashCode;
 	}
 
 	template<typename KeyArg1, typename KeyArg2>

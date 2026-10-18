@@ -13,6 +13,7 @@
 #pragma once
 
 #include "../IteratorUtility.h"
+#include "../KeyUtility.h"
 #include "../ObjectManager.h"
 
 namespace momo
@@ -222,6 +223,11 @@ namespace internal
 			else
 				return (bucketCount < (1 << 20)) ? 2 : 1;
 		}
+
+		static size_t MixHashCode(size_t hashCode) noexcept
+		{
+			return HashMixer::MixFast(hashCode);
+		}
 	};
 
 	class HashBucketOpenBase
@@ -234,6 +240,11 @@ namespace internal
 			size_t /*bucketMaxItemCount*/) noexcept
 		{
 			return 1;
+		}
+
+		static size_t MixHashCode(size_t hashCode) noexcept
+		{
+			return HashMixer::MixFast(hashCode);
 		}
 	};
 }
