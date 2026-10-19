@@ -48,7 +48,7 @@ private:
 		public:
 			size_t GetHashCode(const TemplItem& /*key*/) const noexcept
 			{
-				return 42; //std::hash<unsigned char>()(key.GetValue());
+				return SIZE_MAX; //std::hash<unsigned char>()(key.GetValue());
 			}
 
 			bool IsEqual(const TemplItem& key1, const TemplItem& key2) const
@@ -90,8 +90,12 @@ public:
 		TestStrHashMultiMap<HashTraits, momo::HashMultiMapSettings>();
 		std::cout << "ok" << std::endl;
 
-		std::cout << bucketName << ": HashMultiMap (1): " << std::flush;
+		std::cout << bucketName << ": HashMultiMap (valueArrayMaxFastCount = 1): " << std::flush;
 		TestStrHashMultiMap<HashTraits, HashMultiMapSettings<1>>();
+		std::cout << "ok" << std::endl;
+
+		std::cout << bucketName << ": Big HashSet: " << std::flush;
+		TestStrBigHashSet<HashTraits>();
 		std::cout << "ok" << std::endl;
 	}
 
@@ -226,6 +230,29 @@ public:
 		mmap2 = mmap;
 		//mmap2.Shrink();
 		assert(mmap.GetKeyCount() == mmap2.GetKeyCount() && mmap.GetCount() == mmap2.GetValueCount());
+	}
+
+	template<typename HashTraits>
+	static void TestStrBigHashSet()
+	{
+		constexpr size_t count = 1 << 12;
+		static std::string array[count];
+		for (size_t i = 0; i < count; ++i)
+			array[i] = std::to_string(i);
+
+		typedef momo::HashSet<std::string, HashTraits> HashSet;
+		HashSet set;
+
+		for (const std::string& s : array)
+			assert(set.Insert(s).inserted);
+		assert(set.GetCount() == count);
+
+		std::mt19937_64 mt;
+		std::shuffle(array, array + count, mt);
+
+		for (const std::string& s : array)
+			assert(set.Remove(s));
+		assert(set.IsEmpty());
 	}
 
 	template<typename HashBucket, size_t size, size_t alignment>
