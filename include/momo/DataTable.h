@@ -50,18 +50,8 @@ public:
 		uint64_t mult64 = uint64_t{offset + 1} * 2 * 0x0E9846AF9B1A615Dull;
 		mult64 ^= mult64 >> 32;
 		mult64 |= 1;
-		uint64_t hashCode64 = HashCoder<Item>()(item);
-		if constexpr (sizeof(size_t) == 4)
-		{
-			hashCode64 *= static_cast<size_t>(mult64);
-			hashCode64 ^= hashCode64 >> 32;
-		}
-		else
-		{
-			hashCode64 ^= hashCode64 >> 33;
-			hashCode64 *= mult64;
-		}
-		return static_cast<size_t>(hashCode64);
+		size_t hashCode = HashCoder<Item>()(item);
+		return internal::HashMixer::MixFast<true>(hashCode, static_cast<size_t>(mult64));
 	}
 
 	template<typename Item>

@@ -97,18 +97,32 @@ namespace internal
 	class HashMixer
 	{
 	public:
+		template<bool doXorShift = (sizeof(size_t) == 4)>
 		static size_t MixFast(size_t hashCode) noexcept
 		{
-			uint64_t hashCode64 = hashCode;
 			if constexpr (sizeof(size_t) == 4)
 			{
-				hashCode64 *= 0x9E3779B9u;	// golden ratio
-				hashCode64 ^= hashCode64 >> 32;
+				// Golden ratio
+				return MixFast<doXorShift>(hashCode,
+					std::integral_constant<uint32_t, 0x9E3779B9u>());
 			}
 			else
 			{
-				hashCode64 *= 0x9E3779B97F4A7C15ull;	// golden ratio
+				// Constant from https://github.com/ztanml/fast-hash
+				return MixFast<doXorShift>(hashCode,
+					std::integral_constant<uint64_t, 0x2127599BF4325C37ull>());
 			}
+		}
+
+		template<bool doXorShift, typename UInt>
+		static size_t MixFast(size_t hashCode, UInt mult) noexcept
+		{
+			uint64_t hashCode64 = hashCode;
+			if constexpr (doXorShift && sizeof(size_t) == 8)
+				hashCode64 ^= hashCode64 >> 31;
+			hashCode64 *= mult;
+			if constexpr (doXorShift && sizeof(size_t) == 4)
+				hashCode64 ^= hashCode64 >> 32;
 			return static_cast<size_t>(hashCode64);
 		}
 	};
