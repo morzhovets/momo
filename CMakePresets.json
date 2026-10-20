@@ -141,11 +141,11 @@
       }
     },
     {
-      "name": "Test-MSVC_2026-x64-std26",
+      "name": "Test-MSVC_1450-x64-std23",
       "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
-        "CMAKE_GENERATOR_TOOLSET": "v145",
-        "CMAKE_CXX_STANDARD": "26",
+        "CMAKE_GENERATOR_TOOLSET": "version=14.50",
+        "CMAKE_CXX_STANDARD": "23",
         "CMAKE_VERBOSE_MAKEFILE": "OFF"
       }
     }
@@ -227,13 +227,13 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "MSVC_2026-x64-std26-Debug",
-      "configurePreset": "Test-MSVC_2026-x64-std26",
+      "name": "MSVC_1450-x64-std23-Debug",
+      "configurePreset": "Test-MSVC_1450-x64-std23",
       "configuration": "Debug"
     },
     {
-      "name": "MSVC_2026-x64-std26-Release",
-      "configurePreset": "Test-MSVC_2026-x64-std26",
+      "name": "MSVC_1450-x64-std23-Release",
+      "configurePreset": "Test-MSVC_1450-x64-std23",
       "configuration": "RelWithDebInfo"
     }
   ]
