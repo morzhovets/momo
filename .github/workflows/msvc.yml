@@ -14,7 +14,7 @@ jobs:
       matrix:
         include:
 
-        # Visual Studio 2019 x64
+        # VS2019 x64
         - toolset: '14.2'
           arch: 'x64'
           build_type: 'Release'
@@ -33,7 +33,7 @@ jobs:
           flags: '/std:c++20 /WX'
           win_ver: '2025'
 
-        # Visual Studio 2022 x64
+        # VS2022 x64
         - toolset: '14.4'
           arch: 'x64'
           build_type: 'Release'
@@ -52,7 +52,7 @@ jobs:
           flags: '/std:c++23preview /WX'
           win_ver: '2025'
 
-        # Visual Studio 2026 x64
+        # 14.5x x64
         - toolset: '14.5'
           arch: 'x64'
           build_type: 'Release'
@@ -60,7 +60,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++14 /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64'
@@ -69,7 +69,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++17 /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64'
@@ -78,7 +78,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++20 /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64'
@@ -87,7 +87,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++23preview /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64'
@@ -96,7 +96,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64'
@@ -105,7 +105,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64'
@@ -114,7 +114,7 @@ jobs:
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64'
@@ -123,9 +123,9 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '/std:c++latest /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
-        # Visual Studio 2019 x86
+        # VS2019 x86
         - toolset: '14.2'
           arch: 'x64_x86'
           build_type: 'Release'
@@ -144,7 +144,7 @@ jobs:
           flags: '/std:c++20 /WX'
           win_ver: '2025'
 
-        # Visual Studio 2022 x86
+        # VS2022 x86
         - toolset: '14.4'
           arch: 'x64_x86'
           build_type: 'Release'
@@ -163,7 +163,7 @@ jobs:
           flags: '/std:c++23preview /WX'
           win_ver: '2025'
 
-        # Visual Studio 2026 x86
+        # 14.5x x86
         - toolset: '14.5'
           arch: 'x64_x86'
           build_type: 'Release'
@@ -171,7 +171,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++14 /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64_x86'
@@ -180,7 +180,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++17 /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64_x86'
@@ -189,7 +189,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++20 /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64_x86'
@@ -198,7 +198,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++23preview /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64_x86'
@@ -207,7 +207,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64_x86'
@@ -216,7 +216,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64_x86'
@@ -225,7 +225,7 @@ jobs:
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
         - toolset: '14.5'
           arch: 'x64_x86'
@@ -234,9 +234,9 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '/std:c++latest /WX'
-          win_ver: '2025-vs2026'
+          win_ver: '2025'
 
-        # Visual Studio 2022 ARM64
+        # VS2022 ARM64
         - toolset: '14.4'
           arch: 'arm64'
           build_type: 'Release'
@@ -255,7 +255,7 @@ jobs:
           flags: '/std:c++23preview /WX'
           win_ver: '11-arm'
 
-        # Visual Studio 2026 ARM64
+        # 14.5x ARM64
         - toolset: '14.5'
           arch: 'arm64'
           build_type: 'Release'
@@ -263,7 +263,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++14 /WX'
-          win_ver: '11-vs2026-arm'
+          win_ver: '11-arm'
 
         - toolset: '14.5'
           arch: 'arm64'
@@ -272,7 +272,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++17 /WX'
-          win_ver: '11-vs2026-arm'
+          win_ver: '11-arm'
 
         - toolset: '14.5'
           arch: 'arm64'
@@ -281,7 +281,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++20 /WX'
-          win_ver: '11-vs2026-arm'
+          win_ver: '11-arm'
 
         - toolset: '14.5'
           arch: 'arm64'
@@ -290,7 +290,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++23preview /WX'
-          win_ver: '11-vs2026-arm'
+          win_ver: '11-arm'
 
         - toolset: '14.5'
           arch: 'arm64'
@@ -299,7 +299,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '11-vs2026-arm'
+          win_ver: '11-arm'
 
         - toolset: '14.5'
           arch: 'arm64'
@@ -308,7 +308,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '11-vs2026-arm'
+          win_ver: '11-arm'
 
         - toolset: '14.5'
           arch: 'arm64'
@@ -317,7 +317,7 @@ jobs:
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '/std:c++latest /WX'
-          win_ver: '11-vs2026-arm'
+          win_ver: '11-arm'
 
         - toolset: '14.5'
           arch: 'arm64'
@@ -326,7 +326,7 @@ jobs:
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '/std:c++latest /WX'
-          win_ver: '11-vs2026-arm'
+          win_ver: '11-arm'
 
     runs-on: windows-${{ matrix.win_ver }}
 

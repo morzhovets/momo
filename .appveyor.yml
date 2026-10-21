@@ -6,6 +6,14 @@ skip_tags: true
 environment:
   matrix:
 
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2026
+      ARCH: x64
+      BUILD_TYPE: Debug
+      NO_EXCEPTIONS_RTTI: Off
+      EXTRA_SETTINGS: Off
+      FLAGS: "/std:c++23preview /WX"
+      VCVARS_BAT: "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Auxiliary/Build/vcvarsall.bat"
+
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
       ARCH: x64
       BUILD_TYPE: Release
@@ -84,7 +92,8 @@ build_script:
   - cd test
   - mkdir build
   - cd build
-  - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DMOMO_TEST_NO_EXCEPTIONS_RTTI=%NO_EXCEPTIONS_RTTI% -DMOMO_TEST_EXTRA_SETTINGS=%EXTRA_SETTINGS%
+  - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+      -DMOMO_TEST_NO_EXCEPTIONS_RTTI=%NO_EXCEPTIONS_RTTI% -DMOMO_TEST_EXTRA_SETTINGS=%EXTRA_SETTINGS%
   - cmake --build . -v
 
 test_script:
