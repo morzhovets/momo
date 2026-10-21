@@ -213,21 +213,21 @@
       }
     },
     {
-      "name": "Test-MSVC_2026-x64-std26",
+      "name": "Test-MSVC_1450-x64-std23",
       "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
-        "CMAKE_GENERATOR_TOOLSET": "v145",
-        "CMAKE_CXX_STANDARD": "26",
+        "CMAKE_GENERATOR_TOOLSET": "version=14.50",
+        "CMAKE_CXX_STANDARD": "23",
         "CMAKE_VERBOSE_MAKEFILE": "OFF"
       }
     },
     {
-      "name": "Test-MSVC_CLI_2026-x64-std20",
+      "name": "Test-MSVC_CLI_2022-x64-std20",
       "inherits": "Test-VS_2026-x64",
       "cacheVariables": {
         "MOMO_COMMON_LANGUAGE_RUNTIME": "",
         "CMAKE_DOTNET_TARGET_FRAMEWORK": "",
-        "CMAKE_GENERATOR_TOOLSET": "v145",
+        "CMAKE_GENERATOR_TOOLSET": "v143",
         "CMAKE_CXX_STANDARD": "20"
       }
     }
@@ -369,23 +369,23 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "MSVC_2026-x64-std26-Debug",
-      "configurePreset": "Test-MSVC_2026-x64-std26",
+      "name": "MSVC_1450-x64-std23-Debug",
+      "configurePreset": "Test-MSVC_1450-x64-std23",
       "configuration": "Debug"
     },
     {
-      "name": "MSVC_2026-x64-std26-Release",
-      "configurePreset": "Test-MSVC_2026-x64-std26",
+      "name": "MSVC_1450-x64-std23-Release",
+      "configurePreset": "Test-MSVC_1450-x64-std23",
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "MSVC_CLI_2026-x64-std20-Debug",
-      "configurePreset": "Test-MSVC_CLI_2026-x64-std20",
+      "name": "MSVC_CLI_2022-x64-std20-Debug",
+      "configurePreset": "Test-MSVC_CLI_2022-x64-std20",
       "configuration": "Debug"
     },
     {
-      "name": "MSVC_CLI_2026-x64-std20-Release",
-      "configurePreset": "Test-MSVC_CLI_2026-x64-std20",
+      "name": "MSVC_CLI_2022-x64-std20-Release",
+      "configurePreset": "Test-MSVC_CLI_2022-x64-std20",
       "configuration": "RelWithDebInfo"
     }
   ]
