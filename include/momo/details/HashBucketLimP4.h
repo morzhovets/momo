@@ -140,7 +140,7 @@ namespace internal
 	};
 
 	template<size_t maxCount>
-	concept conceptBucketLimP4MaxCount = (0 < maxCount && maxCount <= 4);
+	concept conceptBucketLimP4MaxCount = (1 < maxCount && maxCount <= 4);
 
 	template<typename TItemTraits, size_t tMaxCount,
 		conceptMemPoolParamsBlockSizeAlignment TMemPoolParams, bool tUseHashCodePartGetter>
@@ -233,7 +233,8 @@ namespace internal
 
 	private:
 		constexpr static size_t minMemPoolIndex =
-			(maxCount > 1 && sizeof(Item) <= itemAlignment) ? 2 : 1;
+			(maxCount > 2 && sizeof(Item) <= itemAlignment) ? 2 : 1;
+		static_assert(minMemPoolIndex < maxCount);
 
 		template<size_t memPoolIndex>
 		using Memory = BucketMemory<MemPool<memPoolIndex>, Item*>;
@@ -243,7 +244,7 @@ namespace internal
 
 		static_assert(PtrState::bitCount % 8 == 0);
 		constexpr static size_t codeCount = 4 +
-			(useHashCodePartGetter ? sizeof(void*) - PtrState::bitCount / 8 : 0);
+			((useHashCodePartGetter && maxCount > 2) ? sizeof(void*) - PtrState::bitCount / 8 : 0);
 
 		constexpr static uint8_t maskEmpty = 128;
 		constexpr static uint8_t emptyCodeProbe = 255;
@@ -379,9 +380,7 @@ namespace internal
 				MOMO_ASSERT(count == 1 && iter == items);
 				std::move(itemReplacer)(*items, *items);
 				pvDeallocate<false>(params, memPoolIndex, items);
-				if (memPoolIndex != maxCount)
-					memPoolIndex = minMemPoolIndex;
-				pvSetEmpty(memPoolIndex);
+				pvSetEmpty((memPoolIndex == maxCount) ? maxCount : minMemPoolIndex);
 				return nullptr;
 			}
 		}

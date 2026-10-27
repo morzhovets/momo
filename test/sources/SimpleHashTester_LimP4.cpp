@@ -24,11 +24,11 @@
 static int testSimpleHash = []
 {
 	SimpleHashTester::TestStrHash<momo::HashBucketLimP4<>>("momo::HashBucketLimP4<>");
-	SimpleHashTester::TestStrHash<momo::HashBucketLimP4<1>>("momo::HashBucketLimP4<1>");
+	SimpleHashTester::TestStrHash<momo::HashBucketLimP4<2>>("momo::HashBucketLimP4<2>");
 
-	SimpleHashTester::TestTemplHashSet<BUCKET(1, 16),  1, 1>("momo::HashBucketLimP4<1, 16>");
-	SimpleHashTester::TestTemplHashSet<BUCKET(1, 99),  2, 1>("momo::HashBucketLimP4<1, 99>");
-	SimpleHashTester::TestTemplHashSet<BUCKET(2, 32), 16, 8>("momo::HashBucketLimP4<2, 32>");
+	SimpleHashTester::TestTemplHashSet<BUCKET(2, 16),  1, 1>("momo::HashBucketLimP4<2, 16>");
+	SimpleHashTester::TestTemplHashSet<BUCKET(2, 99),  2, 1>("momo::HashBucketLimP4<2, 99>");
+	SimpleHashTester::TestTemplHashSet<BUCKET(3, 32), 16, 8>("momo::HashBucketLimP4<3, 32>");
 	SimpleHashTester::TestTemplHashSet<BUCKET(3,  1),  4, 4>("momo::HashBucketLimP4<3,  1>");
 	SimpleHashTester::TestTemplHashSet<BUCKET(3,  2),  4, 4>("momo::HashBucketLimP4<3,  2>");
 	SimpleHashTester::TestTemplHashSet<BUCKET(4, 11),  6, 2>("momo::HashBucketLimP4<4, 11>");
