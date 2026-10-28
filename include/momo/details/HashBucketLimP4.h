@@ -152,7 +152,7 @@ namespace internal
 
 	public:
 		constexpr static size_t maxCount = tMaxCount;
-		MOMO_STATIC_ASSERT(0 < maxCount && maxCount <= 4);
+		MOMO_STATIC_ASSERT(1 < maxCount && maxCount <= 4);
 
 		typedef typename ItemTraits::Item Item;
 		typedef typename ItemTraits::MemManager MemManager;
@@ -169,7 +169,8 @@ namespace internal
 			? ItemTraits::alignment : 4;
 
 		constexpr static size_t minMemPoolIndex =
-			(maxCount > 1 && sizeof(Item) <= itemAlignment) ? 2 : 1;
+			(maxCount > 2 && sizeof(Item) <= itemAlignment) ? 2 : 1;
+		MOMO_STATIC_ASSERT(minMemPoolIndex < maxCount);
 
 		template<size_t memPoolIndex>
 		using MemPoolParamsStatic = momo::MemPoolParamsStatic<memPoolIndex * sizeof(Item),
@@ -187,7 +188,7 @@ namespace internal
 
 		MOMO_STATIC_ASSERT(PtrState::bitCount % 8 == 0);
 		constexpr static size_t codeCount = 4 +
-			(useHashCodePartGetter ? sizeof(void*) - PtrState::bitCount / 8 : 0);
+			((useHashCodePartGetter && maxCount > 2) ? sizeof(void*) - PtrState::bitCount / 8 : 0);
 
 		constexpr static uint8_t maskEmpty = 128;
 		constexpr static uint8_t emptyCodeProbe = 255;
@@ -379,9 +380,7 @@ namespace internal
 				MOMO_ASSERT(count == 1 && iter == items);
 				std::forward<ItemReplacer>(itemReplacer)(*items, *items);
 				pvDeallocate<false>(params, memPoolIndex, items);
-				if (memPoolIndex != maxCount)
-					memPoolIndex = minMemPoolIndex;
-				pvSetEmpty(memPoolIndex);
+				pvSetEmpty((memPoolIndex == maxCount) ? maxCount : minMemPoolIndex);
 				return nullptr;
 			}
 		}
