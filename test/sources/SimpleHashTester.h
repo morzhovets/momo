@@ -235,7 +235,7 @@ public:
 	template<typename HashTraits>
 	static void TestStrBigHashSet()
 	{
-		constexpr size_t count = 1 << 12;
+		constexpr size_t count = 1 << 17;
 		static std::string array[count];
 		for (size_t i = 0; i < count; ++i)
 			array[i] = std::to_string(i);

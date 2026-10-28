@@ -103,7 +103,7 @@ namespace internal
 	public:
 		explicit BucketLimP1() noexcept
 		{
-			pvSet(nullptr, pvGetMemPoolIndex(1), 0);
+			pvSetEmpty();
 		}
 
 		BucketLimP1(const BucketLimP1&) = delete;
@@ -146,7 +146,7 @@ namespace internal
 				if (!memPool.CanDeallocateAll())
 					memPool.Deallocate(items);
 			}
-			pvSet(nullptr, pvGetMemPoolIndex(1), 0);
+			pvSetEmpty();
 		}
 
 		template<typename ItemCreator>
@@ -158,6 +158,8 @@ namespace internal
 			{
 				size_t newCount = 1;
 				size_t newMemPoolIndex = pvGetMemPoolIndex();
+				if (newMemPoolIndex == 0)
+					newMemPoolIndex = pvGetMemPoolIndex(newCount);
 				Memory memory(params.GetMemPool(newMemPoolIndex));
 				Item* newItems = memory.Get();
 				std::forward<ItemCreator>(itemCreator)(newItems);
@@ -203,9 +205,7 @@ namespace internal
 				std::forward<ItemReplacer>(itemReplacer)(*items, *items);
 				size_t memPoolIndex = pvGetMemPoolIndex();
 				params.GetMemPool(memPoolIndex).Deallocate(items);
-				if (memPoolIndex != pvGetMemPoolIndex(maxCount))
-					memPoolIndex = pvGetMemPoolIndex(1);
-				pvSet(nullptr, memPoolIndex, 0);
+				pvSetEmpty((memPoolIndex == pvGetMemPoolIndex(maxCount)) ? memPoolIndex : 0);
 				return nullptr;
 			}
 			else
@@ -218,6 +218,11 @@ namespace internal
 		}
 
 	private:
+		void pvSetEmpty(size_t memPoolIndex = 0) noexcept
+		{
+			pvSet(nullptr, memPoolIndex, 0);
+		}
+
 		void pvSet(Item* items, size_t memPoolIndex, size_t count) noexcept
 		{
 			MemCopyer::ToBuffer(items, mItemPtrBuffer);
