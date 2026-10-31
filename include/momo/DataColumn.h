@@ -623,7 +623,7 @@ public:
 
 template<typename TStruct = DataStructDefault<>,
 	size_t tLogVertexCount = 8>
-requires (4 <= tLogVertexCount && tLogVertexCount < 16)
+requires (4 <= tLogVertexCount && tLogVertexCount <= 16)
 class DataColumnTraits
 {
 public:
@@ -632,7 +632,6 @@ public:
 	constexpr static size_t logVertexCount = tLogVertexCount;
 
 	constexpr static size_t maxColumnCount = size_t{1} << (logVertexCount - 1);
-	constexpr static size_t maxCodeParam = 255;
 
 	typedef DataColumnInfo<Struct> ColumnInfo;
 
@@ -646,20 +645,24 @@ public:
 
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
+private:
+	constexpr static size_t codeBitSize = (sizeof(ColumnCode) > 4) ? 64 : 32;
+
+public:
+	constexpr static size_t maxCodeParam = codeBitSize * (codeBitSize / 2 - logVertexCount + 1) - 1;
+
 public:
 	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(
 		ColumnCode columnCode, size_t codeParam) noexcept
 	{
-		constexpr size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
-		size_t shortCode = static_cast<size_t>(columnCode);
-		if constexpr (sizeof(ColumnCode) > 4)
-			shortCode += static_cast<size_t>(static_cast<uint64_t>(columnCode) >> 32);
-		shortCode += shortCode >> 16;
-		if constexpr (logVertexCount < 8)
-			shortCode += shortCode >> 8;
-		size_t vertex1 = (shortCode & vertexCount1) ^ (codeParam >> 4);
-		size_t vertex2 = ((shortCode >> logVertexCount) & vertexCount1) ^ (codeParam & 15);
-		vertex2 ^= (vertex1 == vertex2) ? 1 : 0;
+		typedef typename internal::UIntSelector<codeBitSize / 8>::UInt UIntCode;
+		constexpr size_t vertexCount = size_t{1} << logVertexCount;
+		UIntCode code = static_cast<UIntCode>(columnCode);
+		code = std::rotr(code, static_cast<int>(codeParam % codeBitSize));
+		size_t vertex1 = static_cast<size_t>(code) % vertexCount;
+		code = std::rotr(code, static_cast<int>(logVertexCount + codeParam / codeBitSize));
+		size_t vertex2 = static_cast<size_t>(code) % vertexCount;
+		vertex2 ^= size_t{vertex1 == vertex2};
 		return { vertex1, vertex2 };
 	}
 
@@ -780,6 +783,7 @@ private:
 	constexpr static size_t maxCodeParam = ColumnTraits::maxCodeParam;
 
 	constexpr static size_t vertexCount = size_t{1} << logVertexCount;
+	static_assert(maxColumnCount <= vertexCount);
 
 	// http://cmph.sourceforge.net/papers/chm92.pdf
 	class Graph
