@@ -399,6 +399,13 @@ namespace internal
 			return result;
 		}
 
+		static UInt RotateRight(UInt value, size_t shift) noexcept
+		{
+			constexpr size_t bitSize = sizeof(UInt) * 8;
+			MOMO_ASSERT(shift < bitSize);
+			return (shift == 0) ? value : (value >> shift) | (value << (bitSize - shift));
+		}
+
 		static UInt Log2(UInt value) noexcept
 		{
 			return pvLog2(value);

@@ -665,10 +665,9 @@ public:
 	typedef TStruct Struct;
 
 	constexpr static size_t logVertexCount = tLogVertexCount;
-	MOMO_STATIC_ASSERT(4 <= logVertexCount && logVertexCount < 16);
+	MOMO_STATIC_ASSERT(4 <= logVertexCount && logVertexCount <= 16);
 
 	constexpr static size_t maxColumnCount = size_t{1} << (logVertexCount - 1);
-	constexpr static size_t maxCodeParam = 255;
 
 	typedef DataColumnInfo<Struct> ColumnInfo;
 
@@ -682,20 +681,25 @@ public:
 
 	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
 
+private:
+	constexpr static size_t codeBitSize = (sizeof(ColumnCode) > 4) ? 64 : 32;
+
+public:
+	constexpr static size_t maxCodeParam = codeBitSize * (codeBitSize / 2 - logVertexCount + 1) - 1;
+
 public:
 	MOMO_FORCEINLINE static std::pair<size_t, size_t> GetVertices(
 		ColumnCode columnCode, size_t codeParam) noexcept
 	{
-		constexpr size_t vertexCount1 = (size_t{1} << logVertexCount) - 1;
-		size_t shortCode = static_cast<size_t>(columnCode);
-		if MOMO_CONSTEXPR_IF (sizeof(ColumnCode) > 4)
-			shortCode += static_cast<size_t>(static_cast<uint64_t>(columnCode) >> 32);
-		shortCode += shortCode >> 16;
-		if MOMO_CONSTEXPR_IF (logVertexCount < 8)
-			shortCode += shortCode >> 8;
-		size_t vertex1 = (shortCode & vertexCount1) ^ (codeParam >> 4);
-		size_t vertex2 = ((shortCode >> logVertexCount) & vertexCount1) ^ (codeParam & 15);
-		vertex2 ^= (vertex1 == vertex2) ? 1 : 0;
+		typedef typename internal::UIntSelector<codeBitSize / 8>::UInt UIntCode;
+		typedef internal::UIntMath<UIntCode> UIntCodeMath;
+		constexpr size_t vertexCount = size_t{1} << logVertexCount;
+		UIntCode code = static_cast<UIntCode>(columnCode);
+		code = UIntCodeMath::RotateRight(code, codeParam % codeBitSize);
+		size_t vertex1 = static_cast<size_t>(code) % vertexCount;
+		code = UIntCodeMath::RotateRight(code, logVertexCount + codeParam / codeBitSize);
+		size_t vertex2 = static_cast<size_t>(code) % vertexCount;
+		vertex2 ^= size_t{vertex1 == vertex2};
 		return { vertex1, vertex2 };
 	}
 
@@ -807,6 +811,7 @@ private:
 	constexpr static size_t maxCodeParam = ColumnTraits::maxCodeParam;
 
 	constexpr static size_t vertexCount = size_t{1} << logVertexCount;
+	static_assert(maxColumnCount <= vertexCount);
 
 	// http://cmph.sourceforge.net/papers/chm92.pdf
 	class Graph
