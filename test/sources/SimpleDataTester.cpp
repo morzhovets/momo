@@ -55,11 +55,17 @@ private:
 		constexpr static size_t selectEqualityMaxCount = 1;
 	};
 
+	class DataColumnTraits4 : public momo::DataColumnTraits<momo::DataStructDefault<>, 4>
+	{
+	public:
+		constexpr static size_t maxColumnCount = 16;
+	};
+
 public:
 	static void TestAll()
 	{
 		{
-			std::cout << "momo::DataColumnListNative (-RowNumber): " << std::flush;
+			std::cout << "momo::DataTableNative (-RowNumber): " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfoNative<Struct>,
 				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
@@ -71,7 +77,7 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnListStatic (-RowNumber): " << std::flush;
+			std::cout << "momo::DataTableStatic (-RowNumber): " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
 				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
@@ -83,7 +89,7 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnListStatic (+RowNumber): " << std::flush;
+			std::cout << "momo::DataTableStatic (+RowNumber): " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
 				momo::MemManagerDict<>, momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
@@ -97,7 +103,7 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnList (struct, -RowNumber): " << std::flush;
+			std::cout << "momo::DataTable (struct, -RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<Struct, 4>,
 				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList = { dblStruct.Mutable(), intStruct };
@@ -108,7 +114,7 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnList (string, +RowNumber): " << std::flush;
+			std::cout << "momo::DataTable (string, +RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct, 12>, momo::MemManagerDict<>,
 				momo::DataItemTraits<momo::MemManagerDict<>>, momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
@@ -121,11 +127,17 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataColumnList (string, -RowNumber): " << std::flush;
+			std::cout << "momo::DataTable (string, -RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct>,
 				momo::MemManagerDict<>> DataColumnList;
 			momo::DataTable<DataColumnList> table({ intString, strString, dblString.Mutable() });
 			TestData<true>(table, intString, dblString, strString);
+			std::cout << "ok" << std::endl;
+		}
+
+		{
+			std::cout << "momo::DataColumnList: " << std::flush;
+			TestDataColumnList<DataColumnTraits4>();
 			std::cout << "ok" << std::endl;
 		}
 	}
@@ -563,6 +575,35 @@ private:
 			assert(row->dblStruct == 3.5);
 			assert(row->strStruct == "2");
 		}
+	}
+
+	template<typename ColumnTraits>
+	static void TestDataColumnList()
+	{
+		constexpr momo::DataColumn<int> columns[] = {
+			momo::DataColumn<int>(1ull << 60),
+			momo::DataColumn<int>(2ull << 60),
+			momo::DataColumn<int>(3ull << 60),
+			momo::DataColumn<int>(4ull << 60),
+			momo::DataColumn<int>(5ull << 60),
+			momo::DataColumn<int>(6ull << 60),
+			momo::DataColumn<int>(7ull << 60),
+			momo::DataColumn<int>(8ull << 60),
+			momo::DataColumn<int>(9ull << 60),
+			momo::DataColumn<int>(10ull << 50),
+			momo::DataColumn<int>(11ull << 50),
+			momo::DataColumn<int>(12ull << 50),
+			momo::DataColumn<int>(13ull << 50),
+			momo::DataColumn<int>(14ull << 50),
+			momo::DataColumn<int>(15ull << 50),
+		};
+
+		momo::DataColumnList<ColumnTraits> columnList;
+		for (const momo::DataColumn<int>& col : columns)
+			columnList.Add(col);
+
+		for (const momo::DataColumn<int>& col : columns)
+			assert(columnList.Contains(col));
 	}
 };
 
