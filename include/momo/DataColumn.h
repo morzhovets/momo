@@ -811,7 +811,7 @@ private:
 	constexpr static size_t maxCodeParam = ColumnTraits::maxCodeParam;
 
 	constexpr static size_t vertexCount = size_t{1} << logVertexCount;
-	static_assert(maxColumnCount <= vertexCount);
+	MOMO_STATIC_ASSERT(maxColumnCount <= vertexCount);
 
 	// http://cmph.sourceforge.net/papers/chm92.pdf
 	class Graph
