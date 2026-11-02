@@ -329,7 +329,7 @@ namespace internal
 		typedef NestedArrayIntCap<4, size_t, MemManagerPtr> Offsets;
 
 		template<typename Item = void>
-		struct MixedRaw
+		struct UpdatedRaw
 		{
 			Raw* raw;
 			size_t offset;
@@ -343,8 +343,8 @@ namespace internal
 
 		typedef size_t (*RawHasher)(Raw*, const size_t*);
 		typedef bool (*RawEqualComparer)(Raw*, Raw*, const size_t*);
-		typedef size_t (*MixedRawHasher)(const MixedRaw<>&, const size_t*);
-		typedef bool (*MixedRawEqualComparer)(const MixedRaw<>&, Raw*, const size_t*);
+		typedef size_t (*UpdatedRawHasher)(const UpdatedRaw<>&, const size_t*);
+		typedef bool (*UpdatedRawEqualComparer)(const UpdatedRaw<>&, Raw*, const size_t*);
 
 		class HashTraits : public momo::HashTraits<Raw*, typename DataTraits::HashBucket>
 		{
@@ -360,7 +360,7 @@ namespace internal
 			};
 
 			template<typename Item>
-			struct IsValidKeyArg<MixedRaw<Item>> : public std::true_type
+			struct IsValidKeyArg<UpdatedRaw<Item>> : public std::true_type
 			{
 			};
 
@@ -369,12 +369,12 @@ namespace internal
 
 		public:
 			explicit HashTraits(RawHasher rawHasher, RawEqualComparer rawEqualComp,
-				MixedRawHasher mixedRawHasher, MixedRawEqualComparer mixedRawEqualComp,
+				UpdatedRawHasher updatedRawHasher, UpdatedRawEqualComparer updatedRawEqualComp,
 				Offsets&& offsets) noexcept
 				: mRawHasher(rawHasher),
 				mRawEqualComparer(rawEqualComp),
-				mMixedRawHasher(mixedRawHasher),
-				mMixedRawEqualComparer(mixedRawEqualComp),
+				mUpdatedRawHasher(updatedRawHasher),
+				mUpdatedRawEqualComparer(updatedRawEqualComp),
 				mOffsets(std::move(offsets))
 			{
 			}
@@ -382,8 +382,8 @@ namespace internal
 			explicit HashTraits(const HashTraits& hashTraits, MemManagerPtr&& memManagerPtr)
 				: mRawHasher(hashTraits.mRawHasher),
 				mRawEqualComparer(hashTraits.mRawEqualComparer),
-				mMixedRawHasher(hashTraits.mMixedRawHasher),
-				mMixedRawEqualComparer(hashTraits.mMixedRawEqualComparer),
+				mUpdatedRawHasher(hashTraits.mUpdatedRawHasher),
+				mUpdatedRawEqualComparer(hashTraits.mUpdatedRawEqualComparer),
 				mOffsets(hashTraits.mOffsets, std::move(memManagerPtr))
 			{
 			}
@@ -405,9 +405,9 @@ namespace internal
 			}
 
 			template<typename Item>
-			size_t GetHashCode(const MixedRaw<Item>& key) const
+			size_t GetHashCode(const UpdatedRaw<Item>& key) const
 			{
-				return mMixedRawHasher({ key.raw, key.offset, key.item }, mOffsets.GetItems());
+				return mUpdatedRawHasher({ key.raw, key.offset, key.item }, mOffsets.GetItems());
 			}
 
 			bool IsEqual(Raw* key1, Raw* key2) const
@@ -427,9 +427,9 @@ namespace internal
 			}
 
 			template<typename Item>
-			bool IsEqual(const MixedRaw<Item>& key1, Raw* key2) const
+			bool IsEqual(const UpdatedRaw<Item>& key1, Raw* key2) const
 			{
-				return mMixedRawEqualComparer({ key1.raw, key1.offset, key1.item }, key2,
+				return mUpdatedRawEqualComparer({ key1.raw, key1.offset, key1.item }, key2,
 					mOffsets.GetItems());
 			}
 
@@ -473,8 +473,8 @@ namespace internal
 		private:
 			RawHasher mRawHasher;
 			RawEqualComparer mRawEqualComparer;
-			MixedRawHasher mMixedRawHasher;
-			MixedRawEqualComparer mMixedRawEqualComparer;
+			UpdatedRawHasher mUpdatedRawHasher;
+			UpdatedRawEqualComparer mUpdatedRawEqualComparer;
 			Offsets mOffsets;
 		};
 
@@ -553,14 +553,14 @@ namespace internal
 			}
 
 			template<typename Item>
-			Raw* Add(const MixedRaw<Item>& mixedRaw)
+			Raw* Add(const UpdatedRaw<Item>& updatedRaw)
 			{
 				MOMO_ASSERT(!mPositionAdd);
-				Position pos = mHashSet.Find(mixedRaw);
+				Position pos = mHashSet.Find(updatedRaw);
 				if (!!pos)
 					return *pos;
-				mPositionAdd = mHashSet.Add(pos, mixedRaw.raw);
-				return mixedRaw.raw;
+				mPositionAdd = mHashSet.Add(pos, updatedRaw.raw);
+				return updatedRaw.raw;
 			}
 
 			void RejectAdd() noexcept
@@ -707,19 +707,19 @@ namespace internal
 			}
 
 			template<typename Item>
-			void Add(const MixedRaw<Item>& mixedRaw)
+			void Add(const UpdatedRaw<Item>& updatedRaw)
 			{
 				MOMO_ASSERT(!mKeyIteratorAdd);
-				KeyIterator keyIter = mHashMultiMap.Find(mixedRaw);
+				KeyIterator keyIter = mHashMultiMap.Find(updatedRaw);
 				if (!!keyIter)
 				{
-					pvAdd(keyIter, mixedRaw.raw);
+					pvAdd(keyIter, updatedRaw.raw);
 					mKeyIteratorAdd = keyIter;
 				}
 				else
 				{
-					auto keyCreator = [&mixedRaw] (Raw** newRaw) noexcept
-						{ *newRaw = mixedRaw.raw; };
+					auto keyCreator = [&updatedRaw] (Raw** newRaw) noexcept
+						{ *newRaw = updatedRaw.raw; };
 					mKeyIteratorAdd = mHashMultiMap.AddKeyCrt(keyIter, keyCreator);
 				}
 			}
@@ -1101,13 +1101,13 @@ namespace internal
 				std::forward<ItemAssigner>(itemAssigner)(raw, offset);
 				return { nullptr, UniqueHashIndex::empty };
 			}
-			MixedRaw<Item> mixedRaw{ raw, offset, std::addressof(item) };
+			UpdatedRaw<Item> updatedRaw{ raw, offset, std::addressof(item) };
 			auto fin = Catcher::Finalize(&DataIndexes::pvReject, *this, true, true, nullptr);
 			for (UniqueHash& uniqueHash : mUniqueHashes)
 			{
 				if (!pvContainsOffset(uniqueHash, offset))
 					continue;
-				Raw* resRaw = uniqueHash.Add(mixedRaw);
+				Raw* resRaw = uniqueHash.Add(updatedRaw);
 				if (resRaw != raw)	// pvReject();
 					return { resRaw, pvGetHashIndex(mUniqueHashes, uniqueHash) };
 				uniqueHash.PrepareRemove(raw);
@@ -1116,7 +1116,7 @@ namespace internal
 			{
 				if (!pvContainsOffset(multiHash, offset))
 					continue;
-				multiHash.Add(mixedRaw);
+				multiHash.Add(updatedRaw);
 				multiHash.PrepareRemove(raw);
 			}
 			std::forward<ItemAssigner>(itemAssigner)(raw, offset);
@@ -1260,12 +1260,12 @@ namespace internal
 				{ return pvGetHashCode<void, Items...>(key, offsets); };
 			auto rawEqualComp = [] (Raw* key1, Raw* key2, const size_t* offsets)
 				{ return pvIsEqual<void, Items...>(key1, key2, offsets); };
-			auto mixedRawHasher = [] (const MixedRaw<>& key, const size_t* offsets)
+			auto updatedRawHasher = [] (const UpdatedRaw<>& key, const size_t* offsets)
 				{ return pvGetHashCode<void, Items...>(key, offsets); };
-			auto mixedRawEqualComp = [] (const MixedRaw<>& key1, Raw* key2, const size_t* offsets)
+			auto updatedRawEqualComp = [] (const UpdatedRaw<>& key1, Raw* key2, const size_t* offsets)
 				{ return pvIsEqual<void, Items...>(key1, key2, offsets); };
 			const MemManagerPtr& memManagerPtr = hashes.GetMemManager();
-			HashTraits hashTraits(rawHasher, rawEqualComp, mixedRawHasher, mixedRawEqualComp,
+			HashTraits hashTraits(rawHasher, rawEqualComp, updatedRawHasher, updatedRawEqualComp,
 				Offsets(offsets.begin(), offsets.end(), MemManagerPtr(memManagerPtr)));
 			Hash hash(std::move(hashTraits),
 				Offsets(sortedOffsets.begin(), sortedOffsets.end(), MemManagerPtr(memManagerPtr)));
@@ -1321,7 +1321,7 @@ namespace internal
 		}
 
 		template<typename Void, typename Item, typename... Items>
-		static size_t pvGetHashCode(const MixedRaw<>& key, const size_t* offsets)
+		static size_t pvGetHashCode(const UpdatedRaw<>& key, const size_t* offsets)
 		{
 			size_t offset = *offsets;
 			const Item& item = (offset != key.offset)
@@ -1333,7 +1333,7 @@ namespace internal
 		}
 
 		template<typename Void>
-		static size_t pvGetHashCode(const MixedRaw<>& /*key*/, const size_t* /*offsets*/) noexcept
+		static size_t pvGetHashCode(const UpdatedRaw<>& /*key*/, const size_t* /*offsets*/) noexcept
 		{
 			return 0;
 		}
@@ -1355,7 +1355,7 @@ namespace internal
 		}
 
 		template<typename Void, typename Item, typename... Items>
-		static bool pvIsEqual(const MixedRaw<>& key1, Raw* key2, const size_t* offsets)
+		static bool pvIsEqual(const UpdatedRaw<>& key1, Raw* key2, const size_t* offsets)
 		{
 			size_t offset = *offsets;
 			const Item& item1 = (offset != key1.offset)
@@ -1367,7 +1367,7 @@ namespace internal
 		}
 
 		template<typename Void>
-		static bool pvIsEqual(const MixedRaw<>& /*key1*/, Raw* /*key2*/,
+		static bool pvIsEqual(const UpdatedRaw<>& /*key1*/, Raw* /*key2*/,
 			const size_t* /*offsets*/) noexcept
 		{
 			return true;
