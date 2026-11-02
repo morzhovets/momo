@@ -65,7 +65,7 @@ public:
 	static void TestAll()
 	{
 		{
-			std::cout << "momo::DataTableNative (-RowNumber): " << std::flush;
+			std::cout << "momo::DataTableNative: " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfoNative<Struct>,
 				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
@@ -77,7 +77,7 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataTableStatic (-RowNumber): " << std::flush;
+			std::cout << "momo::DataTableStatic: " << std::flush;
 			typedef momo::DataColumnListStatic<Struct, momo::DataColumnInfo<Struct>,
 				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList;
@@ -103,7 +103,7 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataTable (struct, -RowNumber): " << std::flush;
+			std::cout << "momo::DataTable (struct): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<Struct, 4>,
 				momo::MemManagerDict<>> DataColumnList;
 			DataColumnList columnList = { dblStruct.Mutable(), intStruct };
@@ -114,7 +114,16 @@ public:
 		}
 
 		{
-			std::cout << "momo::DataTable (string, +RowNumber): " << std::flush;
+			std::cout << "momo::DataTable: " << std::flush;
+			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct>,
+				momo::MemManagerDict<>> DataColumnList;
+			momo::DataTable<DataColumnList> table({ intString, strString, dblString.Mutable() });
+			TestData<true>(table, intString, dblString, strString);
+			std::cout << "ok" << std::endl;
+		}
+
+		{
+			std::cout << "momo::DataTable (+RowNumber): " << std::flush;
 			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct, 12>, momo::MemManagerDict<>,
 				momo::DataItemTraits<momo::MemManagerDict<>>, momo::DataSettings<true>> DataColumnList;
 			DataColumnList columnList;
@@ -122,15 +131,6 @@ public:
 			columnList.Add(intString);
 			columnList.Add(strString);
 			momo::DataTable<DataColumnList, DataTraits1> table(std::move(columnList));
-			TestData<true>(table, intString, dblString, strString);
-			std::cout << "ok" << std::endl;
-		}
-
-		{
-			std::cout << "momo::DataTable (string, -RowNumber): " << std::flush;
-			typedef momo::DataColumnList<momo::DataColumnTraits<BaseStruct>,
-				momo::MemManagerDict<>> DataColumnList;
-			momo::DataTable<DataColumnList> table({ intString, strString, dblString.Mutable() });
 			TestData<true>(table, intString, dblString, strString);
 			std::cout << "ok" << std::endl;
 		}
