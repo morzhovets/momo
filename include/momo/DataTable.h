@@ -46,8 +46,7 @@ public:
 	template<typename Item>
 	static size_t GetHashCode(const Item& item, size_t offset)
 	{
-		// Constant from https://jonkagstrom.com/mx3/mx3_rev2.html
-		uint64_t mult64 = uint64_t{offset + 1} * 2 * 0x0E9846AF9B1A615Dull;
+		uint64_t mult64 = uint64_t{offset + 1} * 2 * internal::HashMixer::mult64;
 		mult64 ^= mult64 >> 32;
 		mult64 |= 1;
 		size_t hashCode = HashCoder<Item>()(item);

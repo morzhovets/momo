@@ -97,6 +97,10 @@ namespace internal
 	class HashMixer
 	{
 	public:
+		// Constant from https://jonkagstrom.com/mx3/mx3_rev2.html
+		constexpr static uint64_t mult64 = 0x0E9846AF9B1A615Dull;
+
+	public:
 		template<bool doXorShift = (sizeof(size_t) == 4)>
 		static size_t MixFast(size_t hashCode) noexcept
 		{
@@ -125,6 +129,16 @@ namespace internal
 				hashCode64 ^= hashCode64 >> 32;
 			return static_cast<size_t>(hashCode64);
 		}
+
+		static constexpr uint64_t Mix64(uint64_t hashCode64) noexcept
+		{
+			hashCode64 >>= 32;
+			hashCode64 *= mult64;
+			hashCode64 >>= 32;
+			hashCode64 *= mult64;
+			hashCode64 >>= 28;
+			return hashCode64;
+		}
 	};
 
 	class StrHasher
@@ -136,7 +150,7 @@ namespace internal
 			uint64_t hashCode64 = 0xCBF29CE484222325ull;
 			for (const char* p = str; *p != '\0'; ++p)
 				hashCode64 = (hashCode64 ^ uint64_t{static_cast<unsigned char>(*p)}) * 0x100000001B3ull;
-			return hashCode64;
+			return HashMixer::Mix64(hashCode64);
 		}
 	};
 }
