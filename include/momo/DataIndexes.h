@@ -395,7 +395,7 @@ namespace internal
 				auto tupleHasher = [&hashCode] (const auto&... pairs)
 					{ (AccumulateHashCode(hashCode, pairs.second, pairs.first), ...); };
 				std::apply(tupleHasher, key);
-				return hashCode;
+				return MixHashCode(hashCode);
 			}
 
 			template<typename Item>
@@ -436,6 +436,11 @@ namespace internal
 			static void AccumulateHashCode(size_t& hashCode, const Item& item, size_t offset)
 			{
 				hashCode += DataTraits::GetHashCode(item, offset);
+			}
+
+			static size_t MixHashCode(size_t hashCode) noexcept
+			{
+				return DataTraits::HashBucket::MixHashCode(hashCode);
 			}
 
 		private:
@@ -1232,7 +1237,7 @@ namespace internal
 				size_t hashCode = 0;
 				const size_t* offsetPtr = offsets;
 				(pvAccumulateHashCode<Items>(hashCode, key, *offsetPtr++), ...);
-				return hashCode;
+				return HashTraits::MixHashCode(hashCode);
 			};
 			auto rawEqualComp = [] (Raw* key1, Raw* key2, const size_t* offsets)
 			{
@@ -1244,7 +1249,7 @@ namespace internal
 				size_t hashCode = 0;
 				const size_t* offsetPtr = offsets;
 				(pvAccumulateHashCode<Items>(hashCode, key, *offsetPtr++), ...);
-				return hashCode;
+				return HashTraits::MixHashCode(hashCode);
 			};
 			auto mixedRawEqualComp = [] (const MixedRaw<>& key1, Raw* key2, const size_t* offsets)
 			{
