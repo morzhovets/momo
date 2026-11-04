@@ -643,7 +643,14 @@ public:
 
 	typedef typename ColumnInfo::Code ColumnCode;
 
-	typedef HashTraitsOpen<ColumnCode> ColumnCodeHashTraits;
+	class ColumnCodeHashTraits : public HashTraitsOpen<ColumnCode>
+	{
+	public:
+		size_t GetHashCode(ColumnCode key) const noexcept
+		{
+			return static_cast<size_t>(key);
+		}
+	};
 
 private:
 	constexpr static size_t codeBitSize = (sizeof(ColumnCode) > 4) ? 64 : 32;
