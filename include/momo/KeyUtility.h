@@ -132,11 +132,11 @@ namespace internal
 
 		static constexpr uint64_t Mix64(uint64_t hashCode64) noexcept
 		{
-			hashCode64 >>= 32;
+			hashCode64 ^= hashCode64 >> 32;
 			hashCode64 *= mult64;
-			hashCode64 >>= 32;
+			hashCode64 ^= hashCode64 >> 32;
 			hashCode64 *= mult64;
-			hashCode64 >>= 28;
+			hashCode64 ^= hashCode64 >> 28;
 			return hashCode64;
 		}
 	};
