@@ -30,6 +30,9 @@ jobs:
         - type: 'data_table_static'
           gcc_ver: '15'
 
+        - type: 'data_table_string'
+          gcc_ver: '15'
+
     runs-on: ubuntu-26.04
 
     steps:

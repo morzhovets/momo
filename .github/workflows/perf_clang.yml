@@ -36,6 +36,10 @@ jobs:
           ubuntu_ver: '26.04-arm'
           clang_ver: '22'
 
+        - type: 'data_table_string'
+          ubuntu_ver: '26.04-arm'
+          clang_ver: '22'
+
     runs-on: ubuntu-${{ matrix.ubuntu_ver }}
 
     steps:
