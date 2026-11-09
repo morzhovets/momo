@@ -20,17 +20,17 @@ jobs:
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
 
-#        - build_type: 'Release'
-#          test_libcxx20: 'Off'
-#          no_exceptions_rtti: 'On'
-#          extra_settings: 'Off'
-#          flags: '-std=c++11 -Werror'
-#
-#        - build_type: 'Release'
-#          test_libcxx20: 'Off'
-#          no_exceptions_rtti: 'Off'
-#          extra_settings: 'On'
-#          flags: '-std=c++11 -Werror'
+        - build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'On'
+          extra_settings: 'Off'
+          flags: '-std=c++11 -Werror'
+
+        - build_type: 'Release'
+          test_libcxx20: 'Off'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'On'
+          flags: '-std=c++11 -Werror'
 
         - build_type: 'Release'
           test_libcxx20: 'Off'
@@ -44,29 +44,41 @@ jobs:
           extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
 
-#        - build_type: 'Release'
-#          test_libcxx20: 'On'
-#          no_exceptions_rtti: 'Off'
-#          extra_settings: 'Off'
-#          flags: '-std=c++20 -Werror'
-#
-#        - build_type: 'Debug'
-#          test_libcxx20: 'On'
-#          no_exceptions_rtti: 'Off'
-#          extra_settings: 'Off'
-#          flags: '-std=c++20 -Werror'
-#
-#        - build_type: 'Release'
-#          test_libcxx20: 'On'
-#          no_exceptions_rtti: 'On'
-#          extra_settings: 'Off'
-#          flags: '-std=c++20 -Werror'
-#
-#        - build_type: 'Release'
-#          test_libcxx20: 'On'
-#          no_exceptions_rtti: 'Off'
-#          extra_settings: 'On'
-#          flags: '-std=c++20 -Werror'
+        - build_type: 'Release'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++20 -Werror'
+
+        - build_type: 'Release'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++23 -Werror'
+
+        - build_type: 'Release'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - build_type: 'Debug'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - build_type: 'Release'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'On'
+          extra_settings: 'Off'
+          flags: '-std=c++26 -Werror'
+
+        - build_type: 'Release'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'On'
+          flags: '-std=c++26 -Werror'
 
     runs-on: ubuntu-24.04
 
@@ -82,12 +94,12 @@ jobs:
         rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
         echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
         sudo apt-get update
-        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp
         source /opt/intel/oneapi/setvars.sh
         printenv >> $GITHUB_ENV
     - name: Build
       env:
-        CXX: icpc
+        CXX: icpx
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
