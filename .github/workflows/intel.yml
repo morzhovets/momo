@@ -14,73 +14,93 @@ jobs:
       matrix:
         include:
 
+        # 2023.2.4
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp-and-cpp-classic'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
 
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp-and-cpp-classic'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
 
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp-and-cpp-classic'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++11 -Werror'
 
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp-and-cpp-classic'
+          test_libcxx20: 'On'
+          no_exceptions_rtti: 'Off'
+          extra_settings: 'Off'
+          flags: '-std=c++20 -Werror'
+
+        #
+        - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++14 -Werror'
 
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp'
           test_libcxx20: 'Off'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
 
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++20 -Werror'
 
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++23 -Werror'
 
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
         - build_type: 'Debug'
+          intel_cpp: 'dpcpp-cpp'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'On'
           extra_settings: 'Off'
           flags: '-std=c++26 -Werror'
 
         - build_type: 'Release'
+          intel_cpp: 'dpcpp-cpp'
           test_libcxx20: 'On'
           no_exceptions_rtti: 'Off'
           extra_settings: 'On'
           flags: '-std=c++26 -Werror'
 
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     steps:
     - name: Checkout
@@ -89,12 +109,12 @@ jobs:
       run: sudo apt-get install ninja-build
     - name: Install Intel
       run: |
-        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
-        echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+        wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
+         | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" \
+         | sudo tee /etc/apt/sources.list.d/oneAPI.list
         sudo apt-get update
-        sudo apt-get install intel-oneapi-compiler-dpcpp-cpp
+        sudo apt-get install intel-oneapi-compiler-${{ matrix.intel_cpp }}
         source /opt/intel/oneapi/setvars.sh
         printenv >> $GITHUB_ENV
     - name: Build
