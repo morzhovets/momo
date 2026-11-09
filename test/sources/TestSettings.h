@@ -118,8 +118,6 @@
 #  undef TEST_LIBCXX_ARRAY	// libcxx20_array_5_cons_assign_copy (-assert)
 # endif
 #endif
-#if defined(__INTEL_LLVM_COMPILER) && !defined(TEST_DEBUG)
-# if 20260000 <= __INTEL_LLVM_COMPILER && __INTEL_LLVM_COMPILER < 20270000
-#  undef TEST_LIBCXX_ARRAY	// libcxx11_segmented_array_cnst_0_modifiers_emplace
-# endif
+#if defined(__INTEL_LLVM_COMPILER) && __INTEL_LLVM_COMPILER == 20260200 && !defined(TEST_DEBUG)
+# undef TEST_LIBCXX_ARRAY	// libcxx11_segmented_array_cnst_0_modifiers_emplace
 #endif
