@@ -52,6 +52,12 @@ int main()
 #endif
 	std::cout << std::endl;
 
+	std::cout << "__INTEL_LLVM_COMPILER: ";
+#ifdef __INTEL_LLVM_COMPILER
+	std::cout << __INTEL_LLVM_COMPILER;
+#endif
+	std::cout << std::endl;
+
 	std::cout << "_MSVC_STL_VERSION: ";
 #ifdef _MSVC_STL_VERSION
 	std::cout << _MSVC_STL_VERSION;

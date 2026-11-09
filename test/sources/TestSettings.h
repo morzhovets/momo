@@ -115,6 +115,9 @@
 
 #endif // MOMO_TEST_EXTRA_SETTINGS
 
-#if defined(TEST_MSVC) && _MSC_VER == 1951	// vs2026: Internal compiler error
-# undef TEST_SIMPLE_DATA
+#if defined(TEST_MSVC) && _MSC_VER == 1951
+# undef TEST_SIMPLE_DATA	// Internal compiler error
+#endif
+#if defined(__INTEL_LLVM_COMPILER) && __INTEL_LLVM_COMPILER == 20260200 && !defined(TEST_DEBUG)
+# undef TEST_LIBCXX_ARRAY	// libcxx20_array_5_spec_asan_throw
 #endif
