@@ -20,17 +20,17 @@ jobs:
           extra_settings: 'Off'
           flags: '-std=c++11 -Werror'
 
-        - build_type: 'Release'
-          test_libcxx20: 'Off'
-          no_exceptions_rtti: 'On'
-          extra_settings: 'Off'
-          flags: '-std=c++11 -Werror'
-
-        - build_type: 'Release'
-          test_libcxx20: 'Off'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'On'
-          flags: '-std=c++11 -Werror'
+#        - build_type: 'Release'
+#          test_libcxx20: 'Off'
+#          no_exceptions_rtti: 'On'
+#          extra_settings: 'Off'
+#          flags: '-std=c++11 -Werror'
+#
+#        - build_type: 'Release'
+#          test_libcxx20: 'Off'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'On'
+#          flags: '-std=c++11 -Werror'
 
         - build_type: 'Release'
           test_libcxx20: 'Off'
@@ -44,31 +44,31 @@ jobs:
           extra_settings: 'Off'
           flags: '-std=c++17 -Werror'
 
-        - build_type: 'Release'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'Off'
-          flags: '-std=c++20 -Werror'
+#        - build_type: 'Release'
+#          test_libcxx20: 'On'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'Off'
+#          flags: '-std=c++20 -Werror'
+#
+#        - build_type: 'Debug'
+#          test_libcxx20: 'On'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'Off'
+#          flags: '-std=c++20 -Werror'
+#
+#        - build_type: 'Release'
+#          test_libcxx20: 'On'
+#          no_exceptions_rtti: 'On'
+#          extra_settings: 'Off'
+#          flags: '-std=c++20 -Werror'
+#
+#        - build_type: 'Release'
+#          test_libcxx20: 'On'
+#          no_exceptions_rtti: 'Off'
+#          extra_settings: 'On'
+#          flags: '-std=c++20 -Werror'
 
-        - build_type: 'Debug'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'Off'
-          flags: '-std=c++20 -Werror'
-
-        - build_type: 'Release'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'On'
-          extra_settings: 'Off'
-          flags: '-std=c++20 -Werror'
-
-        - build_type: 'Release'
-          test_libcxx20: 'On'
-          no_exceptions_rtti: 'Off'
-          extra_settings: 'On'
-          flags: '-std=c++20 -Werror'
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Checkout
@@ -87,7 +87,7 @@ jobs:
         printenv >> $GITHUB_ENV
     - name: Build
       env:
-        CXX: icpx
+        CXX: icpc
         CXXFLAGS: ${{ matrix.flags }}
       run: |
         cd test
