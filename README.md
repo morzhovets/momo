@@ -80,4 +80,4 @@ Some examples are [here](https://github.com/morzhovets/momo/blob/branch_cpp11/te
 
 - Apple Clang
 
-- Intel C++
+- Intel C++ (LLVM-based)
