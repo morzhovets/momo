@@ -120,4 +120,5 @@
 #endif
 #if defined(__INTEL_LLVM_COMPILER) && __INTEL_LLVM_COMPILER == 20260200 && !defined(TEST_DEBUG)
 # undef TEST_LIBCXX_ARRAY	// libcxx20_array_5_spec_asan_throw
+# undef TEST_LIBCXX_TREE_MAP	// libcxx20_tree_map_modifiers_insert_range
 #endif
