@@ -652,6 +652,8 @@ public:
 		}
 	};
 
+	typedef uint32_t Addend;
+
 private:
 	constexpr static size_t codeBitSize = (sizeof(ColumnCode) > 4) ? 64 : 32;
 
@@ -792,6 +794,11 @@ private:
 	constexpr static size_t vertexCount = size_t{1} << logVertexCount;
 	static_assert(maxColumnCount <= vertexCount);
 
+	typedef typename ColumnTraits::Addend Addend;
+
+	constexpr static Addend zeroAddend = 0;
+	constexpr static Addend initAddend = Addend{1} << (sizeof(Addend) * 8 - 1);
+
 	// http://cmph.sourceforge.net/papers/chm92.pdf
 	class Graph
 	{
@@ -830,26 +837,16 @@ private:
 			return mEdges[vertex] != nullptr;
 		}
 
-		bool FillAddends(size_t* addends, size_t vertex) const noexcept
+		bool FillAddends(Addend* addends, size_t vertex) const noexcept
 		{
-			size_t addend = addends[vertex];
-			for (Edge* edge = mEdges[vertex]; edge != nullptr; edge = edge->nextEdge)
-			{
-				size_t vertex2 = edge->vertex;
-				size_t& addend2 = addends[vertex2];
-				if (addend2 == 0)
-				{
-					addend2 = edge->value - addend;
-					if (!FillAddends(addends, vertex2))
-						return false;
-				}
-				else
-				{
-					if (addend + addend2 != edge->value)
-						return false;
-				}
-			}
-			return true;
+			MOMO_ASSERT(addends[vertex] == zeroAddend);
+			addends[vertex] = initAddend;
+			return pvFillAddends(addends, vertex);
+		}
+
+		static size_t GetEdgeValue(Addend addend1, Addend addend2) noexcept
+		{
+			return size_t{static_cast<Addend>(addend1 + addend2)};
 		}
 
 	private:
@@ -864,13 +861,37 @@ private:
 			mEdges[vertex1] = edge;
 		}
 
+		bool pvFillAddends(Addend* addends, size_t vertex) const noexcept
+		{
+			Addend addend = addends[vertex];
+			for (Edge* edge = mEdges[vertex]; edge != nullptr; edge = edge->nextEdge)
+			{
+				size_t vertex2 = edge->vertex;
+				Addend& addend2 = addends[vertex2];
+				if (addend2 == zeroAddend)
+				{
+					addend2 = static_cast<Addend>(edge->value) - addend;	//?
+					if (addend2 == zeroAddend || GetEdgeValue(addend, addend2) != edge->value)
+						return false;
+					if (!pvFillAddends(addends, vertex2))
+						return false;
+				}
+				else
+				{
+					if (GetEdgeValue(addend, addend2) != edge->value)
+						return false;
+				}
+			}
+			return true;
+		}
+
 	private:
 		size_t mEdgeNumber;
 		std::array<Edge, maxEdgeCount> mEdgeStorage;
 		std::array<Edge*, vertexCount> mEdges;
 	};
 
-	typedef std::array<size_t, vertexCount> Addends;
+	typedef std::array<Addend, vertexCount> Addends;
 
 	typedef typename ColumnTraits::ColumnCode ColumnCode;
 
@@ -911,7 +932,7 @@ public:
 	{
 		if constexpr (Settings::keepRowNumber)
 			mTotalSize += sizeof(typename Settings::RowNumber);
-		std::ranges::fill(mAddends, 0);
+		std::ranges::fill(mAddends, zeroAddend);
 	}
 
 	template<typename Item, typename... Items>
@@ -1069,14 +1090,14 @@ public:
 	{
 		ColumnCode columnCode = columnInfo.GetCode();
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnCode, mCodeParam);
-		size_t addend1 = mAddends[vertices.first];
-		size_t addend2 = mAddends[vertices.second];
-		if (addend1 == 0 || addend2 == 0)
+		Addend addend1 = mAddends[vertices.first];
+		Addend addend2 = mAddends[vertices.second];
+		if (addend1 == zeroAddend || addend2 == zeroAddend)
 			return false;
 		if (!mColumnCodeSet.ContainsKey(columnCode))
 			return false;
 		if (resOffset != nullptr)
-			*resOffset = addend1 + addend2;
+			*resOffset = Graph::GetEdgeValue(addend1, addend2);
 		return true;
 	}
 
@@ -1107,7 +1128,7 @@ private:
 		size_t codeParam = mCodeParam;
 		while (true)
 		{
-			std::ranges::fill(addends, 0);
+			std::ranges::fill(addends, zeroAddend);
 			offset = mTotalSize;
 			maxAlignment = mAlignment;
 			if (pvFillAddends<Items...>(addends, offset, maxAlignment, codeParam, columnCodes.data()))
@@ -1160,8 +1181,8 @@ private:
 		Graph graph;
 		for (const ColumnRecord& columnRec : mColumnRecords)
 		{
-			std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnRec.GetCode(),
-				codeParam);
+			std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(
+				columnRec.GetCode(), codeParam);
 			graph.AddEdges(vertices.first, vertices.second, columnRec.GetOffset());
 		}
 		return pvFillAddends<Items...>(addends, graph, offset, maxAlignment, codeParam, columnCodes);
@@ -1175,9 +1196,8 @@ private:
 		(pvAddEdge<Items>(graph, offset, maxAlignment, codeParam, *columnCodePtr++), ...);
 		for (size_t v = 0; v < vertexCount; ++v)
 		{
-			if (!graph.HasEdge(v) || addends[v] != 0)
+			if (!graph.HasEdge(v) || addends[v] != zeroAddend)
 				continue;
-			addends[v] = size_t{1} << (sizeof(size_t) * 8 - 1);
 			if (!graph.FillAddends(addends.data(), v))
 				return false;
 		}
@@ -1227,10 +1247,10 @@ private:
 	MOMO_FORCEINLINE size_t pvGetOffset(ColumnCode columnCode) const noexcept
 	{
 		std::pair<size_t, size_t> vertices = ColumnTraits::GetVertices(columnCode, mCodeParam);
-		size_t addend1 = mAddends[vertices.first];
-		size_t addend2 = mAddends[vertices.second];
-		MOMO_ASSERT(addend1 != 0 && addend2 != 0);
-		return addend1 + addend2;
+		Addend addend1 = mAddends[vertices.first];
+		Addend addend2 = mAddends[vertices.second];
+		MOMO_ASSERT(addend1 != zeroAddend && addend2 != zeroAddend);
+		return Graph::GetEdgeValue(addend1, addend2);
 	}
 
 	template<typename Item, typename... Items, typename DataColumnListPtr, typename RawPtr>
