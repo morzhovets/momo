@@ -115,7 +115,7 @@
 
 #endif // MOMO_TEST_EXTRA_SETTINGS
 
-#if defined(TEST_MSVC) && _MSC_VER == 1952
+#if defined(TEST_MSVC) && 1950 < _MSC_VER && _MSC_VER <= 1952
 # undef TEST_SIMPLE_DATA	// Internal compiler error
 #endif
 #if defined(__INTEL_LLVM_COMPILER) && __INTEL_LLVM_COMPILER == 20260200 && !defined(TEST_DEBUG)
