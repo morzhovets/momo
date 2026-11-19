@@ -75,7 +75,7 @@ jobs:
           extra_settings: 'On'
           flags: '-m32 -std=c++26 -Werror'
 
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - name: Checkout
