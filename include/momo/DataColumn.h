@@ -832,14 +832,11 @@ private:
 			pvAddEdge(vertex2, vertex1, value);
 		}
 
-		bool HasEdge(size_t vertex) const noexcept
-		{
-			return mEdges[vertex] != nullptr;
-		}
-
 		bool FillAddends(Addend* addends, size_t vertex) const noexcept
 		{
 			MOMO_ASSERT(addends[vertex] == zeroAddend);
+			if (mEdges[vertex] == nullptr)
+				return true;
 			addends[vertex] = initAddend;
 			return pvFillAddends(addends, vertex);
 		}
@@ -1196,7 +1193,7 @@ private:
 		(pvAddEdge<Items>(graph, offset, maxAlignment, codeParam, *columnCodePtr++), ...);
 		for (size_t v = 0; v < vertexCount; ++v)
 		{
-			if (!graph.HasEdge(v) || addends[v] != zeroAddend)
+			if (addends[v] != zeroAddend)
 				continue;
 			if (!graph.FillAddends(addends.data(), v))
 				return false;
