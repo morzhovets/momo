@@ -956,7 +956,7 @@ public:
 		mFuncRecords(MemManagerPtr(GetMemManager())),
 		mMutableOffsets(MemManagerPtr(GetMemManager()))
 	{
-		std::fill(mAddends.begin(), mAddends.end(), zeroAddend);
+		std::fill(mAddends.begin(), mAddends.end(), Addend{zeroAddend});
 	}
 
 	template<typename Item, typename... Items>
@@ -1149,7 +1149,7 @@ private:
 		size_t codeParam = mCodeParam;
 		while (true)
 		{
-			std::fill(addends.begin(), addends.end(), zeroAddend);
+			std::fill(addends.begin(), addends.end(), Addend{zeroAddend});
 			offset = mTotalSize;
 			maxAlignment = mAlignment;
 			if (pvFillAddends<Items...>(addends, offset, maxAlignment, codeParam, columnCodes.data()))
