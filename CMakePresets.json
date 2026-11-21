@@ -16,6 +16,7 @@
       "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_CXX_STANDARD": "23",
+        "MOMO_TEST_LIBCXX20": "ON",
         "CMAKE_BUILD_TYPE": "Debug"
       }
     },
@@ -50,7 +51,8 @@
       "name": "Test-GCC-std11-Debug",
       "inherits": "Test-GCC-std23-Debug",
       "cacheVariables": {
-        "CMAKE_CXX_STANDARD": "11"
+        "CMAKE_CXX_STANDARD": "11",
+        "MOMO_TEST_LIBCXX20": "OFF"
       }
     },
     {
@@ -78,7 +80,8 @@
       "name": "Test-Clang-std11-Debug",
       "inherits": "Test-Clang-std23-Debug",
       "cacheVariables": {
-        "CMAKE_CXX_STANDARD": "11"
+        "CMAKE_CXX_STANDARD": "11",
+        "MOMO_TEST_LIBCXX20": "OFF"
       }
     },
     {
@@ -110,7 +113,8 @@
       "name": "Test-MSVC-x64-std14-Debug",
       "inherits": "Test-MSVC-x64-std23-Debug",
       "cacheVariables": {
-        "CMAKE_CXX_STANDARD": "14"
+        "CMAKE_CXX_STANDARD": "14",
+        "MOMO_TEST_LIBCXX20": "OFF"
       }
     },
     {
@@ -162,7 +166,8 @@
       "name": "Test-MSVC_Clang-x64-std14-Debug",
       "inherits": "Test-MSVC_Clang-x64-std23-Debug",
       "cacheVariables": {
-        "CMAKE_CXX_STANDARD": "14"
+        "CMAKE_CXX_STANDARD": "14",
+        "MOMO_TEST_LIBCXX20": "OFF"
       }
     },
     {
